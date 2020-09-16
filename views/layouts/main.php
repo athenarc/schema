@@ -24,6 +24,17 @@ AppAsset::register($this);
 echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['integrity'=> 'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', 'crossorigin'=> 'anonymous']);
 ?>
 
+<style>
+.bg {
+ 
+    background-image: url("/schema_test/web/img/egci-head.png");
+    background-repeat: no-repeat;
+    
+    background-size: cover;
+}
+</style>
+
+
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -38,7 +49,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
+<div class="wrap bg">
     <?php
 
     if(Yii::$app->user->getIsGuest() == false)
@@ -58,8 +69,8 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 
     // print_r(User::getCurrentUser());
     // exit(0);
-    $menuItems=[
-            ['label' => 'Home', 'url' => ['/site/index']],];
+    $menuItems=[];
+            //['label' => 'Home', 'url' => ['/site/index']],];
             // ['label' => 'About', 'url' => ['/site/about']],];
             // ['label' => 'Contact', 'url' => ['/site/contact']]];
     if(Yii::$app->user->getIsGuest() == true)

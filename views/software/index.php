@@ -200,7 +200,7 @@ foreach ($software as $name=>$uploader)
 ?> 
 			<td class="col-md-3 software-button-container $disabledClass"><?=SoftIndexButton::button('run',$runLink,$name)?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['software/edit-software','name'=>$name, 'version'=>$versions[$first_key]]),$name,'software') : ''?>&nbsp;
-				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
+				 <?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
 			</td>
 			<?=Html::hiddenInput('hiddenUrl',Url::base('http'),['class'=>'hidden_url']);?>
 		</tr>

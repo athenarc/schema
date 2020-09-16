@@ -42,7 +42,7 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
             <?= $form->field($model, 'imountpoint') ?>
             <?= $form->field($model, 'omountpoint') ?>
         </div>
-        <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?>
+        <!-- <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?> -->
         <?= $form->field($model, 'mpi') -> checkbox(['id'=>'mpi']) ?>
         <div class="mpi-warning row">
             <div class=col-md-12>
