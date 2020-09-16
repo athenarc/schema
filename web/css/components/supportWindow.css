@@ -1,0 +1,23 @@
+.support-window-wrapper
+{
+	position:fixed;
+	z-index:100;
+	bottom:7%;
+	right:0%;
+	background-color:#f8f9fa;
+	width:150px;
+	/*height:100px;*/
+	
+}
+
+.support-window-text
+{
+	padding: 10px 10px 5px 10px;
+}
+
+.support-window-button
+{
+	padding-top:5px;
+	padding-bottom:10px;
+}
+

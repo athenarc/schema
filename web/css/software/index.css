@@ -1,0 +1,150 @@
+.software-run
+{
+	/*margin-top:13px;*/
+	/*display:table-cell;*/
+	vertical-align:middle;
+}
+.software-gap
+{
+	display:inline-block;
+}
+.software-name
+{
+	/*display:table-cell;*/
+	/*font-weight:bold;*/
+	display:inline-block;
+	font-size:14px;
+	font-weight:500;
+}
+.software-lock
+{
+	display:inline-block;
+	margin-right:10px;
+	margin-top:-17.5px;
+}
+.software-description
+{
+	display:inline-block;
+	margin-left:5px;
+	font-size:18px;
+}
+
+.indicators-div
+{
+	display: inline-block;
+}
+
+.indicator-padding
+{
+	display:inline-block;
+	margin-left:16px;
+}
+.mpi-indicator
+{
+	display:inline-block;
+	margin-left:5px;
+	font-size:11px;
+	border-radius:5px;
+	background-color: #abebc6;
+	padding:2.5px;
+}
+.covid19-indicator
+{
+	display:inline-block;
+	margin-left:5px;
+	font-size:11px;
+	border-radius:5px;
+	background-color: #f5b7b1;
+	padding:2.5px;
+}
+
+
+.software-description:hover
+{
+	cursor:pointer;
+}
+
+.software-versions
+{
+	padding-top: 5px;
+	font-size:14px;
+}
+
+.image-field
+{
+	font-size:14px;
+}
+.software-image-uploader
+{
+	padding-top:5px;
+	font-size:14px;
+}
+
+.software-row
+{
+	padding-top:5px;
+	padding-bottom:5px;
+}
+/*.software-table
+{
+	display:table-row;
+}*/
+.software-add
+{
+	text-align:right;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+.software-header
+{
+	padding-top:5px;
+	font-size:16px;
+	/*font-weight:500;*/
+}
+
+.modal-loading
+{
+	display: none;
+	width: 100%;
+	text-align: center;
+	font-size: 14px;
+	color: red;
+}
+
+.software-button-container
+{
+	text-align:right;
+	vertical-align:middle;
+}
+
+.project-dropdown
+{
+	margin-top:10px;
+	font-size:12px;
+
+}
+.project-dropdown-label
+{
+	font-weight:500;
+	font-size:18px;
+	margin-top:6px;
+}
+
+.create-project-btn
+{
+	margin-top:0px;
+	font-size:12px;
+}
+
+.invisible
+{
+	display:none;
+}
+
+.run-button, .edit-button, .delete-button
+{
+	font-size:12px !important;
+}
