@@ -30,10 +30,10 @@ class SoftwareIndicatorList
 			$output.='<div class="mpi-indicator" title="This software uses OpenMPI">OpenMPI&nbsp;<i class="fa fa-rocket" aria-hidden="true"></i></div>';
 		}
 
-		if (isset($indicators['covid19']))
-		{
-			$output.='<div class="covid19-indicator" title="This software has been flagged as relevant to performing COVID-19-related analyses">COVID-19&nbsp;<i class="fa fa-certificate" aria-hidden="true"></i></div>';
-		}
+		// if (isset($indicators['covid19']))
+		// {
+		// 	$output.='<div class="covid19-indicator" title="This software has been flagged as relevant to performing COVID-19-related analyses">COVID-19&nbsp;<i class="fa fa-certificate" aria-hidden="true"></i></div>';
+		// }
 		return $output;
 	}	
 	

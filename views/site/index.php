@@ -14,7 +14,7 @@ $this->title = 'SCHeMa scheduler';
 ?>
 <div class="site-index">
 
-    <div class="jumbotron">
+    <div class="text-center">
         <?=Html::img('@web/img/logo.png') ?>
         <!-- <h1>Congratulations!</h1> -->
         <br />
