@@ -1,0 +1,205 @@
+#command-text-box
+{
+	width:100%;
+	border-radius: 5px;
+	box-shadow:none;
+}
+.status-div
+{
+	display: inline-block;
+}
+.status-COMPLETE
+{
+	color:green;
+}
+.status-RUNNING
+{
+	color: blue;
+}
+.status-QUEUED
+{
+	color:#ff712d;
+}
+.status-INITIALIZING
+{
+	color: #9400D3;
+}
+
+.steps-box
+{
+	width:100%;
+	height:200px;
+	overflow:scroll;
+	padding:10px;
+	border: 1px solid black;
+	background-color:#F5F5F5;
+}
+
+.running-logo
+{
+	float:right;
+}
+
+.disabled-box
+{
+	background-color:#dedede;
+}
+.button-spacing
+{
+	width:10px;
+	display:inline-block;
+}
+.cancel-button-container
+{
+	display:none;
+}
+.add-example-link-hidden
+{
+	display:none;
+}
+.run-button-container
+{
+	display:inline-block;
+}
+
+.example-button-container
+{
+	display:inline-block;
+}
+
+#select-active-form-btn, #select-non-active-form-btn
+{
+	display:inline-block;
+	width:200px;
+	border: 1px solid black;
+	text-align: center;
+	border-radius: 5px;
+}
+
+.form-btn-link
+{
+	color: #000;
+	text-decoration: none;
+}
+
+#select-active-form-btn:hover, #select-non-active-form-btn:hover
+{
+	cursor:pointer;
+}
+
+
+.active-tab
+{
+	background-color:#f37d30;
+	color:#fff;
+}
+
+.active-form-display
+{
+	display:block;
+}
+
+.inactive-form-display
+{
+	display:none;
+}
+
+.software-header
+{
+	padding-top:5px;
+	font-size:28px;
+	font-weight:bold;
+}
+
+.mount-exist-error
+{
+	color:red;
+	font-weight:bold;
+}
+
+.hidden-element
+{
+	display:none;
+}
+
+.back-btn
+{
+	padding-top:22.5px;
+}
+
+.btn-default-values
+{
+	font-size:10px;
+	background-color: #efefef;
+}
+
+.select-file-btn
+{
+	font-size:10px;
+}
+
+.clear-file-btn
+{
+	font-size:10px;
+}
+
+.select-file-btn:hover
+{
+	font-size:10px;
+	background-color: #efefef;
+	color:black;
+}
+
+.clear-file-btn:hover
+{
+	font-size:10px;
+	background-color: #efefef;
+	color:black;
+}
+
+.padding-0{
+    padding-right:0;
+    padding-left:0;
+}
+
+
+
+.inputbox{
+
+	width:10%;
+}
+
+.project-quotas-div
+{
+	background-color: #f5f5f5;
+	height: 220px;
+	top:20px;
+}
+
+.rcorners {
+  border-radius: 25px;
+}
+
+.headers {
+	border-top-left-radius: 25px;
+	border-top-right-radius:25px;
+	background-color:rgb(169,169,169);
+	text-align: center !important;
+
+}
+
+#centerheaders {
+  width: 100% !important;
+  text-align: center;
+  
+}
+
+.quotas-line
+{
+	padding-left:10px;
+}
+
+.field-dropdown
+{
+	width:65%;
+}

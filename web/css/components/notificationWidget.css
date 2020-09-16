@@ -1,0 +1,97 @@
+.grey-notification-bell
+{
+	display:inline-block;
+}
+
+.color-notification-bell
+{
+	display:inline-block;
+	color: #f57d20;
+}
+
+.notification_count_not_zero
+{
+	display:inline-block;
+	margin-left:5px;
+	color:red;
+
+}
+
+.notification_count_zero
+{
+	display:inline-block;
+	margin-left:5px;
+	
+
+}
+
+
+.notifications_div
+{
+	z-index:1000;
+	width:200px;
+	top:60;
+	position:absolute;
+	right:10%;
+	border-color: #f8f9fa;
+	border-style: solid;
+ 	border-width: 1px;
+	background-color: #f8f9fa;
+	/*text-align:right;*/
+	display:none;
+}
+
+.notification
+{
+	padding-left:5px;
+}
+
+.notification:hover {
+  color: blue;
+}
+
+.notification-mark
+{
+	border-color: black;
+	border-style: solid;
+ 	border-width: 1px;
+	padding-left:5px;
+}
+
+.notification-mark:hover {
+  color: red;
+}
+
+#mark_all_seen:hover
+{
+	cursor:pointer;
+}
+
+.dropdown .dropdown-toggle .caret
+{
+	display:none;
+}
+
+.notification-danger
+{
+	background-color: #f8d7da;
+}
+
+.notification-warning
+{
+	background-color: #fff3cd;
+}
+.notification-success
+{
+	background-color: #d4edda;
+}
+
+.notification-history a
+{
+	display: block;
+	padding: 3px 20px;
+	font-size: 12px;
+	line-height: 1.42857143;
+	color: #777777 !important;
+	white-space: nowrap;
+}
