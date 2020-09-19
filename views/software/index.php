@@ -17,7 +17,6 @@ use app\components\SoftDescrModal;
 use app\components\SoftwareIndicatorList;
 
 
-
 /*
  * Add stylesheet
  */
@@ -59,7 +58,7 @@ $this->title = 'Available Software';
 
 $softwareAdd='<i class="fas fa-plus"></i>&nbsp;New image';
 $softwareAddExisting='<i class="fas fa-plus"></i>&nbsp;Existing image';
-$projectAdd='<i class="fas fa-plus"></i>&nbsp;New project';
+$imageAdd='<i class="fas fa-plus"></i>&nbsp;Image Request';
 
 
 // $softwareAdd.='</div>';
@@ -72,10 +71,11 @@ if (!empty($projectsDropdown))
 {
 	$key=array_key_first($projectsDropdown);
 	$project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
+	$project_name=' ';
 	$project_name=trim(explode('(',$project_selected)[0]);
-	$dropdownLabel='Resources from project:';
-	// print_r($project_name);
-	// exit(0);
+	$dropdownLabel='Working project:';
+	//$remaining_jobs=0;
+	
 }
 else
 {
@@ -88,23 +88,52 @@ else
 
 ?>
 
-<div class="row">
-			<div class="col-md-5"><span class="project-dropdown-label">New software based on:</span><br />
-				<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
-			</div>
-			<div class="col-md-7 text-right"><span class="project-dropdown-label"><?=$dropdownLabel?></span>&nbsp;
-<?php
-	if (!empty($projectsDropdown))
-	{
-?>
-	
-		<?=Html::dropDownList('dropdown', $project_selected, $projectsDropdown, ['class'=>'project-dropdown']) ?>&nbsp;
-<?php		
-	}
-?>
-		<?= Html::a($projectAdd, "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['class' => 'btn btn-secondary create-project-btn'])?></div>
-	</div>
 
+<div class="row">
+	<div class="col-md-5">
+		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
+		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
+	</div>
+	<div class="project-egci col-md-7">
+		<div>
+			<div class="col-md-12 text-center">Working Project:</div>
+			<div class="col-md-12 text-center">
+			<?php
+			if (!empty($projectsDropdown))
+			{?>
+				<?=Html::dropDownList('dropdown', $project_selected, $projectsDropdown, 
+				['class'=>'project-dropdown']) ?>
+			<?php		
+			}?>
+			</div>
+			<div class="col-md-12 text-center">Remaining Jobs: &nbsp;
+			<span class="rem-jobs"></span>
+			<?php
+						foreach ($remaining_jobs_array as $project=>$remaining_jobs)
+						{
+							if ($project==$project_name)
+							{
+								$job_class="";
+							}
+							else
+							{
+								$job_class="invisible";
+							}?>
+						<span id="<?=$project?>" class="jobs-div <?=$job_class?>">
+						<?=$remaining_jobs?>
+						</span>
+						<?php
+						}?>
+			<div class="col-md-12">
+			<?= Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"])?>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="row">&nbsp;</div>
 <div class="row">&nbsp;</div>
 
 
@@ -304,3 +333,4 @@ foreach ($descriptions as $soft)
 ?>
 
 </div>
+

@@ -14,7 +14,6 @@ use app\components\NotificationWidget;
 
 $footerImage=Html::img('@web/img/elixir-dark.png',['class'=>'footer-elixir-image']);
 $footerImageLink=Html::a($footerImage,'https://elixir-greece.org',['target'=>'_blank']);
-
 echo Html::cssFile('@web/css/components/notificationWidget.css');
 $this->registerJsFile('@web/js/components/notificationWidget.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
@@ -24,15 +23,7 @@ AppAsset::register($this);
 echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['integrity'=> 'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', 'crossorigin'=> 'anonymous']);
 ?>
 
-<style>
-.bg {
- 
-    background-image: url("/schema_test/web/img/egci-head.png");
-    background-repeat: no-repeat;
-    
-    background-size: cover;
-}
-</style>
+
 
 
 <?php $this->beginPage() ?>
@@ -49,7 +40,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap bg">
+<div class="wrap background-image">
     <?php
 
     if(Yii::$app->user->getIsGuest() == false)

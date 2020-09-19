@@ -22,6 +22,7 @@ use app\models\SoftwareUpload;
 use app\models\SoftwareUploadExisting;
 use app\models\SoftwareEdit;
 use app\models\SoftwareRemove;
+use app\models\ImageRequest;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\RunHistory;
@@ -123,19 +124,50 @@ class SoftwareController extends Controller
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         $projectsDropdown=Software::getActiveProjects();
-        $indicators=Software::getIndicators($softUser);
+        $remaining_jobs_array=[];
+        foreach ($projectsDropdown as $project) 
+        {
+              $project_name=trim(explode('(',$project)[0]);
+              $remaining=trim(explode(' ',$project)[1]);
+              $remaining_jobs=trim(explode('(', $remaining)[1]);
+              $projectsDropdown[$project_name]=$project_name;
+              $remaining_jobs_array["$project_name"]=$remaining_jobs;
+              
+        }
+
+
+        
+         $indicators=Software::getIndicators($softUser);
         
                 
 
         return $this->render('index',['software' => $software, 'user'=> $user,
                                       'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
                                       'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators,
-                                      'images'=>$images, ]);
+                                      'images'=>$images, 'remaining_jobs_array'=>$remaining_jobs_array]);
     }
 
     /**
      * Action to run a docker image uploaded in the system
      */
+
+    public function actionImageRequest()
+    {
+        $model=new ImageRequest;
+        $user=User::getCurrentUser()['username'];
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) 
+        {
+            $date=date("Y-m_d");
+            $model->date=$date;
+            $model->user_name=$user;
+            $model->save();
+            return $this->redirect('index');
+        }
+        return $this->render('image_request', ['model'=>$model]);
+    }
+
+
     public function actionRun($name, $version,$project)
     {
 
