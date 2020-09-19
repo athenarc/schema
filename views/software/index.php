@@ -94,7 +94,7 @@ else
 		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
 		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
 	</div>
-	<div class="project-egci col-md-7">
+	<div class="project-egci col-md-4">
 		<div>
 			<div class="col-md-12 text-center">Working Project:</div>
 			<div class="col-md-12 text-center">
@@ -124,7 +124,8 @@ else
 						</span>
 						<?php
 						}?>
-			<div class="col-md-12">
+			</div>
+			<div class="col-md-12 text-center">
 			<?= Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"])?>
 			</div>
 		</div>
