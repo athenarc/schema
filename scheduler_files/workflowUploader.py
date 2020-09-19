@@ -81,6 +81,7 @@ elif isinstance(inputs,list):
     exit_value=wuf.inputStoreList(workName,workVersion,content['inputs'])
 else:
     exit_value=50
+    
 exit(exit_value)
 
 # uf.imageStoreAndClassify(softName,softVersion, imageNew,script,user,visibility,
