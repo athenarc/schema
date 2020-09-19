@@ -27,7 +27,9 @@ def getMainWorkflowFile(folder,allowed):
             file=os.path.join(root,name)
             f, ext=os.path.splitext(name)
             ext=ext.strip('.')
-
+            print('File: ' + file)
+            if '__MACOSX' in file:
+                continue
             if ext not in allowed:
                 continue
             # Read the file of the class.
@@ -68,7 +70,7 @@ def deleteSavedWorkflow(name,version):
     conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
     cur=conn.cursor()
 
-    query="SELECT id FROM workflow_upload WHERE name='" + softName + "' AND version='" + softVersion + "' ORDER BY date DESC LIMIT 1"
+    query="SELECT id FROM workflow_upload WHERE name='" + name + "' AND version='" + version + "' ORDER BY date DESC LIMIT 1"
     cur.execute(query)
     result=cur.fetchall()
     workuploadId=str(result[0][0])
@@ -111,27 +113,32 @@ def inputStoreDict(workName, workVersion, inputs):
         optional='f'
         prefix=''
         
-            
+        
        
         # print(inpt)
         # Get field type and optional
         if 'type' not in inputs[inpt]:
             #stop execution and return because this is serious
-            deleteSavedSoftware(workName,workVersion)
+            deleteSavedWorkflow(workName,workVersion)
             return 34
         
+
         fieldType=inputs[inpt]['type']
+
+        if fieldType[-1]=='?':
+            optional='t'
+            fieldType=fieldType[:-1]  
         # If input is type enum
         if isinstance(fieldType,dict):
             if 'type' not in fieldType:
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(36)
 
             if fieldType['type']!='enum':
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(37)
             if 'symbols' not in fieldType:
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(38)
 
 
@@ -153,14 +160,10 @@ def inputStoreDict(workName, workVersion, inputs):
                 fieldType=inputs[inpt]['type'].strip()
 
             
-            if fieldType[-1]=='?':
-                optional='t'
-                fieldType=fieldType[:-1]
-            
             if fieldType not in types:
                 #stop execution and return because this is serious
-                deleteSavedSoftware(softName,softVersion)
-                # print(fieldType)
+                deleteSavedWorkflow(workName,workVersion)
+                print(fieldType)
                 return 35
         
         
@@ -228,21 +231,21 @@ def inputStoreList(workName, workVersion, inputs):
         # Get field type and optional
         if 'type' not in inpt:
             #stop execution and return because this is serious
-            deleteSavedSoftware(workName,workVersion)
+            deleteSavedWorkflow(workName,workVersion)
             return 34
         
         fieldType=inpt['type']
         # If input is type enum
         if isinstance(fieldType,dict):
             if 'type' not in fieldType:
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(36)
 
             if fieldType['type']!='enum':
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(37)
             if 'symbols' not in fieldType:
-                deleteSavedSoftware(workName,workVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 return(38)
 
 
@@ -270,7 +273,7 @@ def inputStoreList(workName, workVersion, inputs):
             
             if fieldType not in types:
                 #stop execution and return because this is serious
-                deleteSavedSoftware(softName,softVersion)
+                deleteSavedWorkflow(workName,workVersion)
                 # print(fieldType)
                 return 35
         
