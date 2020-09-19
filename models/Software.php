@@ -1212,6 +1212,7 @@ class Software extends \yii\db\ActiveRecord
         $response = $client->createRequest()
                 ->setMethod('GET')
                 // ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-projects&username=$username")
+                //->setUrl("http://83.212.72.66/rac-loukas/web/index.php?r=api/active-ondemand-quotas&username=$username")
                 ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-ondemand-quotas&username=$username")
                 ->send();
 
@@ -1267,6 +1268,8 @@ class Software extends \yii\db\ActiveRecord
                 
 
     }
+
+    
 
 
      public static function getUserStatistics($softUser)
