@@ -207,6 +207,10 @@ class WorkflowUpload extends \yii\db\ActiveRecord
             case 35:
                 $errors.="Error: code $ret. ";
                 $errors.="One of your workflow inputs has an urecognized type specification.";
+                // foreach ($out as $line)
+                // {
+                //     $errors.=$line . "<br />";
+                // }
                 $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
             case 36:
