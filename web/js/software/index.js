@@ -115,6 +115,9 @@ $(document).ready(function()
 	$(".project-dropdown").change(function()
 	{
 		var project=$(this).val();
+		var jobs='#' + project;
+		$(".jobs-div").addClass('invisible');
+		$(jobs).removeClass('invisible');
 		$(".software-button-container").each(function()
 		{
 			var version=$(this).parent().children(".software-versions").children('.versionsDropDown').children('option:selected').text();
@@ -128,6 +131,7 @@ $(document).ready(function()
 			$(this).children('.run-button').attr('href', runLink);
 
 		});
+		
 
 	});
 

@@ -122,8 +122,8 @@
 
 .project-dropdown
 {
-	margin-top:10px;
-	font-size:12px;
+	margin-top:2px;
+	font-size:14px;
 
 }
 .project-dropdown-label
@@ -148,3 +148,31 @@
 {
 	font-size:12px !important;
 }
+
+.project-egci
+{
+	position:fixed;
+	z-index:100;
+	background-color: #f8f9fa;
+	top:11%;
+	right:1%;
+	width:225px;
+	/*height:100px;*/
+	
+}
+
+.project-egci-content
+{
+	padding: 2px 2px 2px 2px;
+}
+
+.project-dropdown
+{
+	width:200px;
+}
+
+.invisible
+{
+	display:none;
+}
+
