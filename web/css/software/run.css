@@ -178,9 +178,15 @@
 	padding-left:10px;
 }
 
-.select-file-btn
+.select-file-btn, .select-file-multiple-btn, .fill-array-field-btn
 {
 	font-size:10px;
+}
+
+.select-file-btn i
+{
+	padding-left:1.25px;
+	padding-right:1.25px;
 }
 
 .clear-file-btn
@@ -188,14 +194,38 @@
 	font-size:10px;
 }
 
-.select-file-btn:hover
+.select-file-btn:hover, .select-file-multiple-btn:hover, , .fill-array-field-btn:hover
 {
 	font-size:10px;
 	background-color: #efefef;
 	color:black;
 }
 
-.clear-file-btn:hover
+.clear-file-btn:hover, 
+{
+	font-size:10px;
+	background-color: #efefef;
+	color:black;
+}
+
+.select-folder-btn, .select-folder-multiple-btn
+{
+	font-size:10px;
+}
+
+.clear-folder-btn
+{
+	font-size:10px;
+}
+
+.select-folder-btn:hover, .select-folder-multiple-btn:hover
+{
+	font-size:10px;
+	background-color: #efefef;
+	color:black;
+}
+
+.clear-folder-btn:hover
 {
 	font-size:10px;
 	background-color: #efefef;

@@ -210,25 +210,80 @@ if (!empty($fields))
 			}
 			else if ($field->field_type=='File')
 			{
+				if ($field->is_array)
+                {
+                    $slcbtnLink='workflow/select-file-multiple';
+                    $select_file_icon='<i class="fas fa-copy"></i>';
+                    $select_file_title='Select files';
+                }
+                else
+                {
+                    $slcbtnLink='workflow/select-file';
+                    $select_file_icon='<i class="fas fa-file"></i>';
+                    $select_file_title='Select file';
+                }
+	        ?>
+                <div class="col-md-5">
+                    <?=Html::textInput('field-' . $index, $field->value,['readonly'=>true,'class'=>'file_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
+                    <?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success select-file-btn",'title'=>$select_file_title])?>
+                    <?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
+                    <?=Html::hiddenInput('hidden_select_file_url', Url::to([$slcbtnLink, 'caller'=>'field-' . $index]), ['class'=>'hidden_select_file_url'])?>
+                </div>
+			<?php
+			}
+			else if ($field->field_type=='Directory')
+			{
+				if ($field->is_array)
+				{
+					$slcbtnLink='workflow/select-folder-multiple';
+                    $select_file_icon='<i class="fas fa-folder"></i>';
+                    $select_file_title='Select directories';
+
+				}
+				else
+				{
+					$slcbtnLink='workflow/select-folder';
+                    $select_file_icon='<i class="fas fa-folder"></i>';
+                    $select_file_title='Select directory';
+				}
 			?>
 				<div class="col-md-5">
 					<?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 					<?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-success select-file-btn','title'=>$select_file_title])?>
 					<?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
-					<?=Html::hiddenInput('hidden_select_file_url', Url::to(['workflow/select-file', 'caller'=>'field-' . $index]), ['class'=>'hidden_select_file_url'])?>
+					<?=Html::hiddenInput('hidden_select_file_url', Url::to([$slcbtnLink, 'caller'=>'field-' . $index]), ['class'=>'hidden_select_folder_url'])?>
 				</div>
 			<?php
 			}	
 			else
 			{
-			?>
-				<div class="col-md-5">
+				if (!$field->is_array)
+                {
 
-					<?=Html::textInput('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
-					<?=(($field->field_type!='File') && (!empty($field->default_value))) ? Html::a($default_icon,'javascript:void(0);',['disabled'=>$commandsDisabled,'id'=>'default-values', 'class'=>'btn btn-basic btn-default-values','title'=>$default_title]) : ''?>
-				</div>
-			   	<?=Html::hiddenInput('default_field_values[]',$field->default_value,['readonly'=>true, 'class'=>'hidden_default_value'])?>
-			<?php
+                ?>
+                    <div class="col-md-5">
+                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
+                        <?=(($field->field_type!='file') && (!empty($field->default_value))) ? Html::a($default_icon,'javascript:void(0);',['id'=>'default-values', 'class'=>'btn btn-basic btn-default-values','title'=>$default_title]) : ''?>
+                    </div>
+                    <?=Html::hiddenInput('default_field_values[]',$field->default_value,['readonly'=>true, 'class'=>'hidden_default_value'])?>  
+                
+                <?php
+                }
+                else
+                {
+                    $fill_array_icon='<i class="fas fa-table"></i>';
+                    $fill_array_title='Fill array field'
+                ?>
+
+                    <div class="col-md-5">
+                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'array_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
+                        <?=Html::a($fill_array_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success fill-array-field-btn",'title'=>$fill_array_title])?>
+                    <?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-folder-btn','title'=>$clear_file_title])?>
+                    <?=Html::hiddenInput('hidden_fill_array_field_url', Url::to(['software/fill-array-field', 'caller'=>'field-' . $index]), ['class'=>'hidden_fill_array_field_url'])?>
+                    </div>
+                
+                <?php
+                }
 			}	
             ?>   
 		</div>
