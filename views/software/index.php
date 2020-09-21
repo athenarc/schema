@@ -80,6 +80,8 @@ if (!empty($projectsDropdown))
 else
 {
 	$dropdownLabel='No active projects available.';
+	$project_selected='';
+	$project_name='';
 }
 
 /*
