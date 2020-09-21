@@ -94,10 +94,10 @@ else
 		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
 		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
 	</div>
-	<div class="project-egci col-md-4">
+	<div class="project-egci">
 		<div>
-			<div class="col-md-12 text-center">Working Project:</div>
-			<div class="col-md-12 text-center">
+			<div class="col-md-12 text-center project-egci-content">Working Project:</div>
+			<div class="col-md-12 text-center project-egci-content">
 			<?php
 			if (!empty($projectsDropdown))
 			{?>
@@ -106,7 +106,7 @@ else
 			<?php		
 			}?>
 			</div>
-			<div class="col-md-12 text-center">Remaining Jobs: &nbsp;
+			<div class="col-md-12 text-center project-egci-content" style="color: grey">Remaining Jobs: &nbsp;
 			<span class="rem-jobs"></span>
 			<?php
 						foreach ($remaining_jobs_array as $project=>$remaining_jobs)
@@ -125,7 +125,7 @@ else
 						<?php
 						}?>
 			</div>
-			<div class="col-md-12 text-center">
+			<div class="col-md-12 text-center project-egci-content">
 			<?= Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"])?>
 			</div>
 		</div>

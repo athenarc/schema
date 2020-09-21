@@ -568,12 +568,6 @@ class Software extends \yii\db\ActiveRecord
                 }
             }
         }
-        // else
-        // {
-        //     // print_r(4);
-        //     $command.= ' ' . $argumentString;
-        //     $choose_form=false;
-        // }
         // print_r($command);
         // exit(0);
         return [$errors, $command];

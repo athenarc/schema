@@ -29,6 +29,7 @@ $cancel_icon='<i class="fas fa-times"></i>';
             <?= Html::a("$cancel_icon Cancel", ['/software/index'], ['class'=>'btn btn-default']) ?>
         </div>
     </div>
+    <div class="row" style="padding-left: 15px;"> * Submit this form to request for a dockerhub image to be included in the software catalogue.</div>
     <div class="row">&nbsp;</div>
     <div class="row">&nbsp;</div>
     <?= $form->field($model, 'dock_link') ?>

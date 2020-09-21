@@ -47,3 +47,5 @@ else
 <br />
 <?= ToolButton::createButton("COVID-19 dataset requests", "",['/filebrowser/covid-list-applications']) ?>
 <br />
+<?= ToolButton::createButton("Dockerhub image requests", "",['/administration/dockerhub-image-list']) ?>
+<br />

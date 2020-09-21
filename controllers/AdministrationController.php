@@ -9,7 +9,9 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\ImageRequest;
 use app\models\User;
+use yii\data\Pagination;
 use app\models\Notification;
 
 
@@ -69,6 +71,33 @@ class AdministrationController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    public function actionDockerhubImageList()
+    {
+        $query=ImageRequest::find();
+
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count()]);
+        $requests = $query->offset($pages->offset)
+            ->limit($pages->limit)
+            ->all();
+
+        return $this->render('dockerhub_image_list', 
+            [
+                'requests' => $requests,
+                'pages' => $pages,
+        ]);
+        
+    }
+
+    public function actionDockerhubImageDetails()
+    {
+        $id=$_GET['id'];
+        $image=ImageRequest::find()->where(['id'=>$id])->one();
+        $details=$image->details;
+        return $this->render('image_details', ['details'=>$details]);
+        
     }
 
 

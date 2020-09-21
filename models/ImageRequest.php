@@ -32,6 +32,7 @@ class ImageRequest extends \yii\db\ActiveRecord
             [['details', 'user_name'], 'string'],
             [['date'], 'safe'],
             [['dock_link'], 'string', 'max' => 200],
+            [['dock_link'], 'url'],
         ];
     }
 
@@ -45,7 +46,7 @@ class ImageRequest extends \yii\db\ActiveRecord
             'details' => 'Usage details',
             'user_name' => 'User name',
             'date' => 'Date',
-            'dock_link' => 'Dockhub link',
+            'dock_link' => 'Dockerhub URL',
         ];
     }
 }
