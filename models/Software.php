@@ -518,52 +518,248 @@ class Software extends \yii\db\ActiveRecord
                 }
                 else
                 {
-                    if ($field->separate)
+                    #if the field is not of array type
+                    if (!$field->is_array)
                     {
-                        $field_gap=' ';
-                    }
-                    else
-                    {
-                        $field_gap='';
-                    }
-                    /*
-                     * If field is not optional
-                     */
-                    if (!$field->optional)
-                    {
-                        /*
-                         * Not optional and empty should throw an error
-                         */
-                        if (empty($field->value))
+                        if ($field->separate)
                         {
-                            $errors[]="Field $field->name cannon be empty.";
+                            $field_gap=' ';
                         }
                         else
                         {
-                            if (($field->field_type=='File') || ($field->field_type=='Directory'))
-                            {
-                                $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
-                            }
-                            else
-                            {
-                                $command.= ' ' . $field->prefix . $field_gap . $field->value;
-                            }
+                            $field_gap='';
                         }
 
-                    }
-                    else
-                    {
-                        if (!empty($field->value))
+
+                        /*
+                         * If field is not optional
+                         */
+                        if (!$field->optional)
                         {
-                            if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                            /*
+                             * Not optional and empty should throw an error
+                             */
+                            if (empty($field->value) && ($field->field_type!='Directory'))
                             {
-                                $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                $errors[]="Field $field->name cannon be empty.";
                             }
                             else
                             {
-                                $command.= ' ' . $field->prefix . $field_gap . $field->value;
+                                if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                {
+                                    $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                }
+                                else
+                                {
+                                    $command.= ' ' . $field->prefix . $field_gap . $field->value;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            if (!empty($field->value))
+                            {
+                                if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                {
+                                    $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                }
+                                else
+                                {
+                                    $command.= ' ' . $field->prefix . $field_gap . $field->value;
+                                }
                             }
                         }
+                    }
+                    /*
+                     * if field is array
+                     */
+                    else
+                    {
+                        if (!$field->optional)
+                        {
+                            /*
+                             * Not optional and empty should throw an error
+                             */
+                            if (empty($field->value) && ($field->field_type!='Directory'))
+                            {
+                                $errors[]="Field $field->name cannon be empty.";
+                            }
+                            else
+                            {
+
+                                $tmpArray=explode(';',$field->value);
+                                // print_r($tmpArray);
+                                // exit(0);
+                                $finalValue='';
+                                /*
+                                 * if the value is separate from the prefix,
+                                 * e.g. -Α value1 -A value2
+                                 * given that the field has an inputBinding selector inside
+                                 */
+                                if ($field->separate)
+                                {
+                                    $field_gap=' ';
+                                }
+                                /*
+                                 * if the value is not separate from the prefix,
+                                 * e.g. -Α=value1 -A=value2
+                                 * given that the field has an inputBinding selector inside
+                                 */
+                                else
+                                {
+                                    $field_gap='';
+                                }
+                                if ($field->nested_array_binding)
+                                {
+                                    foreach ($tmpArray as $val)
+                                    {
+                                        if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                        {
+                                            $finalValue.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $val;
+                                        }
+                                        else
+                                        {
+                                            $finalValue.= ' ' . $field->prefix . $field_gap . $val;
+                                        }
+                                    }
+
+                                }
+                                /*
+                                 * Field has no inside inputBinding selector,
+                                 * e.g -A value1 value2 value3
+                                 */
+                                else
+                                {
+                                    /* 
+                                     * field is separate from the prefix, e.g
+                                     * -A=value1,value2,value3
+                                     */
+                                    if ($field->separate)
+                                    {
+                                        $field_gap=' ';
+                                    }
+                                    else
+                                    {
+                                        $field_gap='';
+                                    }
+
+                                    if (!empty($field->array_separator))
+                                    {
+                                        $separator=$field->array_separator;
+                                    }
+                                    else
+                                    {
+                                        $separator=' ';
+                                    }
+
+                                    $finalValue.=$field->prefix . $field_gap;
+
+                                    foreach ($tmpArray as $val)
+                                    {
+                                        if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                        {
+                                            $finalValue.= $mountpoint . '/' . $val . $separator;
+                                        }
+                                        else
+                                        {
+                                            $finalValue.= ' ' . $val . $separator;
+                                        }
+                                    }
+                                    $finalValue=trim($finalValue, $separator);
+                                }
+                                
+                                $command.= ' '. $finalValue;
+                            }
+
+                        }
+                        /* 
+                         * Array field is not optional
+                         */
+                        else
+                        {
+                            $tmpArray=explode(';',$field->value);
+                            $finalValue='';
+                            /*
+                             * if the value is separate from the prefix,
+                             * e.g. -Α value1 -A value2
+                             * given that the field has an inputBinding selector inside
+                             */
+                            if ($field->separate)
+                            {
+                                $field_gap=' ';
+                            }
+                            /*
+                             * if the value is not separate from the prefix,
+                             * e.g. -Α=value1 -A=value2
+                             * given that the field has an inputBinding selector inside
+                             */
+                            else
+                            {
+                                $field_gap='';
+                            }
+                            if ($field->nested_array_binding)
+                            {
+                                foreach ($tmpArray as $val)
+                                {
+                                    if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                    {
+                                        $finalValue.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                    }
+                                    else
+                                    {
+                                        $finalValue.= ' ' . $field->prefix . $field_gap . $field->value;
+                                    }
+                                }
+
+                            }
+                            /*
+                             * Field has no inside inputBinding selector,
+                             * e.g -A value1 value2 value3
+                             */
+                            else
+                            {
+                                /* 
+                                 * field is separate from the prefix, e.g
+                                 * -A=value1,value2,value3
+                                 */
+                                if ($field->separate)
+                                {
+                                    $field_gap=' ';
+                                }
+                                else
+                                {
+                                    $field_gap='';
+                                }
+
+                                if (!empty($field->array_separator))
+                                {
+                                    $separator=$field->array_separator;
+                                }
+                                else
+                                {
+                                    $separator=' ';
+                                }
+
+                                $finalValue.=$field->prefix . $field_gap;
+
+                                foreach ($tmpArray as $val)
+                                {
+                                    if (($field->field_type=='File') || ($field->field_type=='Directory'))
+                                    {
+                                        $finalValue.= $mountpoint . '/' . $field->value . $separator;
+                                    }
+                                    else
+                                    {
+                                        $finalValue.= ' ' . $field->value . $separator;
+                                    }
+                                }
+                                $finalValue=trim($finalValue, $separator);
+                            }
+                            
+                            $command.=$finalValue;
+                        }
+
                     }
                 }
             }
@@ -1212,7 +1408,7 @@ class Software extends \yii\db\ActiveRecord
         $response = $client->createRequest()
                 ->setMethod('GET')
                 // ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-projects&username=$username")
-                ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-ondemand-quotas&username=$username")
+                ->setUrl(Yii::$app->params['egciActiveQuotas'] . "&username=$username")
                 ->send();
 
         $projects=$response->data;
@@ -1335,7 +1531,7 @@ class Software extends \yii\db\ActiveRecord
         $client = new Client();
         $response = $client->createRequest()
                 ->setMethod('GET')
-                ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-ondemand-quotas&username=$username")
+                ->setUrl(Yii::$app->params['egciActiveQuotas'] ."&username=$username")
                 ->send();
 
         $data=$response->data;
@@ -1360,7 +1556,7 @@ class Software extends \yii\db\ActiveRecord
     public static function getOndemandProjectQuotas($username,$project)
     {
         $project=str_replace(' ','%20',$project);
-        $url="https://egci-beta.imsi.athenarc.gr/index.php?r=api/ondemand-project-quotas&username=$username&project=$project";
+        $url=Yii::$app->params['egciSingleProjecteQuotas'] . "&username=$username&project=$project";
         // print_r($url);
         // exit(0);
         $client = new Client();

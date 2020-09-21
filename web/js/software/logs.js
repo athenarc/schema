@@ -100,7 +100,11 @@ $(document).ready(function()
                             var fieldID="#field-" + i;
                             var field=$(fieldID);
                             field.removeClass('disabled-box');
-                            field.prop('readonly',false);
+                            if ( (!field.hasClass('file_field')) && (field.hasClass('folder_field')) && (!field.hasClass('array_field')) )
+                            {
+                                field.prop('readonly',false);
+                            } 
+                            
                         }
                         if ((status!='Error') && (status!="ImagePullBackOff"))
                         {
@@ -175,7 +179,10 @@ $(document).ready(function()
             var fieldID="#field-" + i;
             var field=$(fieldID);
             field.removeClass('disabled-box');
-            field.prop('readonly',false);
+            if ( (!field.hasClass('file_field')) && (!field.hasClass('folder_field')) && (!field.hasClass('array_field')))
+            {
+                field.prop('readonly',false);
+            } 
         }
         $(".job-output").hide()
         $("#isystemmount").removeClass('disabled-box');
