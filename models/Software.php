@@ -764,12 +764,6 @@ class Software extends \yii\db\ActiveRecord
                 }
             }
         }
-        // else
-        // {
-        //     // print_r(4);
-        //     $command.= ' ' . $argumentString;
-        //     $choose_form=false;
-        // }
         // print_r($command);
         // exit(0);
         return [$errors, $command];
@@ -1407,7 +1401,6 @@ class Software extends \yii\db\ActiveRecord
         $client = new Client();
         $response = $client->createRequest()
                 ->setMethod('GET')
-                // ->setUrl("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-projects&username=$username")
                 ->setUrl(Yii::$app->params['egciActiveQuotas'] . "&username=$username")
                 ->send();
 
@@ -1463,6 +1456,8 @@ class Software extends \yii\db\ActiveRecord
                 
 
     }
+
+    
 
 
      public static function getUserStatistics($softUser)
