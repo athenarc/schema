@@ -155,14 +155,16 @@ class SoftwareController extends Controller
     {
         $model=new ImageRequest;
         $user=User::getCurrentUser()['username'];
+        $username=explode('@', $user)[0];
         
         if ($model->load(Yii::$app->request->post()) && $model->validate()) 
         {
-            $date=date("Y-m_d");
+            $date=date("Y-m-d H:i:s");
             $model->date=$date;
-            $model->user_name=$user;
+            $model->user_name=$username;
             $model->save();
-            return $this->redirect('index');
+            Yii::$app->session->setFlash('success', "Image request submitted successfully.");
+            return $this->redirect(['software/index']);
         }
         return $this->render('image_request', ['model'=>$model]);
     }
