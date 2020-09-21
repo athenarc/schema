@@ -865,7 +865,7 @@ class WorkflowController extends Controller
         // print_r($directory);
         // exit(0);
         
-        return $this->renderAjax('folder_list',['folders'=>$folders]);
+        return $this->renderAjax('folder_list_output',['folders'=>$folders]);
     }
 
     public function actionSelectFile($caller)
@@ -882,6 +882,73 @@ class WorkflowController extends Controller
         // exit(0);
         
         return $this->renderAjax('file_list',['files'=>$files, 'caller'=>$caller]);
+    }
+
+    public function actionSelectFolder($caller)
+    {
+        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
+        // print_r($directory);
+        // exit(0);
+        $folders=Workflow::listDirectories($directory);
+        // foreach ($files as $directory=>$items)
+        // {
+        //     print_r($directory . '<br />');
+        //     print_r($items);
+        //     print_r('<br />' . '<br />');
+        // }
+        // exit(0);
+        
+        return $this->renderAjax('folder_list',['folders'=>$folders, 'caller'=>$caller,'root'=>$directory]);
+    }
+
+    public function actionSelectFileMultiple($caller)
+    {
+        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+
+        $files=Workflow::listFiles($directory);
+        // foreach ($files as $directory=>$items)
+        // {
+        //     print_r($directory . '<br />');
+        //     print_r($items);
+        //     print_r('<br />' . '<br />');
+        // }
+        // exit(0);
+        
+        return $this->renderAjax('file_list_multiple',['files'=>$files, 'caller'=>$caller]);
+    }
+
+    public function actionSelectFolderMultiple($caller)
+    {
+        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
+        // print_r($directory);
+        // exit(0);
+        $folders=Workflow::listDirectories($directory);
+        // foreach ($files as $directory=>$items)
+        // {
+        //     print_r($directory . '<br />');
+        //     print_r($items);
+        //     print_r('<br />' . '<br />');
+        // }
+        // exit(0);
+        
+        return $this->renderAjax('folder_list_multiple',['folders'=>$folders, 'caller'=>$caller,'root'=>$directory]);
+    }
+
+    public function actionFillArrayField($caller,$content='')
+    {
+        $fields=explode(';',$content);
+
+        /*
+         * If no content is provided add one field
+         * to print in the view file
+         */
+        if (empty($fields))
+        {
+            $fields[]='';
+        }
+        
+        
+        return $this->renderAjax('fill_array_field',['fields'=>$fields,'caller'=>$caller]);
     }
 
     public function actionHistory()

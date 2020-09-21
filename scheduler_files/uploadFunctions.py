@@ -21,7 +21,7 @@ dbname=db['database']
 def cwlReadFile(filename):
     f=open(filename,'r')
     try:
-        content=yaml.load(f)
+        content=yaml.load(f,Loader=yaml.FullLoader)
     except Exception as exp:
         print(str(exp))
         exit(26)
@@ -44,20 +44,23 @@ def cwlReturnDockerImage(content):
     requirements=[]
     if 'hints' in content:
         hints=content['hints']
+    # print(hints)
     if 'requirements' in content:
         requirements=content['requirements']
     hintDockerImage=''
     reqDockerImage=''
     #if hints is a list
-    if len(hints)>1:
+    if len(hints)>=1:
         appearances=0
         for hint in hints:
+            # print(hint)
             if 'DockerRequirement' in hint:
                 docker=hint['DockerRequirement']
                 appearances+=1
             elif 'class' in hint:
                 if  hint['class']=='DockerRequirement':
-                    docker=hint
+                    if 'dockerPull' in hint:
+                        docker=hint
                     appearances+=1
         #if the user declared no images or declared more than one image
         if appearances==0:
@@ -67,22 +70,27 @@ def cwlReturnDockerImage(content):
         else:
             if 'dockerPull' in docker:
                 hintDockerImage=docker['dockerPull']
-    #if hints is a list and a DockerRequirement exists
-    else:
-        if 'DockerRequirement' in hints:
-            docker=hints['DockerRequirement']
-            if 'dockerPull' in docker:
-                hintDockerImage=docker['dockerPull']
+    # #if hints is a list and a DockerRequirement exists
+    # else:
+    #     if 'DockerRequirement' in hints:
+    #         docker=hints['DockerRequirement']
+    #         if 'dockerPull' in docker:
+    #             hintDockerImage=docker['dockerPull']
     #if requirements is a list
     if len(requirements)>=1:
         appearances=0
         for req in requirements:
+            # print(req)
             if 'DockerRequirement' in req:
                 docker=req['DockerRequirement']
                 appearances+=1
             elif 'class' in req:
+                # print (req)
                 if  req['class']=='DockerRequirement':
-                    docker=req
+                    if 'dockerPull' in req:
+                        docker=req['dockerPull']
+                    else:
+                        docker=req
                     appearances+=1
         if appearances==0:
             return ''
@@ -127,59 +135,95 @@ def inputStore(softName,softVersion, inputs):
         exit(30)
 
     #create queries for input insertion
-    query='INSERT INTO software_inputs(name, position, softwareid, field_type, prefix, separate, optional, default_value) VALUES '
+    query='INSERT INTO software_inputs(name, position, softwareid, field_type, prefix, separate, optional, default_value, is_array, array_separator, nested_array_binding) VALUES '
 
     bindingFlag=False
     positionFlag=False
+    separateInner=False
+    prefixInner=False
+
 
     for inpt in inputs:
-        if 'inputBinding' not in inputs[inpt]:
-            bindingFlag=True
-            continue
-            #exit(32)
-        
-        binding=inputs[inpt]['inputBinding']
-        # Get position, separate and prefix from inputBinding.
-        # If it does not exist, ignore input
-        if 'position' not in binding:
-            positionFlat=True
-            continue
-        position=binding['position']
-
-        separate='t'
-        if 'separate' in binding:
-            if binding['separate']=='false':
-                separate='f'
-            else:
-                separate='t'
-
+        is_array='f'
+        array_separator=''
+        nested_array_binding='f'
         prefix=''
-        if 'prefix' in binding:
-            prefix=binding['prefix']
-            
-       
-
-        # Get field type and optional
+        separate='f'
         if 'type' not in inputs[inpt]:
             #stop execution and return because this is serious
             deleteSavedSoftware(softName,softVersion)
             return 34
-    
-        fieldType=inputs[inpt]['type'].strip()
+        fieldType=inputs[inpt]['type']
+        #field type is array
+        if isinstance(fieldType,dict):
+            if fieldType['type']!='array':
+                deleteSavedSoftware(softName,softVersion)
+                return 36
+            is_array='t'
+            if 'inputBinding' in fieldType:
+                nested_array_binding='t'
+                innerBinding=fieldType['inputBinding']
+                if 'separate' in binding:
+                    separateInner=True
+                    if innerBinding['separate']==True:
+                        separate='t'
+                if 'prefix' in binding:
+                    prefixInner=True
+                    prefix=innerBinding['prefix']
+            if 'items' not in fieldType:
+                deleteSavedSoftware(softName,softVersion)
+                return 37
+
+            fieldType=fieldType['items']
+
+        else:
+            fieldType=inputs[inpt]['type'].strip()
+
+        
+        if 'inputBinding' not in inputs[inpt]:
+                bindingFlag=True
+                continue
+                #exit(32)
+
+               
+        outerBinding=inputs[inpt]['inputBinding']
+        # Get position, separate and prefix from inputBinding.
+        # If it does not exist, ignore input
+        if 'position' not in outerBinding:
+            positionFlat=True
+            continue
+        position=outerBinding['position']
+
+        if ('separate' in outerBinding) and (separateInner==False):
+            if outerBinding['separate']=='false':
+                separate='f'
+            else:
+                separate='t'
+
+        if ('prefix' in outerBinding) and (prefixInner==False):
+            prefix=outerBinding['prefix'] 
+        if ('itemSeparator' in outerBinding):
+            array_separator=outerBinding['itemSeparator']     
+        
+        # print(separate)
 
         optional='f'
         if fieldType[-1]=='?':
             optional='t'
             fieldType=fieldType[:-1]
+
+        if '[]' in fieldType:
+            is_array='t'
+            fieldType=fieldType[:-2]
         
         if fieldType not in types:
             #stop execution and return because this is serious
             deleteSavedSoftware(softName,softVersion)
             print(fieldType)
             return 35
-        
-        
-        #get default value
+            
+            
+            #get default value
         defaultValue=''
         if (fieldType!='File') and (fieldType!='Directory') and (fieldType!='null'):
             if 'default' in inputs[inpt]:
@@ -191,8 +235,11 @@ def inputStore(softName,softVersion, inputs):
         defaultValue=quoteEnclose(defaultValue)
         optional=quoteEnclose(optional)
         separate=quoteEnclose(separate)
+        is_array=quoteEnclose(is_array)
+        array_separator=quoteEnclose(array_separator)
+        nested_array_binding=quoteEnclose(nested_array_binding)
 
-        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + '),'
+        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + ',' + is_array+ ',' + array_separator + ',' + nested_array_binding + '),'
 
     query=query[:-1]
     # print(query)

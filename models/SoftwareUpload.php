@@ -71,8 +71,6 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             [['mpi'],'boolean'],
             [['commandRetrieval'],'required'],
             [['version'], 'uniqueSoftware'],
-            [['covid19'],'required'],
-            
         ];
     }
 

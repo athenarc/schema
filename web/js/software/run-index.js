@@ -206,6 +206,22 @@ $(document).ready(function() {
 		}
 	});
 
+	$(".fill-array-field-btn").click(function(){
+
+		var disabled = $(this).attr('disabled');
+		if (!disabled)
+		{
+			var content=$(this).parent().children('.array_field').val();
+			// var link = $(this).parent().html();//children('.hidden_fill_array_url').val();
+			// window.alert(link);
+			var link = $(this).parent().children('.hidden_fill_array_field_url').val() + '&content=' + content;
+			// window.alert(link);
+			window.open(link, "Ratting",
+				"height=500,width=800,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no, status=no");
+		}
+	});
+
+
 	$(".clear-file-btn").click(function(){
 		var field=$(this).parent().children('.input_field');
 		field.val('');
@@ -229,6 +245,7 @@ $(document).ready(function() {
 				"height=500,width=800,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no, status=no");
 		}
 	});
+
 
 	$(".clear-folder-btn").click(function(){
 		var field=$(this).parent().children('.input_field');

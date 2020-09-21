@@ -78,23 +78,68 @@ class Workflow extends \yii\db\ActiveRecord
     {
         $params=[];
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        // print_r($fields);
+        // exit(0);
         foreach ($fields as $field)
         {
-            if ($field->field_type=='File')
+            if (!$field->is_array)
             {
-                $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
-                $params[$field->name]=$value;
-            }
-            else if ($field->field_type=='boolean')
-            {
-                $params[$field->name]=$field->value ? true : false;
+                // print_r($field);
+                // exit(0);
+                if ($field->field_type=='File')
+                {
+                    $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
+                    $params[$field->name]=$value;
+                    // print_r($params);
+                    // print_r("<br /><br />");
+                }
+                else if ($field->field_type=='Directory')
+                {
+                    $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
+                    $params[$field->name]=$value;
+                }
+                else if ($field->field_type=='boolean')
+                {
+                    $params[$field->name]=$field->value ? true : false;
+                }
+                else
+                {
+                    $params[$field->name]=$field->value;
+                }
             }
             else
             {
-                $params[$field->name]=$field->value;
+                $tmpArray=explode(';',$field->value);
+                if ($field->field_type=='File')
+                {
+                    $finalArray=[];
+                    foreach ($tmpArray as $val)
+                    {
+                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                    }
+                    
+                    $params[$field->name]=$finalArray;
+                }
+                else if ($field->field_type=='Directory')
+                {
+                    $finalArray=[];
+                    foreach ($tmpArray as $val)
+                    {
+                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                    }
+                    
+                    $params[$field->name]=$finalArray;
+                }
+                else
+                {
+                    $params[$field->name]=$tmpArray;
+                }
             }
             
         }
+        // print_r("<br /><br />");
+        // print_r($params);
+        // exit(0);
         return json_encode($params,JSON_UNESCAPED_SLASHES);
     }
 
