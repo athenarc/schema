@@ -1,0 +1,29 @@
+.active
+{
+	background-color:#5d79fa;
+	color: white !important;
+}
+
+.selectable:hover
+{
+	cursor:pointer;
+}
+.selectable
+{
+	display:inline-block;
+	border: 1px solid LightGray;
+	color:black;
+}
+
+.non-selectable
+{
+	display:inline-block;
+	border: 1px solid LightGray;
+	color:black;
+}
+
+.selection-row
+{
+	font-size:20px;
+	padding-bottom:10px;
+}
