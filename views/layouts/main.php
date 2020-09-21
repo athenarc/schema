@@ -14,7 +14,12 @@ use app\components\NotificationWidget;
 
 $footerImage=Html::img('@web/img/elixir-dark.png',['class'=>'footer-elixir-image']);
 $footerImageLink=Html::a($footerImage,'https://elixir-greece.org',['target'=>'_blank']);
-
+$twitter_icon='<i class="fab fa-twitter fa-2x"></i>';
+$twitter_link=Html::a($twitter_icon,'https://twitter.com/ELIXIRGR_Comp',
+    ['target'=>'_blank']);
+$youtube_icon='<i class="fab fa-youtube fa-2x" style="color:red"></i>';
+$youtube_link=Html::a($youtube_icon,'https://www.youtube.com/channel/UC6ek-jYFfq0FDEcSJF4UEuw',
+    ['target'=>'_blank']);
 echo Html::cssFile('@web/css/components/notificationWidget.css');
 $this->registerJsFile('@web/js/components/notificationWidget.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
@@ -23,6 +28,7 @@ AppAsset::register($this);
 //Include font-awsome icons
 echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['integrity'=> 'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', 'crossorigin'=> 'anonymous']);
 ?>
+
 
 
 <?php $this->beginPage() ?>
@@ -146,8 +152,9 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <footer class="footer bg-light">
     <div class="container">
         <p class="pull-left">&copy; Athena RC <?= date('Y') ?></p>
-        <p class="col-md-offset-4 col-md-1"><?=$footerImageLink?></p>
-        <p class="pull-right"><?=Html::a('Privacy & cookie policy','https://egci-beta.imsi.athenarc.gr/index.php?r=site/privacy')?></p>
+        <p class="col-md-offset-4 col-md-3"><?=$footerImageLink?></p>
+        <p class="col-md-offset-1 col-md-2"><?=Html::a('Privacy & cookie policy','https://egci-beta.imsi.athenarc.gr/index.php?r=site/privacy')?></p>
+        <p class="pull-right"><?=$twitter_link?>&nbsp;<?=$youtube_link?></p>
     </div>
 </footer>
 
