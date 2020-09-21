@@ -99,7 +99,7 @@ def inputStoreDict(workName, workVersion, inputs):
         exit(30)
 
     #create queries for input insertion
-    query='INSERT INTO workflow_inputs(name, position, workflow_id, field_type, prefix, separate, optional, default_value, enum_fields) VALUES '
+    query='INSERT INTO workflow_inputs(name, position, workflow_id, field_type, prefix, separate, optional, default_value, enum_fields, is_array) VALUES '
 
     pos=0
     for inpt in inputs:
@@ -112,6 +112,7 @@ def inputStoreDict(workName, workVersion, inputs):
         separate='t'
         optional='f'
         prefix=''
+        is_array='f'
         
         
        
@@ -157,14 +158,20 @@ def inputStoreDict(workName, workVersion, inputs):
             if 'prefix' in inputs[inpt]:
                 prefix=inputs[inpt]['prefix']
 
-                fieldType=inputs[inpt]['type'].strip()
+            fieldType=inputs[inpt]['type'].strip()
 
-            
-            if fieldType not in types:
-                #stop execution and return because this is serious
-                deleteSavedWorkflow(workName,workVersion)
-                print(fieldType)
-                return 35
+        if fieldType[-1]=='?':
+            optional='t'
+            fieldType=fieldType[:-1]
+        if '[]' in fieldType:
+            is_array='t'
+            fieldType=fieldType[:-2]
+        
+        if fieldType not in types:
+            #stop execution and return because this is serious
+            deleteSavedWorkflow(workName,workVersion)
+            print(fieldType)
+            return 35
         
         
         #get default value
@@ -180,8 +187,9 @@ def inputStoreDict(workName, workVersion, inputs):
         optional=quoteEnclose(optional)
         separate=quoteEnclose(separate)
         enum_fields=quoteEnclose(enum_fields)
+        is_array=quoteEnclose(is_array)
 
-        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + ',' + enum_fields +'),'
+        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + ',' + enum_fields + ',' + is_array + '),'
 
     query=query[:-1]
     # print(query)
@@ -211,7 +219,7 @@ def inputStoreList(workName, workVersion, inputs):
         exit(30)
 
     #create queries for input insertion
-    query='INSERT INTO workflow_inputs(name, position, workflow_id, field_type, prefix, separate, optional, default_value, enum_fields) VALUES '
+    query='INSERT INTO workflow_inputs(name, position, workflow_id, field_type, prefix, separate, optional, default_value, enum_fields, is_array) VALUES '
 
     pos=0
     for inpt in inputs:
@@ -224,6 +232,7 @@ def inputStoreList(workName, workVersion, inputs):
         separate='t'
         optional='f'
         prefix=''
+        is_array='t'
         
             
        
@@ -264,18 +273,22 @@ def inputStoreList(workName, workVersion, inputs):
             if 'prefix' in inpt:
                 prefix=inpt['prefix']
 
-                fieldType=inpt['type'].strip()
+            fieldType=inpt['type'].strip()
 
             
-            if fieldType[-1]=='?':
-                optional='t'
-                fieldType=fieldType[:-1]
-            
-            if fieldType not in types:
-                #stop execution and return because this is serious
-                deleteSavedWorkflow(workName,workVersion)
-                # print(fieldType)
-                return 35
+        if fieldType[-1]=='?':
+            optional='t'
+            fieldType=fieldType[:-1]
+        
+        if '[]' in fieldType:
+            fieldType=fieldType[:-2]
+            is_array='t'
+
+        if fieldType not in types:
+            #stop execution and return because this is serious
+            deleteSavedWorkflow(workName,workVersion)
+            # print(fieldType)
+            return 35
         
         
         #get default value

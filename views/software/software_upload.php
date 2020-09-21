@@ -26,6 +26,9 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
         <div class="col-md-12"><h1><?= Html::encode($this->title) ?></h1></div>
     </div>
     <?php $form = ActiveForm::begin(); 
+    
+    echo $form->errorSummary($model);
+
 
  $submit_icon='<i class="fas fa-check"></i>';
  $cancel_icon='<i class="fas fa-times"></i>';
