@@ -14,6 +14,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\Software;
 
+
 /**
  * This is the model class for table "software_upload".
  *
@@ -53,7 +54,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
     {
         return [    
             [['name'], 'string', 'max' => 100],
-            [['description'], 'string'],
+            [['description', 'instructions'], 'string'],
             [['version'], 'string', 'max' => 80],
             [['image'], 'string', 'max' => 200],
             [['imountpoint','omountpoint'], 'string', 'max' => 200],
@@ -98,6 +99,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             'iomount' => 'Image requires disk I/O',
             'mpi' => 'Software uses OpenMPI',
             'covid19' => 'Software is related to COVID-19 research',
+            'instructions'=>'User instructions'
         ];
     }
 
@@ -108,6 +110,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
 
         $username=User::getCurrentUser()['username'];
         $this->description=$this->quotes($this->description);
+        $this->instructions=$this->quotes($this->instructions);
         $this->imountpoint=$this->quotes($this->imountpoint);
         $this->omountpoint=$this->quotes($this->omountpoint);
         $imageFileName=$this->quotes('');

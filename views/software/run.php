@@ -75,7 +75,7 @@ if (!empty($projectsDropdown))
 
 <div class='title row'>
     
-    <div class="col-md-10 ">
+    <div class="col-md-10">
         
         <h2><?= Html::encode($this->title) ?></h2>
         
@@ -409,7 +409,7 @@ else
 
 <div class="col-md-5 project-quotas-div rcorners">
 
-<div class="row headers">
+<div class="row run-headers">
 <h3 id="centerheaders"><b>Job resources</b></h3>
 </div>
 

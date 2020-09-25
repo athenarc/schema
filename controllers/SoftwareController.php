@@ -762,13 +762,26 @@ class SoftwareController extends Controller
             $images=Software::getOriginalImages($softUser);
             $indicators=Software::getIndicators($softUser);;
 
+            if(!empty($messages[1]))
+            {
+                Yii::$app->session->setFlash('success', "$messages[1]");
+            }
+            if(!empty($messages[2]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");   
+            }    
+            if(!empty($messages[0]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");
+            }   
 
-            return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin, //'visibility'=>$visibility,
-                                      'success'=>$messages[1],'warning'=>$messages[2], 
-                                      'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-                                      'descriptions'=>$descriptions,'indicators'=>$indicators,
-                                      'images'=>$images,]);
+            return $this->redirect(['software/index']);
+            // return $this->render('index',['software' => $software, 'user'=> $user,
+            //                           'superadmin' => $superadmin, //'visibility'=>$visibility,
+            //                           'success'=>$messages[1],'warning'=>$messages[2], 
+            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
+            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
+            //                           'images'=>$images,]);
 
         }
 
@@ -863,15 +876,28 @@ class SoftwareController extends Controller
             $software=$model::getSoftwareNames($softUser);
             $descriptions=Software::getSoftwareDescriptions($softUser);
             $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);;
+            $indicators=Software::getIndicators($softUser);
 
+            if(!empty($messages[1]))
+            {
+                Yii::$app->session->setFlash('success', "$messages[1]");
+            }
+            if(!empty($messages[2]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");   
+            }    
+            if(!empty($messages[0]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");
+            }
 
-            return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin, //'visibility'=>$visibility,
-                                      'success'=>$messages[1],'warning'=>$messages[2], 
-                                      'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-                                      'descriptions'=>$descriptions,'indicators'=>$indicators,
-                                      'images'=>$images,]);
+            return $this->redirect(['software/index']);
+            // return $this->render('index',['software' => $software, 'user'=> $user,
+            //                           'superadmin' => $superadmin, //'visibility'=>$visibility,
+            //                           'success'=>$messages[1],'warning'=>$messages[2], 
+            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
+            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
+            //                           'images'=>$images,]);
 
         }
 
@@ -976,18 +1002,32 @@ class SoftwareController extends Controller
             /**
              * Get the list of software
              */
+            
 
             $software=Software::getSoftwareNames($softUser);
             $descriptions=Software::getSoftwareDescriptions($softUser);
             $images=Software::getOriginalImages($softUser);
             $indicators=Software::getIndicators($softUser);;
 
-            return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin,
-                                      'success'=>$messages[1],'warning'=>$messages[2],
-                                      'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-                                      'descriptions'=>$descriptions,'indicators'=>$indicators,
-                                      'images'=>$images,]);
+            if(!empty($messages[1]))
+            {
+                Yii::$app->session->setFlash('success', "$messages[1]");
+            }
+            if(!empty($messages[2]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");   
+            }    
+            if(!empty($messages[0]))
+            {
+                Yii::$app->session->setFlash('danger', "$messages[0]");
+            }
+            return $this->redirect(['software/index']);
+            // return $this->render('index',['software' => $software, 'user'=> $user,
+            //                           'superadmin' => $superadmin,
+            //                           'success'=>$messages[1],'warning'=>$messages[2],
+            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
+            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
+            //                           'images'=>$images,]);
 
 
         }
@@ -1055,15 +1095,24 @@ class SoftwareController extends Controller
         $software=$model::getSoftwareNames($softUser);
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
-        $indicators=Software::getIndicators($softUser);
-        
+        $indicators=Software::getIndicators($softUser);;
 
-        return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin,
-                                      'success'=>$success,'warning'=>'',
-                                      'error' =>$error, 'projectsDropdown'=>$projectsDropdown,
-                                      'descriptions'=>$descriptions,'indicators'=>$indicators,
-                                      'images'=>$images,]);
+            if(!empty($messages[1]))
+            {
+                Yii::$app->session->setFlash('success', "$success");
+            }    
+            if(!empty($messages[0]))
+            {
+                Yii::$app->session->setFlash('danger', "$error");
+            }
+        
+        return $this->redirect(['software/index']);
+        // return $this->render('index',['software' => $software, 'user'=> $user,
+        //                               'superadmin' => $superadmin,
+        //                               'success'=>$success,'warning'=>'',
+        //                               'error' =>$error, 'projectsDropdown'=>$projectsDropdown,
+        //                               'descriptions'=>$descriptions,'indicators'=>$indicators,
+        //                               'images'=>$images,]);
     }
 
     public function actionSelectMountpoint($username)
@@ -1657,12 +1706,20 @@ class SoftwareController extends Controller
                 }
                 $indicators=Software::getIndicators($softUser);;
 
-                return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin,
-                                      'success'=>$success,'warning'=>'',
-                                      'error' =>'', 'projectsDropdown'=>$projectsDropdown,
-                                      'descriptions'=>$descriptions,'indicators'=>$indicators,
-                                      'images'=>$images,]);
+                if(!empty($messages[1]))
+                {
+                    Yii::$app->session->setFlash('success', "$success");
+                }
+            
+
+                return $this->redirect(['software/index']);
+
+                // return $this->render('index',['software' => $software, 'user'=> $user,
+                //                       'superadmin' => $superadmin,
+                //                       'success'=>$success,'warning'=>'',
+                //                       'error' =>'', 'projectsDropdown'=>$projectsDropdown,
+                //                       'descriptions'=>$descriptions,'indicators'=>$indicators,
+                //                       'images'=>$images,]);
             }
 
         }

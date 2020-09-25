@@ -22,7 +22,7 @@ $stats_icon='<i class="fas fa-eye"></i>';
 ?>
 <div class='title row'>
 	
-	<div class="col-md-12">
+	<div class="col-md-12 headers">
 		<h1><?= Html::encode($this->title) ?>
 		<span class="pull-right"> 
 			<?= Html::a("$stats_icon User Statistics", ['/software/user-statistics'], ['class'=>'btn btn-info']) ?> </span>
@@ -72,11 +72,11 @@ foreach ($results as $res)
 	$key=$res['software_id'];
 ?>
 			<tr>
-				<td class="col-md-2"><?=$res['softname']?> <?=$res['softversion']?></td>
-				<td class="col-md-2"><?=empty($res['start'])? '' : date("F j, Y, H:i:s",strtotime($res['start']))?></td>
-				<td class="col-md-2"><?=empty($res['stop'])? '' : date("F j, Y, H:i:s",strtotime($res['stop']))?></td>
-				<td class="col-md-2"><?=$res['project']?></td>
-				<td class="col-md-1"><?=(empty($res['status'])) ? "Running" : $res['status']?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=$res['softname']?> <?=$res['softversion']?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=empty($res['start'])? '' : date("F j, Y, H:i:s",strtotime($res['start']))?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=empty($res['stop'])? '' : date("F j, Y, H:i:s",strtotime($res['stop']))?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=$res['project']?></td>
+				<td class="col-md-1" style="font-size: 14px;"><?=(empty($res['status'])) ? "Running" : $res['status']?></td>
 				<?php
 						/**
 						 * available contains the available software

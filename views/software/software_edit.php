@@ -9,6 +9,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use dosamigos\ckeditor\CKEditor;
+
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -19,7 +22,7 @@ use yii\helpers\Url;
 echo Html::cssFile('@web/css/software/edit-software.css');
 $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 ?>
-<h2>Edit details for software <?=$model->name?> v.<?=$model->version?></h2>
+<h2 class="headers">Edit details for software <?=$model->name?> v.<?=$model->version?></h2>
 <br />
 <div class="software_edit">
 
@@ -77,7 +80,15 @@ $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\w
 
     
 
-    <br \>	
+    <br \>
+
+    <?php
+        echo $form->field($model, 'instructions')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ]);
+                ?>
+        <br /><br />	
         <div class="form-group">
             <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
             <?= Html::a('Cancel', ['/software/index'], ['class'=>'btn btn-default']) ?>
