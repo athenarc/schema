@@ -23,7 +23,7 @@ $cancel_icon='<i class="fas fa-times"></i>';
 <div class="software_upload">
 
     <div class="row">
-        <div class="col-md-9"><h1><?= Html::encode($this->title) ?></h1></div>
+        <div class="col-md-9 headers"><h1><?= Html::encode($this->title) ?></h1></div>
         <div class="form-group col-md-3" style="padding-top: 25px; text-align: right;">
             <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary']) ?>
             <?= Html::a("$cancel_icon Cancel", ['/software/index'], ['class'=>'btn btn-default']) ?>

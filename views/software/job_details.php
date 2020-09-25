@@ -24,7 +24,7 @@ $logs_icon='<i class="fas fa-cloud-download-alt"></i>';
  */
 ?>
 <div class='title row'>
-	<div class="col-md-11">
+	<div class="col-md-11 headers">
 		<h1><?= Html::encode($this->title) ?></h1>
 	</div>
 	<div class="col-md-1 float-right">

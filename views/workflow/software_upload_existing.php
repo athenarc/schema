@@ -23,7 +23,7 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
 <div class="software_upload">
 
     <div class="row">
-        <div class="col-md-12"><h1><?= Html::encode($this->title) ?></h1></div>
+        <div class="col-md-12 headers"><h1><?= Html::encode($this->title) ?></h1></div>
     </div>
     <?php $form = ActiveForm::begin(); 
 

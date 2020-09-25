@@ -8,6 +8,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use dosamigos\ckeditor\CKEditor;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -23,7 +24,7 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
 <div class="software_upload">
 
     <div class="row">
-        <div class="col-md-12"><h1><?= Html::encode($this->title) ?></h1></div>
+        <div class="col-md-12 headers"><?= Html::encode($this->title) ?></div>
     </div>
     <?php $form = ActiveForm::begin(); 
     
@@ -73,6 +74,13 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
         <br /><br />
         <?= $form->field($model,'imageInDockerHub')->checkbox(['id'=>'imageInDockerHub'])?>
         <?= $form->field($model, 'imageFile',['options'=>['class'=>'form-group invisible-div image-file-input']])->fileInput() ?>
+        <br /><br />
+        <?php
+        echo $form->field($model, 'instructions')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ]);
+                ?>
         <br /><br />
         <div class="form-group">
             <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary']) ?>

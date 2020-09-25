@@ -24,8 +24,8 @@ $back_icon='<i class="fas fa-arrow-left"></i>';
  */
 ?>
 <div class='title row'>
-	<div class="col-md-11">
-		<h1><?= Html::encode($this->title) ?></h1>
+	<div class="col-md-11 headers">
+		<?= Html::encode($this->title) ?>
 	</div>
 	<div class="col-md-1 float-right">
 		<?= Html::a("$back_icon Back", ['software/history'], ['class'=>'btn btn-default']) ?>

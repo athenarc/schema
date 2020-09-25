@@ -10,6 +10,7 @@ use yii\data\Pagination;
 use yii\httpclient\Client;
 use app\models\RunHistory;
 
+
 /**
  * This is the model class for table "software".
  *
@@ -45,7 +46,7 @@ class Software extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['script', 'visibility', 'description', 'dois'], 'string'],
+            [['script', 'visibility', 'description', 'dois', 'instructions'], 'string'],
             [['has_example'], 'boolean'],
             [['name'], 'string', 'max' => 30],
             [['image', 'workingdir', 'imountpoint', 'omountpoint'], 'string', 'max' => 200],
