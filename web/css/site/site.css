@@ -151,3 +151,9 @@ a.desc:after {
     /*display: block;*/
     word-wrap: break-word;
 }
+
+.headers
+{
+     color:#E6833B;
+     font-size: 30px;
+}

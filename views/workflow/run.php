@@ -67,7 +67,7 @@ $select_file_icon='<i class="fas fa-folder-open"></i>';
 
 <div class='title row'>
 	
-	<div class="col-md-10 ">
+	<div class="col-md-10" style="color:#E6833B">
 		
 		<h2><?= Html::encode($this->title) ?></h2>
 		
@@ -331,7 +331,7 @@ else
 
 <div class="col-md-5 project-quotas-div rcorners">
 
-<div class="row headers">
+<div class="row run-headers">
 <h3 id="centerheaders"><b>Job resources</b></h3>
 </div>
 
