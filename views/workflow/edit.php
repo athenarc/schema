@@ -19,7 +19,7 @@ use yii\helpers\Url;
 echo Html::cssFile('@web/css/software/edit-software.css');
 $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 ?>
-<h2>Edit details for software <?=$model->name?> v.<?=$model->version?></h2>
+<h2 class="headers">Edit details for software <?=$model->name?> v.<?=$model->version?></h2>
 <br />
 <div class="software_edit">
     

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\db\Query;
 
+
 /**
  * This is the model class for table "software".
  *
@@ -42,7 +43,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description'], 'string',],
+            [['description', 'instructions'], 'string',],
             [['description'], 'required',],
             [['visibility'], 'required',],
             [['imountpoint','omountpoint'], 'string',],
@@ -81,6 +82,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             'iomount' => 'Image requires disk I/O',
             'cwlFile' => 'Upload a new CWL definition file * ',
             'covid19' => 'Software is related to COVID-19 research',
+            'instructions'=>'User instructions'
         ];
     }
 

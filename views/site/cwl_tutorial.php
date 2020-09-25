@@ -5,7 +5,7 @@ $this->title='Short CWL difinition tutorial for software images for SCHeMa';
 
 ?>
 
-<h1><?=Html::encode($this->title)?></h1>
+<h1 class="headers"><?=Html::encode($this->title)?></h1>
 
 <div class='row'><div class="col-md-12">An image definition CWL file is a <a href="https://en.wikipedia.org/wiki/YAML" target="_blank">YAML</a> containing objects. An object is a data structure equivalent to the "object" type in JSON, consisting of a unordered set of name/value pairs (referred to here as fields) and where the name is a string and the value is a string, number, boolean, array, or object.</div></div>
 

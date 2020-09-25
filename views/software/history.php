@@ -22,12 +22,12 @@ $stats_icon='<i class="fas fa-eye"></i>';
 ?>
 <div class='title row'>
 	
-	<div class="col-md-12">
-		<h1><?= Html::encode($this->title) ?>
+	<div class="col-md-12 headers">
+		<?= Html::encode($this->title) ?>
 		<span class="pull-right"> 
 			<?= Html::a("$stats_icon User Statistics", ['/software/user-statistics'], ['class'=>'btn btn-info']) ?> </span>
 			
-		</h1>	
+			
 	</div>	
 
 	
@@ -44,7 +44,7 @@ if (!empty($results))
 ?>
 
 <div class="row"><div class="col-md-12"><?= LinkPager::widget(['pagination' => $pagination]) ?></div></div>
-<div class="table-responsive"><table class="table table-striped">
+<div class="table-responsive"><table class="table table-striped" >
 	<thead>
 		<tr>
 			<th class="col-md-2" scope="col">Software</th>
@@ -72,11 +72,11 @@ $details_icon='<i class="fas fa-eye"></i>';
 		$key=$res['software_id'];
 	?>
 			<tr>
-				<td class="col-md-2"><span><?=$res['softname']?> <?=$res->softversion?></span><span><?=($res->type=='workflow') ? Html::img('@web/img/cwl-32x32-transparent.png',['height'=>'25px;']) : '' ?></span></td>
-				<td class="col-md-2"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
-				<td class="col-md-2"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
-				<td class="col-md-2"><?=$res->project?></td>
-				<td class="col-md-1"><?=(empty($res->status)) ? "Running" : $res->status?></td>
+				<td class="col-md-2" style="font-size: 14px;"><span><?=$res['softname']?> <?=$res->softversion?></span><span><?=($res->type=='workflow') ? Html::img('@web/img/cwl-32x32-transparent.png',['height'=>'25px;']) : '' ?></span></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
+				<td class="col-md-2" style="font-size: 14px;"><?=$res->project?></td>
+				<td class="col-md-1" style="font-size: 14px;"><?=(empty($res->status)) ? "Running" : $res->status?></td>
 				<?php
 						if ($res->type!='workflow')
 						{	
