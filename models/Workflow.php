@@ -82,6 +82,11 @@ class Workflow extends \yii\db\ActiveRecord
         // exit(0);
         foreach ($fields as $field)
         {
+            //field is optional and empty
+            if (($field->optional) && ($field->value==''))
+            {
+                continue;
+            }
             if (!$field->is_array)
             {
                 // print_r($field);
