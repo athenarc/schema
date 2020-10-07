@@ -96,7 +96,7 @@ else
 		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
 		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
 	</div>
-	<div class="project-egci">
+	<!-- <div class="project-egci">
 		<div>
 			<div class="col-md-12 text-center project-egci-content">Working Project:</div>
 			<div class="col-md-12 text-center project-egci-content">
@@ -131,7 +131,7 @@ else
 			<?= Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"])?>
 			</div>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 
@@ -206,7 +206,7 @@ foreach ($software as $name=>$uploader)
 		// print_r($upl);
 		// exit(0);
 		$indicatorList=$indicators[$name][$versions[$first_key]];
-		$runLink=(isset($indicatorList['mpi'])) ? Url::to(['software-mpi/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$project_name]) : Url::to(['software/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$project_name]);
+		$runLink=(isset($indicatorList['mpi'])) ? Url::to(['software-mpi/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]) : Url::to(['software/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]);
 		
 
 ?>

@@ -85,7 +85,12 @@ class SoftwareController extends Controller
      */
     public function actionIndex($selected_project='')
     {
-
+    	
+    	 // $session = Yii::$app->session;
+   		 // $session->set('user_id', '1234');
+   		 // print_r($session['new_session']);
+   		 // exit(0);
+    	
         /**
          * If the user-data folder for the current user does not exist, 
          * create one
@@ -124,6 +129,8 @@ class SoftwareController extends Controller
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         $projectsDropdown=Software::getActiveProjects();
+        // print_r($projectsDropdown);
+        // exit(0);
         $remaining_jobs_array=[];
         foreach ($projectsDropdown as $project) 
         {
@@ -135,9 +142,28 @@ class SoftwareController extends Controller
               
         }
 
+        if (!empty($projectsDropdown))
+        {
+            $key=array_key_first($projectsDropdown);
+            $project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
+          //    print_r($project_selected);
+             // exit(0);
+            $project_name=' ';
+            $project_name=trim(explode('(',$project_selected)[0]);
+            $dropdownLabel='Working project:';
+            //$remaining_jobs=0;
+            
+        }
+        else
+        {
+            $dropdownLabel='No active projects available.';
+            $project_selected='';
+            $project_name='';
+        }
+
 
         
-         $indicators=Software::getIndicators($softUser);
+        $indicators=Software::getIndicators($softUser);
         
                 
 
@@ -170,10 +196,13 @@ class SoftwareController extends Controller
     }
 
 
-    public function actionRun($name, $version,$project)
+    public function actionRun($name, $version)
     {
 
+        $project=$_SESSION['selected_project'];
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software_id=$software->id;
+        $software_instructions=$software->instructions;
         if (empty($software))
         {
             return $this->render('no_software',['name'=>$name,'version'=>$version]);
@@ -655,7 +684,7 @@ class SoftwareController extends Controller
         // exit(0);
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
-            'version'=>$version,  'jobid'=>$jobid, 
+            'version'=>$version,  'jobid'=>$jobid, 'software_id'=>$software_id, 'software_instructions'=>$software_instructions,
             'errors'=>$errors, 'runErrors'=>$runError, 'podid'=>$podid, 'machineType'=>$machineType,
             'fields'=>$fields,'isystemMount' => $isystemMountField, 'osystemMount' => $osystemMountField,
             'iosystemMount' => $iosystemMountField, 'example' => '0', 'hasExample'=>$hasExample,
@@ -668,16 +697,18 @@ class SoftwareController extends Controller
     /*
      * Get logs from the running pod to show on the webpage
      */
-    public function actionGetLogs($podid,$machineType)
+    public function actionGetLogs($podid,$machineType,$jobid)
     {
 
         $results=Software::getLogs($podid);
         $logs=$results[1];
         $status=$results[0];
         $time=$results[2];
+        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+
         
 
-        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status, 'machineType'=>$machineType,'time'=>$time]);
+        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status, 'machineType'=>$machineType,'time'=>$time,'project'=>$history->project]);
     }
 
     /*
@@ -768,7 +799,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[0]");   
+                Yii::$app->session->setFlash('danger', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {
@@ -1097,22 +1128,18 @@ class SoftwareController extends Controller
         $images=Software::getOriginalImages($softUser);
         $indicators=Software::getIndicators($softUser);;
 
-            if(!empty($messages[1]))
-            {
-                Yii::$app->session->setFlash('success', "$success");
-            }    
-            if(!empty($messages[0]))
-            {
-                Yii::$app->session->setFlash('danger', "$error");
-            }
+        
+
+        if(!empty($messages[0]))
+        {
+                Yii::$app->session->setFlash('success', "$messages[0]");
+        }    
+        elseif(!empty($messages[1]))
+        {
+                Yii::$app->session->setFlash('danger', "$messages[1]");
+        }
         
         return $this->redirect(['software/index']);
-        // return $this->render('index',['software' => $software, 'user'=> $user,
-        //                               'superadmin' => $superadmin,
-        //                               'success'=>$success,'warning'=>'',
-        //                               'error' =>$error, 'projectsDropdown'=>$projectsDropdown,
-        //                               'descriptions'=>$descriptions,'indicators'=>$indicators,
-        //                               'images'=>$images,]);
     }
 
     public function actionSelectMountpoint($username)
@@ -1194,6 +1221,7 @@ class SoftwareController extends Controller
         $commands='';
 
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software_instructions=$software->instructions;
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1334,7 +1362,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>$mountExistError,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions]);
     }
 
     public function actionReattach($jobid)
@@ -1358,6 +1386,9 @@ class SoftwareController extends Controller
         $isystemMountField=$history->imountpoint;
         $osystemMountField=$history->omountpoint;
         $iosystemMountField=$history->iomountpoint;
+        $software=Software::find()->where(['name'=>$name])->andWhere(['version'=>$version])->one();
+        $software_instructions=$software->instructions;
+        
 
         $podid=Software::runningPodIdByJob($name,$jobid);
         /** 
@@ -1492,7 +1523,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,'iocontMount'=>$iocontMount,
             'mountExistError'=>false,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions]);
 
 
     }
