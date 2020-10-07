@@ -102,6 +102,7 @@ class SoftwareMpiController extends Controller
         $user=User::getCurrentUser()['username'];
         
         $software=SoftwareMpi::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software_instructions=$software->instructions;
         // print_r($software);
         // exit(0);
         if (empty($software))
@@ -596,7 +597,7 @@ class SoftwareMpiController extends Controller
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
             'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,
-            'processes'=>$processes,]);
+            'processes'=>$processes, 'software_instructions'=>$software_instructions]);
     }
 
     public function actionSetupCluster($jobid)
@@ -621,9 +622,10 @@ class SoftwareMpiController extends Controller
         $status=$results[0];
         $logs=$results[1];
         $time=$results[2];
+        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
         
 
-        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status,'time'=>$time]);
+        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status,'time'=>$time, 'project'=>$history->project]);
     }
 
     /*
@@ -698,6 +700,7 @@ class SoftwareMpiController extends Controller
 
 
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software_instructions=$software->instructions;
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -790,7 +793,7 @@ class SoftwareMpiController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions]);
 
 
     }
@@ -819,6 +822,7 @@ class SoftwareMpiController extends Controller
         $cluster='running';
         
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software_instructions=$software->instructions;
         $icontMount=$software->imountpoint;
         $ocontMount=$software->omountpoint;
         $iocontMount='';
@@ -970,7 +974,7 @@ class SoftwareMpiController extends Controller
             'username'=>$user,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions]);
     }
 
 

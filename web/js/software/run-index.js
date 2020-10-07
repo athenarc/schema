@@ -178,6 +178,7 @@ $(document).ready(function() {
 
 	$("#software-run-example-button").click(function(){
 		var disabled = $(this).attr('disabled');
+		//window.alert($("#software_commands_form").html());
 		if (!disabled)
 		{
 
@@ -257,5 +258,15 @@ $(document).ready(function() {
 	{
 		$("#systemmount").trigger('change');
 	}
+	
+	//$("#software-start-run-button").click(function(){
+	//	var project=$(".project-dropdown").val();
+	//	alert(project);
+	//	});
+	
+	$("#software-run-example-button").click(function(){
+		var project=$(".project-dropdown").val();
+		//window.alert(project);
+		});
 
 });

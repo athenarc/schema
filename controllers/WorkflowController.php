@@ -144,6 +144,7 @@ class WorkflowController extends Controller
         {
             return $this->render('no_software',['name'=>$name,'version'=>$version]);
         }
+        $workflow_instructions=$workflow->instructions;
 
         /*
          * Get name and version from the browser link
@@ -499,7 +500,7 @@ class WorkflowController extends Controller
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>$errors, 'runErrors'=>$runError,'fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
-            'username'=>$user,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
+            'username'=>$user,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas, 'workflow_instructions'=>$workflow_instructions,
             'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder]);
     }
 
@@ -513,9 +514,13 @@ class WorkflowController extends Controller
         $taskLogs=$results[2];
         $status=$results[1];
         $time=$results[0];
+        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+        $project=$history->project;
+        // print_r($history->project);
+        // exit(0);
         
 
-        return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time]);
+        return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time, 'project'=>$project]);
         // return $this->render('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time]);
     }
 
@@ -1006,6 +1011,7 @@ class WorkflowController extends Controller
         $maxCores=$history->max_cpu;
 
         $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
+        $workflow_instructions=$workflow->instructions;
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1078,7 +1084,7 @@ class WorkflowController extends Controller
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions]);
     }
 
     public function actionReattach($jobid)
@@ -1110,6 +1116,7 @@ class WorkflowController extends Controller
         $maxCores=$history->max_cpu;
 
         $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
+        $workflow_instructions=$workflow->instructions;
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1182,7 +1189,7 @@ class WorkflowController extends Controller
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions]);
 
 
     }

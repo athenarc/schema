@@ -10,7 +10,10 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use webvimark\modules\UserManagement\models\User;
 use app\components\SupportWindow;
+use app\components\ProjectWindow;
 use app\components\NotificationWidget;
+
+
 
 $footerImage=Html::img('@web/img/elixir-dark.png',['class'=>'footer-elixir-image']);
 $footerImageLink=Html::a($footerImage,'https://elixir-greece.org',['target'=>'_blank']);
@@ -22,6 +25,10 @@ $youtube_link=Html::a($youtube_icon,'https://www.youtube.com/channel/UC6ek-jYFfq
     ['target'=>'_blank']);
 echo Html::cssFile('@web/css/components/notificationWidget.css');
 $this->registerJsFile('@web/js/components/notificationWidget.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+//$this->registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+
+
+
 
 AppAsset::register($this);
 
@@ -51,6 +58,10 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
     if(Yii::$app->user->getIsGuest() == false)
     {
         SupportWindow::show(Yii::$app->request->absoluteUrl);
+    }
+    if(Yii::$app->user->getIsGuest() == false)
+    {
+        ProjectWindow::show(Yii::$app->request->absoluteUrl);
     }
 
     NavBar::begin([
