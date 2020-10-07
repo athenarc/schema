@@ -109,7 +109,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $errors="";
 
         $username=User::getCurrentUser()['username'];
-        $this->description=$this->quotes($this->description);
+        $this->description=$this->quotes(trim($this->description));
         $this->instructions=$this->quotes($this->instructions);
         $this->imountpoint=$this->quotes($this->imountpoint);
         $this->omountpoint=$this->quotes($this->omountpoint);
@@ -172,7 +172,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
 
         $arguments=[$this->name, $this->version, $imageFileName, $imageFileExt, $cwlFileName, 
                     $username, $this->visibility, $this->imountpoint, $this->omountpoint, $this->commandRetrieval,
-                    $this->description, $this->biotools, $doiFile, $mpi, $this->covid19];
+                    $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
         $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "imageUploader.py ";
@@ -365,7 +365,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
 
     public function quotes($string)
     {
-        return "'" . $string . "'";
+        return "'" . trim($string) . "'";
     }
 
     public function allowed_name_chars($attribute, $params, $validator)

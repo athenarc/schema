@@ -76,10 +76,12 @@ $(document).ready(function()
     {
       var podid=$("#hidden_podid_input").val();
       var machineType=$("#hidden_machineType_input").val();
+      var jobid=$("#hidden_jobid_input").val();
+      // window.alert(jobid);
         $.ajax({
                 url: "index.php?r=software/get-logs",
                 type: "GET",
-                data: { "podid": podid, "machineType": machineType },
+                data: { "podid": podid, "machineType": machineType, "jobid" : jobid },
                 dataType: "html",
                 success: function (data) 
                 {
