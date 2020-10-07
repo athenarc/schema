@@ -8,6 +8,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use dosamigos\ckeditor\CKEditor;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -34,7 +35,17 @@ $cwl_label="Upload your CWL workflow definition file(s) (" . Html::a('more info'
 
         <?= $form->field($model, 'name') ?>
         <?= $form->field($model, 'version') ?>
-        <?= $form->field($model, 'description')->textarea(['rows' => '6']) ?>
+        <?=$form->field($model, 'description')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ])
+                ?>
+        <?php
+        echo $form->field($model, 'instructions')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ]);
+                ?>
         <?= $form->field($model, 'visibility')->dropDownList($dropdown) ?>
         <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?>
         <?= $form->field($model, 'biotools') ?>
@@ -56,7 +67,7 @@ $cwl_label="Upload your CWL workflow definition file(s) (" . Html::a('more info'
             <div class="cwl-logo"><img src="<?=Url::to('@web/img/cwl-logo.png')?>" class='cwl-logo-img'></div>
         </div>
         <br /><br />
-        <div class="form-group">
+         <div class="form-group">
             <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary']) ?>
             <?= Html::a("$cancel_icon Cancel", ['/software/index'], ['class'=>'btn btn-default']) ?>
         </div>

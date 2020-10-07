@@ -20,6 +20,34 @@ $(document).ready(function(){
 
         });
 	});
+	
+	$(".project-dropdown").change(function()
+	{
+		var project=$(this).val();
+		var jobs='#' + project;
+		$(".jobs-div").addClass('invisible');
+		$(jobs).removeClass('invisible');
+     		var job_number=$(jobs).html();
+	   $.ajax({
+            			url: "index.php?r=site/change-project-session&project=" + project + "&jobs=" + job_number,
+            			type: "GET",		
+	   });
+		
+		//$(".software-button-container").each(function()
+		//{
+		//	var version=$(this).parent().children(".software-versions").children('.versionsDropDown').children('option:selected').text();
+		//	var name=$(this).parent().children('.software-name-column').children('.software-name').html();
+		//	var selector ='hidden-run-link-'+ name + '-' + version;
+		//	selector=$.escapeSelector(selector);
+		//	var runInput=$('#' + selector).val();
+		//	//window.alert(runInput);
+			
+		//	var runLink=runInput + '&version=' + version + '&project=' + project;
+		//	$(this).children('.run-button').attr('href', runLink);
+
+		//});
+
+   });
 
 
 })

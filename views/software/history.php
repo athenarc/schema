@@ -96,7 +96,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 									$controller='software';
 								}
 						?>
-								<td class="col-md-3 text-center">
+								<td class="col-md-3" style="text-align: right;">
 						<?php
 								if (empty($res->status))
 								{
@@ -120,7 +120,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							else
 							{
 						?>
-									<td class="col-md-3 text-center"><span><?=($res->type=='workflow')? '' : '<i>Image unavailable</i>&nbsp;'?></span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
+									<td class="col-md-3" style="text-align: right;"><span><?=($res->type=='workflow')? '' : '<i style="font-size:14px;">Image N/A</i>'?> &nbsp;</span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
 						<?php
 							}
 						}
@@ -132,7 +132,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							if (isset($available_workflows[$key]))
 							{	
 						?>
-								<td class="col-md-3 text-center">
+								<td class="col-md-3" style="text-align: right;">
 						<?php
 								if (empty($res->status))
 								{
@@ -156,7 +156,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							else
 							{
 						?>
-									<td class="col-md-3 text-center"><span><i>Workflow unavailable</i>&nbsp;</span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
+									<td class="col-md-3" style="text-align: right;"><span><i style="font-size: 14px;">Workflow N/A</i>&nbsp;</span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
 						<?php
 							}
 						}

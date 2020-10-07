@@ -11,6 +11,16 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\User;
 use app\models\Notification;
+use app\models\Software;
+use app\models\SoftwareUpload;
+use app\models\SoftwareUploadExisting;
+use app\models\SoftwareEdit;
+use app\models\SoftwareRemove;
+use app\models\ImageRequest;
+use yii\helpers\Url;
+use webvimark\modules\UserManagement\models\User as Userw;
+use app\models\RunHistory;
+use app\models\SoftwareInput;
 
 
 class SiteController extends Controller
@@ -70,7 +80,7 @@ class SiteController extends Controller
     {
         return $this->render('index');
     }
-
+    
     /**
      * Login action.
      *
@@ -237,6 +247,12 @@ class SiteController extends Controller
     public function actionCwlTutorial()
     {
         return $this->render('cwl_tutorial');
+    }
+
+    public function actionChangeProjectSession($project, $jobs)
+    {
+        $_SESSION['selected_project']=$project;
+        $_SESSION['remaining_jobs']=$jobs;
     }
 
 

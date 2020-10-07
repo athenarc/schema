@@ -29,7 +29,13 @@ $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\w
     <?php $form = ActiveForm::begin(); 
     ?>
     
-    <?=$form->field($model, 'description')->textarea(['rows' => '6']) ?> 
+    <?php
+        echo $form->field($model, 'description')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ]);
+                ?>
+        <br /><br /> 
     <?=$form->field($model, 'visibility')->dropDownList($vdropdown,['options'=>[$model->visibility => ['selected'=>true]]]) ?>
     <?= $form->field($model, 'iomount') -> checkbox(['id'=>'iomount']) ?>
     <?php
