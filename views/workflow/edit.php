@@ -9,6 +9,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use dosamigos\ckeditor\CKEditor;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -26,7 +27,17 @@ $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\w
     <?php $form = ActiveForm::begin(); 
     ?>
     <?= $form->errorSummary($model) ?>
-    <?=$form->field($model, 'description')->textarea(['rows' => '6']) ?> 
+    <?=$form->field($model, 'description')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ])
+                ?> 
+    <?php
+        echo $form->field($model, 'instructions')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ]);
+                ?>
     <?=$form->field($model, 'visibility')->dropDownList($vdropdown,['options'=>[$model->visibility => ['selected'=>true]]]) ?>
     <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?>
     <?=$form->field($model, 'biotools')->textInput() ?>
@@ -60,10 +71,6 @@ $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\w
     <div>
         <?=Html::a('Download workflow files',['/workflow/download-files', 'name'=>$model->name, 'version'=>$model->version])?>
     </div>
-
-
-    
-
     <br \>	
         <div class="form-group">
             <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>

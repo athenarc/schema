@@ -18,6 +18,7 @@ biotools=sys.argv[8]
 doiFile=sys.argv[9]
 covid19=sys.argv[10]
 github_link=sys.argv[11]
+instructions=sys.argv[12]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -68,7 +69,7 @@ print('Workfile: ' + workFile)
 workFile=workFile.replace(containerMount['local'],containerMount['wesContainer'])
 
 wuf.workflowStore(workName,workVersion,workFile,user,visibility,
-                description,biotools,doiFile,github_link,covid19,workflowPath)
+                description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 if 'inputs' not in content:
     exit(2)

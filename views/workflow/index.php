@@ -67,21 +67,21 @@ $runIcon='<i class="fas fa-play"></i>';
 $editIcon='<i class="fas fa-edit"></i>';
 $deleteIcon='';
 
-if (!empty($projectsDropdown))
-{
-	$key=array_key_first($projectsDropdown);
-	$project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
-	$project_name=trim(explode('(',$project_selected)[0]);
-	$dropdownLabel='Resources from project:';
-	// print_r($project_name);
-	// exit(0);
-}
-else
-{
-	$dropdownLabel='No active projects available.';
-	$project_selected='';
-	$project_name='';
-}
+// if (!empty($projectsDropdown))
+// {
+// 	$key=array_key_first($projectsDropdown);
+// 	$project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
+// 	$project_name=trim(explode('(',$project_selected)[0]);
+// 	$dropdownLabel='Resources from project:';
+// 	// print_r($project_name);
+// 	// exit(0);
+// }
+// else
+// {
+// 	$dropdownLabel='No active projects available.';
+// 	$project_selected='';
+// 	$project_name='';
+// }
 
 /*
  * Add software with "Run" button
@@ -90,20 +90,12 @@ else
 ?>
 
 <div class="row">
-			<div class="col-md-5"><?=Html::a($workflowAdd,['workflow/upload'],['class'=>'btn btn-primary'])?>	</div>
-			<div class="col-md-7 text-right"><span class="project-dropdown-label"><?=$dropdownLabel?></span>&nbsp;
-<?php
-	if (!empty($projectsDropdown))
-	{
-?>
-	
-		<?=Html::dropDownList('dropdown', $project_selected, $projectsDropdown, ['class'=>'project-dropdown']) ?>&nbsp;
-<?php		
-	}
-?>
-		<?= Html::a($projectAdd, "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['class' => 'btn btn-secondary create-project-btn'])?></div>
-	</div>
+	<div class="col-md-5"><?=Html::a($workflowAdd,['workflow/upload'],['class'=>'btn btn-primary'])?>	</div>
+</div>
 
+<div class="row">&nbsp;</div>
+<div class="row">&nbsp;</div>
+<div class="row">&nbsp;</div>
 <div class="row">&nbsp;</div>
 
 
@@ -172,7 +164,7 @@ foreach ($workflows as $name=>$uploader)
 		// print_r($upl);
 		// exit(0);
 		$indicatorList=$indicators[$name][$versions[$first_key]];
-		$runLink=Url::to(['workflow/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$project_name]);
+		$runLink=Url::to(['workflow/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]);
 		
 
 ?>
