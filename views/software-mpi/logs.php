@@ -10,6 +10,7 @@ use yii\helpers\Html;
 	// echo Html::CssFile('@web/css/software.css');
 ?>
 <h3>Runtime Info:</h3>
+<div class="project-resources"><b>Resources from project:</b> <?=$project?></div>
 <div class="status-div col-md-3>">
 	<div class="status-label"><b>Status:</b></div>
 	<div id="status-value" class="<?= ($status=="Completed") ? "status-completed" : "status-running" ?> "><?=$status?></div>

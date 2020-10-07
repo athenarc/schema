@@ -85,10 +85,11 @@ $(document).ready(function()
     function sendRequest(refId)
     {
       var jobid=$("#hidden_jobid_input").val();
+      var podid=$("#hidden_podid_input").val();
         $.ajax({
                 url: "index.php?r=workflow/get-logs",
                 type: "GET",
-                data: { "jobid":jobid},
+                data: { "jobid":jobid, "podid":podid},
                 dataType: "html",
                 success: function (data) 
                 {
