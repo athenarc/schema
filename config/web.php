@@ -16,6 +16,11 @@ $config = [
     'components' => [
         'assetManager'=>[
             'appendTimestamp'=>true,
+            'bundles' => [
+                'yii\bootstrap\BootstrapPluginAsset' => false,
+                'webvimark\extensions\DateRangePicker\DateRangePickerAsset'=>false,
+                
+            ],
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -26,6 +31,7 @@ $config = [
         ],
         'user' => [
                     'class' => 'webvimark\modules\UserManagement\components\UserConfig',
+
 
                     // Comment this if you don't want to record user logins
                     // 'on afterLogin' => function($event) {
@@ -74,6 +80,7 @@ $config = [
     'modules'=>[
         'user-management' => [
             'class' => 'webvimark\modules\UserManagement\UserManagementModule',
+
 
             'enableRegistration' => true,
 

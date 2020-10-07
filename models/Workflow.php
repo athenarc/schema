@@ -41,7 +41,7 @@ class Workflow extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['location', 'visibility', 'description', 'github_link'], 'string'],
+            [['location', 'visibility', 'description', 'github_link', 'instructions'], 'string'],
             [['has_example', 'covid19'], 'boolean'],
             [['name'], 'string', 'max' => 100],
             [['version'], 'string', 'max' => 80],
@@ -71,6 +71,7 @@ class Workflow extends \yii\db\ActiveRecord
             'covid19' => 'Covid19',
             'original_image' => 'Original Image',
             'github_link' => 'Github Link',
+            'instructions'=>'Instructions',
         ];
     }
 

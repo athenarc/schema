@@ -50,11 +50,12 @@ def cwlReturnDockerImage(content):
     hintDockerImage=''
     reqDockerImage=''
     #if hints is a list
-    if len(hints)>=1:
+    if len(hints)>1:
         appearances=0
         for hint in hints:
-            # print(hint)
+            print(hint)
             if 'DockerRequirement' in hint:
+                # print(hint)
                 docker=hint['DockerRequirement']
                 appearances+=1
             elif 'class' in hint:
@@ -70,12 +71,12 @@ def cwlReturnDockerImage(content):
         else:
             if 'dockerPull' in docker:
                 hintDockerImage=docker['dockerPull']
-    # #if hints is a list and a DockerRequirement exists
-    # else:
-    #     if 'DockerRequirement' in hints:
-    #         docker=hints['DockerRequirement']
-    #         if 'dockerPull' in docker:
-    #             hintDockerImage=docker['dockerPull']
+    #if hints is a list and a DockerRequirement exists
+    else:
+        if 'DockerRequirement' in hints:
+            docker=hints['DockerRequirement']
+            if 'dockerPull' in docker:
+                hintDockerImage=docker['dockerPull']
     #if requirements is a list
     if len(requirements)>=1:
         appearances=0
@@ -256,7 +257,7 @@ def inputStore(softName,softVersion, inputs):
     return 0
 
 def imageStoreAndClassify(name,version,image,script,user,visibility,
-                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19):
+                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions):
     
     softFull=name+ '-' + version
     name=quoteEnclose(name)
@@ -275,6 +276,8 @@ def imageStoreAndClassify(name,version,image,script,user,visibility,
     original=quoteEnclose(original)
     docker_or_local=quoteEnclose(docker_or_local)
     covid19=quoteEnclose(covid19)
+    instructions=quoteEnclose(instructions)
+    
 
     if doiFile!='':
         f=open(doiFile)
@@ -287,10 +290,10 @@ def imageStoreAndClassify(name,version,image,script,user,visibility,
     date="NOW()"
 
     values=[name,version,image,script,user, date, visibility, workingDir, imountPoint, 
-                omountPoint, description, cwlPath,biotools,dois,mpi,original,docker_or_local,covid19]
+                omountPoint, description, cwlPath,biotools,dois,mpi,original,docker_or_local,covid19, instructions]
     
     sql1='INSERT INTO software_upload (name,version, image,script,uploaded_by, date, visibility, workingdir, imountpoint, omountpoint,\
-    description, cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19) '
+    description, cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions) '
     sql1+='VALUES (' + ','.join(values) + ')'
 
     # print(sql1);
@@ -309,10 +312,10 @@ def imageStoreAndClassify(name,version,image,script,user,visibility,
     #     exit(24)
 
     values=[name,version,image,script,user, visibility, workingDir, imountPoint, omountPoint,description,cwlPath,biotools,
-                    dois,mpi,original,docker_or_local,covid19]
+                    dois,mpi,original,docker_or_local,covid19, instructions]
     sql2='INSERT INTO software (name,version,image,script,uploaded_by,\
             visibility, workingdir, imountpoint, omountpoint, description,\
-            cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19) '
+            cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions) '
     sql2+='VALUES (' + ','.join(values) + ')'
     
     # print()

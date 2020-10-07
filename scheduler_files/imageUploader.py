@@ -22,6 +22,7 @@ biotools=sys.argv[12]
 doiFile=sys.argv[13]
 mpi=sys.argv[14]
 covid19=sys.argv[15]
+instructions=sys.argv[16]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -205,7 +206,7 @@ except subprocess.CalledProcessError as exc:
     exit(10)
 
 uf.imageStoreAndClassify(softName,softVersion, imageNew,script,user,visibility,
-    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,dockerHub,covid19)
+    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,dockerHub,covid19,instructions)
 
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];

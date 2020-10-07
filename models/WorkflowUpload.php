@@ -49,7 +49,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
     {
         return [    
             [['name'], 'string', 'max' => 100],
-            [['description'], 'string'],
+            [['description', 'instructions'], 'string'],
             [['version'], 'string', 'max' => 80],
             [['location'], 'string'],
             [['name','version',],'required'],
@@ -79,6 +79,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
             'visibility' => 'Visible to',
             'description'=> 'Workflow description * ',
             'covid19' => 'Workflow is related to COVID-19 research',
+            'instructions'=>'Instructions',
         ];
     }
 
@@ -89,6 +90,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
 
         $username=User::getCurrentUser()['username'];
         $this->description=$this->quotes($this->description);
+        $this->instructions=$this->quotes($this->instructions);
         $workflowFilePath=$this->quotes('');
         $workFlowFileExt=$this->quotes('');
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
@@ -134,7 +136,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $username=$this->quotes($username);
 
         $arguments=[$this->name, $this->version, $workflowFilePath, $workflowFileExt, 
-                    $username, $this->visibility, $this->description, $this->biotools, $doiFile, $this->covid19,$this->github_link];
+                    $username, $this->visibility, $this->description, $this->biotools, $doiFile, $this->covid19,$this->github_link,$this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
         $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "workflowUploader.py ";

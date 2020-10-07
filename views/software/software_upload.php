@@ -38,7 +38,12 @@ $cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/
 
         <?= $form->field($model, 'name') ?>
         <?= $form->field($model, 'version') ?>
-        <?= $form->field($model, 'description')->textarea(['rows' => '6']) ?>
+        <?=$form->field($model, 'description')->widget(CKEditor::className(), [
+                     'options' => ['rows' => 4],
+                     'preset' => 'basic'
+                ])
+                ?>
+        <br /><br />
         <?= $form->field($model, 'visibility')->dropDownList($dropdown) ?>
         <?= $form->field($model,'commandRetrieval')-> dropDownList($command_drop) ?>
         <?= $form->field($model, 'iomount') -> checkbox(['id'=>'iomount']) ?>
