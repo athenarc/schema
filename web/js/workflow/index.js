@@ -115,6 +115,7 @@ $(document).ready(function()
 	$(".project-dropdown").change(function()
 	{
 		var project=$(this).val();
+		//window.alert(project);
 		$(".software-button-container").each(function()
 		{
 			var version=$(this).parent().children(".software-versions").children('.versionsDropDown').children('option:selected').text();
@@ -122,7 +123,7 @@ $(document).ready(function()
 			var selector ='hidden-run-link-'+ name + '-' + version;
 			selector=$.escapeSelector(selector);
 			var runInput=$('#' + selector).val();
-			// window.alert(runInput);
+			//window.alert(runInput);
 			
 			var runLink=runInput + '&version=' + version + '&project=' + project;
 			$(this).children('.run-button').attr('href', runLink);
