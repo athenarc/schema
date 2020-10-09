@@ -102,7 +102,7 @@ class JobResourcesWidget
 
     $play_icon='<i class="fas fa-play"></i>';
 
-    $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
+    $instructions_icon='<i class="fa fa-file aria-hidden="true" style="color:white"></i>';
 
 
 
@@ -125,8 +125,8 @@ class JobResourcesWidget
     ?>
 
         <div class="run-button-container col-md-2" style="text-align: center;"><?=Html::a("$play_icon Run example",'javascript:void(0);',['id'=>'software-run-example-button', 'class'=>"btn btn-success btn-md",'disabled'=>((!$hasExample) || $commandsDisabled)])?></div>
-        <div class="instructions col-md-1" style="margin-right: 55px; padding-left: 10px;"><?=Html::a("$instructions_icon Instructions",null,['id'=>'software-instructions', 'data-toggle'=>'modal', 
-    												'data-target'=>"#per", 'class'=>'btn btn-secondary'])?></div>
+        <div class="instructions col-md-1" style="margin-right: 55px; padding-left: 10px;"><?=Html::a("$instructions_icon <span style='color:white'>Instructions</span>",null,['id'=>'software-instructions', 'data-toggle'=>'modal', 
+    												'data-target'=>"#per", 'class'=>'btn btn-secondary btn-md instructions-modal'])?></div>
 
 
     <?php
@@ -200,7 +200,7 @@ class JobResourcesWidget
           </div>
           <div class="modal-body">
           	<div class="row">
-               <div class="col-md-12 text-center" style="padding-bottom: 10px;"><?=$software_instructions?></div>
+               <div class="col-md-12 text-center" style="padding-bottom: 10px;"><?=empty($software_instructions)?'Instructions not available': $software_instructions ?></div>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
