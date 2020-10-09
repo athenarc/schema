@@ -65,7 +65,7 @@ ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $ver
             $username,$icontMount='',$ocontMount=1,
             $iocontMount='',$mountExistError='',
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder, $type=3);
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder, $type);
 
 JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, 
 		$software_instructions=$workflow_instructions,
@@ -73,9 +73,9 @@ JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $
             $fields,$isystemMount='', $osystemMount='',
             $iosystemMount='', $example, $hasExample,
             $username,$icontMount='',$ocontMount=1,
-            $iocontMount='',$mountExistError='',
+            $iocontMount='',$mountExistError=1,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, $type=3);   
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, $type);   
 
 
 ActiveForm::end();  

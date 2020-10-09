@@ -59,7 +59,8 @@ class JobResourcesWidget
     				</div>
     				</div>
     		</div> 
-            <?php //Software-MPI
+            <?php //Software-MPi
+
             if($processes)
             {?>
             <div class="row">
@@ -119,6 +120,7 @@ class JobResourcesWidget
     <div class="row">
         <div class="run-button-container col-md-offset-4 col-md-1" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn    btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?></div>
     <?php
+
     if(!empty($icontMount) || !empty($ocontMount) || !empty($iocontMount))
     {
 
@@ -133,6 +135,7 @@ class JobResourcesWidget
 
         if ((($superadmin) || ($username==$uploadedBy)) && (!$hasExample))
         {
+
             if ($commandsDisabled)
             {
                 $addExampleHidden="add-example-link-hidden";
@@ -142,43 +145,27 @@ class JobResourcesWidget
                 $addExampleHidden="";
             }
         
-    ?>
-
-    <?php
-    ?> 
-        <?php
-        if($type==1)
-        {?>
-    	<div class="add-example-link col-md-offset-5 col-md-2 <?=$addExampleHidden?>" style="text-align: center"><?=Html::a('Add example',['/software/add-example','name'=>$name, 'version' =>$version],['id'=>'software-add-example-button', 'class'=>'btn btn-link'])?></div>
-        <?php
-        }
-        elseif ($type==2) 
-        {?>
-            <div class="add-example-link col-md-offset-5 col-md-2 <?=$addExampleHidden?>" style="text-align: center"><?=Html::a('Add example',['/software-mpi/add-example','name'=>$name, 'version' =>$version],['id'=>'software-add-example-button', 'class'=>'btn btn-link'])?></div>
-        <?php
-        }
-        else
-        {?>
+        	if($pernode)
+        	{?>
+    		<div class="add-example-link col-md-offset-5 col-md-2 <?=$addExampleHidden?>" style="text-align: center"><?=Html::a('Add example',['/software-mpi/add-example','name'=>$name, 'version' =>$version],['id'=>'software-add-example-button', 'class'=>'btn btn-link'])?></div>
+        	<?php
+        	}
+        	elseif($mountExistError==1)
+        	{?>
             <div class="add-example-link col-md-offset-5 col-md-2 <?=$addExampleHidden?>" style="text-align: center"><?=Html::a('Add example',['/workflow/add-example','name'=>$name, 'version' =>$version],['id'=>'software-add-example-button', 'class'=>'btn btn-link'])?></div>
-        <?php
-        }?>
-
-       
-
-       
-    <?php
-
+            <?php
+        	}
+        	else
+        	{?>
+            	<div class="add-example-link col-md-offset-5 col-md-2 <?=$addExampleHidden?>" style="text-align: center"><?=Html::a('Add example',['/software/add-example','name'=>$name, 'version' =>$version],['id'=>'software-add-example-button', 'class'=>'btn btn-link'])?></div>
+            <?php
+        	}
         }
     }
     $cancel_icon='<i class="fas fa-times"></i>';
     ?>
 
-    <?php
-    if($type==1 || $type==2)
-    {?>
-        <div class="cancel-button-container col-md-1"><?=Html::a("$cancel_icon Cancel ",'javascript:void(0);',['id'=>'software-cancel-button', 'class'=>'btn btn-danger'])?></div>
-    <?php
-    }?>
+		<div class="cancel-button-container col-md-1"><?=Html::a("$cancel_icon Cancel ",'javascript:void(0);',['id'=>'software-cancel-button', 'class'=>'btn btn-danger'])?></div>
     </div>
 
 

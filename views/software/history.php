@@ -48,9 +48,24 @@ if (!empty($results))
 	<thead>
 		<tr>
 			<th class="col-md-2" scope="col">Software</th>
+		<?php
+		if (Yii::$app->params['standalone'])
+		{
+		?>
+			<th class="col-md-3" scope="col">Started on</th>
+			<th class="col-md-3" scope="col">Stopped on</th>
+		<?php	
+		}
+		else
+		{
+		?>
 			<th class="col-md-2" scope="col">Started on</th>
 			<th class="col-md-2" scope="col">Stopped on</th>
 			<th class="col-md-2" scope="col">Project</th>
+		<?php	
+		}
+		?>
+			
 			<th class="col-md-1" scope="col">Status</th>
 			<th class="col-md-3" scope="col">&nbsp;</th>
 		</tr>
@@ -73,9 +88,26 @@ $details_icon='<i class="fas fa-eye"></i>';
 	?>
 			<tr>
 				<td class="col-md-2" style="font-size: 14px;"><span><?=$res['softname']?> <?=$res->softversion?></span><span><?=($res->type=='workflow') ? Html::img('@web/img/cwl-32x32-transparent.png',['height'=>'25px;']) : '' ?></span></td>
-				<td class="col-md-2" style="font-size: 14px;"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
-				<td class="col-md-2" style="font-size: 14px;"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
-				<td class="col-md-2" style="font-size: 14px;"><?=$res->project?></td>
+
+				<?php
+				if (Yii::$app->params['standalone'])
+				{
+				?>
+					<td class="col-md-3" style="font-size: 14px;"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
+					<td class="col-md-3" style="font-size: 14px;"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
+				<?php	
+				}
+				else
+				{
+				?>
+					<td class="col-md-2" style="font-size: 14px;"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
+					<td class="col-md-2" style="font-size: 14px;"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
+					<td class="col-md-2" style="font-size: 14px;"><?=$res->project?></td>
+				<?php	
+				}
+				?>
+
+				
 				<td class="col-md-1" style="font-size: 14px;"><?=(empty($res->status)) ? "Running" : $res->status?></td>
 				<?php
 						if ($res->type!='workflow')

@@ -19,6 +19,8 @@ echo Html::CssFile('@web/css/software-mpi/run.css');
 $this->registerJsFile('@web/js/software-mpi/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 
 $title = "New job ($name v.$version) ";
+
+
 //$this->title = "$name v.$version ";
 
 
@@ -68,6 +70,7 @@ $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
 ActiveForm::begin($form_params);
 
 
+
 ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
             $errors, $runErrors, $podid='', $machineType='',
             $fields,$isystemMount, $osystemMount,
@@ -75,7 +78,11 @@ ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $ver
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster, $outFolder='', $type=2);
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster, $outFolder='', $type);
+
+
+
+
 
 JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
             $errors, $runErrors, $podid='', $machineType='',
@@ -84,7 +91,9 @@ JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $outFolder='', $type=2);   
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $outFolder='', $type);
+
+
 
 
 ActiveForm::end();  
