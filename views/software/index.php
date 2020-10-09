@@ -16,6 +16,8 @@ use webvimark\modules\UserManagement\models\User;
 use app\components\SoftDescrModal;
 use app\components\SoftwareIndicatorList;
 
+// print_r($_SESSION['selected_project']);
+// exit();
 
 /*
  * Add stylesheet
@@ -67,23 +69,6 @@ $runIcon='<i class="fas fa-play"></i>';
 $editIcon='<i class="fas fa-edit"></i>';
 $deleteIcon='';
 
-if (!empty($projectsDropdown))
-{
-	$key=array_key_first($projectsDropdown);
-	$project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
-	$project_name=' ';
-	$project_name=trim(explode('(',$project_selected)[0]);
-	$dropdownLabel='Working project:';
-	//$remaining_jobs=0;
-	
-}
-else
-{
-	$dropdownLabel='No active projects available.';
-	$project_selected='';
-	$project_name='';
-}
-
 /*
  * Add software with "Run" button
  */
@@ -96,42 +81,6 @@ else
 		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
 		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
 	</div>
-	<!-- <div class="project-egci">
-		<div>
-			<div class="col-md-12 text-center project-egci-content">Working Project:</div>
-			<div class="col-md-12 text-center project-egci-content">
-			<?php
-			if (!empty($projectsDropdown))
-			{?>
-				<?=Html::dropDownList('dropdown', $project_selected, $projectsDropdown, 
-				['class'=>'project-dropdown']) ?>
-			<?php		
-			}?>
-			</div>
-			<div class="col-md-12 text-center project-egci-content" style="color: grey">Remaining Jobs: &nbsp;
-			<span class="rem-jobs"></span>
-			<?php
-						foreach ($remaining_jobs_array as $project=>$remaining_jobs)
-						{
-							if ($project==$project_name)
-							{
-								$job_class="";
-							}
-							else
-							{
-								$job_class="invisible";
-							}?>
-						<span id="<?=$project?>" class="jobs-div <?=$job_class?>">
-						<?=$remaining_jobs?>
-						</span>
-						<?php
-						}?>
-			</div>
-			<div class="col-md-12 text-center project-egci-content">
-			<?= Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"])?>
-			</div>
-		</div>
-	</div> -->
 </div>
 
 

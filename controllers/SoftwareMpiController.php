@@ -89,6 +89,7 @@ class SoftwareMpiController extends Controller
         // $name=$_GET['name'];
         // $version=$_GET['version'];
         // $project=$_GET['project'];
+        $type=2;
         $projects=Software::getActiveProjects();
 
         $mpiAlreadyRunning=SoftwareMpi::anotherJobRunning();
@@ -110,6 +111,14 @@ class SoftwareMpiController extends Controller
             return $this->render('no_software',['name'=>$name,'version'=>$version]);
         }
 
+        if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
+        {
+            
+            return $this->render('project_error',['project'=>$project]);
+        }
+
+             
+        $user=User::getCurrentUser()['username'];
         /*
          * If the posted values are filled, use that
          * or assign default values
@@ -474,11 +483,11 @@ class SoftwareMpiController extends Controller
             }
         }
 
-        if(!isset($projects[$project]))
-        {
+        // if(!isset($projects[$project]))
+        // {
         	
-            return $this->render('project_error',['project'=>$project]);
-        }
+        //     return $this->render('project_error',['project'=>$project]);
+        // }
         
 
 
@@ -587,6 +596,7 @@ class SoftwareMpiController extends Controller
         // print_r($ocontMount);
         // print_r("<br />");
         // exit(0);
+        
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
@@ -597,7 +607,7 @@ class SoftwareMpiController extends Controller
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
             'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,
-            'processes'=>$processes, 'software_instructions'=>$software_instructions]);
+            'processes'=>$processes, 'software_instructions'=>$software_instructions, 'type'=>$type]);
     }
 
     public function actionSetupCluster($jobid)
@@ -785,6 +795,8 @@ class SoftwareMpiController extends Controller
             ])
             ->count();
 
+        $type=2;
+
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>$errors, 'runErrors'=>$runError,
@@ -793,7 +805,7 @@ class SoftwareMpiController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions, 'type'=>$type]);
 
 
     }
@@ -966,6 +978,8 @@ class SoftwareMpiController extends Controller
          */
         $clusterRunning=($cluster!='down') ? true: false;
 
+        $type=2;
+
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>$errors, 'runErrors'=>$runError,
@@ -974,7 +988,7 @@ class SoftwareMpiController extends Controller
             'username'=>$user,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false, 'cluster'=>$cluster,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'pernode'=>$pernode,'processes'=>$processes, 'software_instructions'=>$software_instructions, 'type'=>$type]);
     }
 
 

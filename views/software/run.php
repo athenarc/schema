@@ -56,7 +56,6 @@ $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
 <?php 
 ActiveForm::begin($form_params);
 
-
 ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
             $errors, $runErrors, $podid, $machineType,
             $fields,$isystemMount, $osystemMount,
@@ -64,7 +63,7 @@ ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $ver
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder='', $type=1);
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder='', $type);
 
 JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
             $errors, $runErrors, $podid, $machineType,
@@ -73,7 +72,7 @@ JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder='', $type=1);   
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder='', $type);   
 
 
 ActiveForm::end();  
