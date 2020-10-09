@@ -154,7 +154,7 @@ class WorkflowController extends Controller
         // $project=$_GET['project'];
         $projects=Software::getActiveProjects();
 
-        if(!isset($projects[$project]))
+        if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
         {
             
             return $this->render('project_error',['project'=>$project]);
@@ -495,13 +495,14 @@ class WorkflowController extends Controller
         // print_r($ocontMount);
         // print_r("<br />");
         // exit(0);
+        $type=3;
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>$errors, 'runErrors'=>$runError,'fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$user,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas, 'workflow_instructions'=>$workflow_instructions,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'type'=>$type]);
     }
 
     /*
@@ -1079,12 +1080,14 @@ class WorkflowController extends Controller
             ])
             ->count();
 
+        $type=3;
+
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>'', 
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type]);
     }
 
     public function actionReattach($jobid)
@@ -1184,12 +1187,14 @@ class WorkflowController extends Controller
             ])
             ->count();
 
+        $type=3;
+
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type]);
 
 
     }

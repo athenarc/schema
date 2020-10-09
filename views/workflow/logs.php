@@ -19,8 +19,20 @@ use yii\helpers\Html;
 		<span class="status-label"><b>Running time:</b></span>
 		<span id="exec-time-value" class="status-<?=$status?>"><?=$time?></span>
 </div>
-<div class="project-resources row" style="padding-left: 15px;"><b>Resources from project:</b> &nbsp; <?=$project?></div>
 	<?php
+	if (Yii::$app->params['standalone']==false)
+	{
+	?>
+		<div class="project-resources row" style="padding-left: 15px;"><b>Resources from project:</b> &nbsp; <?=$project?></div>
+	<?php	
+	}
+	else
+	{
+	?>
+		<div class="project-resources row" style="padding-left: 15px;"></div>
+	<?php
+	}
+
 	if ($status!='COMPLETE')
 	{
 	?>  <div class="col-md-6"><?=Html::img('@web/img/schema-01-loading.gif',['class'=>'float-right run-gif-img'])?></div>

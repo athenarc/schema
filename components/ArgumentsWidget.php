@@ -37,11 +37,11 @@ class ArgumentsWidget
             $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster, $outFolder, $type)
     {
     ?>		
-			<div class="site-software">
-			<div class="row">&nbsp;</div>
-			<div class="row">&nbsp;</div>
-			<div class="row" style="text-align: center;">
-			<div class="col-md-12">
+		<div class="site-software">
+		<div class="row">&nbsp;</div>
+		<div class="row">&nbsp;</div>
+		<div class="row" style="text-align: center;">
+		<div class="col-md-12">
 			<?php
 			$select_icon='<i class="fas fa-folder-open"></i>';
 			$clear_icon='<i class="fas fa-times"></i>';
@@ -49,11 +49,11 @@ class ArgumentsWidget
 			if($type==1 || $type==2)
 			{
 				if(!empty($iocontMount))
-					{?>
+				{?>
 						    
-					    <div class="row">
+					<div class="row">
 						    <div class="col-md-12">  <h3>Input/Output directory <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select a folder to mount to the <?=$iocontMount?> directory in the container.")> </i></h3> </div>
-					    </div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">      
 							<?=Html::textInput('iosystemmount',$iosystemMount,['id' => 'iosystemmount','class'=>'mount-field','readonly'=>true,])?>
@@ -61,22 +61,22 @@ class ArgumentsWidget
 			                <?=Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-mount-button btn btn-danger btn-md','disabled'=>($commandsDisabled)])?>
 						</div>
 					</div>
-					<?php
-					}
-				    else
-				    {
-				        if ( (empty($icontMount)) && (empty($ocontMount)) )
-				        {?>
+				<?php
+				}
+				else
+				{
+				    if ( (empty($icontMount)) && (empty($ocontMount)) )
+				    {?>
 						<br>
 							<div class="alert alert-success col-md-offset-3 col-7" role="alert">
 						        Based on the provided metadata, this docker image does not require any input/output mountpoint.
 						    </div>
 							<?php
-						}
-				        else
-				        {
-				            if (!empty($icontMount))
-				            {?>
+					}
+				    else
+				    {
+				        if (!empty($icontMount))
+				        {?>
 							<div class="row">
 							    <div class="col-md-12">  <h3>Input directory <i class="fa fa-question-circle" style="font-size:20px; text-align: center" title="Select a folder to mount to the <?=$icontMount?> directory in the container.")> </i></h3> </div>
 						    </div>
@@ -87,11 +87,11 @@ class ArgumentsWidget
 									<?=Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-mount-button btn btn-danger btn-md','disabled'=>($commandsDisabled)])?>
 							    </div>
 						    </div>
-						    <?php
-				            }
-				            if (!empty($ocontMount))
-				            {
-						    ?>
+						 <?php
+				         }
+				         if (!empty($ocontMount))
+				         {
+						 ?>
 						    <div class="row">
 							    <div class="col-md-12">  <h3>Output directory <i class="fa fa-question-circle" style="font-size:20px" title="Select a folder to mount to the <?=$ocontMount?> directory in the container.")> </i></h3> </div>
 						    </div>
@@ -120,35 +120,31 @@ class ArgumentsWidget
 
 
 
-						<?php
-						/*
-						 * This is the non active form, that does not really submit.
-						 * The content of the fields is concatenated with JS, pasted
-						 * in the command box and the active form is submitted.
-						 */
-						?>
-						<div id="non-active-run-form">
-						<?=Html::hiddenInput('jobid', $jobid,['id'=>'hidden_jobid_input'])?>
-						<?=Html::hiddenInput('name', $name,['id'=>'hidden_name_input'])?>
-						<?=Html::hiddenInput('version', $version,['id'=>'hidden_version_input'])?>
-						<?php 
-						if($cluster)
-						{?>
-							<?=Html::hiddenInput('cluster', $cluster,['id'=>'hidden_cluster_input'])?>
-						<?php
-						}?>
-						<?=Html::hiddenInput('podid', $podid,['id'=>'hidden_podid_input'])?>
-						<?=Html::hiddenInput('machineType', $machineType,['id'=>'hidden_machineType_input'])?>
-						<?=Html::hiddenInput('example', $example,['id'=>'hidden_example_input'])?>
-						<?=$hasExample ? Html::hiddenInput('has_example','',['id'=>'has_example']) : ''?>
-						<?php
-						/* 
-						 * TODO PHP code here
-						 */
-			
-				if (!empty($fields))
-				{
-				?>
+					<?php
+					/*
+					 * This is the non active form, that does not really submit.
+					 * The content of the fields is concatenated with JS, pasted
+					 * in the command box and the active form is submitted.
+					 */
+					?>
+					<div id="non-active-run-form">
+					<?=Html::hiddenInput('jobid', $jobid,['id'=>'hidden_jobid_input'])?>
+					<?=Html::hiddenInput('name', $name,['id'=>'hidden_name_input'])?>
+					<?=Html::hiddenInput('version', $version,['id'=>'hidden_version_input'])?>
+					<?php 
+					if($cluster)
+					{?>
+						<?=Html::hiddenInput('cluster', $cluster,['id'=>'hidden_cluster_input'])?>
+					<?php
+					}?>
+					<?=Html::hiddenInput('podid', $podid,['id'=>'hidden_podid_input'])?>
+					<?=Html::hiddenInput('machineType', $machineType,['id'=>'hidden_machineType_input'])?>
+					<?=Html::hiddenInput('example', $example,['id'=>'hidden_example_input'])?>
+					<?=$hasExample ? Html::hiddenInput('has_example','',['id'=>'has_example']) : ''?>
+					<?php
+						
+					if (!empty($fields))
+					{?>
 
 					<div class="row">
 					<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
@@ -161,14 +157,14 @@ class ArgumentsWidget
 					    $clear_file_title='Clear field.';
 					    $index=0;
 					    foreach ($fields as $field)
-					    {
-					    ?>
+					    {?>
 					        <div class="row">
-					            <div class="col-md-offset-3 col-md-3" style="text-align: right;"><?=Html::label($field->name,null,[])?></div>
-					    <?php
+					            <div class="col-md-offset-3 col-md-3" style="text-align: right;"><?=Html::label($field->name,null,[])?>
+					            	
+					            </div>
+					   			 <?php
 					            if ($field->field_type=='boolean')
-					            {
-					    ?>
+					            {?>
 
 					                <div class="col-md-3" style="text-align: left;">
 					                    <?=Html::checkbox('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>$commandBoxClass, 'id'=>'field-' . $index, 'uncheck'=>"0"])?>
@@ -255,9 +251,9 @@ class ArgumentsWidget
 					                }
 					            }   
 					            ?>   
-					        </div>
-					    <?php
-					    $index++;
+					        	</div>
+					    	<?php
+					    	$index++;
 					    }
 					    echo Html::hiddenInput('fieldsNum', count($fields),['id'=>'hidden_fieldsNum']);
 					}
