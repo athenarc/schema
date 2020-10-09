@@ -55,13 +55,21 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <div class="wrap background-image">
     <?php
 
-    if(Yii::$app->user->getIsGuest() == false)
+    if (Yii::$app->user->getIsGuest() == false)
     {
         SupportWindow::show(Yii::$app->request->absoluteUrl);
     }
-    if(Yii::$app->user->getIsGuest() == false)
+    if (Yii::$app->user->getIsGuest() == false)
     {
-        ProjectWindow::show(Yii::$app->request->absoluteUrl);
+        if (Yii::$app->params['standalone']==false)
+        {
+            ProjectWindow::show(Yii::$app->request->absoluteUrl);
+        }
+        else
+        {
+            $_SESSION['selected_project']='';
+        }
+        
     }
 
     NavBar::begin([

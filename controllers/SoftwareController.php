@@ -216,13 +216,13 @@ class SoftwareController extends Controller
         // $project=$_GET['project'];
         $projects=Software::getActiveProjects();
 
-        if(!isset($projects[$project]))
+        if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
         {
             
             return $this->render('project_error',['project'=>$project]);
         }
 
-              
+             
         $user=User::getCurrentUser()['username'];
         
        
@@ -489,53 +489,6 @@ class SoftwareController extends Controller
                 }
             }
         }
-        // var_dump($fields[--$index]);
-        // exit(0);
-        // $emptyFields=true;
-        // if (!empty($fields))
-        // {
-        //     for ($i=0; $i<count($fields); $i++)
-        //     {
-        //         if (empty($field_values))
-        //         {
-        //             if (!$example)
-        //             {
-        //                 $fields[$i]['value']='';
-        //             }
-        //             else
-        //             {
-        //                 $fields[$i]['value']=$fields[$i]['example'];
-        //                 $emptyFields=false;
-        //             }
-        //             // print_r($fields[$i]['default_value']);
-                    
-        //         }
-                
-        //         else
-        //         {
-        //             if (!$example)
-        //             {
-        //                 if (!empty($field_values[$i]))
-        //                 {
-        //                     $emptyFields=false;
-        //                 }
-        //                 $fields[$i]['value']=$field_values[$i];
-        //             }
-        //             else
-        //             {
-        //                 $fields[$i]['value']=$fields[$i]['example'];
-        //                 $emptyFields=false;
-        //             }
-                    
-
-                    
-        //         }
-        //     }
-        //     //print_r($fields);
-        //     //exit(0);
-        // }
-
-        // $script=$softwareModel::getScript($name,$version);
         $container_command='';
         $errors=[];
         if (empty($fields))
@@ -596,13 +549,16 @@ class SoftwareController extends Controller
          * that are over 60 seconds long.
          */
         $quotas=Software::getOndemandProjectQuotas($user,$project);
+        // print_r($quotas);
+        // exit(0);
 
-        if(empty($quotas))
+        if(empty($quotas) && (Yii::$app->params['standalone']==false))
         {
             
             return $this->render('project_error',['project'=>$project]);
         }
         $quotas=$quotas[0];
+
 
         $jobUsage=RunHistory::find()->where(['project'=>$project,])
             ->andFilterWhere(
@@ -682,6 +638,7 @@ class SoftwareController extends Controller
         // print_r($ocontMount);
         // print_r("<br />");
         // exit(0);
+        $type=1;
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 'software_id'=>$software_id, 'software_instructions'=>$software_instructions,
@@ -691,7 +648,7 @@ class SoftwareController extends Controller
             'username'=>$user,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'type'=>$type]);
     }
 
     /*
@@ -1352,6 +1309,7 @@ class SoftwareController extends Controller
                 ]
             ])
             ->count();
+        $type=1;
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>'',
@@ -1362,7 +1320,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>$mountExistError,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions, 'type'=>$type]);
     }
 
     public function actionReattach($jobid)
@@ -1514,6 +1472,8 @@ class SoftwareController extends Controller
             ])
             ->count();
 
+        $type=1;
+        
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid,
             'errors'=>'', 'runErrors'=>'', 'podid'=>$podid, 'machineType'=>$machineType,
@@ -1523,7 +1483,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,'iocontMount'=>$iocontMount,
             'mountExistError'=>false,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions,'type'=>$type]);
 
 
     }

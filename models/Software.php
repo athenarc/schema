@@ -1551,32 +1551,49 @@ class Software extends \yii\db\ActiveRecord
 
     public static function getOndemandProjectQuotas($username,$project)
     {
-        $project=str_replace(' ','%20',$project);
-        $url=Yii::$app->params['egciSingleProjecteQuotas'] . "&username=$username&project=$project";
-        // print_r($url);
-        // exit(0);
-        $client = new Client();
-        $response = $client->createRequest()
-                ->setMethod('GET')
-                ->setUrl($url)
-                ->send();
+        if (Yii::$app->params['standalone']==false)
+        {
+            $project=str_replace(' ','%20',$project);
+            $url=Yii::$app->params['egciSingleProjecteQuotas'] . "&username=$username&project=$project";
+            // print_r($url);
+            // exit(0);
+            $client = new Client();
+            $response = $client->createRequest()
+                    ->setMethod('GET')
+                    ->setUrl($url)
+                    ->send();
 
-        // print_r($url);
-        // exit(0);
-        $data=$response->data;
-    
-        // $results=[];
-        // foreach($data as $row) 
-        // {
-        //     $results[$row['name']]=
-        //     [
-        //         'num_of_jobs'=>$row['num_of_jobs'],
-        //         'ram'=>$row['ram'],
-        //         'cores'=>$row['cores'],
-        //         'time_per_job'=>$row['time_per_job'],
-        //     ];
-        // }
-
+            // print_r($url);
+            // exit(0);
+            $data=$response->data;
+        
+            // $results=[];
+            // foreach($data as $row) 
+            // {
+            //     $results[$row['name']]=
+            //     [
+            //         'num_of_jobs'=>$row['num_of_jobs'],
+            //         'ram'=>$row['ram'],
+            //         'cores'=>$row['cores'],
+            //         'time_per_job'=>$row['time_per_job'],
+            //     ];
+            // }
+        }
+        /*
+         * SCHeMa runs as standalone without 
+         * the project management interface
+         */
+        else
+        {
+            $data=[
+                [
+                    'num_of_jobs'=>0,
+                    'time_per_job'=>-1,
+                    'ram' => Yii::$app->params['standaloneResources']['maxRam'],
+                    'cores' => Yii::$app->params['standaloneResources']['maxCores'],
+                ]
+            ];
+        }
         return $data;
 
                 
