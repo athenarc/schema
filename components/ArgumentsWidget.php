@@ -311,7 +311,7 @@ class ArgumentsWidget
 				{?>
 
 				<div class="row">
-				<div class="col-md-12"><h3>Arguments</h3></div>
+				<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 				</div> 
 				<?php
 
@@ -435,7 +435,7 @@ class ArgumentsWidget
 				?>
 				<br>
 					<div class="row">
-					<div class="col-md-12"><h3>Arguments</h3></div>
+					<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 					</div> 
 
 					<?php
