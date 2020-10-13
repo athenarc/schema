@@ -1,0 +1,26 @@
+{
+	"registry": "172.16.0.231:5000/",
+	"registryAuth":
+	{
+		"username": "schema_admin",
+		"password": "30Athenarc"
+	},
+	"database": 
+	{
+		"host":"localhost",
+		"username": "schema_test",
+		"password": "L3m)n@k!",
+		"database": "schema_test"
+	},
+	"localftp":
+	{
+		"domain": "172.16.0.248",
+		"username": "tesk-1",
+		"password": "Z6fsH6MG"
+	},
+	"workflowContainerMount":
+	{
+		"local": "/data/docker/workflows",
+		"wesContainer": "/workflows"
+	}
+}
