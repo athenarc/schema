@@ -3,6 +3,7 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $db2 = require __DIR__ . '/db2.php';
+$standalone=$params['standalone'];
 
 $config = [
     'id' => 'basic',
@@ -60,7 +61,7 @@ $config = [
             ],
         ],
         'db' => $db,
-        'db2' => $db2,
+        'db2' => ($standalone) ? [] : $db2,
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -69,7 +70,7 @@ $config = [
             ],
         ],
         */
-        'view'=>[
+        'view'=>($standalone)? [] :[
             'theme' => [
                 'pathMap' => [
                     '@webvimark/views/auth' => '@app/views/user/'
