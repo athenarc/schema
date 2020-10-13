@@ -1,8 +1,8 @@
-<div style="text-align:center">
+<p align="center">
   <img src="https://raw.githubusercontent.com/athenarc/schema/master/web/img/logo.png?token=ADKZMICQFGW7UKAAWXAR7V27R3AUG" />
   <h1>Scientific Containers on Heterogeneous Machines (SCHeMa)</h1>
   <br />
-</div>
+</p>
 
 ## Prerequisites
 In order to install SCHeMa you need:
