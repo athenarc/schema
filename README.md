@@ -1,4 +1,4 @@
- Scientific Containers on Heterogeneous Machines (SCHeMa)
+# Scientific Containers on Heterogeneous Machines (SCHeMa)
 
 
 ## Prerequisites
