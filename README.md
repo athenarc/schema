@@ -1,233 +1,124 @@
-<p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
-    </a>
-    <h1 align="center">Yii 2 Basic Project Template</h1>
-    <br>
-</p>
-
-Yii 2 Basic Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-rapidly creating small projects.
-
-The template contains the basic features including user login/logout and a contact page.
-It includes all commonly used configurations that would allow you to focus on adding new
-features to your application.
-
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-basic.svg)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-basic.svg)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-basic.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-basic)
-
-DIRECTORY STRUCTURE
--------------------
-
-      assets/             contains assets definition
-      commands/           contains console commands (controllers)
-      config/             contains application configurations
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
+ Scientific Containers on Heterogeneous Machines (SCHeMa)
 
 
+## Prerequisites
+In order to install SCHeMa you need:
+* an operational Kubernetes cluster or minikube cluster ([tutorial](https://www.howtoforge.com/how-to-install-kubernetes-with-minikube-on-ubuntu-1804-lts/)) with metrics-server installed
+* a docker registry configured with TLS and basic authentication (or see below for installation instructions for a private local registry)
+* an Apache server with PHP 7.2 installed on the cluster master or another machine that has access to the "kubectl" command
+* a PostgreSQL database server
+* python 2.7 and docker installed
+* a local directory exposed via NFS (called local NFS from here on) to the cluster so that Kubernetes pods can read/write data from/on it ([tutorial](https://help.ubuntu.com/community/SettingUpNFSHowTo))
+* a system user with sudo permissions that is able to run docker and kubectl without using sudo.
+* a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) and [TESK](https://github.com/EMBL-EBI-TSI/TESK) installation, for workflow and task execution respectively.
+* a ReadWriteMany Kubernetes StorageClass (like NFS) for cwl-WES and TESK.
 
-REQUIREMENTS
-------------
+### Required PHP packages
+The node running the installation of SCHeMa should have the following PHP packages installed:
+* php-mbstring
+* php-xml
+* php-gd
+* php-pgsql
 
-The minimum requirement by this project template that your Web server supports PHP 5.4.0.
+### Required Python packages
+The node running the installation of SCHeMa should have the following Python packages installed:
+* python-ruamel.yaml
+* python-psycopg2
+* python-yaml
+* python-requests
 
-
-INSTALLATION
-------------
-
-### Install via Composer
-
-If you do not have [Composer](http://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
-
-You can then install this project template using the following command:
-
-~~~
-php composer.phar create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic basic
-~~~
-
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
-directly under the Web root.
-
-~~~
-http://localhost/basic/web/
-~~~
-
-### Install from an Archive File
-
-Extract the archive file downloaded from [yiiframework.com](http://www.yiiframework.com/download/) to
-a directory named `basic` that is directly under the Web root.
-
-Set cookie validation key in `config/web.php` file to some random secret string:
-
-```php
-'request' => [
-    // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-    'cookieValidationKey' => '<secret random string goes here>',
-],
+## Installing a local docker registry with self-signed certificates and basic authentication
+On the machine that will run the SCHeMa installation:
+1. Create a folder for the registry certificates and authentication files (e.g. /data/registry) with two additional directories, "certs" and reg_auth".
+2. Create self-signed certificates:
+```bash
+openssl req \
+  -newkey rsa:4096 -nodes -sha256 -keyout <registry_data_directory>/certs/domain.key \
+  -x509 -days 365 -out <registry_data_directory>/certs/domain.crt
+````
+3. Create a username and password for the registry (change ```<registry_username>``` and ```<registry_username>``` appropriately):
+```bash
+sudo docker run -it --entrypoint htpasswd -v $PWD/reg_auth:/auth -w /auth registry:2 -Bbc /auth/htpasswd <registry_username> <registry_password>
+```
+4. Start the registry with the created certificates:
+```bash
+  docker run -d \
+  --restart=always \
+  --name registry \
+  -v "$(pwd)"/certs:/certs \
+  -v "$(pwd)"/reg_auth:/auth \
+  -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 \
+  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+  -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+  -e "REGISTRY_AUTH=htpasswd" \
+  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  -e REGISTRY_STORAGE_DELETE_ENABLED=true \
+  -p 5000:5000 \
+  registry:2
+```
+5. Create folders with the certificate for the docker registry and copy the certificates:
+```bash
+sudo mkdir -p /etc/docker/certs.d/127.0.0.1:5000
+sudo mkdir -p /etc/docker/certs.d/localhost:5000
+sudo cp <registry_data_directory>/certs/domain.crt /etc/docker/certs.d/127.0.0.1:5000/ca.crt
+sudo cp <registry_data_directory>/certs/domain.crt /etc/docker/certs.d/localhost:5000/ca.crt
+```
+7. Login to the registry:
+```bash
+docker login 127.0.0.1:5000 -u <registry_username> -p pass <registry_password>
 ```
 
-You can then access the application through the following URL:
-
-~~~
-http://localhost/basic/web/
-~~~
-
-
-### Install with Docker
-
-Update your vendor packages
-
-    docker-compose run --rm php composer update --prefer-dist
-    
-Run the installation triggers (creating cookie validation code)
-
-    docker-compose run --rm php composer install    
-    
-Start the container
-
-    docker-compose up -d
-    
-You can then access the application through the following URL:
-
-    http://127.0.0.1:8000
-
-**NOTES:** 
-- Minimum required Docker engine version `17.04` for development (see [Performance tuning for volume mounts](https://docs.docker.com/docker-for-mac/osxfs-caching/))
-- The default configuration uses a host-volume in your home directory `.docker-composer` for composer caches
+## Modiry cwl-WES before installing
+1. Clone the cwl-WES Helm charts from the GitHub [repository](https://github.com/elixir-cloud-aai/cwl-WES).
+2. Open deployment/templates/wes-deployment.yaml and add the following lines under volumeMounts:
+```yaml
+ - mountPath: {{ .Values.wes.workflowsPodPath }}
+   name: shared-workflows-volume
+```
+and the following lines under volumes:
+```yaml
+- name: shared-workflows-volume
+  nfs:
+    server: {{ .Values.wes.workflowsNfsAddress }} # Please change this to your NFS server
+    path: {{ .Values.wes.workflowsLocalPath }} # Please change this to the relevant share
+```
+3. Open deployment/values.yaml and add the following lines under wes:
+```yaml
+workflowsLocalPath: "<directory_containing_the_workflows_exposed_under_NFS>"
+workflowsPodPath: "/workflows"
+workflowsNfsAddress: "<local NFS address>"
+```
+4. Install cwl-WES as per the developers' instructions.
 
 
-CONFIGURATION
--------------
+## Installing SCHeMa
 
-### Database
+1. Install the Yii2 framework([tutorial](https://www.yiiframework.com/doc/guide/2.0/en/start-installation)) and install the following plugins:
+  1. [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
+  2. [DatePicker](https://demos.krajee.com/widget-details/datepicker)
+2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
+3. Create a postgres database named "schema" for user "schema".
+4. Restore the .sql file inside the "database_schema" folder as user "postgres" to the database created in the previous step:
+  ```sudo -u postgres psql -d schema -f <path_to_database_schema>/database_schema.sql```
+5. Copy the docker registry certificates in the project_root/scheduler_files/certificates:
+```cp <registry_data_directory>/certs/* <path_to_schema_project>/scheduler_files/certificates```
+6. Using root permissions create an empty file inside /etc/sudoers.d/ with ```visudo``` and paste the following inside it after filling the relevant information:
+```bash
+www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_schema_project>/scheduler_files/scheduler.py, <path_to_schema_project>/scheduler_files/ontology/initialClassify.py, <path_to_schema_project>/scheduler_files/imageUploader.py, <path_to_schema_project>/scheduler_files/imageRemover.py, <path_to_schema_project>/scheduler_files/inputReplacer.py, <path_to_schema_project>/scheduler_files/probe_stats.py, <path_to_schema_project>/scheduler_files/setupMpiCluster.py, <path_to_schema_project>/scheduler_files/mpiMonitorAndClean.py, <path_to_schema_project>/scheduler_files/existingImageUploader.py, <path_to_schema_project>/scheduler_files/workflowMonitorAndClean.py, <path_to_schema_project>/scheduler_files/workflowUploader.py
+```
+  where ```<user>```: a user that has permissions to run path-to-kubectl. As an example take a look at the following
 
-Edit the file `config/db.php` with real data, for example:
-
-```php
-return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '1234',
-    'charset' => 'utf8',
-];
+```bash
+  www-data ALL=(ubuntu) NOPASSWD: /usr/bin/kubectl, /data/www/schema/scheduler_files/scheduler.py, /data/www/schema/scheduler_files/ontology/initialClassify.py, /data/www/schema/scheduler_files/imageUploader.py, /data/www/schema/scheduler_files/imageRemover.py, /data/www/schema/scheduler_files/inputReplacer.py, /data/www/schema/scheduler_files/probe_stats.py, /data/www/schema/scheduler_files/setupMpiCluster.py,/data/www/schema/scheduler_files/mpiMonitorAndClean.py, /data/www/schema/scheduler_files/existingImageUploader.py, /data/www/schema/scheduler_files/workflowMonitorAndClean.py, /data/www/schema/scheduler_files/workflowUploader.py
 ```
 
-**NOTES:**
-- Yii won't create the database for you, this has to be done manually before you can access it.
-- Check and edit the other files in the `config/` directory to customize your application as required.
-- Refer to the README in the `tests` directory for information specific to basic application tests.
-
-
-TESTING
--------
-
-Tests are located in `tests` directory. They are developed with [Codeception PHP Testing Framework](http://codeception.com/).
-By default there are 3 test suites:
-
-- `unit`
-- `functional`
-- `acceptance`
-
-Tests can be executed by running
-
+  This will allow www-data to run kubectl and the python scripts inside the folder as the user you have selected.
+7. Inside the project folder change the following files according to the database and Docker registry configuration:
+  1. scheduler_files/configuration.json using the template found at scheduler_files/configuration-template.json and fill the appropriate details.
+  2. config/db.php and fill the details for the database (for details see the Yii2 documentation)
+  3. config/params.php and fill the following details according to your configuration (you can use params-template.php):
+8. Create a new namespace in Kubernetes for the Open MPI Cluster:
+```bash
+kubectl create namespace mpi-cluster
 ```
-vendor/bin/codecept run
-```
-
-The command above will execute unit and functional tests. Unit tests are testing the system components, while functional
-tests are for testing user interaction. Acceptance tests are disabled by default as they require additional setup since
-they perform testing in real browser. 
-
-
-### Running  acceptance tests
-
-To execute acceptance tests do the following:  
-
-1. Rename `tests/acceptance.suite.yml.example` to `tests/acceptance.suite.yml` to enable suite configuration
-
-2. Replace `codeception/base` package in `composer.json` with `codeception/codeception` to install full featured
-   version of Codeception
-
-3. Update dependencies with Composer 
-
-    ```
-    composer update  
-    ```
-
-4. Download [Selenium Server](http://www.seleniumhq.org/download/) and launch it:
-
-    ```
-    java -jar ~/selenium-server-standalone-x.xx.x.jar
-    ```
-
-    In case of using Selenium Server 3.0 with Firefox browser since v48 or Google Chrome since v53 you must download [GeckoDriver](https://github.com/mozilla/geckodriver/releases) or [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) and launch Selenium with it:
-
-    ```
-    # for Firefox
-    java -jar -Dwebdriver.gecko.driver=~/geckodriver ~/selenium-server-standalone-3.xx.x.jar
-    
-    # for Google Chrome
-    java -jar -Dwebdriver.chrome.driver=~/chromedriver ~/selenium-server-standalone-3.xx.x.jar
-    ``` 
-    
-    As an alternative way you can use already configured Docker container with older versions of Selenium and Firefox:
-    
-    ```
-    docker run --net=host selenium/standalone-firefox:2.53.0
-    ```
-
-5. (Optional) Create `yii2_basic_tests` database and update it by applying migrations if you have them.
-
-   ```
-   tests/bin/yii migrate
-   ```
-
-   The database configuration can be found at `config/test_db.php`.
-
-
-6. Start web server:
-
-    ```
-    tests/bin/yii serve
-    ```
-
-7. Now you can run all available tests
-
-   ```
-   # run all available tests
-   vendor/bin/codecept run
-
-   # run acceptance tests
-   vendor/bin/codecept run acceptance
-
-   # run only unit and functional tests
-   vendor/bin/codecept run unit,functional
-   ```
-
-### Code coverage support
-
-By default, code coverage is disabled in `codeception.yml` configuration file, you should uncomment needed rows to be able
-to collect code coverage. You can run your tests and collect coverage with the following command:
-
-```
-#collect coverage for all tests
-vendor/bin/codecept run -- --coverage-html --coverage-xml
-
-#collect coverage only for unit tests
-vendor/bin/codecept run unit -- --coverage-html --coverage-xml
-
-#collect coverage for unit and functional tests
-vendor/bin/codecept run functional,unit -- --coverage-html --coverage-xml
-```
-
-You can see code coverage output under the `tests/_output` directory.
