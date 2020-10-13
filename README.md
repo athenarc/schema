@@ -1,5 +1,5 @@
 # Scientific Containers on Heterogeneous Machines (SCHeMa)
-
+![Schema logo](https://raw.githubusercontent.com/athenarc/schema/master/web/img/logo.png?token=ADKZMICQFGW7UKAAWXAR7V27R3AUG)
 
 ## Prerequisites
 In order to install SCHeMa you need:
