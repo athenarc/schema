@@ -65,6 +65,7 @@ $projectAdd='<i class="fas fa-plus"></i>&nbsp;New project';
 
 $runIcon='<i class="fas fa-play"></i>';
 $editIcon='<i class="fas fa-edit"></i>';
+$visualizeIcon='<i class="fas fa-eye"></i>';
 $deleteIcon='';
 
 // if (!empty($projectsDropdown))
@@ -112,10 +113,10 @@ $deleteIcon='';
 	<div class=" table-responsive">
 		<table class="table table-striped">
 		<thead class="software-header">
-			<th class="col-md-4">Software Name</th>
+			<th class="col-md-3">Software Name</th>
 			<th class="col-md-2">Version</th>
 			<th class="col-md-3">Uploader</th>
-			<th class="col-md-3"></th>
+			<th class="col-md-4"></th>
 		</thead>
 		<tbody>
 	
@@ -153,9 +154,11 @@ foreach ($workflows as $name=>$uploader)
 {
 	foreach($uploader as $upl=>$versions)
 	{
+		
 		$uploaded_by=explode('@', $upl)[0];
 		reset($versions);
 		$first_key = key($versions);
+		$id=$nameversion_to_id[$name][$versions[$first_key]];
 		$visibility=explode('|',$first_key)[1];
 		$lockIcon=($visibility=='public') ? $publicIcon : $privateIcon;
 		// $image_location=$images[$name][$versions[$first_key]][1];
@@ -165,15 +168,17 @@ foreach ($workflows as $name=>$uploader)
 		// exit(0);
 		$indicatorList=$indicators[$name][$versions[$first_key]];
 		$runLink=Url::to(['workflow/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]);
+
+		$visualizeLink=Url::to(['workflow/visualize','name'=>$name, 'version'=>$versions[$first_key]]);
 		
 
 ?>
 		
 		<tr class="software-row-$name">
-			<td class="col-md-4 software-name-column"><div class="software-lock"><?=$lockIcon?></div><div class="software-name"><?=$name?></div><div class="software-description"><i class="fa fa-question-circle"></i></div><div class="indicators-div"><?=SoftwareIndicatorList::getIndicators($indicatorList)?></div></td>
-			<td class="col-md-2 software-versions"><?=Html::dropDownList('versions_drop_down',$versions[$first_key],$versions,['class'=>'versionsDropDown align-middle'])?></td>
+			<td class="software-name-column"><div class="software-lock"><?=$lockIcon?></div><div class="software-name"><?=$name?></div><div class="software-description"><i class="fa fa-question-circle"></i></div><div class="indicators-div"><?=SoftwareIndicatorList::getIndicators($indicatorList)?></div></td>
+			<td class="software-versions"><?=Html::dropDownList('versions_drop_down',$versions[$first_key],$versions,['class'=>'versionsDropDown align-middle'])?></td>
 			
-			<td class="col-md-3 software-image-uploader"><span class="align-middle"><?= $uploaded_by?></span></td>
+			<td class="software-image-uploader"><span class="align-middle"><?= $uploaded_by?></span></td>
 			
 
 <?php
@@ -188,7 +193,10 @@ foreach ($workflows as $name=>$uploader)
 		}
 
 ?> 
-			<td class="col-md-3 software-button-container $disabledClass"><?=SoftIndexButton::button('run',$runLink,$name)?>&nbsp;
+			<td class="software-button-container $disabledClass">
+				<?=Html::a(" <span style='color:white'> $visualizeIcon Visualize </span>",null, ['id'=>'software-instructions', 'data-toggle'=>'modal', 
+    												'data-target'=>"#vis$id", 'class'=>'btn btn-primary']);?>  &nbsp;
+				<?=SoftIndexButton::button('run',$runLink,$name)?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['workflow/edit-workflow','name'=>$name, 'version'=>$versions[$first_key]]),$name) : ''?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
 			</td>
@@ -265,3 +273,37 @@ foreach ($descriptions as $soft)
 	}
 ?>
 </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<?php
+foreach ($workflows as $name=>$uploader)
+{
+	foreach($uploader as $upl=>$versions)
+	{
+		
+		$first_key = key($versions);
+		$id=$nameversion_to_id[$name][$versions[$first_key]];
+		?>
+	    <div class="modal fade" id="vis<?=$id?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	      <div class="modal-dialog" role="document">
+	        <div class="modal-content" style="width:650px;">
+	          <div class="modal-header">
+	            <h5 class="modal-title text-center" id="exampleModalLabel">Workflow</h5>
+	          </div>
+	          <div class="modal-body">
+	          	<div class="row">
+	               <div class="col-md-12 text-center" style="padding-bottom: 10px;">
+	               	<?=empty($id_to_vis[$id]) ? "Workflow visualizaton not available" : Html::img("@web/img/workflows/$id_to_vis[$id]", ['width'=>'600px','height'=> '400px'])?>
+	               </div>
+	            </div>
+	            <div class="modal-footer">
+	            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
+	            </div>
+	       	 </div>
+	      	</div>
+	      </div>
+	    </div>
+<?php
+	}	
+}?>
