@@ -93,7 +93,16 @@ class WorkflowController extends Controller
          */
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
         $user=User::getCurrentUser()['username'];
-
+        //<img src="<?= Yii::$app->request->baseUrl ?">
+        $dirname = "/data/docker/workflows/GWAS-workflow/1.0/CWL/";
+        $image = glob($dirname."*.svg");
+        
+        // foreach($images as $image) {
+        //     echo '<img src="'.$image.'" /><br />';
+        // }
+       // print_r($images);
+       // exit(0);
+        
         if (!is_dir($userFolder))
         {
             exec("mkdir $userFolder");
@@ -119,6 +128,28 @@ class WorkflowController extends Controller
 
         $workflows=Workflow::getWorkflowNames($softUser);
 
+        $all_workflows=Workflow::find()->all();
+        $nameversion_to_id=[];
+        foreach ($all_workflows as $workflow) {
+            $nameversion_to_id[$workflow->name][$workflow->version]=$workflow->id;
+        }
+        $id_to_vis=[];
+        foreach ($all_workflows as $workflow) 
+        {
+            $id_to_vis[$workflow->id]=$workflow->visualize;
+        }
+
+        // $svg_file = file_get_contents('http://62.217.82.57/schema_test/web/img/workflows/workflow12.svg');
+        // $find_string   = '<svg';
+        // $position = strpos($svg_file, $find_string);
+        // $svg_file_new = substr($svg_file, $position);
+        // print_r($svg_file);
+        // exit(0);
+        // echo "<div style='width:100%; height:100%;' >" . $svg_file_new . "</div>";
+
+        
+
+
         // print_r($software);
         // exit(0);
         $descriptions=Workflow::getWorkflowDescriptions($softUser);
@@ -128,14 +159,27 @@ class WorkflowController extends Controller
                 
 
         return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-                                      'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators,
+                                      'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions, 'nameversion_to_id'=>$nameversion_to_id,
+                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis,
         ]);
     }
 
     /**
      * Action to run a docker image uploaded in the system
      */
+
+    public function actionVisualize($name, $version)
+    {
+        $workflow=Workflow::find()->where(['name'=>$name])->andWhere(['version'=>$version])->one();
+        $workflow_id=$workflow->id;
+        // print_r($workflow_id);
+        // exit(0);
+        return $this->redirect(['index','workflow_id'=>$workflow_id]);
+       
+
+    }
+
+
     public function actionRun($name, $version, $project)
     {
 
@@ -223,8 +267,11 @@ class WorkflowController extends Controller
             // print_r($folder);
             // exit(0);
             exec("chmod 777 $folder");
+
             
         }
+
+
 
         
 

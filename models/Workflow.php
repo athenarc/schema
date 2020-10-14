@@ -41,7 +41,7 @@ class Workflow extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['location', 'visibility', 'description', 'github_link', 'instructions'], 'string'],
+            [['location', 'visibility', 'description', 'github_link', 'instructions', 'visualize'], 'string'],
             [['has_example', 'covid19'], 'boolean'],
             [['name'], 'string', 'max' => 100],
             [['version'], 'string', 'max' => 80],
@@ -489,6 +489,7 @@ class Workflow extends \yii\db\ActiveRecord
             $uploader=$row['uploaded_by'];
             $visibility=$row['visibility'];
             
+            
             if (!isset($results[$name]))
             {
                 $results[$name]=[$uploader => [$version . '|' . $visibility =>$version]];
@@ -503,10 +504,14 @@ class Workflow extends \yii\db\ActiveRecord
                 else
                 {
                     $results[$name][$uploader]=[$version . '|' . $visibility=>$version];
-                }
+
                     
+                }
             }
-            // $results[$name][$uploader][$version[0]]=$visibility;
+            
+           
+            
+            
         }
         
         // print_r($results);
@@ -518,6 +523,7 @@ class Workflow extends \yii\db\ActiveRecord
         // return $rows;
     }
 
+    
     public static function getIndicators($softUser)
     {
         $query=new Query;
