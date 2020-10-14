@@ -96,9 +96,12 @@ class JobResourcesWidget
      * Run, Run example and Cancel buttons.
      */
     $classButtonHidden='';
-    if ($mountExistError)
+    if($type==1 and $type==2)
     {
+        if ($mountExistError)
+        {
         $classButtonHidden='hidden-element';
+        }
     }
 
     $play_icon='<i class="fas fa-play"></i>';
@@ -118,7 +121,7 @@ class JobResourcesWidget
     </div> -->
 
     <div class="row">
-        <div class="run-button-container col-md-offset-4 col-md-1" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn    btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?></div>
+        <div class="run-button-container col-md-offset-4 col-md-1" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?></div>
     <?php
 
     if(!empty($icontMount) || !empty($ocontMount) || !empty($iocontMount))
