@@ -17,11 +17,11 @@ $config = [
     'components' => [
         'assetManager'=>[
             'appendTimestamp'=>true,
-            'bundles' => [
-                'yii\bootstrap\BootstrapPluginAsset' => false,
-                'webvimark\extensions\DateRangePicker\DateRangePickerAsset'=>false,
-                
-            ],
+            'bundles' => false,
+                // [
+                // 'yii\bootstrap\BootstrapPluginAsset' => false,
+                // 'webvimark\extensions\DateRangePicker\DateRangePickerAsset'=>false,
+                // ],
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
