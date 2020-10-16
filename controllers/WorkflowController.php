@@ -29,6 +29,7 @@ use app\models\SoftwareInput;
 use app\models\Workflow;
 use app\models\WorkflowInput;
 use app\models\WorkflowUpload;
+use yii\helpers\BaseFileHelper;
 
 
 class WorkflowController extends Controller
@@ -91,6 +92,21 @@ class WorkflowController extends Controller
          * If the user-data folder for the current user does not exist, 
          * create one
          */
+  //       $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();
+  //       $workflowPath = explode('/',$workflow->location);
+		// $workflowFileCwl = end($workflowPath);
+  //       $workflowName=explode('.',$workflowFileCwl)[0];
+     
+      // $file=BaseFileHelper::copyDirectory("/data/docker/workflows_test/lukas1/20/CWL/", "/data/www/schema_test/web");
+    	//copy("/data/docker". $workflow->location, "/data/www/schema_test/web/". $workflowFileCwl);
+    	//chdir("/data/docker/workflows_test/lukas1/20/CWL/");
+    // 	print_r(getcwd());
+    // 	exit(0);
+  		// $command="cwltool --print-dot ". $workflowFileCwl. " | dot -Tsvg > $workflowName.svg";
+       // print_r($command);
+    	// exit(0);
+		// exec($command, $out, $ret);
+
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
         $user=User::getCurrentUser()['username'];
         //<img src="<?= Yii::$app->request->baseUrl ?">
@@ -614,6 +630,7 @@ class WorkflowController extends Controller
              * Get the files and fields
              */
             $model->workflowFile=UploadedFile::getInstance($model, 'workflowFile');
+            
             // print_r($model->workflowFile->extension);
             // exit(0);
             $model->dois=implode('|',$dois);
@@ -623,12 +640,10 @@ class WorkflowController extends Controller
 
             if ($model->validate())
             {
+
                 $messages=$model->upload();
-
-
-
-                $user=User::getCurrentUser()['username'];
-                $projectsDropdown=Software::getActiveProjects();
+                
+    			
                 $success=$messages[1];
                 $error=$messages[0];
                 $warning=$messages[2];
