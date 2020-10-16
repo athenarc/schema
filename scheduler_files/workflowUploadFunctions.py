@@ -304,8 +304,9 @@ def inputStoreList(workName, workVersion, inputs):
         optional=quoteEnclose(optional)
         separate=quoteEnclose(separate)
         enum_fields=quoteEnclose(enum_fields)
+        is_array=quoteEnclose(is_array)
 
-        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + ',' + enum_fields +'),'
+        query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + ',' + enum_fields+ ',' + is_array + '),'
 
     query=query[:-1]
     # print(query)
