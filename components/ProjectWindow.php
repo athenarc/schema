@@ -33,8 +33,7 @@ use app\models\Workflow;
 use yii\data\Pagination;
 
 
-
-Yii::$app->getView()->registerJs('@web/js/software/index.js', \yii\web\View::POS_READY);
+Yii::$app->getView()->registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
 
 class ProjectWindow
