@@ -5,7 +5,7 @@ use yii\helpers\Html;
 
 // Conflict between bootstrap-button.js and jQuery UI
 // https://github.com/twbs/bootstrap/issues/6094
-$this->registerJs('jQuery.fn.btn = jQuery.fn.button.noConflict();');
+// $this->registerJs('jQuery.fn.btn = jQuery.fn.button.noConflict();');
 echo Html::cssFile('@web/css/filebrowser/index.css');
 
 $this->title = Yii::t('app', 'Data Browser');
