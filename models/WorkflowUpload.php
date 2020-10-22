@@ -153,6 +153,17 @@ class WorkflowUpload extends \yii\db\ActiveRecord
 
         exec($command,$out,$ret);
 
+        $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();;
+        $workflow_id=$workflow->id;
+        $name="workflow" . $workflow_id;
+        $dir="/data/docker/".$workflow->location;
+        $working_dir=getcwd();
+        $command2="cwltool --print-dot ". $dir. " | dot -Tsvg > ". $working_dir . "/img/workflows/$name.svg";
+        exec($command2, $out2, $ret2);
+
+        $workflow->visualize="$name.svg";
+        $workflow->update();
+
 
         // print_r($out);
         // print_r("<br /><br />");

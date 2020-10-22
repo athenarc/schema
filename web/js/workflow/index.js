@@ -144,4 +144,17 @@ $(document).ready(function()
 		modal.modal();
 
 	});
+
+	$(".software-visualizations").click(function() { 
+
+		var grandparent=$(this).parent().parent();
+		var name=grandparent.children('.software-name-column').children('.software-name').html();
+		var version=grandparent.children('.software-versions').children('select').children('option:selected').html();
+
+		// var modal=$("#descr-modal-" + name + "-" + version.replace(/\./g, '\\\\.'));
+		var modal=$('#vis-modal-' + name + '-' + version.replace(/\./g, '\\.'));
+		//window.alert(modal.html());
+		modal.modal();
+
+	});
 })
