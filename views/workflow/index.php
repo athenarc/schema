@@ -14,6 +14,7 @@ use yii\captcha\Captcha;
 use app\components\SoftIndexButton;
 use webvimark\modules\UserManagement\models\User;
 use app\components\SoftDescrModal;
+use app\components\WorkflowVisualizeModal;
 use app\components\SoftwareIndicatorList;
 
 
@@ -194,8 +195,9 @@ foreach ($workflows as $name=>$uploader)
 
 ?> 
 			<td class="software-button-container $disabledClass">
-				<?=Html::a(" <span style='color:white'> $visualizeIcon Visualize </span>",null, ['id'=>'software-instructions', 'data-toggle'=>'modal', 
-    												'data-target'=>"#vis$id", 'class'=>'btn btn-primary']);?>  &nbsp;
+				<span class="software-visualizations">
+				 <?=Html::a(" <span style='color:white'> $visualizeIcon Visualize </span>",null, ['id'=>'software-instructions', 'class'=>'btn btn-primary']);?> 
+    												&nbsp;</span>
 				<?=SoftIndexButton::button('run',$runLink,$name)?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['workflow/edit-workflow','name'=>$name, 'version'=>$versions[$first_key]]),$name) : ''?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
@@ -226,6 +228,11 @@ if (!empty($workflows))
 foreach ($descriptions as $soft)
 {
 	SoftDescrModal::addModal($soft['name'], $soft['version'], $soft['description']);
+}
+
+foreach ($visualizations as $soft)
+{
+	WorkflowVisualizeModal::addModal($soft['name'], $soft['version'], $soft['visualize']);
 }
 
 ?>
@@ -274,36 +281,4 @@ foreach ($descriptions as $soft)
 ?>
 </div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<?php
-foreach ($workflows as $name=>$uploader)
-{
-	foreach($uploader as $upl=>$versions)
-	{
-		
-		$first_key = key($versions);
-		$id=$nameversion_to_id[$name][$versions[$first_key]];
-		?>
-	    <div class="modal fade" id="vis<?=$id?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	      <div class="modal-dialog" role="document">
-	        <div class="modal-content" style="width:650px;">
-	          <div class="modal-header">
-	            <h5 class="modal-title text-center" id="exampleModalLabel">Workflow</h5>
-	          </div>
-	          <div class="modal-body">
-	          	<div class="row">
-	               <div class="col-md-12 text-center" style="padding-bottom: 10px;">
-	               	<?=empty($id_to_vis[$id]) ? "Workflow visualizaton not available" : Html::img("@web/img/workflows/$id_to_vis[$id]", ['width'=>'600px','height'=> '400px'])?>
-	               </div>
-	            </div>
-	            <div class="modal-footer">
-	            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
-	            </div>
-	       	 </div>
-	      	</div>
-	      </div>
-	    </div>
-<?php
-	}	
-}?>
+

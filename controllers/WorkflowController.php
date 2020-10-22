@@ -92,32 +92,15 @@ class WorkflowController extends Controller
          * If the user-data folder for the current user does not exist, 
          * create one
          */
-  //       $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();
-  //       $workflowPath = explode('/',$workflow->location);
-		// $workflowFileCwl = end($workflowPath);
-  //       $workflowName=explode('.',$workflowFileCwl)[0];
-     
-      // $file=BaseFileHelper::copyDirectory("/data/docker/workflows_test/lukas1/20/CWL/", "/data/www/schema_test/web");
-    	//copy("/data/docker". $workflow->location, "/data/www/schema_test/web/". $workflowFileCwl);
-    	//chdir("/data/docker/workflows_test/lukas1/20/CWL/");
-    // 	print_r(getcwd());
-    // 	exit(0);
-  		// $command="cwltool --print-dot ". $workflowFileCwl. " | dot -Tsvg > $workflowName.svg";
-       // print_r($command);
-    	// exit(0);
-		// exec($command, $out, $ret);
+         
+		 // $working_dir=getcwd();
+		 // print_r($working_dir);
+		 // exit(0);
+		
 
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
         $user=User::getCurrentUser()['username'];
-        //<img src="<?= Yii::$app->request->baseUrl ?">
-        $dirname = "/data/docker/workflows/GWAS-workflow/1.0/CWL/";
-        $image = glob($dirname."*.svg");
         
-        // foreach($images as $image) {
-        //     echo '<img src="'.$image.'" /><br />';
-        // }
-       // print_r($images);
-       // exit(0);
         
         if (!is_dir($userFolder))
         {
@@ -155,28 +138,19 @@ class WorkflowController extends Controller
             $id_to_vis[$workflow->id]=$workflow->visualize;
         }
 
-        // $svg_file = file_get_contents('http://62.217.82.57/schema_test/web/img/workflows/workflow12.svg');
-        // $find_string   = '<svg';
-        // $position = strpos($svg_file, $find_string);
-        // $svg_file_new = substr($svg_file, $position);
-        // print_r($svg_file);
-        // exit(0);
-        // echo "<div style='width:100%; height:100%;' >" . $svg_file_new . "</div>";
+       // print_r($nameversion_to_id);
+       // exit(0);
 
-        
-
-
-        // print_r($software);
-        // exit(0);
-        $descriptions=Workflow::getWorkflowDescriptions($softUser);
-        $projectsDropdown=Software::getActiveProjects();
-        $indicators=Workflow::getIndicators($softUser);
+       $descriptions=Workflow::getWorkflowDescriptions($softUser);
+       $visualizations=Workflow::getWorkflowVisualizations($softUser);
+       $projectsDropdown=Software::getActiveProjects();
+       $indicators=Workflow::getIndicators($softUser);
         
                 
 
         return $this->render('index',['workflows' => $workflows, 'user'=> $user,
                                       'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions, 'nameversion_to_id'=>$nameversion_to_id,
-                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis,
+                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis, 'visualizations'=>$visualizations,
         ]);
     }
 
@@ -191,6 +165,7 @@ class WorkflowController extends Controller
     {
 
         $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
+        $visualize=$workflow->visualize;
         if (empty($workflow))
         {
             return $this->render('no_software',['name'=>$name,'version'=>$version]);
@@ -556,7 +531,7 @@ class WorkflowController extends Controller
             'errors'=>$errors, 'runErrors'=>$runError,'fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$user,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas, 'workflow_instructions'=>$workflow_instructions,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'type'=>$type, 'visualize'=>$visualize]);
     }
 
     /*

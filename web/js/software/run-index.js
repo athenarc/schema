@@ -269,4 +269,14 @@ $(document).ready(function() {
 		//window.alert(project);
 		});
 
+	$(".instructions").click(function() { 
+
+		var name=$('.name').html();
+		var version=$('.version').html();
+		var modal=$('#instructions-modal-' + name + '-' + version.replace(/\./g, '\\.'));
+		//window.alert(modal);
+		modal.modal();
+
+	});
+
 });
