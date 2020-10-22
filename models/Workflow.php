@@ -451,7 +451,8 @@ class Workflow extends \yii\db\ActiveRecord
             $name=$row['name'];
             $version=$row['version'];
             $description=$row['description'];
-            $results[]=['name'=>$name, 'version'=>$version, 'description'=>$description];
+            
+            $results[]=['name'=>$name, 'version'=>$version, 'description'=>$description,];
             // $results[$name][$uploader][$version[0]]=$visibility;
         }
         
@@ -462,6 +463,40 @@ class Workflow extends \yii\db\ActiveRecord
         return $results;
 
         // return $rows;
+    }
+
+    public static function getWorkflowVisualizations($softUser)
+    {
+        $query=new Query;
+
+        $query->select('name,version,visualize')
+              ->from('workflow')
+              ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
+        if ($softUser!='admin')
+        {
+            $query->where(['visibility'=>'public'])
+                  ->orWhere(['and',['visibility'=>'private','uploaded_by'=>$softUser]]);
+        }
+        // echo $query->createCommand()->getRawSql();
+        // exit(0);
+
+        $rows=$query->all();
+        $results=[];
+        foreach ($rows as $row)
+        {
+            $name=$row['name'];
+            $version=$row['version'];
+            $visualize=$row['visualize'];
+            $results[]=['name'=>$name, 'version'=>$version, 'visualize'=>$visualize];
+            // $results[$name][$uploader][$version[0]]=$visibility;
+        }
+        
+        
+
+        
+        return $results;
+
+       
     }
 
     public static function getWorkflowNames($softUser)

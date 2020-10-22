@@ -196,4 +196,25 @@ $(document).ready(function() {
 		field.trigger("change");
 	});
 
+	$(".software-visualizations").click(function() { 
+
+		//var grandparent=$(this).parent().parent();
+		//window.alert(grandparent);
+		var name=$('.name').html();
+		var version=$('.version').html();
+		var modal=$('#vis-modal-' + name + '-' + version.replace(/\./g, '\\.'));
+		//window.alert(modal);
+		modal.modal();
+
+	});
+	$(".instructions").click(function() { 
+
+		var name=$('.name').html();
+		var version=$('.version').html();
+		var modal=$('#instructions-modal-' + name + '-' + version.replace(/\./g, '\\.'));
+		//window.alert(modal);
+		modal.modal();
+
+	});
+
 });
