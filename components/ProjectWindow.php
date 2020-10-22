@@ -44,6 +44,7 @@ class ProjectWindow
 
 
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
+        $user=User::getCurrentUser()['username'];
         
         if ($superadmin==1)
         {
@@ -65,7 +66,10 @@ class ProjectWindow
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         $projectsDropdownSession=Software::getActiveProjects();
-         
+        // print_r($_SESSION);
+        // exit(0);
+
+
         $remaining_jobs_array=[];
         foreach ($projectsDropdownSession as $project) 
         {
@@ -77,10 +81,7 @@ class ProjectWindow
               
         }
 
-        
-    	
 
-        
 
         if (!empty($projectsDropdownSession))
         {
@@ -108,6 +109,12 @@ class ProjectWindow
             $dropdownLabel='No active projects available.';
             $project_selected='';
             $project_name='';
+            /*
+             * Kostis says: If the user has no active project, 
+             * then set the session variable to empty string, 
+             * otherwise you have a problem.
+             */
+            $_SESSION['selected_project']='';
         }
         //registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
         echo Html::cssFile('@web/css/software/index.css');
@@ -120,7 +127,7 @@ class ProjectWindow
 
         if (!empty($projectsDropdownSession))
         {
-        echo    Html::dropDownList('dropdown', $_SESSION['selected_project'], $projectsDropdownSession, 
+            echo    Html::dropDownList('dropdown', $_SESSION['selected_project'], $projectsDropdownSession, 
             ['class'=>'project-dropdown']); 
         }
         echo "</div>";

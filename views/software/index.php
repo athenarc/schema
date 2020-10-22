@@ -177,9 +177,14 @@ foreach ($software as $name=>$uploader)
 		{
 			$disabledClass='';
 		}
+		/*
+		 * Kostis fixed the following:
+		 * if the user has no active projects,
+		 * they should not be allowed to run.
+		 */
 
 ?> 
-			<td class="col-md-3 software-button-container $disabledClass"><?=SoftIndexButton::button('run',$runLink,$name)?>&nbsp;
+			<td class="col-md-3 software-button-container $disabledClass"><?=(!empty($_SESSION['selected_project'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['software/edit-software','name'=>$name, 'version'=>$versions[$first_key]]),$name,'software') : ''?>&nbsp;
 				 <?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
 			</td>
