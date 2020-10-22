@@ -96,7 +96,7 @@ class FilebrowserController extends Controller
         }
 
         exec("chmod 777 $userFolder -R 2>&1",$out,$ret);
-        // print_r($out);
+         //print_r($out);
         // exit(0);
 
         return $this->render('index',['connectorRoute' => 'connector','messages'=>[]]);

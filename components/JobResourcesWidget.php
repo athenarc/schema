@@ -105,7 +105,7 @@ class JobResourcesWidget
     }
 
     $play_icon='<i class="fas fa-play"></i>';
-
+    $visualize_icon='<i class="fas fa-eye"></i>';
     $instructions_icon='<i class="fa fa-file aria-hidden="true" style="color:white"></i>';
 
 
@@ -121,8 +121,21 @@ class JobResourcesWidget
     </div> -->
 
     <div class="row">
-        <div class="run-button-container col-md-offset-4 col-md-1" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?></div>
     <?php
+    if($mountExistError==1)
+    {?>
+
+        <div class="run-button-container col-md-4" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?>
+        </div>
+    <?php
+    }
+    else
+    {?>
+        <div class="run-button-container col-md-5" style="text-align: right;"><?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn btn-success btn-md $classButtonHidden",'disabled'=>($commandsDisabled)])?>
+        </div>
+    <?php    
+    }    
+    
 
     if(!empty($icontMount) || !empty($ocontMount) || !empty($iocontMount))
     {
@@ -132,6 +145,14 @@ class JobResourcesWidget
         <div class="run-button-container col-md-2" style="text-align: center;"><?=Html::a("$play_icon Run example",'javascript:void(0);',['id'=>'software-run-example-button', 'class'=>"btn btn-success btn-md",'disabled'=>((!$hasExample) || $commandsDisabled)])?></div>
         <div class="instructions col-md-1" style="margin-right: 55px; padding-left: 10px;"><?=Html::a("$instructions_icon <span style='color:white'>Instructions</span>",null,['id'=>'software-instructions', 'data-toggle'=>'modal', 
     												'data-target'=>"#per", 'class'=>'btn btn-secondary btn-md instructions-modal'])?></div>
+        <?php
+        if($mountExistError==1)
+        {?>
+            <div class="software-visualizations col-md-1" style="margin-right: 55px; padding-left: 10px;"><?=Html::a("<span style='color:white'>$visualize_icon Visualize</span>",null,['id'=>'software-instructions', 'class'=>'btn btn-primary btn-md'])?></div>
+        <?php
+        }
+
+        ?>
 
 
     <?php
@@ -166,39 +187,16 @@ class JobResourcesWidget
         }
     }
     $cancel_icon='<i class="fas fa-times"></i>';
+
     ?>
 
 		<div class="cancel-button-container col-md-1"><?=Html::a("$cancel_icon Cancel ",'javascript:void(0);',['id'=>'software-cancel-button', 'class'=>'btn btn-danger'])?></div>
     </div>
 
 
-
-
-    <!-- </div>
-
-
-    </div> -->
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
-    <div class="modal fade" id="per" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content" style="width:450px;">
-          <div class="modal-header">
-            <h5 class="modal-title text-center" id="exampleModalLabel">Instructions</h5>
-          </div>
-          <div class="modal-body">
-          	<div class="row">
-               <div class="col-md-12 text-center" style="padding-bottom: 10px;"><?=empty($software_instructions)?'Instructions not available': $software_instructions ?></div>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
-            </div>
-       	 </div>
-      	</div>
-      </div>
-    </div>
 <?php
   }
-}?>
+}
+
+
+?>

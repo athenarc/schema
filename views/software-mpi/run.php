@@ -9,6 +9,7 @@ use yii\bootstrap\Form;
 use yii\bootstrap\Button;
 use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
+use app\components\InstructionsModal;
 
 
 
@@ -162,26 +163,11 @@ if (!empty($runErrors))
 
 </div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
-<div class="modal fade" id="per" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content" style="width:450px;">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Instructions</h5>
-      </div>
-      <div class="modal-body">
-      	<div class="row">
-           <div class="col-md-12 text-center" style="padding-bottom: 10px;"><?=$software_instructions?></div>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
-        </div>
-   	 </div>
-  	</div>
-  </div>
-</div>
+<div class="name hidden"><?=$name?></div>
+<div class="version hidden"><?=$version?></div>
+<?php
+InstructionsModal::addModal($name, $version, $software_instructions);
+?>
 
 
 

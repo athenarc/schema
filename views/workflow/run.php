@@ -11,10 +11,19 @@ use yii\bootstrap\Button;
 use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
 use yii\bootstrap4\Modal;
+use app\components\WorkflowVisualizeModal;
+use app\components\InstructionsModal;
 
 
 echo Html::CssFile('@web/css/workflow/run.css');
 $this->registerJsFile('@web/js/workflow/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
+
+
+
+
+  
+
+  
 
 
 $title = "Workflow ($name v.$version) ";
@@ -45,6 +54,12 @@ $back_icon='<i class="fas fa-arrow-left"></i>';
 $clear_file_icon='<i class="fas fa-times"></i>';
 $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
 ?>
+
+<style>
+.modal-backdrop {
+     background-color: rgba(0,0,0,0.5) !important;
+}
+</style>
 
 
 <div class='title row'>
@@ -143,17 +158,22 @@ if (!empty($runErrors))
 		echo $this->registerJsFile('@web/js/workflow/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 	}
 
+
+
 ?>
 
 </div>
-
-
-
-
-
 </div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<div class="name hidden"><?=$name?></div>
+<div class="version hidden"><?=$version?></div>
+<?php
+WorkflowVisualizeModal::addModal($name, $version, $visualize);
+InstructionsModal::addModal($name, $version, $software_instructions);
+?>
+
+
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 <div class="modal fade" id="per" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -172,4 +192,9 @@ if (!empty($runErrors))
    	 </div>
   	</div>
   </div>
-</div>
+</div> -->
+
+
+
+
+

@@ -11,6 +11,7 @@ use yii\bootstrap\Button;
 use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
 use yii\bootstrap4\Modal;
+use app\components\InstructionsModal;
 
 echo Html::CssFile('@web/css/software/run.css');
 //Yii::$app->getView()->
@@ -75,7 +76,9 @@ JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $
             $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder='', $type);   
 
 
-ActiveForm::end();  
+ActiveForm::end();
+
+
 ?>
 
 
@@ -116,6 +119,11 @@ ActiveForm::end();
 	</div>
 </div>    
 
+<div class="name hidden"><?=$name?></div>
+<div class="version hidden"><?=$version?></div>
+<?php
+InstructionsModal::addModal($name, $version, $software_instructions);
+?>
 
 
 
