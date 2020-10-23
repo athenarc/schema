@@ -88,7 +88,10 @@ class ProjectWindow
             $key=array_key_first($projectsDropdownSession);
             $project_selected=(empty($selected_project) || !isset($projectsDropdownSession[$selected_project]) ) ? $projectsDropdownSession[$key] : $selected_project;
 
-
+            if(!empty($_GET['selected_project']))
+            {
+                $_SESSION['selected_project']=$_GET['selected_project'];
+            }
             if(!isset($_SESSION['selected_project'])) 
             { 
                 
