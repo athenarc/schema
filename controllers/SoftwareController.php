@@ -128,49 +128,15 @@ class SoftwareController extends Controller
         // exit(0);
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
-        $projectsDropdown=Software::getActiveProjects();
-        // print_r($projectsDropdown);
-        // exit(0);
-        $remaining_jobs_array=[];
-        foreach ($projectsDropdown as $project) 
-        {
-              $project_name=trim(explode('(',$project)[0]);
-              $remaining=trim(explode(' ',$project)[1]);
-              $remaining_jobs=trim(explode('(', $remaining)[1]);
-              $projectsDropdown[$project_name]=$project_name;
-              $remaining_jobs_array["$project_name"]=$remaining_jobs;
-              
-        }
-
-        if (!empty($projectsDropdown))
-        {
-            $key=array_key_first($projectsDropdown);
-            $project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
-          //    print_r($project_selected);
-             // exit(0);
-            $project_name=' ';
-            $project_name=trim(explode('(',$project_selected)[0]);
-            $dropdownLabel='Working project:';
-            //$remaining_jobs=0;
-            
-        }
-        else
-        {
-            $dropdownLabel='No active projects available.';
-            $project_selected='';
-            $project_name='';
-        }
-
-
         
         $indicators=Software::getIndicators($softUser);
         
                 
 
         return $this->render('index',['software' => $software, 'user'=> $user,
-                                      'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators,
-                                      'images'=>$images, 'remaining_jobs_array'=>$remaining_jobs_array]);
+                                      'superadmin' => $superadmin,'descriptions'=>$descriptions,
+                                      'success'=>'','warning'=>'','error' =>'','indicators'=>$indicators,
+                                      'images'=>$images]);
     }
 
     /**
