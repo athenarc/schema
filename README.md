@@ -98,9 +98,9 @@ workflowsNfsAddress: "<local NFS address>"
 ## Installing SCHeMa
 
 1. Install the Yii2 framework([tutorial](https://www.yiiframework.com/doc/guide/2.0/en/start-installation)) and install the following plugins:
-  1. [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
-  2. [DatePicker](https://demos.krajee.com/widget-details/datepicker)
-  3. [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
+  * [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
+  * [DatePicker](https://demos.krajee.com/widget-details/datepicker)
+  * [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
 
 2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
 
@@ -125,9 +125,9 @@ www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_sc
   This will allow www-data to run kubectl and the python scripts inside the folder as the user you have selected.
 
 7. Inside the project folder change the following files according to the database and Docker registry configuration:
-  1. scheduler_files/configuration.json using the template found at scheduler_files/configuration-template.json and fill the appropriate details.
-  2. config/db.php and fill the details for the database (for details see the Yii2 documentation)
-  3. config/params.php and fill the following details according to your configuration (you can use params-template.php):
+  * scheduler_files/configuration.json using the template found at scheduler_files/configuration-template.json and fill the appropriate details.
+  * config/db.php and fill the details for the database (for details see the Yii2 documentation)
+  * config/params.php and fill the following details according to your configuration (you can use params-template.php):
 
 8. Create a new namespace in Kubernetes for the Open MPI Cluster:
 ```bash
