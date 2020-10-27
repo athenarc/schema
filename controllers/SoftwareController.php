@@ -180,7 +180,7 @@ class SoftwareController extends Controller
         // $name=$_GET['name'];
         // $version=$_GET['version'];
         // $project=$_GET['project'];
-        $projects=Software::getActiveProjects();
+        $projects=(Yii::$app->params['standalone']==false) ? Software::getActiveProjects() : [];
 
         if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
         {
@@ -690,7 +690,6 @@ class SoftwareController extends Controller
              */
             $messages=$model->upload();
             $user=User::getCurrentUser()['username'];
-            $projectsDropdown=Software::getActiveProjects();
 
 
             /**
@@ -806,7 +805,6 @@ class SoftwareController extends Controller
              */
             $messages=$model->upload();
             $user=User::getCurrentUser()['username'];
-            $projectsDropdown=Software::getActiveProjects();
 
 
             /**
@@ -939,7 +937,6 @@ class SoftwareController extends Controller
 
             $user=User::getCurrentUser()['username'];
 
-            $projectsDropdown=Software::getActiveProjects();
             /**
             * Is the user SuperAdmin?
             */
@@ -1025,7 +1022,6 @@ class SoftwareController extends Controller
 
 
         // $user=User::getCurrentUser()['username'];
-        $projectsDropdown=Software::getActiveProjects();
 
 
         /**
@@ -1640,7 +1636,6 @@ class SoftwareController extends Controller
                     $user=$username;
                 }
                 
-                $projectsDropdown=Software::getActiveProjects();
                 $software=Software::getSoftwareNames($user);
                 $descriptions=Software::getSoftwareDescriptions($user);
                 $images=Software::getOriginalImages($user);
