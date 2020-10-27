@@ -177,7 +177,7 @@ class WorkflowController extends Controller
         // $name=$_GET['name'];
         // $version=$_GET['version'];
         // $project=$_GET['project'];
-        $projects=Software::getActiveProjects();
+        $projects=(Yii::$app->params['standalone']==false) ? Software::getActiveProjects() : [];
 
         if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
         {
@@ -636,36 +636,6 @@ class WorkflowController extends Controller
                 
                 return $this->redirect(['/workflow/index']);
 
-               //  /**
-               //   * Is the user SuperAdmin?
-               //   */
-               //  $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
-            
-               //  if ($superadmin==1)
-               //  {
-               //      $softUser='admin';
-               //  }
-               //  else
-               //  {
-               //      $softUser=$user;
-               //  }
-               // /**
-               //   * Get the list of software
-               //   */
-               //  $workflows=Workflow::getWorkflowNames($softUser);
-
-               //  // print_r($software);
-               //  // exit(0);
-               //  $descriptions=Workflow::getWorkflowDescriptions($softUser);
-               //  $projectsDropdown=Software::getActiveProjects();
-               //  $indicators=Workflow::getIndicators($softUser);
-                
-                        
-
-               //  return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-               //                                'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-               //                                'success'=>$success,'warning'=>$warning,'error' =>$error,'indicators'=>$indicators,
-               //  ]);
             }
                 
 
@@ -762,41 +732,6 @@ class WorkflowController extends Controller
             
             return $this->redirect(['/workflow/index']);
 
-            // $user=User::getCurrentUser()['username'];
-
-            // $projectsDropdown=Software::getActiveProjects();
-            // /**
-            // * Is the user SuperAdmin?
-            // */
-            // $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
-        
-            // if ($superadmin==1)
-            // {
-            //     $softUser='admin';
-            // }
-            // else
-            // {
-            //     $softUser=$user;
-            // }
-            // /**
-            //  * Get the list of software
-            //  */
-
-            // $workflows=Workflow::getWorkflowNames($softUser);
-
-            // // print_r($software);
-            // // exit(0);
-            // $descriptions=Workflow::getWorkflowDescriptions($softUser);
-            // $projectsDropdown=Software::getActiveProjects();
-            // $indicators=Workflow::getIndicators($softUser);
-            
-                    
-
-            // return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-            //                               'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-            //                               'success'=>$success,'warning'=>'','error' =>'','indicators'=>$indicators,
-            // ]);
-
 
         }
 
@@ -843,37 +778,7 @@ class WorkflowController extends Controller
             }
             
             return $this->redirect(['/workflow/index']);
-            // $projectsDropdown=Software::getActiveProjects();
-            // /**
-            //  * Is the user SuperAdmin?
-            //  */
-                    
             
-            // if ($superadmin==1)
-            // {
-            //     $softUser='admin';
-            // }
-            // else
-            // {
-            //     $softUser=$user;
-            // }
-            // /**
-            //  * Get the list of software
-            //  */
-            // $workflows=Workflow::getWorkflowNames($softUser);
-
-            // // print_r($software);
-            // // exit(0);
-            // $descriptions=Workflow::getWorkflowDescriptions($softUser);
-            // $projectsDropdown=Software::getActiveProjects();
-            // $indicators=Workflow::getIndicators($softUser);
-            
-                    
-
-            // return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-            //                               'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-            //                               'success'=>$success,'warning'=>'','error' =>$error,'indicators'=>$indicators,
-            // ]);
         }
 
         $og_folder=Yii::$app->params['workflowsFolder'] . '/' . $workflow->name . '/' . $workflow->version;
@@ -906,38 +811,7 @@ class WorkflowController extends Controller
 
         Yii::$app->session->setFlash('success', "$success");
         return $this->redirect(['/workflow/index']);
-        // $user=User::getCurrentUser()['username'];
-        // $projectsDropdown=Software::getActiveProjects();
-        // /**
-        //  * Is the user SuperAdmin?
-        //  */
-                
         
-        // if ($superadmin==1)
-        // {
-        //     $softUser='admin';
-        // }
-        // else
-        // {
-        //     $softUser=$user;
-        // }
-        // /**
-        //  * Get the list of software
-        //  */
-        // $workflows=Workflow::getWorkflowNames($softUser);
-
-        // // print_r($software);
-        // // exit(0);
-        // $descriptions=Workflow::getWorkflowDescriptions($softUser);
-        // $projectsDropdown=Software::getActiveProjects();
-        // $indicators=Workflow::getIndicators($softUser);
-        
-                
-
-        // return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-        //                               'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-        //                               'success'=>$success,'warning'=>'','error' =>'','indicators'=>$indicators,
-        //]);
     }
 
     public function actionSelectOutput()
@@ -1493,37 +1367,7 @@ class WorkflowController extends Controller
                 }
                 
                 return $this->redirect(['/workflow/index']);
-                /**
-                 * Is the user SuperAdmin?
-                 */
-                // $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
                 
-                // if ($superadmin==1)
-                // {
-                //     $softUser='admin';
-                // }
-                // else
-                // {
-                //     $softUser=$user;
-                // }
-                // /**
-                //  * Get the list of software
-                //  */
-
-                // $workflows=Workflow::getWorkflowNames($softUser);
-
-                // // print_r($software);
-                // // exit(0);
-                // $descriptions=Workflow::getWorkflowDescriptions($softUser);
-                // $projectsDropdown=Software::getActiveProjects();
-                // $indicators=Workflow::getIndicators($softUser);
-                
-                        
-
-                // return $this->render('index',['workflows' => $workflows, 'user'=> $user,
-                //                               'superadmin' => $superadmin, 'projectsDropdown'=>$projectsDropdown,'descriptions'=>$descriptions,
-                //                               'success'=>$success,'warning'=>'','error' =>'','selected_project'=>'','indicators'=>$indicators,
-                // ]);
             }
 
         }
