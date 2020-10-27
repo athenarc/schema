@@ -703,7 +703,8 @@ CREATE TABLE public.workflow (
     covid19 boolean DEFAULT false,
     github_link text,
     original_file text,
-    instructions text
+    instructions text,
+    visualize text
 );
 
 
