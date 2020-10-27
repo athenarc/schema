@@ -100,6 +100,7 @@ workflowsNfsAddress: "<local NFS address>"
 1. Install the Yii2 framework([tutorial](https://www.yiiframework.com/doc/guide/2.0/en/start-installation)) and install the following plugins:
   1. [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
   2. [DatePicker](https://demos.krajee.com/widget-details/datepicker)
+  3. [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
 2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
 3. Create a postgres database named "schema" for user "schema".
 4. Restore the .sql file inside the "database_schema" folder as user "postgres" to the database created in the previous step:
