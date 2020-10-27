@@ -101,12 +101,17 @@ workflowsNfsAddress: "<local NFS address>"
   1. [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
   2. [DatePicker](https://demos.krajee.com/widget-details/datepicker)
   3. [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
+
 2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
+
 3. Create a postgres database named "schema" for user "schema".
+
 4. Restore the .sql file inside the "database_schema" folder as user "postgres" to the database created in the previous step:
   ```sudo -u postgres psql -d schema -f <path_to_database_schema>/database_schema.sql```
+
 5. Copy the docker registry certificates in the project_root/scheduler_files/certificates:
 ```cp <registry_data_directory>/certs/* <path_to_schema_project>/scheduler_files/certificates```
+
 6. Using root permissions create an empty file inside /etc/sudoers.d/ with ```visudo``` and paste the following inside it after filling the relevant information:
 ```bash
 www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_schema_project>/scheduler_files/scheduler.py, <path_to_schema_project>/scheduler_files/ontology/initialClassify.py, <path_to_schema_project>/scheduler_files/imageUploader.py, <path_to_schema_project>/scheduler_files/imageRemover.py, <path_to_schema_project>/scheduler_files/inputReplacer.py, <path_to_schema_project>/scheduler_files/probe_stats.py, <path_to_schema_project>/scheduler_files/setupMpiCluster.py, <path_to_schema_project>/scheduler_files/mpiMonitorAndClean.py, <path_to_schema_project>/scheduler_files/existingImageUploader.py, <path_to_schema_project>/scheduler_files/workflowMonitorAndClean.py, <path_to_schema_project>/scheduler_files/workflowUploader.py
@@ -118,10 +123,12 @@ www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_sc
 ```
 
   This will allow www-data to run kubectl and the python scripts inside the folder as the user you have selected.
+
 7. Inside the project folder change the following files according to the database and Docker registry configuration:
   1. scheduler_files/configuration.json using the template found at scheduler_files/configuration-template.json and fill the appropriate details.
   2. config/db.php and fill the details for the database (for details see the Yii2 documentation)
   3. config/params.php and fill the following details according to your configuration (you can use params-template.php):
+
 8. Create a new namespace in Kubernetes for the Open MPI Cluster:
 ```bash
 kubectl create namespace mpi-cluster
