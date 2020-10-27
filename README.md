@@ -101,6 +101,8 @@ workflowsNfsAddress: "<local NFS address>"
   * [Webvimark User management](https://github.com/webvimark/user-management) without migrating the database.
   * [DatePicker](https://demos.krajee.com/widget-details/datepicker)
   * [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
+  * [Yii http requests](https://github.com/yiisoft/yii2-httpclient)
+  * [elFinder](https://github.com/alexantr/yii2-elfinder)
 
 2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
 
