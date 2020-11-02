@@ -17,8 +17,7 @@ use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
 use yii\bootstrap4\Modal;
 
-// echo Html::CssFile('@web/css/software/run.css');
-// Yii::$app->getView()->registerJs('@web/js/software/run-index.js', \yii\web\View::POS_READY);
+
 
 
 class JobResourcesWidget
