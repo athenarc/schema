@@ -256,7 +256,16 @@ class Workflow extends \yii\db\ActiveRecord
             $error='An unexpected error occurred. Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
-
+        else if ($statusCode==500)
+        {
+            $error='Error 500. Please contact an administrator';
+            return ['jobid'=>'','error'=>$error];
+        }
+        else if ($statusCode==502)
+        {
+            $error='Error 502. Please contact an administrator';
+            return ['jobid'=>'','error'=>$error];
+        }
         /*
          * Save the outFolder field without the user data path in the database
          */
@@ -357,6 +366,11 @@ class Workflow extends \yii\db\ActiveRecord
             $error='An unexpected error occurred. Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
+        else if ($statusCode==502)
+        {
+            $error='An unexpected error occurred. Please contact an administrator';
+            return ['jobid'=>'','error'=>$error];
+        }
 
         $data=$response->data;
         $outputs=$data['outputs'];
@@ -392,6 +406,8 @@ class Workflow extends \yii\db\ActiveRecord
         
         $logs=[];
         $i=1;
+        // print_r($taskLogs);
+        // exit(0);
         foreach ($taskLogs as $index=>$log)
         {
             // print_r($status);
@@ -422,7 +438,7 @@ class Workflow extends \yii\db\ActiveRecord
         //     print_r($value);
         //     print_r("<br /><br /><br /><br />");
         // }
-        // print_r($logs);
+        // print_r([$time,$status,$logs]);
         // exit(0);
         return [$time,$status,$logs];
 
