@@ -52,6 +52,10 @@ use yii\helpers\Html;
 	<?php
 	foreach ($taskLogs as $log)
 	{
+		if (empty($log))
+		{
+			continue;
+		}
 	?>
 	<div class="row">
 		<div class=col-md-1>Step <?=$log['step']?>: </div>
