@@ -55,6 +55,11 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <div class="wrap background-image">
     <?php
 
+    if (!isset($_SESSION['selected_project']))
+    {
+        $_SESSION['selected_project']='';
+    }
+
     if (Yii::$app->user->getIsGuest() == false)
     {
         SupportWindow::show(Yii::$app->request->absoluteUrl);
@@ -64,10 +69,6 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         if (Yii::$app->params['standalone']==false)
         {
             ProjectWindow::show(Yii::$app->request->absoluteUrl);
-        }
-        else
-        {
-            $_SESSION['selected_project']='';
         }
         
     }
