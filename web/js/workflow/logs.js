@@ -141,6 +141,12 @@ $(document).ready(function()
                         $(".clear-file-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
+                        $(".select-folder-btn").each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        $(".fill-array-field-btn").each(function(){
+                            $(this).removeAttr('disabled');
+                        });
                         $(".btn-default-values").each(function(){
                             $(this).removeAttr('disabled');
                         });

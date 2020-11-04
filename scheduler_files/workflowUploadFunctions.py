@@ -126,6 +126,8 @@ def inputStoreDict(workName, workVersion, inputs):
 
         fieldType=inputs[inpt]['type']
 
+        print(fieldType)
+
         if fieldType[-1]=='?':
             optional='t'
             fieldType=fieldType[:-1]  
@@ -160,19 +162,19 @@ def inputStoreDict(workName, workVersion, inputs):
 
             fieldType=inputs[inpt]['type'].strip()
 
-        if fieldType[-1]=='?':
-            optional='t'
-            fieldType=fieldType[:-1]
-        if '[]' in fieldType:
-            is_array='t'
-            fieldType=fieldType[:-2]
-        
-        if fieldType not in types:
-            #stop execution and return because this is serious
-            deleteSavedWorkflow(workName,workVersion)
-            print(fieldType)
-            return 35
-        
+            if fieldType[-1]=='?':
+                optional='t'
+                fieldType=fieldType[:-1]
+            if '[]' in fieldType:
+                is_array='t'
+                fieldType=fieldType[:-2]
+            
+            if (fieldType not in types) and (fieldType!='enum'):
+                #stop execution and return because this is serious
+                deleteSavedWorkflow(workName,workVersion)
+                # print(fieldType)
+                return 35
+            
         
         #get default value
         defaultValue=''
@@ -261,8 +263,9 @@ def inputStoreList(workName, workVersion, inputs):
             symbols=fieldType['symbols']
             enum_fields='|'.join(symbols)
             fieldType='enum'
-
+            print(name)
         else:
+            print(name)
             if 'separate' in inpt:
                 if inpt['separate']=='false':
                     separate='f'
@@ -276,19 +279,19 @@ def inputStoreList(workName, workVersion, inputs):
             fieldType=inpt['type'].strip()
 
             
-        if fieldType[-1]=='?':
-            optional='t'
-            fieldType=fieldType[:-1]
-        
-        if '[]' in fieldType:
-            fieldType=fieldType[:-2]
-            is_array='t'
+            if fieldType[-1]=='?':
+                optional='t'
+                fieldType=fieldType[:-1]
+            
+            if '[]' in fieldType:
+                fieldType=fieldType[:-2]
+                is_array='t'
 
-        if fieldType not in types:
-            #stop execution and return because this is serious
-            deleteSavedWorkflow(workName,workVersion)
-            # print(fieldType)
-            return 35
+            if fieldType not in types:
+                #stop execution and return because this is serious
+                deleteSavedWorkflow(workName,workVersion)
+                print(fieldType)
+                return 35
         
         
         #get default value
