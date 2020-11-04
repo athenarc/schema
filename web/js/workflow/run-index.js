@@ -158,7 +158,15 @@ $(document).ready(function() {
 		}
 	});
 
+<<<<<<< HEAD
 	$(".select-folder-btn").click(function(){
+=======
+<<<<<<< HEAD
+	$(".select-folder-btn").click(function(){
+=======
+	$(".select-file-btn").click(function(){
+>>>>>>> 1071fdecf996ab1823c0bd9c78f5a9015783a2da
+>>>>>>> ab5c1248154c547f499b39a4d66fe7251b1370f0
 		var disabled = $(this).attr('disabled');
 		if (!disabled)
 		{

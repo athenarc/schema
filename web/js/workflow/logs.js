@@ -141,6 +141,7 @@ $(document).ready(function()
                         $(".clear-file-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
+
                         $(".select-folder-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
