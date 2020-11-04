@@ -141,6 +141,17 @@ $(document).ready(function()
                         $(".clear-file-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
+<<<<<<< HEAD
+=======
+
+                        $(".select-folder-btn").each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        $(".fill-array-field-btn").each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+
+>>>>>>> 7459492633fec16b97365721ad5c11c5e38a2b60
                         $(".btn-default-values").each(function(){
                             $(this).removeAttr('disabled');
                         });

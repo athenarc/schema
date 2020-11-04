@@ -158,7 +158,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".select-file-btn").click(function(){
+	$(".select-folder-btn").click(function(){
 		var disabled = $(this).attr('disabled');
 		if (!disabled)
 		{
