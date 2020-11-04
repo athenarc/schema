@@ -158,11 +158,7 @@ $(document).ready(function() {
 		}
 	});
 
-<<<<<<< HEAD
 	$(".select-folder-btn").click(function(){
-=======
-	$(".select-file-btn").click(function(){
->>>>>>> 1071fdecf996ab1823c0bd9c78f5a9015783a2da
 		var disabled = $(this).attr('disabled');
 		if (!disabled)
 		{
