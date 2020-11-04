@@ -46,10 +46,12 @@ class ArgumentsWidget
 			$select_icon='<i class="fas fa-folder-open"></i>';
 			$clear_icon='<i class="fas fa-times"></i>';
 			echo Html::hiddenInput('mountcaller',null ,['id'=>'mountcaller']);
+
 			/*
 			 * type 1 is software
 			 * type 2 is software-mpi
 			 */
+
 			if($type==1 || $type==2)
 			{
 				if(!empty($iocontMount))
@@ -282,6 +284,7 @@ class ArgumentsWidget
 
 		<?php
 		}
+
 		/*
 		 * type 3 is workflows
 		 */
