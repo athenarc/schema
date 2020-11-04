@@ -46,6 +46,10 @@ class ArgumentsWidget
 			$select_icon='<i class="fas fa-folder-open"></i>';
 			$clear_icon='<i class="fas fa-times"></i>';
 			echo Html::hiddenInput('mountcaller',null ,['id'=>'mountcaller']);
+			/*
+			 * type 1 is software
+			 * type 2 is software-mpi
+			 */
 			if($type==1 || $type==2)
 			{
 				if(!empty($iocontMount))
@@ -278,6 +282,9 @@ class ArgumentsWidget
 
 		<?php
 		}
+		/*
+		 * type 3 is workflows
+		 */
 		else
 		{?>
 			<div class="row">
@@ -383,7 +390,7 @@ class ArgumentsWidget
 							?>
 								<div class="col-md-6" style="text-align: left;">
 									<?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
-									<?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-success select-file-btn','title'=>$select_file_title])?>
+									<?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-success select-folder-btn','title'=>$select_file_title])?>
 									<?=Html::a($clear_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
 									<?=Html::hiddenInput('hidden_select_file_url', Url::to([$slcbtnLink, 'caller'=>'field-' . $index]), ['class'=>'hidden_select_folder_url'])?>
 								</div>
