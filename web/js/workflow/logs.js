@@ -141,15 +141,13 @@ $(document).ready(function()
                         $(".clear-file-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
-<<<<<<< HEAD
                         $(".select-folder-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
                         $(".fill-array-field-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
-=======
->>>>>>> 1071fdecf996ab1823c0bd9c78f5a9015783a2da
+
                         $(".btn-default-values").each(function(){
                             $(this).removeAttr('disabled');
                         });
