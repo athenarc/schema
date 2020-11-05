@@ -81,7 +81,7 @@ class ProjectWindow
               
         }
 
-
+        
 
         if (!empty($projectsDropdownSession))
         {
@@ -91,15 +91,13 @@ class ProjectWindow
             if(!empty($_GET['selected_project']))
             {
                 $_SESSION['selected_project']=$_GET['selected_project'];
+                $project_selected=$_GET['selected_project'];
             }
-            if(!isset($_SESSION['selected_project'])) 
+            if(!isset($_SESSION['selected_project']) || empty($_SESSION['selected_project'])) 
             { 
-                
                 $_SESSION['selected_project']=$project_selected;
                 
             }
-
-        
             
             $project_name=' ';
             $project_name=trim(explode('(',$_SESSION['selected_project'])[0]);
