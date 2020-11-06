@@ -506,7 +506,7 @@ class WorkflowController extends Controller
             
             $workflowLimits=Workflow::addLimits($workflow,$maxCores,$maxMem);
             $newLocation=$workflowLimits[0];
-            $tmpWorkflowFolder=$workflowLimits[1]
+            $tmpWorkflowFolder=$workflowLimits[1];
             $result=Workflow::runWorkflow($workflow, $newLocation, $tmpWorkflowFolder, $workflowParams, $fields, $user, 
                                                     $project,$maxMem,$maxCores,$outFolder);
             $jobid=$result['jobid'];

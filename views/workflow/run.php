@@ -64,7 +64,7 @@ $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
 
 <div class='title row'>
 	<div class="col-md-10 headers"><h2><?= Html::encode($title) ?></h2></div>
-	<div class="col-md-2 back-btn"><?= Html::a("$back_icon Available Software", ['/software/index'], ['class'=>'btn btn-default']) ?></div>
+	<div class="col-md-2 back-btn"><?= Html::a("$back_icon Available Software", ['/workflows/index'], ['class'=>'btn btn-default']) ?></div>
 </div>
 
 
