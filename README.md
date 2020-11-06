@@ -22,6 +22,7 @@ The node running the installation of SCHeMa should have the following PHP packag
 * php-xml
 * php-gd
 * php-pgsql
+* php-yaml
 
 ### Required Python packages
 The node running the installation of SCHeMa should have the following Python packages installed:
