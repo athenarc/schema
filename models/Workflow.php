@@ -149,26 +149,26 @@ class Workflow extends \yii\db\ActiveRecord
         return json_encode($params,JSON_UNESCAPED_SLASHES);
     }
 
+    /*
+     * If the job did not submit, then return false
+     */
     public static function isAlreadyRunning($jobid)
     {
         if ($jobid=='')
         {
             return false;
         }
-
-        /*
-         * Use the WES api to find the job status
-         */
         
     }
 
+    /*
+     * Returns a list of folders to be used in the 
+     * select folder popup
+     */
     public function listDirectories($directory)
     {
-        // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
         $results=[];
-        // print_r($files);
-        // exit(0);
         
         foreach($files as $key => $value)
         {
@@ -185,14 +185,14 @@ class Workflow extends \yii\db\ActiveRecord
 
     }
 
+    /*
+     * Returns a nested list of files to be used in the 
+     * select file popup.
+     */
     public function listFiles($directory)
     {
-        // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
         $results=[];
-        // print_r($files);
-        // print_r("<br /><br />");
-        // exit(0);
         $i=0;
         foreach($files as $key => $value)
         {
@@ -219,14 +219,234 @@ class Workflow extends \yii\db\ActiveRecord
 
     }
 
-    public static function runWorkflow($workflow, $workflowParams, $fields,$user, 
+    /*
+     * Returns a list of files recursively (absolute paths)
+     */
+    public function listFilesNonNested($directory)
+    {
+        
+        $files = scandir($directory);
+        $results=[];
+        $i=0;
+        foreach($files as $key => $value)
+        {
+            $path = realpath($directory.DIRECTORY_SEPARATOR.$value);
+            if ($value != "." && $value != ".." && $value[0]!='.')
+            {
+                if (is_dir($path))
+                {
+                    $result=self::listFilesNonNested($path); 
+                    $results=$results + $result;
+                }
+                else
+                {
+                    $results[]=$path;
+                }
+                
+            }
+
+        }
+
+        return $results;
+
+    }
+
+    public static function addLimits($workflow,$maxCores,$maxMem)
+    {
+        $allowedExt=['txt'=>'', 'cwl'=>'', 'yaml'=>''];
+        /*
+         * Find the name of the main workflow file, in order to use it 
+         * and find the file in the new location
+         */
+        $splitMainName=explode('/',$workflow->location);
+        $mainName=end($splitMainName);
+        
+        /*
+         * Copy files to the new location
+         */
+        $dataFolder=Yii::$app->params['tmpWorkflowPath'] . '/' . str_replace(' ','-',$workflow->name) . '/' . str_replace(' ','-',$workflow->version) . '/';
+        $nid=uniqid();
+        $tmpFolder=Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/' . $nid ;
+        $command="cp -r $dataFolder $tmpFolder";
+        exec($command, $out, $ret);
+
+        /*
+         * Return all files in a list
+         */
+        $files=self::listFilesNonNested($tmpFolder);
+        
+
+        foreach ($files as $file)
+        {
+            /*
+             * Find the new main workflow file location
+             * and discard any files that are not text files.
+             */
+            $fileSplit=explode('/',$file);
+            $filename=end($fileSplit);
+            if ($filename==$mainName)
+            {
+                $newMain=str_replace($tmpFolder,"/workflows/tmp-workflows/" . $nid ,$file);
+                continue;
+            }
+            $fileSplit=explode('.',$filename);
+            $extension=end($fileSplit);
+
+            if (!isset($allowedExt[$extension]))
+            {
+                $command="rm $file";
+                exec($command,$out,$ret);
+                continue;
+            }
+
+            /*
+             * Check if file is a commandLineTool
+             * and add the resource limits to it
+             */
+            $content="";
+            $content=yaml_parse_file($file);
+            if (empty($content))
+            {
+                continue;
+            }
+            
+            if (!isset($content['class']))
+            {
+                continue;
+            }
+            
+            if ($content["class"]!='CommandLineTool')
+            {
+                continue;
+            }
+
+            /*
+             * Find if a resource requirement already exists in hints or requirements
+             */
+            $hintsExist=isset($content['hints']);
+            $reqsExist=isset($content['requirements']);
+            $inHints=false;
+            $inReqs=false;
+            $hintsIsAssoc=false;
+            $reqsIsAssoc=false;
+            $requirement='';
+            $maxMem*=1024;
+            $maxMem=intVal($maxMem);
+            $maxCores=intVal($maxCores);
+            /*
+             * Check the hints section and if it there is one
+             * add or modify the limits
+             */
+            if ($hintsExist)
+            {
+                $hints=$content['hints'];
+                $hintsIsAssoc= array_keys($hints) !== range(0, count($hints) - 1);
+                if ($hintsIsAssoc)
+                {
+                    if (isset($hints['ResourceRequirement']))
+                    {
+                        $inHints=true;
+                        $content['hints']['ResourceRequirement']['coresMax']=$maxCores;
+                        $content['hints']['ResourceRequirement']['ramMax']=$maxMem;
+                    }
+
+                }
+                else
+                {
+                    foreach ($hints as $hintsIndex=>$value)
+                    {
+                        if ($value['class']=='ResourceRequirement')
+                        {
+                            $inHints=true;
+                            $content['hints'][$hintsIndex]['coresMax']=$maxCores;
+                            $content['hints'][$hintsIndex]['ramMax']=$maxMem;
+                        }
+                    }
+                }
+            }
+            /*
+             * Check the requirements section and if it there is one
+             * add or modify the limits
+             */
+            if ($reqsExist)
+            {
+                $reqs=$content['requirements'];
+                $reqsIsAssoc= array_keys($reqs) !== range(0, count($reqs) - 1);
+                if ($reqsIsAssoc)
+                {
+                    if (isset($reqs['ResourceRequirement']))
+                    {
+                        $inReqs=true;
+                        $content['requirements']['ResourceRequirement']['coresMax']=$maxCores;
+                        $content['requirements']['ResourceRequirement']['ramMax']=$maxMem;
+                    }
+
+                }
+                else
+                {
+                    foreach ($reqs as $reqsIndex=>$value)
+                    {
+                        if ($value['class']=='ResourceRequirement')
+                        {
+                            $inReqs=true;
+                            $content['requirements'][$reqsIndex]['coresMax']=$maxCores;
+                            $content['requirements'][$reqsIndex]['ramMax']=$maxMem;
+                        }
+                    }
+                }
+            }
+
+            if ((!$inHints) && (!$inReqs))
+            {
+                if (!$reqsExist)
+                {
+                    $content['requirements']=[];
+                    $content['requirements']['ResourceRequirement']=[];
+                    $content['requirements']['ResourceRequirement']['coresMax']=$maxCores;
+                    $content['requirements']['ResourceRequirement']['ramMax']=$maxMem;
+                }
+                else
+                {
+                    if ($reqsIsAssoc)
+                    {
+                        if (isset($reqs['ResourceRequirement']))
+                        {
+                            $content['requirements']['ResourceRequirement']['coresMax']=$maxCores;
+                            $content['requirements']['ResourceRequirement']['ramMax']=$maxMem;
+                        }
+                    }
+                    else
+                    {
+                        foreach ($reqs as $reqsIndex=>$value)
+                        {
+                            if ($value['class']=='ResourceRequirement')
+                            {
+                                $content['requirements'][$reqsIndex]['coresMax']=$maxCores;
+                                $content['requirements'][$reqsIndex]['ramMax']=$maxMem;
+                            }
+                        }
+                    }
+
+                }
+            }
+            $retVal=yaml_emit_file($file,$content);
+
+
+            
+        }
+
+        return [$newMain,$tmpFolder];
+
+    }
+
+    public static function runWorkflow($workflow, $newLocation, $tmpWorkflowFolder, $workflowParams, $fields,$user, 
                                             $project,$maxMem,$maxCores,$outFolder)
     {
         $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs';
         $client = new Client();
         $response = $client->createRequest()
                 ->addHeaders(['Content-Type'=>'multipart/form-data','Accept'=>'application/json'])
-                ->addContent('workflow_url',$workflow->location)
+                ->addContent('workflow_url',$newLocation)
                 ->addContent('workflow_params',$workflowParams)
                 ->addContent('workflow_type','CWL')
                 ->addContent('workflow_type_version','v1.0')
@@ -318,6 +538,8 @@ class Workflow extends \yii\db\ActiveRecord
         $filename=$tmpFolder . '/' . 'fields.txt';
         file_put_contents($filename, $fieldValues);
 
+        $filename=$tmpFolder . '/tmpWorkDir.txt';
+        file_put_contents($filename,$tmpWorkflowFolder);
 
 
 

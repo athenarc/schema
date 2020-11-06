@@ -93,10 +93,10 @@ class WorkflowController extends Controller
          * create one
          */
          
-		 // $working_dir=getcwd();
-		 // print_r($working_dir);
-		 // exit(0);
-		
+         // $working_dir=getcwd();
+         // print_r($working_dir);
+         // exit(0);
+        
 
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
         $user=User::getCurrentUser()['username'];
@@ -488,7 +488,7 @@ class WorkflowController extends Controller
         $maxCores=(!isset($_POST['cores'])) || (empty($_POST['cores'])) || floatval($_POST['cores'])<=0 || (floatval($_POST['cores']) > floatval($quotas['cores'])) ? floatval($quotas['cores']) : floatval($_POST['cores']);
 
         /*
-         * Check if the pod for the current job ID is already running
+         * Check if the workflow for the current ID is already running
          */
         $workflowRunning=Software::isAlreadyRunning($jobid);
 
@@ -504,7 +504,10 @@ class WorkflowController extends Controller
              */
             $jobid='';
             
-            $result=Workflow::runWorkflow($workflow, $workflowParams, $fields, $user, 
+            $workflowLimits=Workflow::addLimits($workflow,$maxCores,$maxMem);
+            $newLocation=$workflowLimits[0];
+            $tmpWorkflowFolder=$workflowLimits[1]
+            $result=Workflow::runWorkflow($workflow, $newLocation, $tmpWorkflowFolder, $workflowParams, $fields, $user, 
                                                     $project,$maxMem,$maxCores,$outFolder);
             $jobid=$result['jobid'];
             $runError=$result['error'];
@@ -617,7 +620,7 @@ class WorkflowController extends Controller
 
                 $messages=$model->upload();
                 
-    			
+                
                 $success=$messages[1];
                 $error=$messages[0];
                 $warning=$messages[2];
