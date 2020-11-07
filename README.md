@@ -72,6 +72,10 @@ sudo cp <registry_data_directory>/certs/domain.crt /etc/docker/certs.d/localhost
 ```bash
 docker login 127.0.0.1:5000 -u <registry_username> -p pass <registry_password>
 ```
+8. Create a Kubernetes secret named `docker-secret` with your Docker login. This is so that Kubernetes can retrieve images from your private registry:
+```bash
+kubectl create secret docker-registry --docker-server <docker-registry-ip> --docker-username <registry_username> --docker-password <registry_password>
+```
 
 ## Modiry cwl-WES before installing
 1. Clone the cwl-WES Helm charts from the GitHub [repository](https://github.com/elixir-cloud-aai/cwl-WES).
