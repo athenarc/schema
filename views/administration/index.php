@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\components\ToolButton;
 use webvimark\modules\UserManagement\models\User;
+use app\components\Headers;
 
 echo Html::CssFile('@web/css/personal-account-settings.css');
 $this->title = "New Request";
@@ -31,15 +32,15 @@ else
 
 }
 
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>'', 
+    
+])
 ?>
+<?Headers::end()?>
 
-<!--  <div class="text-center container-fluid">
- 	<div class="row">
- 		<div class="col-md-12 account-settings-title">
- 			<h1>Select a </h1>
- 		</div>
- 	</div>
- </div> -->
+
 
 <?= ToolButton::createButton("User administration", "",['/personal/superadmin-actions']) ?>
 <br />

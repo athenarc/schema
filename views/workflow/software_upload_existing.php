@@ -8,6 +8,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use app\components\Headers;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -15,16 +16,20 @@ use yii\helpers\Url;
 echo Html::cssFile('@web/css/software/upload-software.css');
 $this->registerJsFile('@web/js/software/upload-software.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 
-$this->title = "Add new software";
+$this->title = "Add new workflow";
 
-$cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/cwl-tutorial'],['target'=>'blank']) . ")"
+$cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/cwl-tutorial'],['target'=>'blank']) . ")";
 
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+])
 ?>
+<?Headers::end()?>
+
 <div class="software_upload">
 
-    <div class="row">
-        <div class="col-md-12 headers"><h1><?= Html::encode($this->title) ?></h1></div>
-    </div>
+    
     <?php $form = ActiveForm::begin(); 
 
  $submit_icon='<i class="fas fa-check"></i>';

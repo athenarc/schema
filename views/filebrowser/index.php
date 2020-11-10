@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use app\components\Headers;
 /* @var $this \yii\web\View */
 /* @var $connectorRoute string */
 
@@ -7,8 +8,16 @@ use yii\helpers\Html;
 // https://github.com/twbs/bootstrap/issues/6094
 // $this->registerJs('jQuery.fn.btn = jQuery.fn.button.noConflict();');
 echo Html::cssFile('@web/css/filebrowser/index.css');
-
 $this->title = Yii::t('app', 'Data Browser');
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+])
+?>
+<?Headers::end()?>
+
+<?php
 $covidButtonIcon='<i class="fa fa-download" aria-hidden="true"></i>';
 $covidDatasetRequest='<i class="fas fa-upload"></i>';
 

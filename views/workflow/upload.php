@@ -18,14 +18,16 @@ $this->registerJsFile('@web/js/workflow/upload.js', ['depends' => [\yii\web\Jque
 
 $this->title = "Add new workflow";
 
-$cwl_label="Upload your CWL workflow definition file(s) (" . Html::a('more info','https://www.commonwl.org/',['target'=>'blank']) . ") *"
+$cwl_label="Upload your CWL workflow definition file(s) (" . Html::a('more info','https://www.commonwl.org/',['target'=>'blank']) . ") *";
 
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+])
 ?>
+<?Headers::end()?>
 <div class="software_upload">
 
-    <div class="row">
-        <div class="col-md-12 headers"><h1><?= Html::encode($this->title) ?></h1></div>
-    </div>
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
 
  $submit_icon='<i class="fas fa-check"></i>';

@@ -10,7 +10,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use dosamigos\ckeditor\CKEditor;
-
+use app\components\Headers;
 
 
 /* @var $this yii\web\View */
@@ -21,8 +21,15 @@ use dosamigos\ckeditor\CKEditor;
 
 echo Html::cssFile('@web/css/software/edit-software.css');
 $this->registerJsFile('@web/js/software/edit-software.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>"Edit details for software $model->name v.$model->version" 
+   
+])
 ?>
-<h2 class="headers">Edit details for software <?=$model->name?> v.<?=$model->version?></h2>
+<?Headers::end()?>
+
 <br />
 <div class="software_edit">
 

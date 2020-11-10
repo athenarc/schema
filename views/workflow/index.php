@@ -16,6 +16,7 @@ use webvimark\modules\UserManagement\models\User;
 use app\components\SoftDescrModal;
 use app\components\WorkflowVisualizeModal;
 use app\components\SoftwareIndicatorList;
+use app\components\Headers;
 
 
 
@@ -69,36 +70,19 @@ $editIcon='<i class="fas fa-edit"></i>';
 $visualizeIcon='<i class="fas fa-eye"></i>';
 $deleteIcon='';
 
-// if (!empty($projectsDropdown))
-// {
-// 	$key=array_key_first($projectsDropdown);
-// 	$project_selected=(empty($selected_project) || !isset($projectsDropdown[$selected_project]) ) ? $projectsDropdown[$key] : $selected_project;
-// 	$project_name=trim(explode('(',$project_selected)[0]);
-// 	$dropdownLabel='Resources from project:';
-// 	// print_r($project_name);
-// 	// exit(0);
-// }
-// else
-// {
-// 	$dropdownLabel='No active projects available.';
-// 	$project_selected='';
-// 	$project_name='';
-// }
-
-/*
- * Add software with "Run" button
- */
-
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+	'buttons'=>
+	[
+		
+		['fontawesome_class'=>'<i class="fas fa-plus"></i>','name'=> 'New workflow', 'action'=>['/workflow/upload'],
+		 'options'=>['class'=>'btn btn-secondary'], 'type'=>'a'] 
+	],
+])
 ?>
+<?Headers::end()?>
 
-<div class="row">
-	<div class="col-md-5"><?=Html::a($workflowAdd,['workflow/upload'],['class'=>'btn btn-primary'])?>	</div>
-</div>
-
-<div class="row">&nbsp;</div>
-<div class="row">&nbsp;</div>
-<div class="row">&nbsp;</div>
-<div class="row">&nbsp;</div>
 
 
 <div id="software-table">

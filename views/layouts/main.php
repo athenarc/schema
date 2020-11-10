@@ -52,7 +52,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap background-image">
+<div class="wrap">
     <?php
 
     if (!isset($_SESSION['selected_project']))

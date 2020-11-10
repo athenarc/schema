@@ -13,6 +13,7 @@ use yii\widgets\ActiveForm;
 use yii\bootstrap4\Modal;
 use app\components\WorkflowVisualizeModal;
 use app\components\InstructionsModal;
+use app\components\Headers;
 
 
 echo Html::CssFile('@web/css/workflow/run.css');
@@ -26,7 +27,7 @@ $this->registerJsFile('@web/js/workflow/run-index.js', ['depends' => [\yii\web\J
   
 
 
-$title = "Workflow ($name v.$version) ";
+$this->title = "Workflow ($name v.$version) ";
 
 $commandsDisabled= ($jobid!='') ? true : false;
 if($commandsDisabled)
@@ -53,19 +54,22 @@ $exampleBtnLink=null;
 $back_icon='<i class="fas fa-arrow-left"></i>';
 $clear_file_icon='<i class="fas fa-times"></i>';
 $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+	'buttons'=>
+	[
+		
+		['fontawesome_class'=>$back_icon,'name'=> 'Available Software', 'action'=>['/software/index'],
+		 'options'=>['class'=>'btn btn-default'], 'type'=>'a'] 
+	],
+])
 ?>
-
-<style>
-.modal-backdrop {
-     background-color: rgba(0,0,0,0.5) !important;
-}
-</style>
+<?Headers::end()?>
 
 
-<div class='title row'>
-	<div class="col-md-10 headers"><h2><?= Html::encode($title) ?></h2></div>
-	<div class="col-md-2 back-btn"><?= Html::a("$back_icon Available Software", ['/workflows/index'], ['class'=>'btn btn-default']) ?></div>
-</div>
+
 
 
 <?php 
@@ -173,26 +177,7 @@ InstructionsModal::addModal($name, $version, $software_instructions);
 ?>
 
 
-<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-<div class="modal fade" id="per" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content" style="width:450px;">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel">Instructions</h5>
-      </div>
-      <div class="modal-body">
-      	<div class="row">
-           <div class="col-md-12 text-center" style="padding-bottom: 10px;"><?=$software_instructions?></div>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"> Close </i></button>
-        </div>
-   	 </div>
-  	</div>
-  </div>
-</div> -->
 
 
 

@@ -10,6 +10,7 @@ use yii\bootstrap\Button;
 use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
 use app\components\InstructionsModal;
+use app\components\Headers;
 
 
 
@@ -19,7 +20,7 @@ use app\components\InstructionsModal;
 echo Html::CssFile('@web/css/software-mpi/run.css');
 $this->registerJsFile('@web/js/software-mpi/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 
-$title = "New job ($name v.$version) ";
+$this->title = "New job ($name v.$version) ";
 
 
 //$this->title = "$name v.$version ";
@@ -57,14 +58,22 @@ else
 $back_icon='<i class="fas fa-arrow-left"></i>';
 $clear_file_icon='<i class="fas fa-times"></i>';
 $instructions_icon='<i class="fa fa-file aria-hidden="true"></i>';
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+    'buttons'=>
+    [
+        ['fontawesome_class'=>$back_icon,'name'=> 'Available Software', 'action'=>['/software/index'],
+        'options'=>['class'=>'btn btn-default'], 'type'=>'a'], 
+        
+    ],
+])
 ?>
+<?Headers::end()?>
 
 
 
-<div class='title row'>
-	<div class="col-md-10 headers"><h2><?= Html::encode($title) ?></h2></div>
-	<div class="col-md-2 back-btn"><?= Html::a("$back_icon Available Software", ['/software/index'], ['class'=>'btn btn-default']) ?></div>
-</div>
 
 
 <?php 
