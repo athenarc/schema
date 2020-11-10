@@ -182,7 +182,7 @@ foreach ($workflows as $name=>$uploader)
 				<span class="software-visualizations">
 				 <?=Html::a(" <span style='color:white'> $visualizeIcon Visualize </span>",null, ['id'=>'software-instructions', 'class'=>'btn btn-primary']);?> 
     												&nbsp;</span>
-				<?=(!empty($_SESSION['selected_project'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
+				<?=(!empty($_SESSION['selected_project']) || (Yii::$app->params['standalone'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['workflow/edit-workflow','name'=>$name, 'version'=>$versions[$first_key]]),$name) : ''?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
 			</td>
