@@ -253,7 +253,7 @@ class Workflow extends \yii\db\ActiveRecord
 
     public static function addLimits($workflow,$maxCores,$maxMem)
     {
-        $allowedExt=['txt'=>'', 'cwl'=>'', 'yaml'=>''];
+        $allowedExt=['txt'=>'', 'cwl'=>'', 'yaml'=>'', 'yml'=>''];
         /*
          * Find the name of the main workflow file, in order to use it 
          * and find the file in the new location
@@ -274,7 +274,13 @@ class Workflow extends \yii\db\ActiveRecord
          * Return all files in a list
          */
         $files=self::listFilesNonNested($tmpFolder);
-        
+        /*
+         * First multiply mem because it is a float
+         * and then turn it into an integer
+         */
+        $maxMem*=1024;
+        $maxMem=intVal($maxMem);
+        $maxCores=intVal($maxCores);
 
         foreach ($files as $file)
         {
@@ -330,9 +336,6 @@ class Workflow extends \yii\db\ActiveRecord
             $hintsIsAssoc=false;
             $reqsIsAssoc=false;
             $requirement='';
-            $maxMem*=1024;
-            $maxMem=intVal($maxMem);
-            $maxCores=intVal($maxCores);
             /*
              * Check the hints section and if it there is one
              * add or modify the limits

@@ -61,7 +61,7 @@ Headers::begin() ?>
 	'buttons'=>
 	[
 		
-		['fontawesome_class'=>$back_icon,'name'=> 'Available Software', 'action'=>['/software/index'],
+		['fontawesome_class'=>$back_icon,'name'=> 'Available Software', 'action'=>['/workflowe/index'],
 		 'options'=>['class'=>'btn btn-default'], 'type'=>'a'] 
 	],
 ])

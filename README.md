@@ -13,7 +13,7 @@ In order to install SCHeMa you need:
 * python 2.7 and docker installed
 * a local directory exposed via NFS (called local NFS from here on) to the cluster so that Kubernetes pods can read/write data from/on it ([tutorial](https://help.ubuntu.com/community/SettingUpNFSHowTo))
 * a system user with sudo permissions that is able to run docker and kubectl without using sudo.
-* a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) and [TESK](https://github.com/EMBL-EBI-TSI/TESK) installation, for workflow and task execution respectively.
+* a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) in k8s namespace ```wes``` and [TESK](https://github.com/EMBL-EBI-TSI/TESK) in k8s namespace ```tes```, for workflow and task execution respectively.
 * a ReadWriteMany Kubernetes StorageClass (like NFS) for cwl-WES and TESK.
 
 ### Required PHP packages
@@ -93,7 +93,8 @@ workflowsLocalPath: "<directory_containing_the_workflows_exposed_under_NFS>"
 workflowsPodPath: "/workflows"
 workflowsNfsAddress: "<local NFS address>"
 ```
-4. Install cwl-WES as per the developers' instructions.
+4. *Repeat steps 2 & 3 for file deployment/templates/celery-deployment.yaml*.
+5. Install cwl-WES as per the developers' instructions.
 
 
 ## Installing SCHeMa
