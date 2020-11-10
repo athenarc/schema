@@ -13,6 +13,7 @@ use yii\bootstrap\Form;
 use yii\bootstrap\Button;
 use yii\captcha\Captcha;
 use yii\widgets\ActiveForm;
+use app\components\Headers;
 
 
 
@@ -27,21 +28,21 @@ $this->title = "Add example for $name v.$version";
 
 
 $back_icon='<i class="fas fa-arrow-left"></i>'; 
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+    'buttons'=>
+    [
+        ['fontawesome_class'=>$back_icon,'name'=> 'Back', 'action'=>['/workflow/index'],
+        'options'=>['class'=>'btn btn-default'], 'type'=>'a'], 
+        
+    ],
+])
 ?>
+<?Headers::end()?>
 
 
-<div class='title row'>
-	<div class="col-md-11 headers">
-		<h1><?= Html::encode($this->title) ?></h1>
-	</div>
-
-
-	<div class="col-md-1 back-btn">
-
-
-		<?= Html::a("$back_icon Back", ['/workflow/index'], ['class'=>'btn btn-default']) ?>
-	</div>
-</div>
 
 <div class="site-software">
 <?php

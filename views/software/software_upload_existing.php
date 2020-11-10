@@ -9,6 +9,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use dosamigos\ckeditor\CKEditor;
+use app\components\Headers;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
@@ -18,15 +19,19 @@ $this->registerJsFile('@web/js/software/upload-software.js', ['depends' => [\yii
 
 $this->title = "Add new software";
 
-$cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/cwl-tutorial'],['target'=>'blank']) . ")"
+$cwl_label="Upload your CWL input definition file (" . Html::a('example',['site/cwl-tutorial'],['target'=>'blank']) . ")";
 
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title
+   
+])
 ?>
+<?Headers::end()?>
+
 <div class="software_upload">
 
-    <div class="row">
-        <div class="col-md-12 headers"><?= Html::encode($this->title) ?></div>
-    </div>
-    <?php $form = ActiveForm::begin(); 
+<?php $form = ActiveForm::begin(); 
 
  $submit_icon='<i class="fas fa-check"></i>';
  $cancel_icon='<i class="fas fa-times"></i>';

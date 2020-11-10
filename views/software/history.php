@@ -10,6 +10,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
+use app\components\Headers;
 
 $this->title="Job history";
 
@@ -18,23 +19,23 @@ $this->title="Job history";
  * Users are able to view the name, version, start date, end date, mountpoint 
  * and running status of their previous software executions. 
  */
+
 $stats_icon='<i class="fas fa-eye"></i>';
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+	'buttons'=>
+	[
+		
+		['fontawesome_class'=>$stats_icon,'name'=> 'User Statistics', 'action'=>['/software/user-statistics'],
+		 'options'=>['class'=>'btn btn-info'], 'type'=>'a'] 
+	],
+])
 ?>
-<div class='title row'>
-	
-	<div class="col-md-12 headers">
-		<?= Html::encode($this->title) ?>
-		<span class="pull-right"> 
-			<?= Html::a("$stats_icon User Statistics", ['/software/user-statistics'], ['class'=>'btn btn-info']) ?> </span>
-			
-			
-	</div>	
-
-	
-</div>	
+<?Headers::end()?>
 
 
-<div class="row">&nbsp;</div>
+
 
 
 
@@ -43,7 +44,7 @@ if (!empty($results))
 {
 ?>
 
-<div class="row"><div class="col-md-12"><?= LinkPager::widget(['pagination' => $pagination]) ?></div></div>
+
 <div class="table-responsive"><table class="table table-striped" >
 	<thead>
 		<tr>
@@ -208,4 +209,6 @@ else
 
 	<h2>You have not run any software yet!</h2>
 <?php
-}
+}?>
+
+<div class="row"><div class="col-md-12"><?= LinkPager::widget(['pagination' => $pagination]) ?></div></div>

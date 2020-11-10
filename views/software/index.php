@@ -15,6 +15,7 @@ use app\components\SoftIndexButton;
 use webvimark\modules\UserManagement\models\User;
 use app\components\SoftDescrModal;
 use app\components\SoftwareIndicatorList;
+use app\components\Headers;
 
 // print_r($_SESSION['selected_project']);
 // exit();
@@ -69,24 +70,24 @@ $runIcon='<i class="fas fa-play"></i>';
 $editIcon='<i class="fas fa-edit"></i>';
 $deleteIcon='';
 
-/*
- * Add software with "Run" button
- */
 
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+    'buttons'=>
+    [
+        ['fontawesome_class'=>'<i class="fas fa-plus"></i>','name'=> 'New image', 'action'=>['/software/upload'],
+        'options'=>['class'=>'btn btn-primary'], 'type'=>'a'], 
+        ['fontawesome_class'=>'<i class="fas fa-plus"></i>','name'=> 'Existing image', 'action'=>['/software/upload-existing'],
+         'options'=>['class'=>'btn btn-secondary'], 'type'=>'a'],
+         ['fontawesome_class'=>'<i class="fas fa-plus"></i>','name'=> 'Image Request', 'action'=>['/software/image-request'],
+         'options'=>['class'=>'btn btn-secondary'], 'type'=>'a']  
+    ],
+])
 ?>
+<?Headers::end()?>
 
 
-<div class="row">
-	<div class="col-md-5">
-		<span><?=Html::a($softwareAdd,['software/upload'],['class'=>'btn btn-primary'])?></span>&nbsp;<span><?=Html::a($softwareAddExisting,['software/upload-existing'],['class'=>'btn btn-secondary'])?></span>
-		<?=Html::a($imageAdd,['software/image-request'],['class'=>'btn btn-secondary'])?></span>
-	</div>
-</div>
-
-
-
-<div class="row">&nbsp;</div>
-<div class="row">&nbsp;</div>
 
 
 <div id="software-table">

@@ -33,7 +33,7 @@ use app\models\Workflow;
 use yii\data\Pagination;
 
 
-Yii::$app->getView()->registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+Yii::$app->getView()->registerJsFile('@web/js/components/projectWindow.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
 
 class ProjectWindow
@@ -61,13 +61,10 @@ class ProjectWindow
 
         $software=$model::getSoftwareNames($softUser);
 
-        // print_r($software);
-        // exit(0);
+        
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         $projectsDropdownSession=Software::getActiveProjects();
-        // print_r($_SESSION);
-        // exit(0);
 
 
         $remaining_jobs_array=[];
@@ -117,12 +114,15 @@ class ProjectWindow
              */
             $_SESSION['selected_project']='';
         }
-        //registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
-        echo Html::cssFile('@web/css/software/index.css');
+        
+        echo Html::cssFile('@web/css/components/projectWindow.css');
         
 
         echo  "<div class='project-egci'>";
-        echo        "<div class='col-md-12 text-center project-egci-content'>Working Project:</div>";
+        echo        "<div class='col-md-6 col-md-offset-3 project-egci-content text-center'>Working Project:</div>";
+        echo        "<div class='col-md-1 col-md-offset-2 project-egci-content arrow-right'  style='padding-top:5px;
+                     cursor:pointer;' title='Minimize project window'>
+                    <i class='fa fa-angle-double-right' aria-hidden='true'></i></div>";
         echo        "<div class='col-md-12 text-center project-egci-content'>";
     
 
@@ -155,7 +155,14 @@ class ProjectWindow
             echo Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"]);
             echo '</div>';
         echo '</div>';
+
+        echo  "<div class='minimized' style='display:none; text-align:left;'>";
+        echo        "<span class='col-md-12 arrow-left'   style='cursor:pointer; padding-left:8px; padding-top:3px;' title='Maximize project window'>
+                    <i class='fa fa-angle-double-left' aria-hidden='true'></i></span>";
+        echo    "</div>";
          
     }
+
+
 }
 

@@ -10,6 +10,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
+use app\components\Headers;
 
 $this->title="Job history";
 
@@ -19,22 +20,22 @@ $this->title="Job history";
  * and running status of their previous software executions. 
  */
 $stats_icon='<i class="fas fa-eye"></i>';
+
+Headers::begin() ?>
+<?php echo Headers::widget(
+['title'=>$this->title, 
+	'buttons'=>
+	[
+		
+		['fontawesome_class'=>$stats_icon,'name'=> 'User Statistics', 'action'=>['/software/user-statistics'],
+		 'options'=>['class'=>'btn btn-info'], 'type'=>'a'] 
+	],
+])
 ?>
-<div class='title row'>
-	
-	<div class="col-md-12 headers">
-		<h1><?= Html::encode($this->title) ?>
-		<span class="pull-right"> 
-			<?= Html::a("$stats_icon User Statistics", ['/software/user-statistics'], ['class'=>'btn btn-info']) ?> </span>
-			
-		</h1>	
-	</div>	
-
-	
-</div>	
+<?Headers::end()?>
 
 
-<div class="row">&nbsp;</div>
+
 
 
 
