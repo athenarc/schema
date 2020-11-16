@@ -1,6 +1,16 @@
 # import uuid
-# import json
+import json
 import yaml
+import os
+
+
+configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
+configFile=open(configFileName,'r')
+config=json.load(configFile)
+configFile.close()
+
+imagePullSecrets = config.get('imagePullSecrets', [])
+
 
 def createFile(name,machineType,image,
 		jobid,tmpFolder,workingDir,
@@ -96,6 +106,8 @@ def createFile(name,machineType,image,
 	manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':1}
 	if len(volumes)!=0:
 		manifest_data['spec']['template']['spec']['volumes']=volumes
+	if imagePullSecrets:
+		manifest_data['spec']['template']['spec']['imagePullSecrets'] = imagePullSecrets
 	manifest_data['spec']['template']['spec']['containers']=containers
 	# manifest_data['spec']['template']['spec']['nodeSelector']={'machine-type': machineType}
 	manifest_data['spec']['template']['spec']['restartPolicy']='Never'
