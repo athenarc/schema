@@ -9,6 +9,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use dosamigos\ckeditor\CKEditor;
+use app\components\Headers;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SoftwareUpload */
