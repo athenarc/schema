@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/athenarc/schema/master/web/img/schema-logo-02.png" width="400px"/>
+  <img src="https://raw.githubusercontent.com/athenarc/schema/master/web/img/schema-logo-03.png" width="400px"/>
   <h1 align="center">Scientific Containers on Heterogeneous Machines (SCHeMa)</h1>
   <br />
 </p>
