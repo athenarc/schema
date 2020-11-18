@@ -75,7 +75,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 
     NavBar::begin([
         // 'brandLabel' => Yii::$app->name,
-        'brandLabel' => Html::img('@web/img/logo.png',['class'=>"navbar-logo"]),
+        'brandLabel' => Html::img('@web/img/schema-logo-03.png',['class'=>"navbar-logo"]),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             // 'class' => 'navbar-default navbar-fixed-top',

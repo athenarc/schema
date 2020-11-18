@@ -15,7 +15,7 @@ $this->title = 'SCHeMa scheduler';
 <div class="site-index">
 
     <div class="text-center">
-        <?=Html::img('@web/img/logo.png') ?>
+        <?=Html::img('@web/img/schema-logo-03.png') ?>
         <!-- <h1>Congratulations!</h1> -->
         <br />
         <br />
