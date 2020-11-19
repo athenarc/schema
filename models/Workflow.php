@@ -79,25 +79,23 @@ class Workflow extends \yii\db\ActiveRecord
     {
         $params=[];
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
-        // print_r($fields);
-        // exit(0);
+
         foreach ($fields as $field)
         {
-            //field is optional and empty
+            /*
+             * field is optional and empty
+             */
+
             if (($field->optional) && ($field->value==''))
             {
                 continue;
             }
             if (!$field->is_array)
             {
-                // print_r($field);
-                // exit(0);
                 if ($field->field_type=='File')
                 {
                     $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
                     $params[$field->name]=$value;
-                    // print_r($params);
-                    // print_r("<br /><br />");
                 }
                 else if ($field->field_type=='Directory')
                 {
@@ -143,9 +141,7 @@ class Workflow extends \yii\db\ActiveRecord
             }
             
         }
-        // print_r("<br /><br />");
-        // print_r($params);
-        // exit(0);
+        
         return json_encode($params,JSON_UNESCAPED_SLASHES);
     }
 
@@ -433,6 +429,7 @@ class Workflow extends \yii\db\ActiveRecord
                 }
             }
             $retVal=yaml_emit_file($file,$content);
+            exec("chmod 777 $tmpFolder -R");
 
 
             

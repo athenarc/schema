@@ -231,7 +231,7 @@ def inputStoreList(workName, workVersion, inputs):
         separate='t'
         optional='f'
         prefix=''
-        is_array='t'
+        is_array='f'
         
             
        
