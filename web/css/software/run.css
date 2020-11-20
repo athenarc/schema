@@ -194,9 +194,9 @@
 	font-size:10px;
 }
 
-.select-file-btn:hover, .select-file-multiple-btn:hover, , .fill-array-field-btn:hover
+.select-file-btn:hover, .select-file-multiple-btn:hover,  .fill-array-field-btn:hover
 {
-	font-size:10px;
+	font-size:15px;
 	background-color: #efefef;
 	color:black;
 }
