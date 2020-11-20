@@ -227,18 +227,18 @@ class Workflow extends \yii\db\ActiveRecord
         foreach($files as $key => $value)
         {
             $path = realpath($directory.DIRECTORY_SEPARATOR.$value);
-            if ($value != "." && $value != ".." && $value[0]!='.')
+            if ($value != "." && $value != ".." && $value[0]!='.' && $value!='__MACOSX')
             {
                 if (is_dir($path))
                 {
-                    $result=self::listFilesNonNested($path); 
-                    $results=$results + $result;
+                    $result=self::listFilesNonNested($path);
+                    
+                    $results=array_merge($results,$result);
                 }
                 else
                 {
                     $results[]=$path;
                 }
-                
             }
 
         }
@@ -286,11 +286,13 @@ class Workflow extends \yii\db\ActiveRecord
              */
             $fileSplit=explode('/',$file);
             $filename=end($fileSplit);
+
             if ($filename==$mainName)
             {
                 $newMain=str_replace($tmpFolder,"/workflows/tmp-workflows/" . $nid ,$file);
                 continue;
             }
+
             $fileSplit=explode('.',$filename);
             $extension=end($fileSplit);
 
@@ -434,6 +436,7 @@ class Workflow extends \yii\db\ActiveRecord
 
             
         }
+        // exit(0);
 
         return [$newMain,$tmpFolder];
 
