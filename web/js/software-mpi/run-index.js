@@ -171,4 +171,8 @@ $(document).ready(function() {
 
 	});
 
+	$(".switch").change(function() {
+		$(".hid").toggle();
+		});
+
 });
