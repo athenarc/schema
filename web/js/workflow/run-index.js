@@ -207,6 +207,7 @@ $(document).ready(function() {
 		modal.modal();
 
 	});
+
 	$(".instructions").click(function() { 
 
 		var name=$('.name').html();
@@ -216,5 +217,9 @@ $(document).ready(function() {
 		modal.modal();
 
 	});
+
+	$(".switch").change(function() {
+		$(".hid").toggle();
+		});
 
 });
