@@ -77,6 +77,7 @@ class ArgumentsWidget
 							<div class="alert alert-success col-md-offset-3 col-7" role="alert">
 						        Based on the provided metadata, this docker image does not require any input/output mountpoint.
 						    </div>
+
 							<?php
 					}
 				    else
@@ -154,7 +155,11 @@ class ArgumentsWidget
 
 					<div class="row">
 					<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
-					</div> 
+					</div>
+					<label class="switch" title="Show optional fields">
+							  <input type="checkbox">
+							  <span class="slider round"></span>
+					</label> 
 					<?php
 
 					    $default_icon='<i class="fas fa-magic"></i>';
@@ -163,16 +168,26 @@ class ArgumentsWidget
 					    $clear_file_title='Clear field.';
 					    $index=0;
 					    foreach ($fields as $field)
-					    {?>
+					   	{?>
 					        <div class="row">
-					            <div class="col-md-offset-3 col-md-3" style="text-align: right;"><?=Html::label($field->name,null,[])?>
-					            	
+					        	<?php 
+					        	
+					        	if($field->optional==1)
+					    		{
+					    			$optional_fields='hid';
+
+					    		}
+					    		else
+					    		{
+					    			$optional_fields='show';
+					    		}?>
+					            <div class="col-md-offset-3 col-md-3 optional <?=$optional_fields?>" style="text-align: right;"><?=Html::label($field->name,null,[])?>
 					            </div>
-					   			 <?php
+					   			<?php
 					            if ($field->field_type=='boolean')
 					            {?>
 
-					                <div class="col-md-3" style="text-align: left;">
+					                <div class="col-md-3 optional <?=$optional_fields?>" style="text-align: left;">
 					                    <?=Html::checkbox('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>$commandBoxClass, 'id'=>'field-' . $index, 'uncheck'=>"0"])?>
 					                </div>
 
@@ -194,7 +209,7 @@ class ArgumentsWidget
 					                }
 
 					            ?>
-					                <div class="col-md-3" style="text-align: left;">
+					                <div class="col-md-3 <?=$optional_fields?>" style="text-align: left;">
 					                    <?=Html::textInput('field-' . $index, $field->value,['readonly'=>true,'class'=>'file_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 					                    <?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success select-file-btn",'title'=>$select_file_title])?>
 					                    <?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
@@ -218,7 +233,7 @@ class ArgumentsWidget
 					                    $select_file_title='Select directory';
 					                }
 					            ?>
-					                <div class="col-md-3" style="text-align: left;">
+					                <div class="col-md-3 <?=$optional_fields?>" style="text-align: left;">
 					                    <?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'folder_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 					                    <?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success select-folder-btn",'title'=>$select_file_title])?>
 					                    <?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-folder-btn','title'=>$clear_file_title])?>
@@ -232,7 +247,7 @@ class ArgumentsWidget
 					                {
 
 					                ?>
-					                    <div class="col-md-3" style="text-align: left;">
+					                    <div class="col-md-3 <?=$optional_fields?>" style="text-align: left;">
 					                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 					                        <?=(($field->field_type!='file') && (!empty($field->default_value))) ? Html::a($default_icon,'javascript:void(0);',['id'=>'default-values', 'class'=>'btn btn-basic btn-default-values','title'=>$default_title]) : ''?>
 					                    </div>
@@ -246,7 +261,7 @@ class ArgumentsWidget
 					                    $fill_array_title='Fill array field'
 					                ?>
 
-					                    <div class="col-md-3" style="text-align: left;">
+					                    <div class="col-md-3 <?=$optional_fields?>" style="text-align: left;">
 					                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'array_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 					                        <?=Html::a($fill_array_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success fill-array-field-btn",'title'=>$fill_array_title])?>
 					                    <?=Html::a($clear_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-folder-btn','title'=>$clear_file_title])?>
@@ -318,7 +333,11 @@ class ArgumentsWidget
 
 				<div class="row">
 				<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
-				</div> 
+				</div>
+				<label class="switch" title="Show optional fields">
+							  <input type="checkbox">
+							  <span class="slider round"></span>
+				</label>  
 				<?php
 
 					$default_icon='<i class="fas fa-magic"></i>';
@@ -328,14 +347,26 @@ class ArgumentsWidget
 					$index=0;
 					foreach ($fields as $field)
 					{
+
 					?>
 						<div class="row">
-							<div class="col-md-5" style="text-align: right;"><?=Html::label($field->name,null,[])?></div>
-					<?php
+							<?php 
+					        if($field->optional==1)
+				    		{
+				    			$optional_fields='hid';
+
+				    		}
+				    		else
+				    		{
+				    			$optional_fields='show';
+				    		}?>
+
+							<div class="col-md-5 <?=$optional_fields?>" style="text-align: right;"><?=Html::label($field->name,null,[])?></div>
+							<?php
 							if ($field->field_type=='boolean')
 							{
-					?>
-								<div class="col-md-6" style="text-align: left;">
+							?>
+								<div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 									<?=Html::checkbox('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>$commandBoxClass, 'id'=>'field-' . $index, 'uncheck'=>"0"])?>
 								</div>
 								
@@ -344,10 +375,9 @@ class ArgumentsWidget
 							}
 							else if ($field->field_type=='enum')
 							{
-								// print_r($field->dropdownValues);
-								// exit(0);
+								
 							?>
-								<div class="col-md-6" style="text-align: left;">
+								<div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 									<?=Html::dropDownList('field-' . $index, $field->dropdownSelected, $field->dropdownValues ,['readonly'=>$commandsDisabled,'class'=>$commandBoxClass . ' field-dropdown', 'id'=>'field-' . $index])?>
 								</div>
 							<?php
@@ -367,7 +397,7 @@ class ArgumentsWidget
 				                    $select_file_title='Select file';
 				                }
 					        ?>
-				                <div class="col-md-6" style="text-align: left;">
+				                <div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 				                    <?=Html::textInput('field-' . $index, $field->value,['readonly'=>true,'class'=>'file_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 				                    <?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success select-file-btn",'title'=>$select_file_title])?>
 				                    <?=Html::a($clear_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
@@ -391,7 +421,7 @@ class ArgumentsWidget
 				                    $select_file_title='Select directory';
 								}
 							?>
-								<div class="col-md-6" style="text-align: left;">
+								<div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 									<?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 									<?=Html::a($select_file_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-success select-folder-btn','title'=>$select_file_title])?>
 									<?=Html::a($clear_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-file-btn','title'=>$clear_file_title])?>
@@ -405,7 +435,7 @@ class ArgumentsWidget
 				                {
 
 				                ?>
-				                    <div class="col-md-6" style="text-align: left;">
+				                    <div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 				                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>$commandsDisabled,'class'=>'input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 				                        <?=(($field->field_type!='file') && (!empty($field->default_value))) ? Html::a($default_icon,'javascript:void(0);',['id'=>'default-values', 'class'=>'btn btn-basic btn-default-values','title'=>$default_title]) : ''?>
 				                    </div>
@@ -419,7 +449,7 @@ class ArgumentsWidget
 				                    $fill_array_title='Fill array field'
 				                ?>
 
-				                    <div class="col-md-6" style="text-align: left;">
+				                    <div class="col-md-6 <?=$optional_fields?>" style="text-align: left;">
 				                        <?=Html::textInput('field-' . $index,$field->value,['readonly'=>true,'class'=>'array_field input_field ' . $commandBoxClass, 'id'=>'field-' . $index])?>
 				                        <?=Html::a($fill_array_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>"btn btn-success fill-array-field-btn",'title'=>$fill_array_title])?>
 				                    <?=Html::a($clear_icon,'javascript:void(0);',['disabled'=>$commandsDisabled, 'class'=>'btn btn-danger clear-folder-btn','title'=>$clear_file_title])?>

@@ -375,8 +375,9 @@ class SoftwareController extends Controller
          */
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
-        // print_r($fields);
-        // exit(0);
+
+         // print_r($fields);
+         // exit(0);
         /*
          * If the form has posted load the field values.
          * This was changed because it didn't work with checkboxes.
