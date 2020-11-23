@@ -106,6 +106,10 @@ class Workflow extends \yii\db\ActiveRecord
                 {
                     $params[$field->name]=$field->value ? true : false;
                 }
+                else if ($field->field_type=='int')
+                {
+                    $params[$field->name]=(int)$field->value;
+                }
                 else
                 {
                     $params[$field->name]=$field->value;
@@ -289,7 +293,8 @@ class Workflow extends \yii\db\ActiveRecord
 
             if ($filename==$mainName)
             {
-                $newMain=str_replace($tmpFolder,"/workflows/tmp-workflows/" . $nid ,$file);
+                // $newMain=str_replace($tmpFolder,"/workflows/tmp-workflows/" . $nid ,$file);
+                $newMain=$file;
                 continue;
             }
 
@@ -436,20 +441,29 @@ class Workflow extends \yii\db\ActiveRecord
 
             
         }
-        // exit(0);
+        /*
+         * Serialize main workflow file
+         */
+        $packedFile=$tmpFolder . '/packed_workflow.cwl';
+        $command="cwltool --pack $newMain > $packedFile";
+        exec($command, $out, $ret);
 
-        return [$newMain,$tmpFolder];
+        return [$packedFile,$tmpFolder];
 
     }
 
     public static function runWorkflow($workflow, $newLocation, $tmpWorkflowFolder, $workflowParams, $fields,$user, 
                                             $project,$maxMem,$maxCores,$outFolder)
     {
+        $newLocationFile=explode('/',$newLocation);
+        $newLocationFile=end($newLocationFile);
+
         $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs';
         $client = new Client();
         $response = $client->createRequest()
                 ->addHeaders(['Content-Type'=>'multipart/form-data','Accept'=>'application/json'])
-                ->addContent('workflow_url',$newLocation)
+                ->addContent('workflow_url',$newLocationFile)
+                ->addFile('workflow_attachment',$newLocation)
                 ->addContent('workflow_params',$workflowParams)
                 ->addContent('workflow_type','CWL')
                 ->addContent('workflow_type_version','v1.0')

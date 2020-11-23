@@ -31,6 +31,9 @@ The node running the installation of SCHeMa should have the following Python pac
 * python-yaml
 * python-requests
 
+### Other packages required:
+* cwltool
+
 ## Installing a local docker registry with self-signed certificates and basic authentication
 On the machine that will run the SCHeMa installation:
 1. Create a folder for the registry certificates and authentication files (e.g. /data/registry) with two additional directories, "certs" and reg_auth".
@@ -77,30 +80,6 @@ docker login 127.0.0.1:5000 -u <registry_username> -p pass <registry_password>
 kubectl create secret docker-registry --docker-server <docker-registry-ip> --docker-username <registry_username> --docker-password <registry_password>
 ```
 
-## Modiry cwl-WES before installing
-1. Clone the cwl-WES Helm charts from the GitHub [repository](https://github.com/elixir-cloud-aai/cwl-WES).
-2. Open deployment/templates/wes-deployment.yaml and add the following lines under volumeMounts:
-```yaml
- - mountPath: {{ .Values.wes.workflowsPodPath }}
-   name: shared-workflows-volume
-```
-and the following lines under volumes:
-```yaml
-- name: shared-workflows-volume
-  nfs:
-    server: {{ .Values.wes.workflowsNfsAddress }} # Please change this to your NFS server
-    path: {{ .Values.wes.workflowsLocalPath }} # Please change this to the relevant share
-```
-3. Open deployment/values.yaml and add the following lines under wes:
-```yaml
-workflowsLocalPath: "<directory_containing_the_workflows_exposed_under_NFS>"
-workflowsPodPath: "/workflows"
-workflowsNfsAddress: "<local NFS address>"
-```
-4. *Repeat steps 2 & 3 for file deployment/templates/celery-deployment.yaml*.
-5. Install cwl-WES as per the developers' instructions.
-
-
 ## Installing SCHeMa
 
 1. Install the Yii2 framework([tutorial](https://www.yiiframework.com/doc/guide/2.0/en/start-installation)) and install the following plugins:
@@ -122,7 +101,7 @@ workflowsNfsAddress: "<local NFS address>"
 
 6. Using root permissions create an empty file inside /etc/sudoers.d/ with ```visudo``` and paste the following inside it after filling the relevant information:
 ```bash
-www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_schema_project>/scheduler_files/scheduler.py, <path_to_schema_project>/scheduler_files/ontology/initialClassify.py, <path_to_schema_project>/scheduler_files/imageUploader.py, <path_to_schema_project>/scheduler_files/imageRemover.py, <path_to_schema_project>/scheduler_files/inputReplacer.py, <path_to_schema_project>/scheduler_files/probe_stats.py, <path_to_schema_project>/scheduler_files/setupMpiCluster.py, <path_to_schema_project>/scheduler_files/mpiMonitorAndClean.py, <path_to_schema_project>/scheduler_files/existingImageUploader.py, <path_to_schema_project>/scheduler_files/workflowMonitorAndClean.py, <path_to_schema_project>/scheduler_files/workflowUploader.py
+www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_schema_project>/scheduler_files/scheduler.py, <path_to_schema_project>/scheduler_files/ontology/initialClassify.py, <path_to_schema_project>/scheduler_files/imageUploader.py, <path_to_schema_project>/scheduler_files/imageRemover.py, <path_to_schema_project>/scheduler_files/inputReplacer.py, <path_to_schema_project>/scheduler_files/probe_stats.py, <path_to_schema_project>/scheduler_files/setupMpiCluster.py, <path_to_schema_project>/scheduler_files/mpiMonitorAndClean.py, <path_to_schema_project>/scheduler_files/existingImageUploader.py, <path_to_schema_project>/scheduler_files/workflowMonitorAndClean.py, <path_to_schema_project>/scheduler_files/workflowUploader.py, <path_to_cwltool>/cwltool
 ```
   where ```<user>```: a user that has permissions to run path-to-kubectl. As an example take a look at the following
 
