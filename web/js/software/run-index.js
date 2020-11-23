@@ -278,5 +278,9 @@ $(document).ready(function() {
 		modal.modal();
 
 	});
+	
+	$(".switch").change(function() {
+		$(".hid").toggle();
+		});
 
 });
