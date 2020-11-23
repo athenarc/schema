@@ -71,11 +71,11 @@ sudo mkdir -p /etc/docker/certs.d/localhost:5000
 sudo cp <registry_data_directory>/certs/domain.crt /etc/docker/certs.d/127.0.0.1:5000/ca.crt
 sudo cp <registry_data_directory>/certs/domain.crt /etc/docker/certs.d/localhost:5000/ca.crt
 ```
-7. Login to the registry:
+6. Login to the registry:
 ```bash
 docker login 127.0.0.1:5000 -u <registry_username> -p pass <registry_password>
 ```
-8. Create a Kubernetes secret named `docker-secret` with your Docker login. This is so that Kubernetes can retrieve images from your private registry:
+7. Create a Kubernetes secret named `docker-secret` with your Docker login. This is so that Kubernetes can retrieve images from your private registry:
 ```bash
 kubectl create secret docker-registry --docker-server <docker-registry-ip> --docker-username <registry_username> --docker-password <registry_password>
 ```
