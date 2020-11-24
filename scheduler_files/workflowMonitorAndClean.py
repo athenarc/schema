@@ -74,16 +74,29 @@ if (status=='COMPLETE'):
 
     #retrieve workflow outputs
     for output in outputs:
-        outClass=outputs[output]['class']
-        name=outputs[output]['basename']
-        url=outputs[output]['location']
-        localpath=outFolder + '/' + name
-        if outClass=='File':
-            url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
-            #this closes the open handle after the block is done
-            with closing(urllib2.urlopen(url)) as r:
-                with open(localpath, 'wb') as f:
-                    shutil.copyfileobj(r, f)
+        if (isinstance(outputs[output],list)):
+            for subOutput in outputs[output]:
+                outClass=subOutput['class']
+                name=subOutput['basename']
+                url=subOutput['location']
+                localpath=outFolder + '/' + name
+                if outClass=='File':
+                    url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
+                    #this closes the open handle after the block is done
+                    with closing(urllib2.urlopen(url)) as r:
+                        with open(localpath, 'wb') as f:
+                            shutil.copyfileobj(r, f)
+        else:
+            outClass=outputs[output]['class']
+            name=outputs[output]['basename']
+            url=outputs[output]['location']
+            localpath=outFolder + '/' + name
+            if outClass=='File':
+                url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
+                #this closes the open handle after the block is done
+                with closing(urllib2.urlopen(url)) as r:
+                    with open(localpath, 'wb') as f:
+                        shutil.copyfileobj(r, f)
 
 
     #for each task collect its info
