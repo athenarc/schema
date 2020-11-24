@@ -6,9 +6,57 @@
 	right:0%;
 	background-color:#f8f9fa;
 	width:150px;
-	/*height:100px;*/
+	opacity:70%;
+	
 	
 }
+
+.support-window-wrapper:hover
+{
+	position:fixed;
+	z-index:100;
+	bottom:7%;
+	right:0%;
+	background-color:#f8f9fa;
+	width:150px;
+	opacity:100%;
+	
+	
+}
+
+
+
+
+.support-minimized
+{
+	position:fixed;
+	z-index:1;
+	background-color: #f8f9fa;
+	bottom:30%;
+	margin-top:0px;
+	opacity:70%;
+	right:1%;
+	width:30px;
+	height:20px;
+	
+}
+
+.support-minimized:hover
+{
+	position:fixed;
+	z-index:1;
+	background-color: #f8f9fa;
+	bottom:30%;
+	margin-top:100px;
+	opacity:100%;
+	right:1%;
+	width:30px;
+	height:20px;
+	
+}
+
+
+
 
 .support-window-text
 {
