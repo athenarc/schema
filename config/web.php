@@ -3,7 +3,8 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $standalone=!empty($params['standalone']);
-$db2=($standalone)? ['class' => 'yii\db\Connection'] : require __DIR__ . '/db2.php';
+$aai=(isset($params['aai_auth'])) && ($params['aai_auth']);
+$db2=($aai) ? require __DIR__ . '/db2.php' : ['class' => 'yii\db\Connection'];
 
 $config = [
     'id' => 'basic',
@@ -70,7 +71,7 @@ $config = [
             ],
         ],
         */
-        'view'=>($standalone)? [] :[
+        'view'=>(!$aai)? [] :[
             'theme' => [
                 'pathMap' => [
                     '@webvimark/views/auth' => '@app/views/user/'
