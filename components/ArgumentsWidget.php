@@ -46,6 +46,7 @@ class ArgumentsWidget
 			$select_icon='<i class="fas fa-folder-open"></i>';
 			$clear_icon='<i class="fas fa-times"></i>';
 			echo Html::hiddenInput('mountcaller',null ,['id'=>'mountcaller']);
+			
 
 			/*
 			 * type 1 is software
@@ -156,10 +157,12 @@ class ArgumentsWidget
 					<div class="row">
 					<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 					</div>
+					<span><strong>Show optional fields: &nbsp;</strong>
 					<label class="switch" title="Show optional fields">
 							  <input type="checkbox">
 							  <span class="slider round"></span>
-					</label> 
+					</label>
+					</span> 
 					<?php
 
 					    $default_icon='<i class="fas fa-magic"></i>';
@@ -167,6 +170,7 @@ class ArgumentsWidget
 					    $clear_file_icon='<i class="fas fa-times"></i>';
 					    $clear_file_title='Clear field.';
 					    $index=0;
+					    $required_icon="<span style='color:red;'>*</span>";
 					    foreach ($fields as $field)
 					   	{?>
 					        <div class="row">
@@ -175,14 +179,18 @@ class ArgumentsWidget
 					        	if($field->optional==1)
 					    		{
 					    			$optional_fields='hid';
+					    			$field_name=$field->name;
 
 					    		}
 					    		else
 					    		{
 					    			$optional_fields='show';
+					    			$field_name="$required_icon $field->name";
 					    		}?>
-					            <div class="col-md-offset-3 col-md-3 optional <?=$optional_fields?>" style="text-align: right;"><?=Html::label($field->name,null,[])?>
+					    		<div class="col-md-offset-3 col-md-3 optional <?=$optional_fields?>" style="text-align: right;" id='field-names'><span class="required hidden"><?=Html::label($field_name,null,[])?></span>
+					    			<span class="non-required"><?=Html::label($field->name,null,[])?></span>
 					            </div>
+					            
 					   			<?php
 					            if ($field->field_type=='boolean')
 					            {?>
@@ -334,17 +342,21 @@ class ArgumentsWidget
 				<div class="row">
 				<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 				</div>
+				<span><strong>Show optional fields: &nbsp;</strong>
 				<label class="switch" title="Show optional fields">
 							  <input type="checkbox">
 							  <span class="slider round"></span>
-				</label>  
+				</label>
+				</span>  
 				<?php
 
 					$default_icon='<i class="fas fa-magic"></i>';
 					$default_title='Fill field with default value.';
 					$select_file_title='Select file.';
 					$clear_file_title='Clear field.';
+					$required_icon="<span style='color:red;'>*</span>";
 					$index=0;
+
 					foreach ($fields as $field)
 					{
 
@@ -354,14 +366,17 @@ class ArgumentsWidget
 					        if($field->optional==1)
 				    		{
 				    			$optional_fields='hid';
+				    			$field_name=$field->name;
 
 				    		}
 				    		else
 				    		{
 				    			$optional_fields='show';
+				    			$field_name="$required_icon $field->name";
 				    		}?>
-
-							<div class="col-md-5 <?=$optional_fields?>" style="text-align: right;"><?=Html::label($field->name,null,[])?></div>
+				    		<div class="col-md-offset-3 col-md-3 optional <?=$optional_fields?>" style="text-align: right;" id='field-names'><span class="required hidden"><?=Html::label($field_name,null,[])?></span>
+				    			<span class="non-required"><?=Html::label($field->name,null,[])?></span>
+				            </div>
 							<?php
 							if ($field->field_type=='boolean')
 							{
