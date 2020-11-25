@@ -2,7 +2,7 @@
 {
 	position:fixed;
 	z-index:100;
-	bottom:7%;
+	bottom:50px;
 	right:0%;
 	background-color:#f8f9fa;
 	width:150px;
@@ -15,7 +15,7 @@
 {
 	position:fixed;
 	z-index:100;
-	bottom:7%;
+	bottom:50px;
 	right:0%;
 	background-color:#f8f9fa;
 	width:150px;
@@ -32,8 +32,7 @@
 	position:fixed;
 	z-index:1;
 	background-color: #f8f9fa;
-	bottom:30%;
-	margin-top:0px;
+	bottom:200px;
 	opacity:70%;
 	right:1%;
 	width:30px;
@@ -46,8 +45,7 @@
 	position:fixed;
 	z-index:1;
 	background-color: #f8f9fa;
-	bottom:30%;
-	margin-top:100px;
+	bottom:200px;
 	opacity:100%;
 	right:1%;
 	width:30px;
