@@ -173,6 +173,19 @@ $(document).ready(function() {
 
 	$(".switch").change(function() {
 		$(".hid").toggle();
-		});
+		var required_class = $(".required").hasClass('hidden');
+		var non_required_class = $(".non-required").hasClass('hidden');
+		if(required_class)
+		{
+			$(".required").removeClass('hidden');
+			$(".non-required").addClass('hidden');
+		}
+		else
+		{
+			$(".required").addClass('hidden');
+			$(".non-required").removeClass('hidden');
+		}
+
+	});
 
 });

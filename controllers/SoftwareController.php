@@ -391,6 +391,7 @@ class SoftwareController extends Controller
                 $field_values[]=Yii::$app->request->post('field-'.$i);
             }
         }
+
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
 
         $hasExample=$software->has_example;
@@ -456,6 +457,9 @@ class SoftwareController extends Controller
                 }
             }
         }
+        // print_r($fields);
+        // exit(0);
+
         $container_command='';
         $errors=[];
         if (empty($fields))
