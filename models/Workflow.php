@@ -124,6 +124,7 @@ class Workflow extends \yii\db\ActiveRecord
                     foreach ($tmpArray as $val)
                     {
                         $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                        $finalArray[]=$value;
                     }
                     
                     $params[$field->name]=$finalArray;
@@ -134,6 +135,7 @@ class Workflow extends \yii\db\ActiveRecord
                     foreach ($tmpArray as $val)
                     {
                         $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                        $finalArray[]=$value;
                     }
                     
                     $params[$field->name]=$finalArray;
