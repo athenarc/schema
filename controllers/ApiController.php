@@ -10,7 +10,9 @@ use yii\filters\VerbFilter;
 use app\models\RunHistory;
 use yii\db\Query;
 use webvimark\modules\UserManagement\models\User as Userw;
-
+use app\models\User;
+use app\models\Software;
+use yii\httpclient\Client;
 
 class ApiController extends Controller
 {
@@ -75,117 +77,278 @@ class ApiController extends Controller
     public function actionTasks()
     {
         $request=Yii::$app->request;
+        $response=Yii::$app->response;
 
         if (Yii::$app->request->getIsPost())
         {
-            $resources=$request->post('resources');
-            $volumes=$request->post('volumes');
-            $executors=$request->post('executors');
-            $api_id=$request->post('user_id');
-            $jobid=uniqid();
-            $ret_value=SoftwareApi::createAndRunJob($executors,$resources,$volumes,$jobid,$api_id);
-
-            if ($ret_value==1)
+            /*
+             * Get the user from the data and see if it exists in the system.
+             * If user does not exist, return an error code.
+             */
+            $data=$request->post();
+            if (!isset($data['username']))
             {
-                $response = Yii::$app->response;
-                $response->setStatusCode(401);
                 $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "No executors in your data."];
+                $response->setStatusCode(401);
+                $response->data = ['message' => "Data does not contain a username specification."];
                 $response->send();
+                return;
 
             }
-            else if ($ret_value==2)
+            $username=trim($request->post('username'));
+            $user=User::find()->where(['username'=>$username])->one();
+            if (empty($user))
             {
-                $response = Yii::$app->response;
-                $response->setStatusCode(401);
                 $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "One or more of your executors do not contain image specifications."];
+                $response->setStatusCode(401);
+                $response->data = ['message' => "User does not exist in the system."];
                 $response->send();
+                return;
 
             }
-            else if ($ret_value==3)
-            {
-                $response = Yii::$app->response;
-                $response->setStatusCode(401);
-                $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "One or more of your images are not specified correctly."];
-                $response->send();
 
-            }
-            else if ($ret_value==4)
+            /*
+             * Get the project from the data and see if it exists in the project management system.
+             * If project does not exist, return an error code.
+             */
+
+            if (!isset($data['project']))
             {
-                $response = Yii::$app->response;
+                
+                $response->format = \yii\web\Response::FORMAT_JSON;
                 $response->setStatusCode(402);
-                $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "One or more of your images were not found in the system."];
+                $response->data = ['message' => "Data does not contain a project specification."];
+
                 $response->send();
+                return;
 
             }
-            else if ($ret_value==5)
+            
+            $project=trim($request->post('project'));
+            $quotas=Software::getOndemandProjectQuotas($username,$project);
+            
+            if (empty($quotas))
             {
-                $response = Yii::$app->response;
-                $response->setStatusCode(401);
+                
                 $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "One or more of your executors do not contain a command."];
+                $response->setStatusCode(402);
+                $response->data = ['message' => "Project does not exist in the system."];
                 $response->send();
+                return;
 
             }
-            else if ($ret_value==6)
+
+            $teskData=$data;
+
+
+            unset($teskData['project']);
+            unset($teskData['username']);
+
+            /*
+             * Job must contain only one executor.
+             * If there are more than one or none, send error code
+             */
+            $executors=$teskData['executors'];
+
+            if (empty($executors))
             {
-                $response = Yii::$app->response;
-                $response->setStatusCode(405);
                 $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "You did not specify a user_id or user_id was not found in the database."];
+                $response->setStatusCode(407);
+                $response->data = ['message' => "Data does not contain an executor"];
                 $response->send();
-
+                return;
             }
-            else if ($ret_value==7)
+            if (count($executors)>1)
             {
-                $response = Yii::$app->response;
-                $response->setStatusCode(406);
                 $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->data = ['message' => "Volumes must be strings in the form SOURCE:DEST."];
+                $response->setStatusCode(407);
+                $response->data = ['message' => "Data must contain only one executor"];
                 $response->send();
+                return;
+            }
+            $executor=$executors[0];
+            // print_r($executor);
+            // exit(0);
+            /*
+             * Send job to TESK
+             */
+            $client = new Client(['baseUrl' => 'https://tesk.egci-endpoints.imsi.athenarc.gr']);
+            $teskResponse = $client->createRequest()
+                                    ->setMethod('POST')
+                                    ->setFormat(Client::FORMAT_JSON)
+                                    ->setUrl('v1/tasks')
+                                    ->setData($teskData)
+                                    ->send();
+            
+            if (!$teskResponse->getIsOk())
+            {
+                $status=$teskResponse->getStatusCode();
+                
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode($status);
+                $response->data = $teskResponse->data;
+                // $respones->data=$data;
+                $response->send();
+                return;
 
             }
-        }
-        else if (Yii::$app->request->getIsGet())
-        {
-            print_r('hello');
-        }
-        else
-        {
-            $method=$request->method;
-            $response = Yii::$app->response;
-            $response->setStatusCode(404);
+
+            
+            /*
+             * Get ID from TESK response 
+             * and add job to the DB.
+             */
+            $teskResponseData=$teskResponse->data;
+
+            $task=$teskResponseData['id'];
+
+            $history=new RunHistory();
+
+            $history->username=$user->username;
+            $history->jobid = $task;
+            $history->command = implode(' ',$executor['command']);
+            $history->image= $executor['image'];
+            $history->start = 'NOW()';
+            $history->project=$project;
+            $history->type='remote-job';
+
+            $history->insert();
+
+            $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $task;
+            exec("mkdir $tmpFolder",$out,$ret);
+            exec("chmod 777 $tmpFolder -R");
+
+            /*
+             * Call a script that monitors the job
+             * and fills the DB when the job is complete
+             */
+            $monitorScript=$scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "/remoteJobMonitor.py";
+            $arguments=[$monitorScript, Software::enclose($task), Software::enclose(Yii::$app->params['teskEndpoint']), Software::enclose($tmpFolder)];
+            $monitorCommand=implode(' ',$arguments);
+
+            shell_exec(sprintf('%s > /dev/null 2>&1 &', $monitorCommand));
+
+            /*
+             * Return jobid in response
+             */
             $response->format = \yii\web\Response::FORMAT_JSON;
-            $response->data = ['message' => "Code 404. No method $method for the /tasks endpoint<br />"];
-
+            $response->setStatusCode(200);
+            $response->data = $teskResponseData;
+            // $response->data=$data;
             $response->send();
+            return;
         }
+        else if (Yii::$app->request->getIsget())
+        {
+            /*
+             * Get task id. If not provided or empty, throw an error
+             */
+            $data=$request->get();
+
+            if (!isset($data['task']))
+            {
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode(408);
+                $response->data = ['message' => "Task not provided", 'status'=>408];
+                $response->send();
+                return;
+            }
+            $task=$data['task'];
+            if (empty($task))
+            {
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode(408);
+                $response->data = ['message' => "Task is empty"];
+                $response->send();
+                return;
+            }
+
+            /*
+             * Uncomment the following line if you want to support other types of views
+             */
+            // $view=isset($data['view']) ? $data['view'] : '';
+            $view='';
+
+            /*
+             * View is optional so see if it defined and use it
+             */
+            if (!empty($view) && ($view!='FULL') && ($view!='MINIMAL') && ($view!='BASIC'))
+            {
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode(409);
+                $response->data = ['message' => "View type unrecongized."];
+                $response->send();
+                return;
+
+            }
+            /*
+             * Query TESK about the task
+             */
+
+            $url='v1/tasks/' . $task;
+            $url.=(empty($view)) ? '' : "?view=$view";
+
+            $client = new Client(['baseUrl' => 'https://tesk.egci-endpoints.imsi.athenarc.gr']);
+            $teskResponse = $client->createRequest()
+                                    ->setMethod('GET')
+                                    ->setFormat(Client::FORMAT_JSON)
+                                    ->setUrl($url)
+                                    ->send();
+            
+            /*
+             * If TESK found the task, send its info directly to the user.
+             */
+            $retCode=$teskResponse->getStatusCode();
+
+            if ($teskResponse->getIsOk())
+            { 
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode($retCode);
+                $response->data = $teskResponse->data;
+                $response->send();
+                return;
+            }
+            /*
+             * If task not found by TESK, and it is not a 404 error,
+             * return the TESK error.
+             */
+
+            if ($retCode!=404)
+            {
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode($retCode);
+                $response->data = $teskResponse->data;
+                $response->send();
+                return;
+            }
+            
+            /*
+             * If job is found in the database, only limited view is supported
+             */
+            $history=RunHistory::find()->where(['jobid'=>$task])->one();
+            // print_r($history);
+            // exit();
+            if (empty($history))
+            {
+                $response->format = \yii\web\Response::FORMAT_JSON;
+                $response->setStatusCode(404);
+                $response->data = $teskResponse->data;
+                $response->send();
+                return;
+            }
+
+            $response->format = \yii\web\Response::FORMAT_JSON;
+            $response->setStatusCode(200);
+            $response->data = [ $task => strtoupper($history->status) ];
+            $response->send();
+            return;
+
+        }
+            
     }
     
 
-    public function actionProjectUsage($project)
-    {
-        // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        // $jobNum=RunHistory::find()->where(['project'=>$project,])
-        //     ->andFilterWhere(
-        //     [
-        //         'or',
-        //         ['status'=>'Complete'],
-        //         [
-        //             'and',
-        //             ['status'=>'Cancelled'],
-        //             "stop-start>='00:00:60'"
-        //         ]
-        //     ])
-        //     ->count();
-        
-        $usage=RunHistory::getProjectUsage($project);
-        $this->asJson($usage);
-    }
+    
 
     public function actionPeriodStatistics()
     {
@@ -218,5 +381,3 @@ class ApiController extends Controller
 
 
 }
-
-
