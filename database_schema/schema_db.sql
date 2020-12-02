@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.14 (Ubuntu 10.14-0ubuntu0.18.04.1)
--- Dumped by pg_dump version 10.14 (Ubuntu 10.14-0ubuntu0.18.04.1)
+-- Dumped from database version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -36,7 +36,8 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 CREATE TYPE public.hist_type AS ENUM (
     'job',
-    'workflow'
+    'workflow',
+    'remote-job'
 );
 
 
@@ -182,6 +183,43 @@ ALTER SEQUENCE public.covid_dataset_application_id_seq OWNED BY public.covid_dat
 
 
 --
+-- Name: download_dataset; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.download_dataset (
+    id integer NOT NULL,
+    dataset_id text,
+    provider text,
+    user_id integer,
+    folder_path text
+);
+
+
+ALTER TABLE public.download_dataset OWNER TO schema;
+
+--
+-- Name: download_dataset_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.download_dataset_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.download_dataset_id_seq OWNER TO schema;
+
+--
+-- Name: download_dataset_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.download_dataset_id_seq OWNED BY public.download_dataset.id;
+
+
+--
 -- Name: image_request; Type: TABLE; Schema: public; Owner: schema
 --
 
@@ -291,6 +329,18 @@ ALTER SEQUENCE public.notification_recipient_id_seq OWNED BY public.notification
 
 
 --
+-- Name: operation_locks; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.operation_locks (
+    id text,
+    operation text
+);
+
+
+ALTER TABLE public.operation_locks OWNER TO schema;
+
+--
 -- Name: run_history; Type: TABLE; Schema: public; Owner: schema
 --
 
@@ -317,7 +367,8 @@ CREATE TABLE public.run_history (
     mpi_proc_per_node integer,
     mpi_proc integer,
     type public.hist_type,
-    field_values_json text
+    field_values_json text,
+    image text
 );
 
 
@@ -602,6 +653,43 @@ ALTER SEQUENCE public.ticket_head_id_seq OWNED BY public.ticket_head.id;
 
 
 --
+-- Name: upload_dataset; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.upload_dataset (
+    id integer NOT NULL,
+    dataset_id text,
+    provider text,
+    user_id integer,
+    api_key text
+);
+
+
+ALTER TABLE public.upload_dataset OWNER TO schema;
+
+--
+-- Name: upload_dataset_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.upload_dataset_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.upload_dataset_id_seq OWNER TO schema;
+
+--
+-- Name: upload_dataset_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.upload_dataset_id_seq OWNED BY public.upload_dataset.id;
+
+
+--
 -- Name: user; Type: TABLE; Schema: public; Owner: schema
 --
 
@@ -828,6 +916,13 @@ ALTER TABLE ONLY public.covid_dataset_application ALTER COLUMN id SET DEFAULT ne
 
 
 --
+-- Name: download_dataset id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.download_dataset ALTER COLUMN id SET DEFAULT nextval('public.download_dataset_id_seq'::regclass);
+
+
+--
 -- Name: image_request id; Type: DEFAULT; Schema: public; Owner: schema
 --
 
@@ -895,6 +990,13 @@ ALTER TABLE ONLY public.ticket_file ALTER COLUMN id SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.ticket_head ALTER COLUMN id SET DEFAULT nextval('public.ticket_head_id_seq'::regclass);
+
+
+--
+-- Name: upload_dataset id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset ALTER COLUMN id SET DEFAULT nextval('public.upload_dataset_id_seq'::regclass);
 
 
 --
@@ -981,6 +1083,14 @@ ALTER TABLE ONLY public.covid_dataset_application
 
 
 --
+-- Name: download_dataset download_dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.download_dataset
+    ADD CONSTRAINT download_dataset_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: image_request image_request_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
 --
 
@@ -1058,6 +1168,14 @@ ALTER TABLE ONLY public.ticket_file
 
 ALTER TABLE ONLY public.ticket_head
     ADD CONSTRAINT ticket_head_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: upload_dataset upload_dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset
+    ADD CONSTRAINT upload_dataset_pkey PRIMARY KEY (id);
 
 
 --
@@ -1140,6 +1258,20 @@ CREATE INDEX i_ticket_head ON public.ticket_head USING btree (user_id);
 --
 
 CREATE INDEX "idx-auth_item-type" ON public.auth_item USING btree (type);
+
+
+--
+-- Name: lock_id_idx; Type: INDEX; Schema: public; Owner: schema
+--
+
+CREATE INDEX lock_id_idx ON public.operation_locks USING btree (id);
+
+
+--
+-- Name: lock_op_idx; Type: INDEX; Schema: public; Owner: schema
+--
+
+CREATE INDEX lock_op_idx ON public.operation_locks USING btree (operation);
 
 
 --

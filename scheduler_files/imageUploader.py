@@ -6,6 +6,9 @@ import re
 import os.path
 import json
 import os
+import uuid
+import psycopg2 as psg
+import time
 
 softName=sys.argv[1]
 softVersion=sys.argv[2]
@@ -31,6 +34,15 @@ configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json
 configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
+
+db=config['database']
+host=db['host']
+dbuser=db['username']
+passwd=db['password']
+dbname=db['database']
+
+conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
+cur=conn.cursor()
 
 uImageFull=''
 cImageFull=''
@@ -185,12 +197,33 @@ except subprocess.CalledProcessError as exc:
     print(exc.output)
     exit(7)
 
+sql="SELECT COUNT(*) FROM operation_locks where operation='image_delete'"
+cur.execute(sql)
+results=cur.fetchone()
+opCount=results[0]
+while opCount>0:
+    time.sleep(5)
+    sql="SELECT COUNT(*) FROM operation_locks where operation='image_delete'"
+    cur.execute(sql)
+    results=cur.fetchone()
+    opCount=results[0]
+
+uniqid=uuid.uuid4()
+uniqid=str(uniqid)
+sql="INSERT INTO operation_locks(id,operation) VALUES ('" + uniqid + "','image_upload')"
+cur.execute(sql)
+conn.commit()
+
 command=['docker','push',imageNew]
 try:
     out=subprocess.check_output(command,stderr=subprocess.STDOUT)
 except subprocess.CalledProcessError as exc:
     print(exc.output)
     exit(8)
+
+sql="DELETE FROM operation_locks WHERE id='" + uniqid + "'"
+cur.execute(sql)
+conn.commit()
 
 command=['docker','image','rm',imageNew]
 try:
