@@ -271,15 +271,13 @@ class SoftwareController extends Controller
             if (!empty($ocontMount)) 
             {
                 $osystemMount=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/' . $osystemMountField;
-                // print_r($osystemMount);
-                // exit(0);
+               
             }
         }
 
         
         $mountpointExistError=false;
-        // print_r($οsystemMount);
-        // exit(0);
+        
         
         /*
          * Check if i/o folders exist. If not, create them. Depends on whether there is one mountpoint for the 
@@ -1072,9 +1070,6 @@ class SoftwareController extends Controller
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
 
         $folders=Software::listDirectories($directory);
-        // print_r($directory);
-        // exit(0);
-        
         return $this->renderAjax('select_mountpoint',['folders'=>$folders]);
     }
 
@@ -1912,6 +1907,17 @@ class SoftwareController extends Controller
         
         return $this->renderAjax('fill_array_field',['fields'=>$fields,'caller'=>$caller]);
     }
+
+
+    public function createExperiment($jobid)
+    {
+
+        return $this->render('create_experiment');
+    }
+
+
+
+
 }
 
 
