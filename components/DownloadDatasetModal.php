@@ -23,30 +23,32 @@ class DownloadDatasetModal
 
 		$model=new DownloadDataset;
 
+
+		echo Html::cssFile('@web/css/components/downloadDataset.css');
 		$form=ActiveForm::begin(['action'=>['filebrowser/download-dataset'], 'method'=> 'POST']);
 		echo Html::hiddenInput('mountcaller',null ,['id'=>'mountcaller']);
 		echo Html::hiddenInput('selectmounturl',Url::to(['software/select-mountpoint','username'=>$username]) ,['id'=>'selectmounturl']);
 
 		echo "<div class='modal fade' tabindex='-1' role='dialog' id='download-modal' aria-labelledby='download-modal' aria-hidden='true'>";
-		echo '<div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width:600px;">';
+		echo '<div class="modal-dialog modal-dialog-centered modal-lg modal-size" role="document">';
 		echo '<div class="modal-content" >';
 		echo '<div class="modal-header">';
-		echo "<h5 class='modal-title text-center' style='font-size:25px' id='exampleModalLongTitle'> Dataset details</h5>";
+		echo "<div class='modal-title text-center size' id='exampleModalLongTitle'> Dataset details</div>";
 		echo '</div>';
 		echo '<div class="modal-body">';
-		echo  '<div class="row" style="font-size:15px; margin-bottom:10px;">
-				 <span class="col-md-4" style="margin-top:5px;">Download dataset from: </span>
+		echo  '<div class="row body-row">
+				 <span class="col-md-4">Download dataset from: </span>
 				 <span class="col-md-7" >'. $form->field($model,'provider')
 				 ->dropdownList($datasets, ['class'=>'form-control'])->label("").'</span>
 				</div>';
-		echo  '<div class="row" style="font-size:15px; margin-bottom:10px;">
-					<span class="col-md-4" style="margin-top:7px;"> Dataset id:</span> 
+		echo  '<div class="row body-row">
+					<span class="col-md-4"> Dataset id:</span> 
 					<span class="col-md-7">'. $form->field($model,'dataset_id')
 					->textInput(['class'=>'form-control'])->label("").'</span>
 				</div>';
-		echo  '<span class="row" style="font-size:15px;">
-				<span class="col-md-4" style="margin-top:5px;">Store the dataset in:</span>
-		 		<span class="col-md-8" style="margin-top:5px;">'.
+		echo  '<span class="row body-row">
+				<span class="col-md-4">Store the dataset in:</span>
+		 		<span class="col-md-8">'.
 		 	
 				Html::textInput('osystemmount',$osystemMount,['id' => 'osystemmount','class'=>'mount-field','readonly'=>true,]).'&nbsp;&nbsp;' 
 				. Html::a("$select_icon Select",'javascript:void(0);',['class'=>'select-mount-button btn btn-success btn-md']).'&nbsp'
