@@ -347,7 +347,26 @@ class ApiController extends Controller
             
     }
     
+    public function actionProjectUsage($project)
+    {
+        // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+        // $jobNum=RunHistory::find()->where(['project'=>$project,])
+        //     ->andFilterWhere(
+        //     [
+        //         'or',
+        //         ['status'=>'Complete'],
+        //         [
+        //             'and',
+        //             ['status'=>'Cancelled'],
+        //             "stop-start>='00:00:60'"
+        //         ]
+        //     ])
+        //     ->count();
+
+        $usage=RunHistory::getProjectUsage($project);
+        $this->asJson($usage);
+    }
     
 
     public function actionPeriodStatistics()
