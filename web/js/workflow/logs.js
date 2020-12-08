@@ -95,6 +95,7 @@ $(document).ready(function()
                 {
                     $("#initial-status").hide();
                     $('#pod-logs').html(data);
+                    $('.steps-box').scrollTop($('.steps-box').prop('scrollHeight')); 
               
               
                     status=$("#status-value").text(); 
