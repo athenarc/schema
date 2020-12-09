@@ -11,10 +11,11 @@
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
 use app\components\Headers;
+use app\components\ROCrateModal;
 
 $this->title="Job history";
 
-
+$this->registerJsFile('@web/js/software/history.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 /*
  * Users are able to view the name, version, start date, end date, mountpoint 
  * and running status of their previous software executions. 
@@ -62,7 +63,7 @@ if (!empty($results))
 		?>
 			<th class="col-md-2" scope="col">Started on</th>
 			<th class="col-md-2" scope="col">Stopped on</th>
-			<th class="col-md-2" scope="col">Project</th>
+			<th class="col-md-3" scope="col">Project</th>
 		<?php	
 		}
 		?>
@@ -80,6 +81,7 @@ if (!empty($results))
  */
 
 $play_icon='<i class="fas fa-play"></i>';
+$experiment_icon='<i class="fa fa-flask" aria-hidden="true"></i>';
 $details_icon='<i class="fas fa-eye"></i>';
 
 
@@ -103,7 +105,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 				?>
 					<td class="col-md-2" style="font-size: 14px;"><?=empty($res->start)? '' : date("F j, Y, H:i:s",strtotime($res->start))?></td>
 					<td class="col-md-2" style="font-size: 14px;"><?=empty($res->stop)? '' : date("F j, Y, H:i:s",strtotime($res->stop))?></td>
-					<td class="col-md-2" style="font-size: 14px;"><?=$res->project?></td>
+					<td class="col-md-3" style="font-size: 14px;"><?=$res->project?></td>
 				<?php	
 				}
 				?>
@@ -134,18 +136,22 @@ $details_icon='<i class="fas fa-eye"></i>';
 								if (empty($res->status))
 								{
 						?>
-									<?= Html::a("$play_icon Re-attach",[$controller . '/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md'])?>
+									<?= Html::a("$play_icon",[$controller . '/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md', 'title'=>'Re-attach' ])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									
 						<?php
 								}
 								else
 								{
-						?>
-									<?= Html::a("$play_icon Re-run",[$controller . '/rerun','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md'])?>
+						?>			<?= Html::a("$play_icon",[$controller . '/rerun','jobid'=>$res->jobid],
+									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
+									<?= Html::a("$experiment_icon", null,
+										['class'=>'btn btn-secondary btn-md experiment hidden', 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Manage experiment', 'id'=>"$res->jobid"])?>
 						<?php
 								}
 						?>
-									<?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-info btn-md'])?>
+									
 								</td>
 
 						<?php
@@ -170,18 +176,24 @@ $details_icon='<i class="fas fa-eye"></i>';
 								if (empty($res->status))
 								{
 						?>
-									<?= Html::a("$play_icon Re-attach",['workflow/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md'])?>
+									<?= Html::a("$play_icon",['workflow/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md', 'title'=>'Re-attach'])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									
 						<?php
 								}
 								else
 								{
-						?>
-									<?= Html::a("$play_icon Re-run",['workflow/rerun','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md'])?>
+
+						?>		<?= Html::a("$play_icon",['workflow/rerun','jobid'=>$res->jobid],
+								['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>	
+								<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-secondary btn-md', 'title'=>'Details'])?>
+									
+									<?= Html::a("$experiment_icon",null,
+									['class'=>'btn btn-secondary btn-md experiment hidden', 'title'=>'Manage experiment', 'data-target'=>"#experiment-modal-$res->jobid" ,'id'=>"$res->jobid"])?>
 						<?php
 								}
 						?>
-									<?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-info btn-md'])?>
+									
 								</td>
 
 						<?php
@@ -189,7 +201,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							else
 							{
 						?>
-									<td class="col-md-3" style="text-align: right;"><span><i style="font-size: 14px;">Workflow N/A</i>&nbsp;</span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
+									<td class="col-md-3" style="text-align: right;"><span><i style="font-size: 14px;">Workflow N/A</i>&nbsp;</span><span><?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md', 'title'=>'Details'])?></span></td>
 						<?php
 							}
 						}
@@ -212,3 +224,12 @@ else
 }?>
 
 <div class="row"><div class="col-md-12"><?= LinkPager::widget(['pagination' => $pagination]) ?></div></div>
+
+<?php
+foreach ($results as $result) 
+{
+	ROCrateModal::addModal($result->jobid);
+}
+
+
+?>  

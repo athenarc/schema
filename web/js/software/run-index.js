@@ -259,10 +259,6 @@ $(document).ready(function() {
 		$("#systemmount").trigger('change');
 	}
 	
-	//$("#software-start-run-button").click(function(){
-	//	var project=$(".project-dropdown").val();
-	//	alert(project);
-	//	});
 	
 	$("#software-run-example-button").click(function(){
 		var project=$(".project-dropdown").val();
