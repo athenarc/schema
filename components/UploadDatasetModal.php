@@ -27,7 +27,7 @@ class UploadDatasetModal
 		echo '<div class="modal-dialog modal-dialog-centered modal-lg modal-size" role="document">';
 		echo '<div class="modal-content" >';
 		echo '<div class="modal-header">';
-		echo "<h5 class='modal-title text-center size'  id='exampleModalLongTitle'> Dataset details</h5>";
+		echo "<div class='modal-title text-center size'  id='exampleModalLongTitle'> Dataset details</div>";
 		echo '</div>';
 		echo '<div class="modal-body">';
 		echo  '<div class="row body-row">

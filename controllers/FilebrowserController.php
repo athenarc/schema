@@ -194,85 +194,75 @@ class FilebrowserController extends Controller
             $user_id=Userw::getCurrentUser()['id'];
             $folder=$_POST['osystemmount'];
             $dataset_id=$_POST['DownloadDataset']['dataset_id'];
-
-            $model->folder_path=$folder;
-            $model->provider=$_POST['DownloadDataset']['provider'];
-            $model->dataset_id=$dataset_id;
-            $model->user_id=$user_id;
-
-            //$model->save();
-
             $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api']);
             $response = $client->createRequest()
                 ->setUrl("action/package_show?id=$dataset_id")
-                //->addHeaders(['content-type' => 'application/json'])
-               // ->addHeaders(['Authorization'=>"$api_key"])
-               // ->setContent('{query_string: "Yii"}')
                 ->send();
+
+            
 
 
             $content=json_decode($response->content);
 
-
+            $title=$content->result->title;
+            $version=$content->result->version;
+           
             
             if(!$content->success==1)
             {
                     Yii::$app->session->setFlash('danger', 'The dataset id you provided is not valid');
                     return $this->redirect(['filebrowser/index']);
+
             }
             else
             {
-                $error=0;
-
-                
-
-                
                 $resources=$content->result->resources;
+                if(empty($folder))
+                {
+                    Yii::$app->session->setFlash('warning', "You must choose a folder to store the dataset");
+                    return $this->redirect(['filebrowser/index']);
+                }
+
+                $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Dataset_" . $dataset_id . '/';
+
+                exec("mkdir $finalFolder");
+
+                foreach ($resources as $res)
+                {
+                    if (empty($res->mimetype))
+                    {
+                        $command="wget  -r -np -R 'index.html*' -P $finalFolder $res->url";
+                    }
+                    else
+                    {
+                        $command="wget -P $finalFolder $res->url";
+                    }
+
+                    exec($command,$out,$ret);
+                    
+                    if ($ret!=0)
+                    {
+                        Yii::$app->session->setFlash('warning', "The dataset contains resources that can not be downloaded. Please visit https://data.hellenicdataservice.gr/dataset/$dataset_id/ to get access to the files");
+                    }
+                    else
+                    {
+                        Yii::$app->session->setFlash('success', 'The dataset has been successfully downloaded');
+                        $model->folder_path=$folder;
+                        $model->provider=$_POST['DownloadDataset']['provider'];
+                        $model->dataset_id=$dataset_id;
+                        $model->user_id=$user_id;
+                        $model->date=date("Y-m-d");
+                        $model->version=$version;
+                        $model->name=$title;
+                        $model->save();
+                    }
                 
-
-                foreach($resources as $res)
-                {
-                    
-                    //$file=file_get_contents($res->url);
-                    $parts=explode('/',$res->url);
-                    $compare_url = $parts[0].'/'.$parts[1].'/'.$parts[2].'/'.$parts[3].'/';
-                    // print_r($compare_url);
-                    // exit(0);
-                    if(!strcmp($compare_url,"https://data.hellenicdataservice.gr/dataset/")==0)
-                    {
-                        $error=1;
-                    }
-
                 }
-
-                if($error!=1)
-                {
-                    $file_name = preg_replace('/\s+/', '-', strval($content->result->title)); 
-                    $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Dataset_" . $dataset_id . '/';
-
-                    exec("mkdir $finalFolder");
-
-                    foreach($resources as $res)
-                    {
-                        $finalFile=$finalFolder . $res->name;
-                        $file=file_get_contents($res->url);
-                        file_put_contents($finalFile, $file);  
-                    }
-                   
-                    
-                    
-                    Yii::$app->session->setFlash('success', 'The dataset has been successfully downloaded');
-                    return $this->redirect(['filebrowser/index']);
-                }
-                else
-                {
-               
-                    Yii::$app->session->setFlash('warning', "The dataset contains resources that can not be downloaded. Please visit https://data.hellenicdataservice.gr/dataset/$dataset_id/ to get access to the files");
-                    return $this->redirect(['filebrowser/index']);
-                }
+                return $this->redirect(['filebrowser/index']);
             }
         }
     }
+
     
     
 
@@ -285,40 +275,26 @@ class FilebrowserController extends Controller
             $metadata=UploadedFile::getInstanceByName('metadata');
             $api_key=$_POST['api_key'];
             
-
-
-            //a8b0653c-94b1-41d7-97aa-abcda0902ab5
            
             $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api']);
             $response = $client->createRequest()
                 ->setUrl('action/package_create')
-                //->addHeaders(['content-type' => 'application/json'])
                 ->addHeaders(['Authorization'=>"$api_key"])
-               // ->setContent('{query_string: "Yii"}')
                 ->send();
             echo 'Results:<br>';
             echo $response->content;
-
-
-            // $client = new Client([
-            //     'transport' => 'yii\httpclient\CurlTransport',     
-            // ]);
-            // $response = $client->createRequest()
-            //     ->setFormat(Client::FORMAT_CURL)
-            //     ->setMethod('POST')
-            //     ->setUrl('http://example.com')
-            //     ->setData([
-            //     'name' => 'John Doe',
-            //     'email' => 'johndoe@example.com',
-            //     'file1' => new \CURLFile('/path/to/file1'), 'text/plain', 'file1'),
-            //     'file2' => new \CURLFile('/path/to/file2'), 'text/plain', 'file2'),
-            // ])
-            // ->send();
-            
-
             return $this->redirect(['filebrowser/index']);
         }
     
+    }
+
+    public function actionDatasetHistory()
+    {
+        $user_id=Userw::getCurrentUser()['id'];
+        $datasets=DownloadDataset::find()->where(['user_id'=>$user_id])->all();
+        // print_r($datasets);
+        // exit(0);
+        return $this->render('dataset_history', ['results'=>$datasets]);
     }
 
 

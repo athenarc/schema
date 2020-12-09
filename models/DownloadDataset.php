@@ -28,10 +28,9 @@ class DownloadDataset extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['folder_path', 'dataset_id', 'provider'], 'string'],
+            [['folder_path', 'dataset_id', 'provider', 'name', 'version'], 'string'],
             ['user_id', 'integer'],
-            ['date','safe']
-          //  [['folder_path', 'download_url', 'provider'], 'required'],
+            ['date','safe'],
         ];
     }
 

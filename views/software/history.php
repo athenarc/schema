@@ -147,7 +147,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>
 									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									<?= Html::a("$experiment_icon", null,
-										['class'=>'btn btn-secondary btn-md hidden', 'data-target'=>"#experiment-modal", 'title'=>'Manage experiment', 'id'=>'experiment-button'])?>
+										['class'=>'btn btn-secondary btn-md experiment hidden', 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Manage experiment', 'id'=>"$res->jobid"])?>
 						<?php
 								}
 						?>
@@ -189,7 +189,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 								<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-secondary btn-md', 'title'=>'Details'])?>
 									
 									<?= Html::a("$experiment_icon",null,
-									['class'=>'btn btn-secondary btn-md hidden', 'title'=>'Manage experiment', 'data-target'=>"#experiment-modal" ,'id'=>'experiment-button'])?>
+									['class'=>'btn btn-secondary btn-md experiment hidden', 'title'=>'Manage experiment', 'data-target'=>"#experiment-modal-$res->jobid" ,'id'=>"$res->jobid"])?>
 						<?php
 								}
 						?>
@@ -228,7 +228,7 @@ else
 <?php
 foreach ($results as $result) 
 {
-	ROCrateModal::addModal();
+	ROCrateModal::addModal($result->jobid);
 }
 
 

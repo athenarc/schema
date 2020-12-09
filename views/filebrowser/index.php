@@ -18,10 +18,14 @@ Headers::begin() ?>
 	[
 		['fontawesome_class'=>'<i class="fas fa-upload"></i>','name'=> 'Upload Dataset', 
 		'action'=>null,
-	     'options'=>['class'=>'btn btn-default upload-dataset hidden', 'data-target'=>"#upload-modal"], 'type'=>'a'], 
+	     'options'=>['class'=>'btn btn-default upload-dataset hidden', 'data-target'=>"#upload-modal"], 'type'=>'a'],
+	     ['fontawesome_class'=>'<i class="fas fa-file"></i>','name'=> 'Downloaded Datasets', 
+	 	'action'=>['filebrowser/dataset-history'],
+	    'options'=>['class'=>'btn btn-default'], 'type'=>'a'], 
 	 	['fontawesome_class'=>'<i class="fas fa-download"></i>','name'=> 'Download Dataset', 
 	 	'action'=>null,
-	    'options'=>['class'=>'btn btn-default download-dataset', 'data-target'=>"#download-modal"], 'type'=>'a'],  
+	    'options'=>['class'=>'btn btn-default download-dataset', 'data-target'=>"#download-modal"], 'type'=>'a'],
+
 	]
 ])
 ?>
