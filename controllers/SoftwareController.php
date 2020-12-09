@@ -23,6 +23,7 @@ use app\models\SoftwareUploadExisting;
 use app\models\SoftwareEdit;
 use app\models\SoftwareRemove;
 use app\models\ImageRequest;
+use app\models\ROCrate;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\RunHistory;
@@ -271,15 +272,13 @@ class SoftwareController extends Controller
             if (!empty($ocontMount)) 
             {
                 $osystemMount=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/' . $osystemMountField;
-                // print_r($osystemMount);
-                // exit(0);
+               
             }
         }
 
         
         $mountpointExistError=false;
-        // print_r($οsystemMount);
-        // exit(0);
+        
         
         /*
          * Check if i/o folders exist. If not, create them. Depends on whether there is one mountpoint for the 
@@ -1072,9 +1071,6 @@ class SoftwareController extends Controller
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
 
         $folders=Software::listDirectories($directory);
-        // print_r($directory);
-        // exit(0);
-        
         return $this->renderAjax('select_mountpoint',['folders'=>$folders]);
     }
 
@@ -1912,6 +1908,45 @@ class SoftwareController extends Controller
         
         return $this->renderAjax('fill_array_field',['fields'=>$fields,'caller'=>$caller]);
     }
+
+
+    public function actionCreateExperiment($jobid)
+    {
+        $model=new ROCrate();
+
+        if($model->load(Yii::$app->request->post()))
+        {
+
+            $software_name=$_POST['softname'];
+            $software_version=$_POST['softversion'];
+            $software_url=$model->software_url;
+            $input_data=$model->input_data;
+            $output_data=$model->output_data;
+            $publication=$model->publication;
+            $local_download=$model->local_download;
+            if($local_download==true)
+            {
+                // print_r('sndknsk');
+                // exit(0);
+            }
+            
+
+            $result=ROCrate::CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+            $software=$result[0];
+
+            Yii::$app->session->setFlash('success', "$result[1]");
+            
+           
+        }
+
+        return $this->redirect(['software/history']);
+    }
+
+
+
+
+
+
 }
 
 
