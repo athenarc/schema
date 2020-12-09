@@ -23,6 +23,7 @@ use app\models\SoftwareUploadExisting;
 use app\models\SoftwareEdit;
 use app\models\SoftwareRemove;
 use app\models\ImageRequest;
+use app\models\ROCrate;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\RunHistory;
@@ -1909,11 +1910,39 @@ class SoftwareController extends Controller
     }
 
 
-    public function createExperiment($jobid)
+    public function actionCreateExperiment($jobid)
     {
+        $model=new ROCrate();
 
-        return $this->render('create_experiment');
+        if($model->load(Yii::$app->request->post()))
+        {
+
+            $software_name=$_POST['softname'];
+            $software_version=$_POST['softversion'];
+            $software_url=$model->software_url;
+            $input_data=$model->input_data;
+            $output_data=$model->output_data;
+            $publication=$model->publication;
+            $local_download=$model->local_download;
+            if($local_download==true)
+            {
+                // print_r('sndknsk');
+                // exit(0);
+            }
+            
+
+            $result=ROCrate::CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+            $software=$result[0];
+
+            Yii::$app->session->setFlash('success', "$result[1]");
+            
+           
+        }
+
+        return $this->redirect(['software/history']);
     }
+
+
 
 
 
