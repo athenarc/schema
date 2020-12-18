@@ -11,7 +11,8 @@
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
 use app\components\Headers;
-use app\components\ROCrateModal;
+use app\components\RoCrateModal;
+use app\models\RoCrate;
 
 $this->title="Job history";
 
@@ -81,12 +82,21 @@ if (!empty($results))
  */
 
 $play_icon='<i class="fas fa-play"></i>';
-$experiment_icon='<i class="fa fa-flask" aria-hidden="true"></i>';
+$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
 $details_icon='<i class="fas fa-eye"></i>';
+
 
 
 	foreach ($results as $res)
 	{
+		if ($res->status=='Complete')
+		{
+			$completed='';
+		}
+		else
+		{
+			$completed='hidden';
+		}
 		$key=$res['software_id'];
 	?>
 			<tr>
@@ -146,8 +156,21 @@ $details_icon='<i class="fas fa-eye"></i>';
 						?>			<?= Html::a("$play_icon",[$controller . '/rerun','jobid'=>$res->jobid],
 									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>
 									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
+									<?php
+									$experiment=RoCrate::find()->where(['jobid'=>$res->jobid])->one(); 
+									if (!empty($experiment)) 
+									{
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:rgb(127, 255, 0)"></i>';
+										$title='Edit the RO-crate object of this run';
+									}
+									else
+									{
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
+										$title='Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment';
+									}
+									?>
 									<?= Html::a("$experiment_icon", null,
-										['class'=>'btn btn-secondary btn-md experiment hidden', 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Manage experiment', 'id'=>"$res->jobid"])?>
+										['class'=>"btn btn-secondary btn-md experiment $completed", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>"$title", 'id'=>"$res->jobid", ])?>
 						<?php
 								}
 						?>
@@ -228,8 +251,8 @@ else
 <?php
 foreach ($results as $result) 
 {
-	ROCrateModal::addModal($result->jobid);
+	RoCrateModal::addModal($result->jobid);
 }
 
 
-?>  
+?>

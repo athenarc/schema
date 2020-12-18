@@ -23,7 +23,7 @@ use app\models\SoftwareUploadExisting;
 use app\models\SoftwareEdit;
 use app\models\SoftwareRemove;
 use app\models\ImageRequest;
-use app\models\ROCrate;
+use app\models\RoCrate;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\RunHistory;
@@ -580,12 +580,13 @@ class SoftwareController extends Controller
             
             $jobid=uniqid();
             $result=Software::createAndRunJob($container_command, $fields, 
-                                                    $name, $version, $jobid, $user, 
-                                                    $podid, $machineType, 
-                                                    $isystemMount, $isystemMountField,
-                                                    $osystemMount, $osystemMountField,
-                                                    $iosystemMount, $iosystemMountField,
-                                                    $project,$maxMem,$maxCores);
+            $name, $version, $jobid, $user, 
+            $podid, $machineType, 
+            $isystemMount, $isystemMountField,
+            $osystemMount, $osystemMountField,
+            $iosystemMount, $iosystemMountField,
+            $project,$maxMem,$maxCores);
+
             $runPodId=$result[0];
             $runError=$result[1];
             $machineType=$result[2];
@@ -733,13 +734,7 @@ class SoftwareController extends Controller
             }   
 
             return $this->redirect(['software/index']);
-            // return $this->render('index',['software' => $software, 'user'=> $user,
-            //                           'superadmin' => $superadmin, //'visibility'=>$visibility,
-            //                           'success'=>$messages[1],'warning'=>$messages[2], 
-            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
-            //                           'images'=>$images,]);
-
+        
         }
 
         /*
@@ -763,11 +758,7 @@ class SoftwareController extends Controller
 
         ];
 
-        // print_r($_POST);
-        // exit(0);
-        /*
-         * Get dropdown of existing images
-         */
+    
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
         $user=User::getCurrentUser()['username'];
         if ($superadmin==1)
@@ -848,12 +839,6 @@ class SoftwareController extends Controller
             }
 
             return $this->redirect(['software/index']);
-            // return $this->render('index',['software' => $software, 'user'=> $user,
-            //                           'superadmin' => $superadmin, //'visibility'=>$visibility,
-            //                           'success'=>$messages[1],'warning'=>$messages[2], 
-            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
-            //                           'images'=>$images,]);
 
         }
 
@@ -898,23 +883,9 @@ class SoftwareController extends Controller
                 'public'=>'Everyone',
                 'private' => 'Only me',];
 
-        // $model->dois=explode('|', $model->dois);
-        // $dbfields=$softwareModel::getSoftwareEditFields($name, $version);
-        
-        // $description=(isset($_POST['description']))? $_POST['description'] : $dbfields['description'];
-        // $visibility=(isset($_POST['visibility']))? $_POST['visibility'] : $dbfields['visibility'];
-        
-
-        // $mountpoint=(isset($_POST['mountpoint']))? $_POST['mountpoint'] : $dbfields['mountpoint'];
-        // $workingdir=(isset($_POST['workingdir']))? $_POST['workingdir'] : $dbfields['workingdir'];
-        // $biotools=(isset($_POST['biotools'])) ? $_POST['biottols'] : $dbfields['biotools'];
+       
         $model->dois=array_filter(explode('|', $model->dois));
-        // print_r($model->description);
-        // exit(0);
-        /** 
-         * If the form has posted get file and software name
-         *
-         */
+        
         if ($model->load(Yii::$app->request->post()) && $model->validate()) 
         {
             
@@ -977,14 +948,6 @@ class SoftwareController extends Controller
                 Yii::$app->session->setFlash('danger', "$messages[0]");
             }
             return $this->redirect(['software/index']);
-            // return $this->render('index',['software' => $software, 'user'=> $user,
-            //                           'superadmin' => $superadmin,
-            //                           'success'=>$messages[1],'warning'=>$messages[2],
-            //                           'error' =>$messages[0], 'projectsDropdown'=>$projectsDropdown,
-            //                           'descriptions'=>$descriptions,'indicators'=>$indicators,
-            //                           'images'=>$images,]);
-
-
         }
 
         return $this->render('software_edit',['model'=>$model,'vdropdown'=>$vdropdown]);
@@ -1009,8 +972,7 @@ class SoftwareController extends Controller
         }
 
         $image=$query->one();
-        // print_r(empty($image)?0:1);
-        // exit(0);
+        
 
         if (empty($image))
         {
@@ -1023,15 +985,6 @@ class SoftwareController extends Controller
             $success=$messages[0];
             $error=$messages[1];
         }
-
-
-        // $user=User::getCurrentUser()['username'];
-
-
-        /**
-         * Is the user SuperAdmin?
-         */
-                
         
         if ($superadmin==1)
         {
@@ -1074,10 +1027,14 @@ class SoftwareController extends Controller
         return $this->renderAjax('select_mountpoint',['folders'=>$folders]);
     }
 
-    public function actionHistory()
+    public function actionHistory($crate_id='')
     {
-
-
+        
+        /*
+         * Add check here whether the ro crate exists. If not, add a flash on top of the page
+         * Create model etc or search files
+         * If crate_id does not exist then make it an empty string ''
+         */
         $user=User::getCurrentUser()['username'];
 
 
@@ -1100,11 +1057,8 @@ class SoftwareController extends Controller
                 ->limit($pagination->limit)
                 ->all();
 
-
-        // $pages=$results[0];
-        // $results=$results[1];
         
-        return $this->render('history',['results'=>$results,'pagination'=>$pagination,'available'=>$available,'available_workflows'=>$available_workflows]);
+        return $this->render('history',['results'=>$results,'pagination'=>$pagination,'available'=>$available,'available_workflows'=>$available_workflows,'crate_id'=>$crate_id]);
     }
 
     public function actionRerun($jobid)
@@ -1201,53 +1155,7 @@ class SoftwareController extends Controller
             'method' => 'POST'
         ];
         
-        // $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
 
-        // if (!empty($fields))
-        // {
-        //     $k=0;
-        //     for ($i=0; $i<count($fields); $i++)
-        //     {
-        //         /**
-        //          * If the field has a prefix
-        //          */
-        //         if (!empty($fields[$i]['prefix']))
-        //         {
-        //             $k++;
-        //         }
-
-        //         if (empty($field_values))
-        //         {
-        //             $fields[$i]['value']='';
-        //         }
-        //         else
-        //         {
-        //             if (!empty($field_values[$i]))
-        //             {
-        //                 $emptyFields=false;
-        //             }
-        //             if (($fields[$i]['field_type']!='file') && ($fields[$i]['field_type']!='File'))
-        //             {
-        //                 $fields[$i]['value']=$field_values[$k];
-        //             }
-        //             else
-        //             {
-        //                 $fields[$i]['value']=substr($field_values[$k],strlen($icontMount));
-        //                 // print_r($fields[$i]['value']);
-        //                 // echo " ";
-        //                 if (substr($fields[$i]['value'],0,1)=='/')
-        //                 {
-        //                     $fields[$i]['value']=substr($fields[$i]['value'],1);
-        //                 }
-        //                 // print_r($fields[$i]['value']);
-        //                 // echo "<br />";
-        //             }
-        //         }
-        //         $k++;
-        //     }
-        // }
-        // print_r($fields);
-        // exit(0);
         $hasExample=$software->has_example;
         $username=User::getCurrentUser()['username'];
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
@@ -1312,31 +1220,6 @@ class SoftwareController extends Controller
         
 
         $podid=Software::runningPodIdByJob($name,$jobid);
-        /** 
-         * The following eliminates empty arguments if the user 
-         * has used a space char athe the end of the argument
-         */
-        // $commTokensTmp=str_replace($software->script,'',$result['command']);
-        // // print_r($result['command']);
-        // // print_r($commTokensTmp);
-        // // exit(0);
-
-        // $commTokensTmp=explode(' ',$commTokensTmp);
-        // $commTokens=[];
-        // foreach ($commTokensTmp as $token)
-        // {
-        //     $token=trim($token);
-        //     if ((empty($token)))
-        //     {
-        //         continue;
-        //     }
-        //     $commTokens[]=$token;
-        // }
-
-        // print_r($commTokens);
-        // exit(0);
-        // $field_values=$commTokens;
-        // $fields=$softwareModel::getSoftwareFields($name,$version);
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
         $icontMount=$software->imountpoint;
         $ocontMount=$software->omountpoint;
@@ -1370,45 +1253,6 @@ class SoftwareController extends Controller
          */
         $fields=Software::getRerunFieldValues($jobid,$fields);
 
-        // if (!empty($fields))
-        // {
-        //     $k=0;
-        //     for ($i=0; $i<count($fields); $i++)
-        //     {
-        //         /**
-        //          * If the field has a prefix
-        //          */
-        //         if (!empty($fields[$i]['prefix']))
-        //         {
-        //             $k++;
-        //         }
-
-        //         if (empty($field_values))
-        //         {
-        //             $fields[$i]['value']='';
-        //         }
-        //         else
-        //         {
-        //             if (!empty($field_values[$i]))
-        //             {
-        //                 $emptyFields=false;
-        //             }
-        //             if ($fields[$i]['field_type']!='file')
-        //             {
-        //                 $fields[$i]['value']=$field_values[$k];
-        //             }
-        //             else
-        //             {
-        //                 $fields[$i]['value']=substr($field_values[$k],strlen($icontMount));
-        //                 if (substr($fields[$i]['value'],0,1)=='/')
-        //                 {
-        //                     $fields[$i]['value']=substr($fields[$i]['value'],1);
-        //                 }
-        //             }
-        //         }
-        //         $k++;
-        //     }
-        // }
         $hasExample=$software->has_example;
         $username=User::getCurrentUser()['username'];
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
@@ -1457,11 +1301,6 @@ class SoftwareController extends Controller
         $filepath=Software::getSoftwarePreviousCwl($name, $version);
         $fileexploded=explode('/',$filepath);
         $filename=end($fileexploded);
-        // print_r($filename);
-        // print_r("<br />");
-        // print_r($filepath);
-        // exit(0);
-
         return Yii::$app->response->sendFile($filepath,$filename);
     }
 
@@ -1505,26 +1344,10 @@ class SoftwareController extends Controller
             $command="chmod 777 $folder";
             exec($command,$output,$ret);
 
-            // $i=0;
-            // $j=0;
-            // $k=0;
+            
             $values=[];
 
-            // print_r($_FILES);
-            // print_r("<br />");
-            // print_r($_POST);
-            // exit(0);
-            // $fieldValues=isset($_POST['field_values']) ? $_POST['field_values'] : [];
-            // print_r($_FILES['field_values']);
-            // exit(0);
-            // $fileNames=$_FILES['field_values']['name'];
-            // $tmpFiles=$_FILES['field_values']['tmp_name'];
-            // print_r($_POST);
-            // exit(0);
-            // print_r($fileNames);
-            // print_r("<br />");
-            // print_r($tmpFiles);
-            // exit(0);
+            
 
             if (!empty($fields))
             {
@@ -1667,12 +1490,7 @@ class SoftwareController extends Controller
 
                 return $this->redirect(['software/index']);
 
-                // return $this->render('index',['software' => $software, 'user'=> $user,
-                //                       'superadmin' => $superadmin,
-                //                       'success'=>$success,'warning'=>'',
-                //                       'error' =>'', 'projectsDropdown'=>$projectsDropdown,
-                //                       'descriptions'=>$descriptions,'indicators'=>$indicators,
-                //                       'images'=>$images,]);
+               
             }
 
         }
@@ -1713,40 +1531,6 @@ class SoftwareController extends Controller
         $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu']/1000;
 
        
-       // rint_r(strtotime($stop));
-       // print_r("");
-       // print_r(strtotime($start));
-    
-             
-
-        // $rows=[
-        //     'Software name' => $result['softname'],
-        //     'Software version' => $result['softversion'],
-        //     'Status'=> $status,
-        //     'Started on'=>$start,
-        //     'Stopped on' => $stop,
-        //     'Total execution time' => $totalExecutionTime,
-        //     'Maximum memory footprint (GB)' => $maxRam,
-        //     'Maximum CPU load (cores)' => $maxCpu,
-        //     'Machine Type' => $machineType,
-        // ];
-
-        // if (!empty($iosystemMountField))
-        // {
-        //     $rows['I/O Mountpoint']=$iosystemMountField;
-        // }
-        // else
-        // {
-        //     if (!empty($isystemMountField))
-        //     {
-        //         $rows['Input Mountpoint']=$isystemMountField;
-        //     }
-
-        //     if (!empty($osystemMountField))
-        //     {
-        //         $rows['Output Mountpoint']=$osystemMountField;
-        //     }
-        // }
 
         return $this->render('job_details',['name'=>$result['softname'],'version'=>$result['softversion'],
                                             'status'=>$status, 'start'=>$start, 'stop'=>$stop, 'execTime'=>$totalExecutionTime,
@@ -1767,28 +1551,6 @@ class SoftwareController extends Controller
         $projectTotals=$softwareModel::getUserStatistics($user);
         $projectAggr=$softwareModel::getUserStatisticsPerProject($user);
         $quotas=Software::getActiveProjectQuotas($user);
-      //  $tim=str_replace(":", "," , $result[2]);
-      //  $time=str_replace("," , "." , $result[2]);
-       
-        
-        
-
-         // print_r($result);
-         // exit(0);
-
-        // $rows=[
-        //     'Number of jobs'=>$result[0],
-        //     'Number of completed jobs'=>$result[1],
-        //     // 'Started on'=>$start,
-        //     // 'Stopped on' => $stop,
-        //     'Total execution time (in hours)' => $result[2],
-        //     'Average memory footprint (GB)' => $result[3],
-        //     'Average CPU load (cores)' => round($result[4])/1000,
-            
-        // ];
-
-      
-        
         return $this->render('user_statistics',['projectTotals'=>$projectTotals,'projectAggr'=>$projectAggr, 'quotas'=>$quotas]);       
               
 
@@ -1805,10 +1567,6 @@ class SoftwareController extends Controller
     {
         $filepath=Yii::$app->params['tmpFolderPath'] . $jobid . '/logs.txt';
         $filename='logs.txt';
-        // print_r($filename);
-        // print_r("<br />");
-        // print_r($filepath);
-        // exit(0);
         if (file_exists($filepath))
         {
             return Yii::$app->response->sendFile($filepath,$filename);
@@ -1820,6 +1578,8 @@ class SoftwareController extends Controller
         
     }
 
+
+
     public function actionSelectFile($caller,$folder)
     {
         if (empty($folder))
@@ -1830,17 +1590,8 @@ class SoftwareController extends Controller
         {
             $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' . $folder . '/';
         }
-        // print_r($directory);
-        // exit(0);
+       
         $files=Software::listFiles($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
-        
         return $this->renderAjax('file_list',['files'=>$files, 'caller'=>$caller,'root'=>$directory]);
     }
     
@@ -1854,16 +1605,8 @@ class SoftwareController extends Controller
         {
             $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' . $folder . '/';
         }
-        // print_r($directory);
-        // exit(0);
         $folders=Software::listDirectories($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
+        
         
         return $this->renderAjax('folder_list',['folders'=>$folders, 'caller'=>$caller,'root'=>$directory]);
     }
@@ -1881,13 +1624,7 @@ class SoftwareController extends Controller
         // print_r($directory);
         // exit(0);
         $files=Software::listFiles($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
+        
         
         return $this->renderAjax('file_list_multiple',['files'=>$files, 'caller'=>$caller,'root'=>$directory]);
     }
@@ -1912,42 +1649,64 @@ class SoftwareController extends Controller
 
     public function actionCreateExperiment($jobid)
     {
-        $model=new ROCrate();
+        
+        $model=new RoCrate();
+        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+        $software_id=$history->software_id;
+        $software=Software::find()->where(['id'=>$software_id])->one();
+        $fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+        $fields=Software::getRerunFieldValues($jobid,$fields);
+
+       
+        $input_data=[];
+        foreach ($fields as $field) 
+        {
+
+            if(empty($field->optional))
+            {
+                $optional=0;
+            }
+            else
+            {
+                $optional=1;
+            }
+
+            $input_data[$field->name]=['id'=>uniqid(),'name'=>$field->name,'url'=>' ', 'type'=>$field->field_type, 'optional'=>$optional];
+
+        }
 
         if($model->load(Yii::$app->request->post()))
         {
-
+            
             $software_name=$_POST['softname'];
             $software_version=$_POST['softversion'];
             $software_url=$model->software_url;
-            $input_data=$model->input_data;
-            $output_data=$model->output_data;
-            $publication=$model->publication;
-            $local_download=$model->local_download;
-            if($local_download==true)
+            foreach ($model->input as $input_name=>$input_url) 
             {
-                // print_r('sndknsk');
-                // exit(0);
+               $input_data[$input_name]['url']=$input_url;
+                 
             }
-            
+           
 
+            $output_data=$model->output;
+            $publication=$model->publication;
+        
             $result=ROCrate::CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
             $software=$result[0];
 
+            if($model->local_download==true)
+            {
+                $filepath=Yii::$app->params['ROCratesFolder']. $jobid .'.zip';
+                $filename=$jobid .'.zip';
+                return Yii::$app->response->sendFile($filepath,$filename);
+            }
+
             Yii::$app->session->setFlash('success', "$result[1]");
-            
-           
         }
 
-        return $this->redirect(['software/history']);
+        return  $this->redirect(['software/history']);
     }
 
 
 
-
-
-
 }
-
-
-
