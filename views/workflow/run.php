@@ -94,7 +94,8 @@ JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $
             $username,$icontMount='',$ocontMount=1,
             $iocontMount='',$mountExistError=1,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, $type);   
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, 
+            $type, $uploadedBy);   
 
 
 ActiveForm::end();  
