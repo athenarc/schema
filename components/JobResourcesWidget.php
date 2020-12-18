@@ -30,7 +30,7 @@ class JobResourcesWidget
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $type)
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $type, $uploadedBy)
   {?>
             
             <div class="row">
@@ -155,7 +155,6 @@ class JobResourcesWidget
 
 
     <?php
-
         if ((($superadmin) || ($username==$uploadedBy)) && (!$hasExample))
         {
 
