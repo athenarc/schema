@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-from rocrate.model.workflow import Workflow
-import rocrate.rocrate as roc
+import json
 import sys
 import subprocess
 import atexit
@@ -9,54 +8,81 @@ import tempfile
 from contextlib import redirect_stdout
 from pathlib import Path
 
-import rocrate.rocrate as roc
-from rocrate.model import entity
-from rocrate.model.workflow import Workflow
-from galaxy2cwl import get_cwl_interface
-
-softName=sys.argv[1]
-softVersion=sys.argv[2]
-softDescription=sys.argv[3]
-softUrl=sys.argv[4]
-inputData=sys.argv[5]
-outpoutData=sys.argv[6]
-publication=sys.argv[7]
-outPath=sys.argv[8]
-location=sys.argv[9]
-uploader=sys.argv[10]
-jobId=sys.argv[11]
-
-
 
 from rocrate import rocrate_api
 from rocrate.model.workflow import Workflow
+from rocrate.model.file import File
+from rocrate.model import entity
+from rocrate.model import contextentity
+import rocrate.rocrate as roc
 
-wf_path = location
+
+
+	
+
+
+with open('/data/docker/RO-crates/arguments.json') as f:
+  data = json.load(f)
+
+
+# inputs=data['input_data']['0']
+# print(data['input_data']['0'])
+
+
+# print(data['software_description'])
+
+wf_path = data['location']
 files_list = []
 
-
+Workflow.TYPES=["File", "SoftwareSourceCode"]
 
 wf_crate = rocrate_api.make_workflow_rocrate(workflow_path=wf_path,wf_type="CWL",include_files=files_list)
 
-TYPES = ["File", "SoftwareSourceCode", "MPI"]
+
+wf_crate.isBasedOn = data['software_url']
+wf_crate.name = data['software_name']
+wf_crate.description=data['software_description']
+wf_crate.creator=data['creator']
+
+main_entity = entity.Entity(wf_crate, data['software_url'],
+            properties={
+                "@id": data['software_url'],
+                "name": data['software_name'],
+                "citation": data['publication'],  
+                "@type": ["File", "SoftwareSourceCode"],
+                "input": [ "{@id: #" + data['input_data']["%s"%x]['id']+"}" for x in data['field_names']],
+                "output": [{"@id": "#" + data['output_data']['id']}],
+                "version": data['version']
+                },
+                 )
+
+ 
+wf_crate._add_context_entity(main_entity)
 
 
+for x in data['field_names']:
+    if (data['input_data']["%s"%x]['type']=='File'):
+        input_entity = entity.Entity(wf_crate, '', 
+        properties={"@id": "#"+data['input_data']["%s"%x]['id'],
+        "@type": 'FormalParameter',
+        'name': data['input_data']["%s"%x]['name'],
+        'url': data['input_data']["%s"%x]['url'],
+     })
+    else:
+        input_entity = entity.Entity(wf_crate, '', 
+        properties={"@id": "#"+data['input_data']["%s"%x]['id'],
+        "@type": 'FormalParameter',
+        'name': data['input_data']["%s"%x]['name'],
+     })
+    wf_crate._add_context_entity(input_entity)
 
-wf_crate.isBasedOn = softUrl
-wf_crate.name = softName
-wf_crate.description=softDescription
-uploader = wf_crate.add_person('001', {'name': uploader})
-wf_crate.creator=uploader
-# wf_crate.image=
+output_entity = entity.Entity(wf_crate, '', 
+        properties={"@id": "#" + data['output_data']['id'],
+        "@type": 'FormalParameter',
+        'url': data['output_data']['data'],
+     })
+wf_crate._add_context_entity(output_entity)
 
-# wf_crate.license = 'MIT'
-# wf_crate.keywords = ['GTN', 'climate']
-# wf_crate.CreativeWorkStatus = "Stable"
-# wf_crate.publisher = publisher
-# wf_crate.creator = [ creator, publisher ]
-
-
-wf_crate.write_zip(outPath+'/'+ jobId)
-
-command=['chmod','777', outPath+'.zip']
+wf_crate.write_zip(data['ROCratesFolder']+'/'+ data['jobid'])
+command=['chmod','777', data['ROCratesFolder']+'.zip']
 subprocess.call(command)
