@@ -157,12 +157,18 @@ class ArgumentsWidget
 					<div class="row">
 					<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 					</div>
-					<span><strong>Show optional fields: &nbsp;</strong>
-					<label class="switch" title="Show optional fields">
-							  <input type="checkbox">
-							  <span class="slider round"></span>
-					</label>
-					</span> 
+					<div class="row">
+						<div class="col-md-6 text-right">
+						<strong>Show optional fields: &nbsp;</strong>
+						</div>
+						<div class="col-md-6 text-left">
+							<label class="switch" title="Show optional fields">
+								  <input type="checkbox"> 
+								  <span class="slider round"></span>
+							</label>
+						</div>
+					</div> 
+					<div class="row">&nbsp;</div>
 					<?php
 
 					    $default_icon='<i class="fas fa-magic"></i>';
@@ -342,12 +348,18 @@ class ArgumentsWidget
 				<div class="row">
 				<div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i></h3></div>
 				</div>
-				<span><strong>Show optional fields: &nbsp;</strong>
-				<label class="switch" title="Show optional fields">
-							  <input type="checkbox">
-							  <span class="slider round"></span>
-				</label>
-				</span>  
+				<div class="row">
+						<div class="col-md-6 text-right">
+						<strong>Show optional fields: &nbsp;</strong>
+						</div>
+						<div class="col-md-6 text-left">
+							<label class="switch" title="Show optional fields">
+								  <input type="checkbox"> 
+								  <span class="slider round"></span>
+							</label>
+						</div>
+					</div> 
+					<div class="row">&nbsp;</div>
 				<?php
 
 					$default_icon='<i class="fas fa-magic"></i>';
@@ -374,7 +386,7 @@ class ArgumentsWidget
 				    			$optional_fields='show';
 				    			$field_name="$required_icon $field->name";
 				    		}?>
-				    		<div class="col-md-offset-3 col-md-3 optional <?=$optional_fields?>" style="text-align: right;" id='field-names'><span class="required hidden"><?=Html::label($field_name,null,[])?></span>
+				    		<div class="col-md-6 optional <?=$optional_fields?> text-right"  id='field-names'><span class="required hidden"><?=Html::label($field_name,null,[])?></span>
 				    			<span class="non-required"><?=Html::label($field->name,null,[])?></span>
 				            </div>
 							<?php

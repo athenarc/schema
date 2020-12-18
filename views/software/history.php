@@ -251,7 +251,10 @@ else
 <?php
 foreach ($results as $result) 
 {
-	RoCrateModal::addModal($result->jobid);
+	if ($result->type=='job')
+	{
+		RoCrateModal::addModal($result->jobid);
+	}
 }
 
 

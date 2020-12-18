@@ -74,9 +74,9 @@ class RoCrate extends \yii\db\ActiveRecord
         $software_description=$software->description;
         $location=empty($software->location)?"$software->cwl_path":"$software->location";
 		$creator=explode('@',$software->uploaded_by)[0];
-        $creator_name=ucfirst(explode('_',$creator)[0]);
-        $creator_surname=ucfirst(explode('_',$creator)[1]);
-        $creator_fullname=$creator_name.' '.$creator_surname;
+        // $creator_name=ucfirst(explode('_',$creator)[0]);
+        // $creator_surname=ucfirst(explode('_',$creator)[1]);
+        // $creator_fullname=$creator_name.' '.$creator_surname;
         
 
         $ROCratesFolder=Yii::$app->params['ROCratesFolder'];
@@ -103,7 +103,7 @@ class RoCrate extends \yii\db\ActiveRecord
                     'publication'=>$publication, 
                     'ROCratesFolder'=>$ROCratesFolder, 
                     'location'=>$location,
-                    'creator'=>$creator_fullname, 
+                    'creator'=>$creator, 
                     'jobid'=>$jobid,
                     'input_data'=>$input_data, 
                     'number_of_inputs'=>count($input_data),
