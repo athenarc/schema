@@ -13,6 +13,7 @@ use webvimark\modules\UserManagement\models\User as Userw;
 use app\models\User;
 use app\models\Software;
 use yii\httpclient\Client;
+use app\models\ApiFunctions;
 
 class ApiController extends Controller
 {
@@ -166,77 +167,40 @@ class ApiController extends Controller
                 $response->send();
                 return;
             }
-            $executor=$executors[0];
-            // print_r($executor);
-            // exit(0);
-            /*
-             * Send job to TESK
-             */
-            $client = new Client(['baseUrl' => 'https://tesk.egci-endpoints.imsi.athenarc.gr']);
-            $teskResponse = $client->createRequest()
-                                    ->setMethod('POST')
-                                    ->setFormat(Client::FORMAT_JSON)
-                                    ->setUrl('v1/tasks')
-                                    ->setData($teskData)
-                                    ->send();
-            
-            if (!$teskResponse->getIsOk())
+            if (!isset($teskData['reference_data']))
             {
-                $status=$teskResponse->getStatusCode();
+                $executor=$executors[0];
+                /*
+                 * Send job to TESK
+                 */
+                $teskResponse=ApiFunctions::runTesk($teskData,$username,$project,$executor);
+                $tesCode=$teskResponse[0];
+                $tesResponseData=$teskResponse[1];
+                /*
+                 * Return jobid in response
+                 */
                 
-                $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->setStatusCode($status);
-                $response->data = $teskResponse->data;
-                // $respones->data=$data;
-                $response->send();
-                return;
+            }
+            else
+            {
+
+                foreach ($teskData['reference_data'] as $index => $ref)
+                {
+                    $teskData['reference_data'][$index]['path']= Yii::$app->params['userDataPath'] . explode('@',$username)[0] . '/' . ltrim($ref['path'],'/');
+                }
+
+                $tesResponse=ApiFunctions::runSchemaTes($teskData,$project,$username,$quotas);
+                $tesCode=$tesResponse[0];
+                $tesResponseData=$tesResponse[1];
 
             }
 
-            
-            /*
-             * Get ID from TESK response 
-             * and add job to the DB.
-             */
-            $teskResponseData=$teskResponse->data;
-
-            $task=$teskResponseData['id'];
-
-            $history=new RunHistory();
-
-            $history->username=$user->username;
-            $history->jobid = $task;
-            $history->command = implode(' ',$executor['command']);
-            $history->image= $executor['image'];
-            $history->start = 'NOW()';
-            $history->project=$project;
-            $history->type='remote-job';
-
-            $history->insert();
-
-            $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $task;
-            exec("mkdir $tmpFolder",$out,$ret);
-            exec("chmod 777 $tmpFolder -R");
-
-            /*
-             * Call a script that monitors the job
-             * and fills the DB when the job is complete
-             */
-            $monitorScript=$scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "/remoteJobMonitor.py";
-            $arguments=[$monitorScript, Software::enclose($task), Software::enclose(Yii::$app->params['teskEndpoint']), Software::enclose($tmpFolder)];
-            $monitorCommand=implode(' ',$arguments);
-
-            shell_exec(sprintf('%s > /dev/null 2>&1 &', $monitorCommand));
-
-            /*
-             * Return jobid in response
-             */
             $response->format = \yii\web\Response::FORMAT_JSON;
-            $response->setStatusCode(200);
-            $response->data = $teskResponseData;
-            // $response->data=$data;
+            $response->setStatusCode($tesCode);
+            $response->data = $tesResponseData;
             $response->send();
             return;
+
         }
         else if (Yii::$app->request->getIsget())
         {
@@ -258,7 +222,7 @@ class ApiController extends Controller
             {
                 $response->format = \yii\web\Response::FORMAT_JSON;
                 $response->setStatusCode(408);
-                $response->data = ['message' => "Task is empty"];
+                $response->data = ['status' => 408, 'message' => "Task is empty"];
                 $response->send();
                 return;
             }
@@ -281,45 +245,49 @@ class ApiController extends Controller
                 return;
 
             }
-            /*
-             * Query TESK about the task
-             */
 
-            $url='v1/tasks/' . $task;
-            $url.=(empty($view)) ? '' : "?view=$view";
-
-            $client = new Client(['baseUrl' => 'https://tesk.egci-endpoints.imsi.athenarc.gr']);
-            $teskResponse = $client->createRequest()
-                                    ->setMethod('GET')
-                                    ->setFormat(Client::FORMAT_JSON)
-                                    ->setUrl($url)
-                                    ->send();
-            
-            /*
-             * If TESK found the task, send its info directly to the user.
-             */
-            $retCode=$teskResponse->getStatusCode();
-
-            if ($teskResponse->getIsOk())
-            { 
-                $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->setStatusCode($retCode);
-                $response->data = $teskResponse->data;
-                $response->send();
-                return;
-            }
-            /*
-             * If task not found by TESK, and it is not a 404 error,
-             * return the TESK error.
-             */
-
-            if ($retCode!=404)
+            if (strpos($task,'task-'))
             {
-                $response->format = \yii\web\Response::FORMAT_JSON;
-                $response->setStatusCode($retCode);
-                $response->data = $teskResponse->data;
-                $response->send();
-                return;
+                /*
+                 * Query TESK about the task
+                 */
+
+                $url='v1/tasks/' . $task;
+                $url.=(empty($view)) ? '' : "?view=$view";
+
+                $client = new Client(['baseUrl' => 'https://tesk.egci-endpoints.imsi.athenarc.gr']);
+                $teskResponse = $client->createRequest()
+                                        ->setMethod('GET')
+                                        ->setFormat(Client::FORMAT_JSON)
+                                        ->setUrl($url)
+                                        ->send();
+                
+                /*
+                 * If TESK found the task, send its info directly to the user.
+                 */
+                $retCode=$teskResponse->getStatusCode();
+
+                if ($teskResponse->getIsOk())
+                { 
+                    $response->format = \yii\web\Response::FORMAT_JSON;
+                    $response->setStatusCode($retCode);
+                    $response->data = $teskResponse->data;
+                    $response->send();
+                    return;
+                }
+                /*
+                 * If task not found by TESK, and it is not a 404 error,
+                 * return the TESK error.
+                 */
+
+                if ($retCode!=404)
+                {
+                    $response->format = \yii\web\Response::FORMAT_JSON;
+                    $response->setStatusCode($retCode);
+                    $response->data = $teskResponse->data;
+                    $response->send();
+                    return;
+                }
             }
             
             /*
@@ -332,14 +300,50 @@ class ApiController extends Controller
             {
                 $response->format = \yii\web\Response::FORMAT_JSON;
                 $response->setStatusCode(404);
-                $response->data = $teskResponse->data;
+                $response->data = ['message' => "Task not found", 'status'=>404];
                 $response->send();
                 return;
             }
 
+            if (($history->remote_status_code<0) && ($history->remote_status_code>-9))
+            {
+                $history->status='SYSTEM_ERROR';
+            }
+            else if ($history->remote_status_code==-9)
+            {
+                $history->status='EXECUTOR_ERROR';
+            }
+            else if ($history->remote_status_code==-10)
+            {
+                $history->status='CANCELED';
+            }
+            else if ($history->remote_status_code==2)
+            {
+                $history->status='QUEUED';
+            }
+            else if ($history->remote_status_code==2)
+            {
+                $history->status='INITIALIZING';
+            }
+            else if ($history->remote_status_code==3)
+            {
+                $history->status='RUNNING';
+            }
+            else if ($history->remote_status_code==4)
+            {
+                $history->status='COMPLETE';
+            }
+            else
+            {
+                $history->status='UNKNOWN';
+            }
+            
+
+
+
             $response->format = \yii\web\Response::FORMAT_JSON;
             $response->setStatusCode(200);
-            $response->data = [ $task => strtoupper($history->status) ];
+            $response->data = [ 'id' => $task, 'state' => strtoupper($history->status) ];
             $response->send();
             return;
 
@@ -349,20 +353,6 @@ class ApiController extends Controller
     
     public function actionProjectUsage($project)
     {
-        // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        // $jobNum=RunHistory::find()->where(['project'=>$project,])
-        //     ->andFilterWhere(
-        //     [
-        //         'or',
-        //         ['status'=>'Complete'],
-        //         [
-        //             'and',
-        //             ['status'=>'Cancelled'],
-        //             "stop-start>='00:00:60'"
-        //         ]
-        //     ])
-        //     ->count();
 
         $usage=RunHistory::getProjectUsage($project);
         $this->asJson($usage);
@@ -378,7 +368,7 @@ class ApiController extends Controller
                 ['status'=>'Complete'],
                 [
                     'and',
-                    ['status'=>'Cancelled'],
+                    ['status'=>'Canceled'],
                     "stop-start>='00:00:60'"
                 ]
             ])

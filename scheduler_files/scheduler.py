@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import classifier as cf
 import configFileCreator as cfile
 import sys

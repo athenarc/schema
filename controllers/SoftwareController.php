@@ -1038,15 +1038,15 @@ class SoftwareController extends Controller
         $user=User::getCurrentUser()['username'];
 
 
-        $inactiveJobs=Software::getInactiveJobs();
+        // $inactiveJobs=Software::getInactiveJobs();
         // print_r($inactiveJobs);
         // exit(0);
         
-        foreach ($inactiveJobs as $job)
-        {
-            Software::cleanUp($job[0],$job[1],'Complete');
+        // foreach ($inactiveJobs as $job)
+        // {
+        //     Software::cleanUp($job[0],$job[1],'Complete');
 
-        }
+        // }
         $available=Software::getAvailableSoftware();
         $available_workflows=Workflow::getAvailableWorkflows();
         // $results=Software::getUserHistory($user);
@@ -1096,6 +1096,7 @@ class SoftwareController extends Controller
 
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
         $software_instructions=$software->instructions;
+        $uploadedBy=$software->uploaded_by;
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1191,7 +1192,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>$mountExistError,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions, 'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions, 'type'=>$type, 'uploadedBy'=>$uploadedBy]);
     }
 
     public function actionReattach($jobid)
@@ -1217,6 +1218,7 @@ class SoftwareController extends Controller
         $iosystemMountField=$history->iomountpoint;
         $software=Software::find()->where(['name'=>$name])->andWhere(['version'=>$version])->one();
         $software_instructions=$software->instructions;
+        $uploadedBy=$software->uploaded_by;
         
 
         $podid=Software::runningPodIdByJob($name,$jobid);
@@ -1290,7 +1292,7 @@ class SoftwareController extends Controller
             'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,'iocontMount'=>$iocontMount,
             'mountExistError'=>false,
             'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions,'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions,'type'=>$type, 'uploadedBy'=>$uploadedBy]);
 
 
     }

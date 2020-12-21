@@ -9,11 +9,11 @@ $(document).ready(function()
     {
     	var jobid=$("#hidden_jobid_input").val();
       	var name=$("#hidden_name_input").val();
-    	$.ajax({
-            url: "index.php?r=software/clean-up",
-            type: "GET",
-            data: { "jobid": jobid, "name": name, 'status': 'Complete'},
-            dataType: "html",
+    	// $.ajax({
+     //        url: "index.php?r=software/clean-up",
+     //        type: "GET",
+     //        data: { "jobid": jobid, "name": name, 'status': 'Complete'},
+     //        dataType: "html",
             // success: function (data) 
             // {
             //   $("#initial-status").hide();
@@ -31,7 +31,7 @@ $(document).ready(function()
             // // Schedule the next request when the current one's complete
             //   setInterval(sendRequest, 5000); // The interval set to 5 seconds
             // },
-        });
+        // });
     }
     function cancelClean()
     {

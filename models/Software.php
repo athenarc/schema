@@ -786,7 +786,8 @@ class Software extends \yii\db\ActiveRecord
          * Scheduler (python) script physical location
          */
         $scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "scheduler.py";
-        $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "probe_stats.py";
+        // $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "probe_stats.py";
+        $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "jobMonitor.py";
         
         /* 
          * Get image repository location from the DB
@@ -897,7 +898,9 @@ class Software extends \yii\db\ActiveRecord
 
         // print_r($output);
         // exit(0);
-        $statsCommand=$command=$stats . ' ' . $name . ' ' . $jobid;
+        $jobName=strtolower($nameNoQuotes) . '-' . $jobid;
+        $arguments=[$jobName, $jobid, $folder];
+        $statsCommand=$stats . ' ' . implode(' ', $arguments);
         // print_r($statsCommand);
         // exit(0);
         shell_exec(sprintf('%s > /dev/null 2>&1 &', $statsCommand));
