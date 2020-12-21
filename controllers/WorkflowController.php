@@ -969,6 +969,7 @@ class WorkflowController extends Controller
 
         $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
         $workflow_instructions=$workflow->instructions;
+        $visualize=$workflow->visualize;
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1043,7 +1044,7 @@ class WorkflowController extends Controller
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type, 'visualize'=>$visualize]);
     }
 
     public function actionReattach($jobid)
@@ -1076,6 +1077,7 @@ class WorkflowController extends Controller
 
         $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
         $workflow_instructions=$workflow->instructions;
+        $visualize=$workflow->visualize;
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
         /*
@@ -1150,7 +1152,7 @@ class WorkflowController extends Controller
             'errors'=>'', 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type, 'visualize'=>$visualize]);
 
 
     }
