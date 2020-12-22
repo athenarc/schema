@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Html;
 use webvimark\modules\UserManagement\models\User;
 use app\models\SoftwareInput;
 use app\models\Software;
@@ -74,9 +75,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $software_description=$software->description;
         $location=empty($software->location)?"$software->cwl_path":"$software->location";
 		$creator=explode('@',$software->uploaded_by)[0];
-        // $creator_name=ucfirst(explode('_',$creator)[0]);
-        // $creator_surname=ucfirst(explode('_',$creator)[1]);
-        // $creator_fullname=$creator_name.' '.$creator_surname;
+        
         
 
         $ROCratesFolder=Yii::$app->params['ROCratesFolder'];
@@ -139,12 +138,12 @@ class RoCrate extends \yii\db\ActiveRecord
         "ro-crate.py ";
         $command.= "2>&1";       
 
-        $success='ROCrate object has been created';
+        $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
+        Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
         exec($command,$out,$ret);
 		
 		return [$software, $success];
 
-        
     }
 }

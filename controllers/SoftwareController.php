@@ -1696,17 +1696,17 @@ class SoftwareController extends Controller
             $result=ROCrate::CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
             $software=$result[0];
 
-            if($model->local_download==true)
-            {
-                $filepath=Yii::$app->params['ROCratesFolder']. $jobid .'.zip';
-                $filename=$jobid .'.zip';
-                return Yii::$app->response->sendFile($filepath,$filename);
-            }
-
             Yii::$app->session->setFlash('success', "$result[1]");
         }
 
         return  $this->redirect(['software/history']);
+    }
+
+    public function actionDownloadRocrate($jobid)
+    {
+        $filepath=Yii::$app->params['ROCratesFolder']. $jobid .'.zip';
+        $filename=$jobid .'.zip';
+        return Yii::$app->response->sendFile($filepath,$filename);
     }
 
 
