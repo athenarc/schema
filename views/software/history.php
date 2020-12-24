@@ -182,7 +182,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							else
 							{
 						?>
-									<td class="col-md-3" style="text-align: right;"><span><?=($res->type=='workflow')? '' : '<i style="font-size:14px;">Image N/A</i>'?> &nbsp;</span><span><?= Html::a("$details_icon Details",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md'])?></span></td>
+									<td class="col-md-3" style="text-align: right;"><span><?=($res->type=='workflow')? '' : '<i style="font-size:14px;">Image N/A</i>'?> &nbsp;</span><span><?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?></span></td>
 						<?php
 							}
 						}
@@ -224,7 +224,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 							else
 							{
 						?>
-									<td class="col-md-3" style="text-align: right;"><span><i style="font-size: 14px;">Workflow N/A</i>&nbsp;</span><span><?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-info btn-md', 'title'=>'Details'])?></span></td>
+									<td class="col-md-3" style="text-align: right;"><span><i style="font-size: 14px;">Workflow N/A</i>&nbsp;</span><span><?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res['jobid']],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?></span></td>
 						<?php
 							}
 						}
