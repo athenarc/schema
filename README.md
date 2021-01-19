@@ -30,9 +30,11 @@ The node running the installation of SCHeMa should have the following Python pac
 * python-psycopg2
 * python-yaml
 * python-requests
+* rocrate (install with pip3)
 
 ### Other packages required:
 * cwltool
+
 
 ## Installing a local docker registry with self-signed certificates and basic authentication
 On the machine that will run the SCHeMa installation:

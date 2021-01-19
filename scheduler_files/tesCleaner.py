@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import subprocess
 
 def cleanJob(mounts,folder,jobName):

@@ -1,4 +1,4 @@
-# import uuid
+#!/usr/bin/python3
 import json
 import yaml
 import os

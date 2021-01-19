@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import mpiConfigFileCreator as cf
 import sys
 import subprocess
