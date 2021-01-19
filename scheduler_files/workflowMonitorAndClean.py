@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 import requests
 import sys
 import os
@@ -7,7 +7,7 @@ import psycopg2 as psg
 import time
 import subprocess
 import shutil
-import urllib2
+import urllib3
 from contextlib import closing
 
 configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'

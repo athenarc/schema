@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import psycopg2 as psg
 import sys
 import yaml
