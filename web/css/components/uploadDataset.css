@@ -5,6 +5,37 @@ font-size: 25px;
 
 .body-row
 {
-font-size:15px; 
-margin-bottom:10px;
+font-size:15px;
+margin-bottom:5px;
+}
+
+.labels
+{
+	padding-top: 10px; 
+}
+
+.label-dataset
+{
+	padding-top: 5px; 
+}
+
+.helix_hide
+{
+	display: none;
+}
+
+.zenodo_hide
+{
+	display: none;
+}
+
+.provider-dropdown-padding
+{
+	padding-bottom: 15px;
+}
+
+.subject-padding
+{
+	padding-bottom: 20px;
+	padding-top: 10px;
 }

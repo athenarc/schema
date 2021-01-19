@@ -16,7 +16,7 @@ class DownloadDatasetModal
 	public static function addModal()
 	{
 		$username=User::getCurrentUser()['username'];
-		$datasets=['Helix'=>'Helix'];
+		$datasets=['Helix'=>'Helix', 'Zenodo'=>'Zenodo'];
 		$select_icon='<i class="fas fa-folder-open"></i>';
 		$clear_icon='<i class="fas fa-times"></i>';
 		$osystemMount='';

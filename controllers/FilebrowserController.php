@@ -13,13 +13,15 @@ use yii\filters\VerbFilter;
 use webvimark\modules\UserManagement\models\User as Userw;
 use \app\models\CovidDatasetApplication;
 use \app\models\User;
-use app\models\UploadDataset;
+use app\models\UploadDatasetZenodo;
+use app\models\UploadDatasetHelix;
 use app\models\DownloadDataset;
 use \app\models\Notification;
 use yii\helpers\Url;
 use yii\data\Pagination;
 use yii\web\UploadedFile;
 use yii\httpclient\Client;
+use yii\db\Query;
 
 
 class FilebrowserController extends Controller
@@ -101,6 +103,7 @@ class FilebrowserController extends Controller
         }
 
         exec("chmod 777 $userFolder -R 2>&1",$out,$ret);
+
 
         return $this->render('index',['connectorRoute' => 'connector','messages'=>[]]);
     }
@@ -189,111 +192,173 @@ class FilebrowserController extends Controller
     {
         $model=new DownloadDataset();
 
-        if (Yii::$app->request->post()) 
+        if (($model->load(Yii::$app->request->post())))
         {
             $user_id=Userw::getCurrentUser()['id'];
             $folder=$_POST['osystemmount'];
-            $dataset_id=$_POST['DownloadDataset']['dataset_id'];
-            $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api']);
-            $response = $client->createRequest()
-                ->setUrl("action/package_show?id=$dataset_id")
-                ->send();
+            $dataset_id=$model->dataset_id;
+            $provider=$model->provider;
 
-            
-
-
-            $content=json_decode($response->content);
-
-            $title=$content->result->title;
-            $version=$content->result->version;
-           
-            
-            if(!$content->success==1)
-            {
-                    Yii::$app->session->setFlash('danger', 'The dataset id you provided is not valid');
-                    return $this->redirect(['filebrowser/index']);
-
+            if ($provider=='Helix')
+            {    
+                $result=DownloadDataset::downloadHelixDataset($folder,$dataset_id,$provider);
             }
             else
             {
-                $resources=$content->result->resources;
-                if(empty($folder))
-                {
-                    Yii::$app->session->setFlash('warning', "You must choose a folder to store the dataset");
-                    return $this->redirect(['filebrowser/index']);
-                }
-
-                $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Dataset_" . $dataset_id . '/';
-
-                exec("mkdir $finalFolder");
-
-                foreach ($resources as $res)
-                {
-                    if (empty($res->mimetype))
-                    {
-                        $command="wget  -r -np -R 'index.html*' -P $finalFolder $res->url";
-                    }
-                    else
-                    {
-                        $command="wget -P $finalFolder $res->url";
-                    }
-
-                    exec($command,$out,$ret);
-                    
-                    if ($ret!=0)
-                    {
-                        Yii::$app->session->setFlash('warning', "The dataset contains resources that can not be downloaded. Please visit https://data.hellenicdataservice.gr/dataset/$dataset_id/ to get access to the files");
-                    }
-                    else
-                    {
-                        Yii::$app->session->setFlash('success', 'The dataset has been successfully downloaded');
-                        $model->folder_path=$folder;
-                        $model->provider=$_POST['DownloadDataset']['provider'];
-                        $model->dataset_id=$dataset_id;
-                        $model->user_id=$user_id;
-                        $model->date=date("Y-m-d");
-                        $model->version=$version;
-                        $model->name=$title;
-                        $model->save();
-                    }
-                
-                }
-                return $this->redirect(['filebrowser/index']);
+                $result=DownloadDataset::downloadZenodoDataset($folder,$dataset_id,$provider);
             }
+
+            if(!empty($result['success']))
+            {
+                $model->version=$result['version'];
+                $model->name=$result['title'];
+                $model->folder_path=$folder;
+                $model->provider=$provider;
+                $model->dataset_id=$dataset_id;
+                $model->user_id=$user_id;
+                $model->date=date("Y-m-d");
+                $model->save();
+            }
+
         }
+
+        if (!empty($result['error']))
+        {
+            Yii::$app->session->setFlash('danger', $result['error']);
+        }
+        elseif (!empty($result['warning']))
+        {
+            Yii::$app->session->setFlash('warning', $result['warning']);
+        }
+        else
+        {
+            Yii::$app->session->setFlash('success', $result['success']);
+        }
+
+        return $this->redirect(['filebrowser/index']);
     }
 
-    
-    
+    public function actionAutoCompleteSubjects($expansion, $max_num, $term)
+    {
+        //Create mature version model
+        $model = new UploadDatasetHelix;
+        //Get names based on query parameters. NOTE: results should be in json
+        $subjects = $model::getSubjectsAutoComplete($expansion, $max_num, $term);
+        // print_r($names);
+        // exit(0);
+        $subjectsDecoded=json_decode($subjects);
+        //Check if results are empty
+        if(empty($subjectsDecoded)) 
+        {
+            $subjects = json_encode(["No suggestions found"]);
+        }     
+        //Return results - these are already encoded in json
+        return $subjects;       
+    }
 
     public function actionUploadDataset()
     {
-        if(Yii::$app->request->post()) 
-        {
-
-            $dataset=UploadedFile::getInstanceByName('dataset');
-            $metadata=UploadedFile::getInstanceByName('metadata');
-            $api_key=$_POST['api_key'];
+        $model_zenodo=new UploadDatasetZenodo;
+        $model_helix=new UploadDatasetHelix;
+        $datasets=['Zenodo'=>'Zenodo','Helix'=>'Helix'];
+        $username=Userw::getCurrentUser()['username'];
+        $helix_licenses=  [
+            'notspecified'=>'License not specified',
+            'CC-BY'=>'CC-BY 4.0 - Creative Commons Attribution 4.0 International',
+            'CC-BY-SA'=>'CC-BY-SA 4.0 - Creative Commons Attribution-ShareAlike 4.0 International',
+            'CC-BY-NC'=>'CC-BY-NC 4.0 - Creative Commons Attribution-NonCommercial 4.0 International',
+            'CC-BY-NC-SA'=>'CC-BY-NC-SA 4.0 - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International',
+            'CC-ZERO'=>'CC-ZERO - Creative Commons CCZero',
             
-           
-            $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api']);
-            $response = $client->createRequest()
-                ->setUrl('action/package_create')
-                ->addHeaders(['Authorization'=>"$api_key"])
-                ->send();
-            echo 'Results:<br>';
-            echo $response->content;
+            'other-restricted'=>'Other (restricted resource)',
+        ];
+        return $this->render('upload_dataset', ['model_zenodo'=>$model_zenodo, 'model_helix'=>$model_helix, 'datasets'=>$datasets, 'username'=>$username, 'helix_licenses'=>$helix_licenses]);
+    }    
+    
+
+    public function actionUploadDatasetHelix()
+    {
+        $model=new UploadDatasetHelix;
+
+        if (($model->load(Yii::$app->request->post()))) 
+        {
+            print_r($_POST);
+            exit(0);
+
+            $dataset_path=$_POST['dataset_helix'];
+            $user_id=Userw::getCurrentUser()['id'];
+            $provider=$model->provider;
+            $api_key=$model->api_key;
+            $title=$model->title;
+            $description=$model->description;
+            $dataset_id=rand(1,10000);
+            $publication_doi=$model->publication_doi;
+            $private=$model->private;
+            $license=$model->license;
+            $subjects=$_POST['subjects'];
+            $creator=$model->creator;
+            $contact_email=$model->contact_email;
+            $affiliation=$model->affiliation;
+            $result=UploadDatasetHelix::uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation);
+            
+
+            if (!empty($result['error']))
+            {
+                Yii::$app->session->setFlash('danger', $result['error']);
+            }
+            elseif (!empty($result['warning']))
+            {
+                Yii::$app->session->setFlash('warning', $result['warning']);
+            }
+            else
+            {
+                Yii::$app->session->setFlash('success', $result['success']);
+                $model->save();
+            }
+
+            return $this->redirect(['filebrowser/index']);
+             
+        }
+       
+        return $this->redirect(['filebrowser/upload-dataset']);
+    
+    }
+
+    public function actionUploadDatasetZenodo()
+    {
+        $model=new UploadDatasetZenodo;
+        
+        if(($model->load(Yii::$app->request->post())))
+        {
+            $dataset_path=$_POST['dataset_zenodo'];
+            $user_id=Userw::getCurrentUser()['id'];
+            $provider=$model->provider;
+            $api_key=$model->api_key;
+            $result=UploadDatasetZenodo::uploadZenodoDataset($dataset_path,$provider,$api_key);
+            if (!empty($result['error']))
+            {
+                Yii::$app->session->setFlash('danger', $result['error']);
+            }
+            elseif (!empty($result['warning']))
+            {
+                Yii::$app->session->setFlash('warning', $result['warning']);
+            }
+            else
+            {
+                Yii::$app->session->setFlash('success', $result['success']);
+                $model_zenodo->save();
+            }
+
             return $this->redirect(['filebrowser/index']);
         }
-    
+        
+        return $this->redirect(['filebrowser/upload-dataset']);
     }
 
     public function actionDatasetHistory()
     {
         $user_id=Userw::getCurrentUser()['id'];
         $datasets=DownloadDataset::find()->where(['user_id'=>$user_id])->all();
-        // print_r($datasets);
-        // exit(0);
         return $this->render('dataset_history', ['results'=>$datasets]);
     }
 
