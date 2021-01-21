@@ -7,7 +7,7 @@ import psycopg2 as psg
 import time
 import subprocess
 import shutil
-import urllib3
+import urllib.request
 from contextlib import closing
 
 configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
@@ -83,7 +83,7 @@ if (status=='COMPLETE'):
                 if outClass=='File':
                     url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
                     #this closes the open handle after the block is done
-                    with closing(urllib2.urlopen(url)) as r:
+                    with closing(urllib.request.urlopen(url)) as r:
                         with open(localpath, 'wb') as f:
                             shutil.copyfileobj(r, f)
         else:
@@ -94,7 +94,7 @@ if (status=='COMPLETE'):
             if outClass=='File':
                 url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
                 #this closes the open handle after the block is done
-                with closing(urllib2.urlopen(url)) as r:
+                with closing(urllib.request.urlopen(url)) as r:
                     with open(localpath, 'wb') as f:
                         shutil.copyfileobj(r, f)
 
@@ -108,31 +108,33 @@ if (status=='COMPLETE'):
         taskIds[log['id']]=log['name']
         taskSteps[i]=log['id']
         i+=1
-
+    
     ram/=len(taskLogs);
     cpu/=len(taskLogs);
-    kube_command='kubectl get pods -n tesk --no-headers'
+    kube_command='kubectl get pods -n tesk --no-headers | tr -s " "'
     try:
         out=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as exc:
         print(exc.output)
         exit(2)
 
-    
-    out=out.split('\n')
+    out=out.decode().split('\n')
     podLogs={}
     for line in out:
-        pod=line.split()
+        pod=line.split(' ')
         if len(pod)==0:
             continue
         pod=pod[0].strip()
+
         if '-ex-' not in pod:
             continue
+
         podTokens=pod.split('-')
         task=podTokens[0] + '-' + podTokens[1]
+        
         if task not in taskIds:
             continue
-        
+
         kube_command='kubectl -n tesk logs ' + pod
         # print(kube_command)
         try:
@@ -140,7 +142,7 @@ if (status=='COMPLETE'):
         except subprocess.CalledProcessError as exc:
             print(exc.output)
             exit(3)
-        podLogs[task]=logs
+        podLogs[task]=logs.decode()
 
         subtasks=[task, task+'-ex-00', task + '-outputs-filer', task + '-inputs-filer']
         for subtask in subtasks:
@@ -150,7 +152,6 @@ if (status=='COMPLETE'):
             except subprocess.CalledProcessError as exc:
                 print(exc.output)
                 exit(4)
-
     #write logs
     logfile=logPath + '/' + 'logs.txt'
     g=open(logfile,'w')    
