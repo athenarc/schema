@@ -56,6 +56,6 @@ foreach ($messages as $message)
 
 <?php
 DownloadDatasetModal::addModal();
-UploadDatasetModal::addModal();
+// UploadDatasetModal::addModal();
 ?>  
 

@@ -28,7 +28,10 @@ nfsIp=sys.argv[15]
 
 ####DONE decide machine type based on the taglist
 # machineType=cf.decideServerPool(tagList)
-machineType='converged-node'
+if int(maxMem) > 64:
+    machineType='fat-node'
+else:
+    machineType='converged-node'
 
 ###DONE create yaml file
 yamlFile=cfile.createFile(name,machineType,image,
