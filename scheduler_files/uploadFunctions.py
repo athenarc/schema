@@ -149,7 +149,7 @@ def inputStore(softName,softVersion, inputs):
         array_separator=''
         nested_array_binding='f'
         prefix=''
-        separate='f'
+        separate='t'
         if 'type' not in inputs[inpt]:
             #stop execution and return because this is serious
             deleteSavedSoftware(softName,softVersion)
@@ -166,8 +166,8 @@ def inputStore(softName,softVersion, inputs):
                 innerBinding=fieldType['inputBinding']
                 if 'separate' in binding:
                     separateInner=True
-                    if innerBinding['separate']==True:
-                        separate='t'
+                    if innerBinding['separate']==False:
+                        separate='f'
                 if 'prefix' in binding:
                     prefixInner=True
                     prefix=innerBinding['prefix']
