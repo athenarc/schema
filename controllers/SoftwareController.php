@@ -883,7 +883,6 @@ class SoftwareController extends Controller
                 'public'=>'Everyone',
                 'private' => 'Only me',];
 
-       
         $model->dois=array_filter(explode('|', $model->dois));
         
         if ($model->load(Yii::$app->request->post()) && $model->validate()) 
