@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 import uploadFunctions as uf
 import sys
 import subprocess
