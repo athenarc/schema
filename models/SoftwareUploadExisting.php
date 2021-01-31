@@ -123,6 +123,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $original=$this->quotes($original);
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
         $this->biotools=$this->quotes($this->biotools);
+        $this->instructions=$this->quotes($this->instructions);
 
         //add dois string in a file and pass it on to python
         $dataFolder=Yii::$app->params['tmpImagePath'] . $username . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
@@ -167,9 +168,10 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $mpi=($this->mpi=='1') ? $this->quotes('t') : $this->quotes('f');
         $username=$this->quotes($username);
 
-        $arguments=[$this->name, $this->version, $this->image, $cwlFileName, 
-                    $username, $this->visibility, $this->imountpoint, $this->omountpoint, $this->commandRetrieval,
-                    $this->description, $this->biotools, $doiFile, $mpi, $workingdir,$original,$dockerhub,$this->covid19 ];
+        $arguments=[
+            $this->name, $this->version, $this->image, $cwlFileName, 
+            $username, $this->visibility, $this->imountpoint, $this->omountpoint, $this->commandRetrieval,
+            $this->description, $this->biotools, $doiFile, $mpi, $workingdir,$original,$dockerhub,$this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
         $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ";
