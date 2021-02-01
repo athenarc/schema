@@ -111,43 +111,16 @@ def createFile(name,machineType,image,
 	manifest_data['spec']['template']['spec']['containers']=containers
 	# manifest_data['spec']['template']['spec']['nodeSelector']={'machine-type': machineType}
 	manifest_data['spec']['template']['spec']['restartPolicy']='Never'
-	# g.write('apiVersion: batch/v1\n')
-	# g.write('kind: Job\n')
-	# g.write('metadata:\n')
-	# g.write(' name: ' + jobName + '\n')
-	# g.write('spec:\n')
-	# g.write(' ttlSecondsAfterFinished: 10\n')
-	# g.write(' template:\n')
-	# g.write('  spec:\n')
-	# g.write('   volumes:\n')
-	# g.write('   - name: ' + jobName + '-storage\n')
-	# g.write('     hostPath:\n')
-	# g.write('      path: ' + systemMount + '\n')
-	# g.write('      type: Directory\n')
-	# g.write('   containers:\n')
-	# g.write('   - name: ' + jobName + '\n')
-	# g.write('     resources:\n')
-	# g.write('      limits:\n')
-	# g.write('       memory: "' + maxMem + 'Gi"\n')
-	# g.write('       cpu: "' + maxCores + 'm"\n')
-	# g.write('     image: ' + image + '\n')
-	# g.write('     workingDir: ' + workingDir + '/\n')
-	# g.write('     command: [' + commandStr + ']\n')
-	# # g.write('     command: ["/bin/sh","-c"]\n')
-	# # g.write('     args: [' + commandStr + ']\n')
-	# if (mountPoint!=''):
-	# 	g.write('     volumeMounts:\n')
-	# 	g.write('       - name: '+ jobName + '-storage\n')
-	# 	g.write('         mountPath: '+ mountPoint + '\n')
-	# g.write('   restartPolicy: Never\n')
 
-	# g.write('   nodeSelector:\n')
-	# g.write('    machine-type: '+ machineType +'\n')
-	# g.write(' backoffLimit: 4\n')
-
+	#if memory is large, add tolerations:
+	if int(maxMem) > 64:
+		tolerations=[]
+		tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
+		manifest_data['spec']['template']['spec']['tolerations']=tolerations
+		manifest_data['spec']['template']['spec']['nodeSelector']={'node-type':'fat-node'}
+	
 	g=open(yamlName,'w')
 	yaml.dump(manifest_data, g, default_flow_style=False)
 	g.close()
 	
 	return yamlName
-	

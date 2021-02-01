@@ -8,6 +8,7 @@ use yii\authclient\OAuth2;
 use webvimark\modules\UserManagement\models\User as Userw;
 use yii\helpers\FileHelper;
 use yii\db\Query;
+use app\models\UploadDatasetDefaults;
 
 /**
  * This is the model class for table "upload_dataset".
@@ -25,17 +26,21 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'upload_dataset';
+        return 'upload_dataset_helix';
     }
+
+
 
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
+        
         return [
             [['dataset_id', 'provider', 'api_key','description', 'publication_doi','contact_email','creator',
         	'affiliation','license', 'subject', 'title'], 'string'],
+            [['title'],'string', 'min'=>6],
         	[['provider', 'api_key','description','contact_email','creator',
         	'affiliation','license', 'subject', 'title'], 'required'],
             ['contact_email','email'],
@@ -60,83 +65,99 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getHelixDefaults()
+    {
 
-    public function uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation)
+        $helix_licenses=  [
+            
+            'CC-BY'=>'CC-BY 4.0 - Creative Commons Attribution 4.0 International',
+            'CC-BY-SA'=>'CC-BY-SA 4.0 - Creative Commons Attribution-ShareAlike 4.0 International',
+            'CC-BY-NC'=>'CC-BY-NC 4.0 - Creative Commons Attribution-NonCommercial 4.0 International',
+            'CC-BY-NC-SA'=>'CC-BY-NC-SA 4.0 - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International',
+            'ODC-By'=>'Open Data Commons Attribution License',
+            'ODbL'=>'Open Data Commons Open Database License',
+            'PDDL'=>'Open Data Commons Public Domain Dedication and License',
+        ];
+
+        $helix_defaults=UploadDatasetDefaults::find()->where(['provider'=>'Helix'])->one();
+        $helix_provider_id=$helix_defaults->provider_id;
+        $helix_community_id=$helix_defaults->default_community_id;
+
+        return ['helix_licenses'=>$helix_licenses, 'helix_provider_id'=>$helix_provider_id, 'helix_community_id'=>$helix_community_id ] ;
+    }
+
+
+    public static function uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation)
     {
         $error='';
         $success='';
-        // print_r(json_encode($subjects));
-        // exit(0);
-        
         $dataset_path_absolute=Yii::$app->params['userDataPath'] . explode('@',Userw::getCurrentUser()['username'])[0]
         . '/'.$dataset_path;
 
         $files=Filehelper::findFiles($dataset_path_absolute);
-        // print_r(json_encode(['Pure Mathematics','Pure Mathematics not elsewhere classified']));
-        // exit(0);
-        
-        $client = new Client(['baseUrl' => 'https://hardmin-dev.heal-link.gr/api/3/action/package_create']);
+
+        $helix_defaults=UploadDatasetHelix::getHelixDefaults();
+        $helix_provider_id=$helix_defaults['helix_provider_id'];
+        $helix_community_id=$helix_defaults['helix_community_id'];
+
+        $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api/action/package_create']);
         $response = $client->createRequest()
             ->setMethod('POST')
+            ->setFormat(Client::FORMAT_JSON)
             ->setData(['title' => $title, 
                 'notes'=>$description,
-                'closed_tag'=>[],
+                'closed_tag'=>$subjects,
                 'name'=>$dataset_id, 
                 'datacite.creator.creator_name'=>$creator,
                 'datacite.creator.creator_affiliation'=>$affiliation, 
                 'datacite.contact_email'=>$contact_email,
                 'private'=>$private,
                 'license_id'=>$license,
-                'owner_org'=>'af33beea-1b64-4052-ac78-e2bf174cc8bd', 
-                'dataset_type'=>'datacite',])
+                'groups'=>[['id'=>$helix_community_id]],
+                'owner_org'=>$helix_provider_id, 
+                'dataset_type'=>'datacite'
+            ])
             ->addHeaders(['Authorization'=>$api_key])
             ->send();
 
         $content=json_decode($response->content, true);
         
+        sleep(2);
+
         if($content['success']==1)
         {
+            
             $id=$content['result']['id'];
-            // print_r($id);
-            // exit(0);
-            // $i=0;
+
             foreach($files as $file)
             {
                 $id=$content['result']['id'];
-                $client = new Client(['baseUrl' => 'https://hardmin-dev.heal-link.gr/api/3/action/resource_create']);
+                $client = new Client(['baseUrl' => 'https://data.hellenicdataservice.gr/api/action/resource_create']);
                 $response = $client->createRequest()
                 ->setMethod('POST')
+                ->setFormat(Client::FORMAT_JSON)
                 ->setData(['package_id' => $id, 'url'=>$file, 'name'=>basename($file)])
                 ->addHeaders(['Authorization'=>$api_key])
                 ->send();
-                // $i++;
-                // if($i==3)
-                // {
-                //     break;
-                // }
+                
             }
 
-            //print_r($response);
+            $content=json_decode($response->content, true);
 
-            
-            $success='The dataset has been successfully uploaded to Helix';
-
-            // $client = new Client(['baseUrl' => 'https://hardmin-dev.heal-link.gr/api/3/action/package_delete']);
-            // $response = $client->createRequest()
-            // ->setMethod('POST')
-            // ->setData(['id' => $id])
-            // ->addHeaders(['Authorization'=>$api_key])
-            // ->send();
-
-           // exit(0);
-
-            
-
-            return ['success'=>$success];
+            if($content['success']!=1)
+            {
+                $error=$content['error'];
+                return ['error'=>$error];
+            }
+            else
+            {
+                $success='The dataset has been successfully uploaded to Helix';
+                return ['success'=>$success];
+            }
         }
         else
         {
-            $error='There was an error uploading the dataset to Helix';
+            $error=$content['error'];
             return ['error'=>$error];
         }
     }

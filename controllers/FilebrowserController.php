@@ -21,6 +21,7 @@ use yii\helpers\Url;
 use yii\data\Pagination;
 use yii\web\UploadedFile;
 use yii\httpclient\Client;
+use app\models\UploadDatasetDefaults;
 use yii\db\Query;
 
 
@@ -55,6 +56,13 @@ class FilebrowserController extends Controller
 
     public function actions()
     {
+       
+        if(Yii::$app->user->getIsGuest())
+        {
+            return [];
+            
+        }
+
         return [
             'connector' => [
                 'class' => ConnectorAction::className(),
@@ -96,7 +104,7 @@ class FilebrowserController extends Controller
     {
         $userFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0];
         // $user=User::getCurrentUser()['username'];
-
+       
         if (!is_dir($userFolder))
         {
             exec("mkdir $userFolder");
@@ -258,21 +266,24 @@ class FilebrowserController extends Controller
 
     public function actionUploadDataset()
     {
+        $datasets=[];
+        $defaults=UploadDatasetDefaults::find()->orderBy(['name'=>SORT_DESC])->all();
+        foreach ($defaults as $default)
+        {
+            if ($default->enabled==1)
+            {
+                $datasets += ["$default->name"=>"$default->name"];
+            }
+        }
+
         $model_zenodo=new UploadDatasetZenodo;
         $model_helix=new UploadDatasetHelix;
-        $datasets=['Zenodo'=>'Zenodo','Helix'=>'Helix'];
         $username=Userw::getCurrentUser()['username'];
-        $helix_licenses=  [
-            'notspecified'=>'License not specified',
-            'CC-BY'=>'CC-BY 4.0 - Creative Commons Attribution 4.0 International',
-            'CC-BY-SA'=>'CC-BY-SA 4.0 - Creative Commons Attribution-ShareAlike 4.0 International',
-            'CC-BY-NC'=>'CC-BY-NC 4.0 - Creative Commons Attribution-NonCommercial 4.0 International',
-            'CC-BY-NC-SA'=>'CC-BY-NC-SA 4.0 - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International',
-            'CC-ZERO'=>'CC-ZERO - Creative Commons CCZero',
-            
-            'other-restricted'=>'Other (restricted resource)',
-        ];
-        return $this->render('upload_dataset', ['model_zenodo'=>$model_zenodo, 'model_helix'=>$model_helix, 'datasets'=>$datasets, 'username'=>$username, 'helix_licenses'=>$helix_licenses]);
+        $helix_defaults= UploadDatasetHelix::getHelixDefaults();
+        $zenodo_defaults=UploadDatasetZenodo::getZenodoDefaults();
+
+
+        return $this->render('upload_dataset', ['model_zenodo'=>$model_zenodo, 'model_helix'=>$model_helix, 'datasets'=>$datasets, 'username'=>$username, 'helix_defaults'=>$helix_defaults, 'zenodo_defaults'=>$zenodo_defaults]);
     }    
     
 
@@ -282,9 +293,6 @@ class FilebrowserController extends Controller
 
         if (($model->load(Yii::$app->request->post()))) 
         {
-            print_r($_POST);
-            exit(0);
-
             $dataset_path=$_POST['dataset_helix'];
             $user_id=Userw::getCurrentUser()['id'];
             $provider=$model->provider;
@@ -301,19 +309,15 @@ class FilebrowserController extends Controller
             $affiliation=$model->affiliation;
             $result=UploadDatasetHelix::uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation);
             
-
             if (!empty($result['error']))
             {
-                Yii::$app->session->setFlash('danger', $result['error']);
-            }
-            elseif (!empty($result['warning']))
-            {
-                Yii::$app->session->setFlash('warning', $result['warning']);
+                Yii::$app->session->setFlash('danger', json_encode($result['error']));
             }
             else
             {
+                $model->save(false);
                 Yii::$app->session->setFlash('success', $result['success']);
-                $model->save();
+                
             }
 
             return $this->redirect(['filebrowser/index']);
@@ -330,23 +334,55 @@ class FilebrowserController extends Controller
         
         if(($model->load(Yii::$app->request->post())))
         {
+            
+            $creators_array=[];
+            for ($i=0; $i < sizeof($_POST['UploadDatasetZenodo']['creators_name']); $i++)
+            {
+                if(empty($_POST['UploadDatasetZenodo']['creators_orcid'][$i]))
+                {
+                    $creators_array[$i]=[
+                        'name'=>$_POST['UploadDatasetZenodo']['creators_name'][$i],
+                        'affiliation'=>$_POST['UploadDatasetZenodo']['creators_affiliation'][$i],
+                        
+                    ];
+                }
+                else
+                {
+                    $creators_array[$i]=[
+                        'name'=>$_POST['UploadDatasetZenodo']['creators_name'][$i],
+                        'affiliation'=>$_POST['UploadDatasetZenodo']['creators_affiliation'][$i],
+                        'orcid'=>$_POST['UploadDatasetZenodo']['creators_orcid'][$i]
+                    ];
+                }
+            }
+            $creators=json_encode($creators_array);
+            $model->creators=$creators;
             $dataset_path=$_POST['dataset_zenodo'];
             $user_id=Userw::getCurrentUser()['id'];
             $provider=$model->provider;
             $api_key=$model->api_key;
-            $result=UploadDatasetZenodo::uploadZenodoDataset($dataset_path,$provider,$api_key);
+            $title=$model->title;
+            $description=$model->description;
+            $upload_type=$model->upload_type;
+            $publication_type=$model->publication_type;
+            $image_type=$model->image_type;
+            $access_rights=$model->access_rights;
+            $access_conditions=$model->access_conditions;
+            $license=$model->license;
+            $doi=$model->doi;
+            $embargo_date=$model->embargo_date;
+
+            $result=UploadDatasetZenodo::uploadZenodoDataset($dataset_path,$provider,$api_key, $title, $description, $upload_type,$publication_type, $image_type, $access_rights,$access_conditions,$license, 
+                $doi,$embargo_date,$creators_array);
             if (!empty($result['error']))
             {
                 Yii::$app->session->setFlash('danger', $result['error']);
             }
-            elseif (!empty($result['warning']))
-            {
-                Yii::$app->session->setFlash('warning', $result['warning']);
-            }
             else
             {
+                 $model->save(false);
                 Yii::$app->session->setFlash('success', $result['success']);
-                $model_zenodo->save();
+               
             }
 
             return $this->redirect(['filebrowser/index']);
