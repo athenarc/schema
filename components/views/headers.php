@@ -10,10 +10,10 @@ echo Html::cssFile('@web/css/components/headers.css');
 ?>
 
 <div class='row'>
-	<div class="col-md-7 headers">
+	<div class="col-md-6 headers">
 		<span><?=$title?></span><span class="subtitle"><?=empty($subtitle)?'':"/$subtitle"?>
 	</div>
-	<div class="col-md-5 header-buttons">
+	<div class="col-md-6 header-buttons">
 		<?php
 		foreach ($buttons as $button) 
 		{

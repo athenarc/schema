@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use app\components\Headers;
 use app\components\DownloadDatasetModal;
-use app\components\UploadDatasetModal;
+
 
 echo Html::cssFile('@web/css/filebrowser/index.css');
 $this->registerJsFile('@web/js/filebrowser/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -16,13 +16,13 @@ Headers::begin() ?>
 ['title'=>$this->title,
 'buttons'=>
 	[
-		['fontawesome_class'=>'<i class="fas fa-upload"></i>','name'=> 'Upload Dataset', 
-		'action'=>null,
-	     'options'=>['class'=>'btn btn-default upload-dataset hidden', 'data-target'=>"#upload-modal"], 'type'=>'a'],
-	     ['fontawesome_class'=>'<i class="fas fa-file"></i>','name'=> 'Downloaded Datasets', 
+		 ['fontawesome_class'=>'<i class="fas fa-file"></i>','name'=> 'Downloaded Datasets', 
 	 	'action'=>['filebrowser/dataset-history'],
 	    'options'=>['class'=>'btn btn-default'], 'type'=>'a'], 
-	 	['fontawesome_class'=>'<i class="fas fa-download"></i>','name'=> 'Download Dataset', 
+		['fontawesome_class'=>'<i class="fas fa-upload"></i>','name'=> 'Upload Dataset', 
+		'action'=>['filebrowser/upload-dataset'],
+	     'options'=>['class'=>'btn btn-default upload-dataset',], 'type'=>'a'],
+	    ['fontawesome_class'=>'<i class="fas fa-download"></i>','name'=> 'Download Dataset', 
 	 	'action'=>null,
 	    'options'=>['class'=>'btn btn-default download-dataset', 'data-target'=>"#download-modal"], 'type'=>'a'],
 
@@ -56,6 +56,5 @@ foreach ($messages as $message)
 
 <?php
 DownloadDatasetModal::addModal();
-// UploadDatasetModal::addModal();
 ?>  
 

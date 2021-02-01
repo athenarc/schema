@@ -5,6 +5,95 @@ font-size: 25px;
 
 .body-row
 {
-font-size:15px; 
-margin-bottom:10px;
+font-size:15px;
+margin-bottom:5px;
+}
+
+.labels
+{
+	padding-top: 10px; 
+}
+
+.label-dataset
+{
+	padding-top: 5px; 
+}
+
+.helix_hide
+{
+	display: none;
+}
+
+.zenodo_hide
+{
+	display: none;
+}
+
+.provider-dropdown-padding
+{
+	padding-bottom: 15px;
+}
+
+.subject-padding
+{
+	padding-bottom: 20px;
+	padding-top: 10px;
+}
+
+.subject-help
+{
+	color:grey;
+	font-style: italic;
+}
+
+.red-border
+{
+	border:solid 1px #a94442; 
+}
+
+.message_folder_helix
+{
+	padding-left: 0px;
+	color:#a94442;
+}
+
+.message_folder_zenodo
+{
+	padding-left: 0px;
+	color:#a94442;
+}
+
+.message_subject
+{
+	color:#a94442;
+}
+
+.creator
+{
+	padding-left: 0px;
+
+}
+
+.add-div
+{
+	margin-bottom: 20px;
+}
+
+.remove-items
+{
+	cursor: pointer;
+}
+
+.dataset-input-size
+{
+	border:1px solid #ccc;
+	border-radius: 4px;
+	width: 70%;
+	height: 34px;
+	padding-bottom: 5px;
+}
+
+.modal-message
+{
+	font-size: 25px;
 }
