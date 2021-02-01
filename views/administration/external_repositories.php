@@ -61,19 +61,24 @@ foreach ($providers as $i => $provider)
 		</label>
 	</div>
 	</div>
-	<div class="row padding hid-<?=$i?> <?=$class?>">
-		<div class="col-md-offset-3 col-md-2 label-pd"> <label> Provider ID</label></div>
-		<div class="col-md-4 field-rows"> 
-		<?=Html::input('text','provider_id-'.$i, $provider->provider_id,
-		['class'=>"form-control provider-input-<?=$i?>" ])?>
-	</div>
-	</div>
-	<div class="row padding hid-<?=$i?> <?=$class?>">
-		<div class="col-md-offset-3 col-md-2 label-pad"> <label> Community ID</label></div>
-		<div class="col-md-4 field-rows">
-		<?=Html::input('text','community_id-'.$i, $provider->default_community_id,['class'=>"form-control provider-input-<?=$i?>"])?>
-	</div>
-	</div>
+	<?php
+	if($provider->name=='Helix')
+	{?>
+		<div class="row padding hid-<?=$i?> <?=$class?>">
+			<div class="col-md-offset-3 col-md-2 label-pd"> <label> Provider ID</label></div>
+			<div class="col-md-4 field-rows"> 
+			<?=Html::input('text','provider_id-'.$i, $provider->provider_id,
+			['class'=>"form-control provider-input-<?=$i?>" ])?>
+		</div>
+		</div>
+		<div class="row padding hid-<?=$i?> <?=$class?>">
+			<div class="col-md-offset-3 col-md-2 label-pad"> <label> Community ID</label></div>
+			<div class="col-md-4 field-rows">
+			<?=Html::input('text','community_id-'.$i, $provider->default_community_id,['class'=>"form-control provider-input-<?=$i?>"])?>
+		</div>
+		</div>
+	<?php
+	}?>
 	<div class="row">&nbsp;</div> 
 <?php
 }
