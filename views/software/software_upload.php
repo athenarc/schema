@@ -92,7 +92,7 @@ echo $form->errorSummary($model);
                      'options' => ['rows' => 4],
                      'preset' => 'basic'
                 ]);
-                ?>
+        ?>
         <br /><br />
         <div class="form-group">
             <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary']) ?>
