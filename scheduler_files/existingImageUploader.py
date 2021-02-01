@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 import uploadFunctions as uf
 import sys
 import subprocess
@@ -24,6 +24,7 @@ workingDir=sys.argv[14]
 original=sys.argv[15]
 docker_or_local=sys.argv[16]
 covid19=sys.argv[17]
+instructions=sys.argv[18]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -56,7 +57,7 @@ if workingDir=='':
     workingDir='/'
 
 uf.imageStoreAndClassify(softName,softVersion, image,script,user,visibility,
-    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19)
+    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions)
 
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];

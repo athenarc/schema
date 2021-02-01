@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import sys
 import subprocess
 import psycopg2 as psg
@@ -35,7 +35,7 @@ cur=conn.cursor()
 sql="SELECT image FROM software WHERE name='" + imageName + "' AND version='" + imageVersion + "'"
 cur.execute(sql)
 results=cur.fetchone()
-
+print(results)
 fullImage=results[0]
 
 sql="SELECT COUNT(*) FROM software WHERE image='" + fullImage + "'"
