@@ -90,6 +90,7 @@ kubectl create secret docker-registry --docker-server <docker-registry-ip> --doc
   * [Yii2 Bootstrap4](https://github.com/yiisoft/yii2-bootstrap4)
   * [Yii http requests](https://github.com/yiisoft/yii2-httpclient)
   * [elFinder](https://github.com/alexantr/yii2-elfinder)
+  * [ckeditor](https://github.com/2amigos/yii2-ckeditor-widget)
 
 2. Download the SCHeMa code from GitHub and replace the files inside the Yii project folder.
 

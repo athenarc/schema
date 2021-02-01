@@ -13,6 +13,7 @@ use app\models\ImageRequest;
 use app\models\User;
 use yii\data\Pagination;
 use app\models\Notification;
+use app\models\UploadDatasetDefaults;
 
 
 class AdministrationController extends Controller
@@ -97,6 +98,31 @@ class AdministrationController extends Controller
         $image=ImageRequest::find()->where(['id'=>$id])->one();
         $details=$image->details;
         return $this->render('image_details', ['details'=>$details]);
+        
+    }
+
+    public function actionExternalRepositories()
+    {
+        
+        $providers=UploadDatasetDefaults::find()->orderBy(['name'=>SORT_ASC])->all();
+        $number_of_providers=sizeof($providers);
+        
+        
+        if(Yii::$app->request->post())
+        {
+            foreach($providers as $i=>$provider)
+            {
+                
+                $providers[$i]['provider_id']=$_POST['provider_id-'.$i];
+                $providers[$i]['default_community_id']=$_POST['community_id-'.$i];
+                $providers[$i]['enabled']=$_POST['enabled-'.$i];
+                $providers[$i]->update(false);
+            }
+            
+
+        }
+
+        return $this->render('external_repositories', ['providers'=>$providers, 'number_of_providers'=>$number_of_providers]);
         
     }
 
