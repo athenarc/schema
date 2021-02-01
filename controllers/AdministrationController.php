@@ -112,9 +112,11 @@ class AdministrationController extends Controller
         {
             foreach($providers as $i=>$provider)
             {
-                
-                $providers[$i]['provider_id']=$_POST['provider_id-'.$i];
-                $providers[$i]['default_community_id']=$_POST['community_id-'.$i];
+                if($provider->name=='Helix')
+                {
+                    $providers[$i]['provider_id']=$_POST['provider_id-'.$i];
+                    $providers[$i]['default_community_id']=$_POST['community_id-'.$i];
+                }
                 $providers[$i]['enabled']=$_POST['enabled-'.$i];
                 $providers[$i]->update(false);
             }

@@ -1,5 +1,18 @@
 $(document).ready(function()
 {
+
+	var provider=$(".provider-dropdown").val();
+	if (provider=='Helix')
+	{
+		$(".helix_field").removeClass("helix_hide");
+		$(".zenodo_field").addClass("zenodo_hide");
+	}
+	else
+	{
+		$(".helix_field").addClass("helix_hide");
+		$(".zenodo_field").removeClass("zenodo_hide");
+	}
+	
 	$(".provider-dropdown").change(function()
 	{
 		var provider=$(this).val();
