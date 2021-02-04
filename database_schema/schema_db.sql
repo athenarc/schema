@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
--- Dumped by pg_dump version 10.15 (Ubuntu 10.15-0ubuntu0.18.04.1)
+-- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,61 +16,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
--- Name: hist_type; Type: TYPE; Schema: public; Owner: schema
---
-
-CREATE TYPE public.hist_type AS ENUM (
-    'job',
-    'workflow',
-    'remote-job'
-);
-
-
-ALTER TYPE public.hist_type OWNER TO schema;
-
---
--- Name: maturity_type; Type: TYPE; Schema: public; Owner: schema
---
-
-CREATE TYPE public.maturity_type AS ENUM (
-    'developing',
-    'testing',
-    'production'
-);
-
-
-ALTER TYPE public.maturity_type OWNER TO schema;
-
---
--- Name: visibility_types; Type: TYPE; Schema: public; Owner: schema
---
-
-CREATE TYPE public.visibility_types AS ENUM (
-    'public',
-    'private'
-);
-
-
-ALTER TYPE public.visibility_types OWNER TO schema;
-
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: auth_assignment; Type: TABLE; Schema: public; Owner: schema
@@ -191,7 +139,10 @@ CREATE TABLE public.download_dataset (
     dataset_id text,
     provider text,
     user_id integer,
-    folder_path text
+    folder_path text,
+    date timestamp without time zone,
+    name text,
+    version text
 );
 
 
@@ -217,6 +168,40 @@ ALTER TABLE public.download_dataset_id_seq OWNER TO schema;
 --
 
 ALTER SEQUENCE public.download_dataset_id_seq OWNED BY public.download_dataset.id;
+
+
+--
+-- Name: helix_subjects; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.helix_subjects (
+    id integer NOT NULL,
+    name text
+);
+
+
+ALTER TABLE public.helix_subjects OWNER TO schema;
+
+--
+-- Name: helix_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.helix_subjects_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.helix_subjects_id_seq OWNER TO schema;
+
+--
+-- Name: helix_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.helix_subjects_id_seq OWNED BY public.helix_subjects.id;
 
 
 --
@@ -341,6 +326,46 @@ CREATE TABLE public.operation_locks (
 ALTER TABLE public.operation_locks OWNER TO schema;
 
 --
+-- Name: ro_crate; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.ro_crate (
+    id integer NOT NULL,
+    username text,
+    jobid text,
+    date timestamp without time zone,
+    software_url text,
+    input text,
+    publication text,
+    output text
+);
+
+
+ALTER TABLE public.ro_crate OWNER TO schema;
+
+--
+-- Name: ro_crate_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.ro_crate_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ro_crate_id_seq OWNER TO schema;
+
+--
+-- Name: ro_crate_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.ro_crate_id_seq OWNED BY public.ro_crate.id;
+
+
+--
 -- Name: run_history; Type: TABLE; Schema: public; Owner: schema
 --
 
@@ -368,7 +393,8 @@ CREATE TABLE public.run_history (
     mpi_proc integer,
     type public.hist_type,
     field_values_json text,
-    image text
+    image text,
+    remote_status_code integer
 );
 
 
@@ -653,19 +679,68 @@ ALTER SEQUENCE public.ticket_head_id_seq OWNED BY public.ticket_head.id;
 
 
 --
--- Name: upload_dataset; Type: TABLE; Schema: public; Owner: schema
+-- Name: upload_dataset_defaults; Type: TABLE; Schema: public; Owner: schema
 --
 
-CREATE TABLE public.upload_dataset (
+CREATE TABLE public.upload_dataset_defaults (
+    id integer NOT NULL,
+    provider text,
+    provider_id text,
+    default_community text,
+    default_community_id text,
+    name text,
+    enabled boolean DEFAULT true
+);
+
+
+ALTER TABLE public.upload_dataset_defaults OWNER TO schema;
+
+--
+-- Name: upload_dataset_defaults_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.upload_dataset_defaults_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.upload_dataset_defaults_id_seq OWNER TO schema;
+
+--
+-- Name: upload_dataset_defaults_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.upload_dataset_defaults_id_seq OWNED BY public.upload_dataset_defaults.id;
+
+
+--
+-- Name: upload_dataset_helix; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.upload_dataset_helix (
     id integer NOT NULL,
     dataset_id text,
     provider text,
     user_id integer,
-    api_key text
+    api_key text,
+    date timestamp without time zone,
+    description text,
+    license text,
+    affiliation text,
+    subject text,
+    contact_email text,
+    creator text,
+    publication_doi text,
+    private boolean,
+    title text
 );
 
 
-ALTER TABLE public.upload_dataset OWNER TO schema;
+ALTER TABLE public.upload_dataset_helix OWNER TO schema;
 
 --
 -- Name: upload_dataset_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
@@ -686,7 +761,55 @@ ALTER TABLE public.upload_dataset_id_seq OWNER TO schema;
 -- Name: upload_dataset_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
 --
 
-ALTER SEQUENCE public.upload_dataset_id_seq OWNED BY public.upload_dataset.id;
+ALTER SEQUENCE public.upload_dataset_id_seq OWNED BY public.upload_dataset_helix.id;
+
+
+--
+-- Name: upload_dataset_zenodo; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.upload_dataset_zenodo (
+    id integer NOT NULL,
+    provider text,
+    title text,
+    creators text,
+    upload_type text,
+    publication_type text,
+    image_type text,
+    access_rights text,
+    license text,
+    access_conditions text,
+    dataset_id text,
+    date timestamp without time zone,
+    embargo_date timestamp without time zone,
+    api_key text,
+    doi text,
+    description text
+);
+
+
+ALTER TABLE public.upload_dataset_zenodo OWNER TO schema;
+
+--
+-- Name: upload_dataset_zenodo_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.upload_dataset_zenodo_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.upload_dataset_zenodo_id_seq OWNER TO schema;
+
+--
+-- Name: upload_dataset_zenodo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.upload_dataset_zenodo_id_seq OWNED BY public.upload_dataset_zenodo.id;
 
 
 --
@@ -923,6 +1046,13 @@ ALTER TABLE ONLY public.download_dataset ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
+-- Name: helix_subjects id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.helix_subjects ALTER COLUMN id SET DEFAULT nextval('public.helix_subjects_id_seq'::regclass);
+
+
+--
 -- Name: image_request id; Type: DEFAULT; Schema: public; Owner: schema
 --
 
@@ -941,6 +1071,13 @@ ALTER TABLE ONLY public.notification ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.notification ALTER COLUMN recipient_id SET DEFAULT nextval('public.notification_recipient_id_seq'::regclass);
+
+
+--
+-- Name: ro_crate id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.ro_crate ALTER COLUMN id SET DEFAULT nextval('public.ro_crate_id_seq'::regclass);
 
 
 --
@@ -993,10 +1130,24 @@ ALTER TABLE ONLY public.ticket_head ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: upload_dataset id; Type: DEFAULT; Schema: public; Owner: schema
+-- Name: upload_dataset_defaults id; Type: DEFAULT; Schema: public; Owner: schema
 --
 
-ALTER TABLE ONLY public.upload_dataset ALTER COLUMN id SET DEFAULT nextval('public.upload_dataset_id_seq'::regclass);
+ALTER TABLE ONLY public.upload_dataset_defaults ALTER COLUMN id SET DEFAULT nextval('public.upload_dataset_defaults_id_seq'::regclass);
+
+
+--
+-- Name: upload_dataset_helix id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset_helix ALTER COLUMN id SET DEFAULT nextval('public.upload_dataset_id_seq'::regclass);
+
+
+--
+-- Name: upload_dataset_zenodo id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset_zenodo ALTER COLUMN id SET DEFAULT nextval('public.upload_dataset_zenodo_id_seq'::regclass);
 
 
 --
@@ -1032,6 +1183,170 @@ ALTER TABLE ONLY public.workflow_inputs ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.workflow_upload ALTER COLUMN id SET DEFAULT nextval('public.workflow_upload_id_seq'::regclass);
+
+
+--
+-- Data for Name: upload_dataset_defaults; Type: TABLE DATA; Schema: public; Owner: schema
+--
+
+COPY public.upload_dataset_defaults (id, provider, provider_id, default_community, default_community_id, name, enabled) FROM stdin;
+2	Helix			Helix	f
+1	Zenodo			Zenodo	f
+\.
+
+
+--
+-- Name: covid_dataset_application_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.covid_dataset_application_id_seq', 1, false);
+
+
+--
+-- Name: download_dataset_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.download_dataset_id_seq', 1, true);
+
+
+--
+-- Name: helix_subjects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.helix_subjects_id_seq', 1410, true);
+
+
+--
+-- Name: image_request_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.image_request_id_seq', 1, false);
+
+
+--
+-- Name: notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.notification_id_seq', 20, true);
+
+
+--
+-- Name: notification_recipient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.notification_recipient_id_seq', 1, false);
+
+
+--
+-- Name: ro_crate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.ro_crate_id_seq', 3, true);
+
+
+--
+-- Name: run_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.run_history_id_seq', 1169, true);
+
+
+--
+-- Name: software_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.software_id_seq', 76, true);
+
+
+--
+-- Name: software_inputs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.software_inputs_id_seq', 445, true);
+
+
+--
+-- Name: software_upload_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.software_upload_id_seq', 75, true);
+
+
+--
+-- Name: ticket_body_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.ticket_body_id_seq', 7, true);
+
+
+--
+-- Name: ticket_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.ticket_file_id_seq', 1, false);
+
+
+--
+-- Name: ticket_head_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.ticket_head_id_seq', 8, true);
+
+
+--
+-- Name: upload_dataset_defaults_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.upload_dataset_defaults_id_seq', 2, true);
+
+
+--
+-- Name: upload_dataset_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.upload_dataset_id_seq', 1, true);
+
+
+--
+-- Name: upload_dataset_zenodo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.upload_dataset_zenodo_id_seq', 1, true);
+
+
+--
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.user_id_seq', 41, true);
+
+
+--
+-- Name: user_visit_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.user_visit_log_id_seq', 277, true);
+
+
+--
+-- Name: workflow_inputs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.workflow_inputs_id_seq', 228, true);
+
+
+--
+-- Name: workflow_upload_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.workflow_upload_id_seq', 50, true);
+
+
+--
+-- Name: workflows_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
+--
+
+SELECT pg_catalog.setval('public.workflows_id_seq', 52, true);
 
 
 --
@@ -1091,6 +1406,14 @@ ALTER TABLE ONLY public.download_dataset
 
 
 --
+-- Name: helix_subjects helix_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.helix_subjects
+    ADD CONSTRAINT helix_subjects_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: image_request image_request_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
 --
 
@@ -1112,6 +1435,14 @@ ALTER TABLE ONLY public.migration
 
 ALTER TABLE ONLY public.notification
     ADD CONSTRAINT notification_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ro_crate ro_crate_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.ro_crate
+    ADD CONSTRAINT ro_crate_pkey PRIMARY KEY (id);
 
 
 --
@@ -1171,11 +1502,27 @@ ALTER TABLE ONLY public.ticket_head
 
 
 --
--- Name: upload_dataset upload_dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+-- Name: upload_dataset_defaults upload_dataset_defaults_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
 --
 
-ALTER TABLE ONLY public.upload_dataset
+ALTER TABLE ONLY public.upload_dataset_defaults
+    ADD CONSTRAINT upload_dataset_defaults_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: upload_dataset_helix upload_dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset_helix
     ADD CONSTRAINT upload_dataset_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: upload_dataset_zenodo upload_dataset_zenodo_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.upload_dataset_zenodo
+    ADD CONSTRAINT upload_dataset_zenodo_pkey PRIMARY KEY (id);
 
 
 --
@@ -1216,6 +1563,13 @@ ALTER TABLE ONLY public.workflow_upload
 
 ALTER TABLE ONLY public.workflow
     ADD CONSTRAINT workflows_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: helix_subject_name_idx; Type: INDEX; Schema: public; Owner: schema
+--
+
+CREATE INDEX helix_subject_name_idx ON public.helix_subjects USING btree (name);
 
 
 --
