@@ -207,12 +207,24 @@ $details_icon='<i class="fas fa-eye"></i>';
 								else
 								{
 
-						?>		<?= Html::a("$play_icon",['workflow/rerun','jobid'=>$res->jobid],
-								['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>	
-								<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-secondary btn-md', 'title'=>'Details'])?>
-									
-									<?= Html::a("$experiment_icon",null,
-									['class'=>'btn btn-secondary btn-md experiment hidden', 'title'=>'Manage experiment', 'data-target'=>"#experiment-modal-$res->jobid" ,'id'=>"$res->jobid"])?>
+						?>			<?= Html::a("$play_icon",['workflow/rerun','jobid'=>$res->jobid],
+									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>	
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-secondary btn-md', 'title'=>'Details'])?>
+									<?php
+									$experiment=RoCrate::find()->where(['jobid'=>$res->jobid])->one(); 
+									if (!empty($experiment)) 
+									{
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:rgb(127, 255, 0)"></i>';
+										$title='Edit the RO-crate object of this run';
+									}
+									else
+									{
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
+										$title='Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment';
+									}
+									?>
+									<?= Html::a("$experiment_icon", null,
+										['class'=>"btn btn-secondary btn-md experiment $completed", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>"$title", 'id'=>"$res->jobid", ])?>
 						<?php
 								}
 						?>
@@ -251,7 +263,7 @@ else
 <?php
 foreach ($results as $result) 
 {
-	if ($result->type=='job')
+	if ($result->type=='job' || $result->type=='workflow')
 	{
 		RoCrateModal::addModal($result->jobid);
 	}

@@ -11,6 +11,7 @@ use app\models\Software;
 use app\models\SoftwareMpi;
 use app\models\Workflow;
 use app\models\SoftwareInput;
+use app\models\WorkflowInput;
 use app\models\RoCrate;
 use yii\widgets\ActiveForm; 
 
@@ -25,18 +26,40 @@ class ROCrateModal
 		$download_icon='<i class="fas fa-question-circle" title="Download a local copy of the RO-Crate object to be produced"></i>';
 		$edit_icon='<i class="fas fa-pencil-alt"></i>';
 		$download_icon='<i class="fas fa-download"></i>';
-
 		$required='<span style="color:red">*</span>';
+
 		$history=RunHistory::find()->where(['jobid'=>$jobid])->one();
 		$software_id=$history->software_id;
-		$software=Software::find()->where(['id'=>$software_id])->one();
+
+		$public_url='';
+		$image_url='';
+
+		if($history->type=='job')
+		{
+			$software=Software::find()->where(['id'=>$software_id])->one();
+			$soft_type='Software';
+			$fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+			$fields=Software::getRerunFieldValues($jobid,$fields);
+		}
+		elseif ($history->type=='workflow')
+		{
+			$workflow=Workflow::find()->where(['id'=>$software_id])->one();
+			$soft_type='Workflow';
+			$fields=WorkflowInput::find()->where(['workflow_id'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+			$fields=Workflow::getRerunFieldValues($jobid,$fields);
+			
+		}
+		
+		
 		$model=RoCrate::find()->where(['jobid'=>$jobid])->one();
+
+		//print_r($history->jobid);
 		$disabled_fields=false;
 		if(!empty($model))
 		{
 			$disabled_fields=true;
 		}
-		$image_url='';
+		
 		$disabled=false;
 		if ((!empty($software)) && (empty($model->software_url)))
 		{
@@ -46,16 +69,19 @@ class ROCrateModal
         		$disabled=true;
             	$image=$software->original_image;
             	$image_url='https://hub.docker.com/r/'.$image;
+
+
         	}
         	
 		}
-		elseif ((!empty($software)) && (!empty($model->software_url)))
+		elseif ((!empty($software) || (!empty($workflow))) && (!empty($model->software_url)))
      	{
          		$image_url=$model->software_url;
         }
 		
-		$fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
-		$fields=Software::getRerunFieldValues($jobid,$fields);
+		
+
+		
 		
 		$field_to_url=[];
         if(empty($model))
@@ -92,19 +118,32 @@ class ROCrateModal
 
 		echo Html::hiddenInput('softname',$history->softname);
 		echo Html::hiddenInput('softversion',$history->softversion);
-
+		
+		
 		echo "<div class='modal fade' tabindex='-1' role='dialog' id='experiment-modal-$jobid' aria-labelledby='experiment-modal' aria-hidden='true'>";
 		echo '<div class="modal-dialog modal-dialog-centered modal-lg modal-size" role="document">';
 		echo '<div class="modal-content" >';
 		echo '<div class="modal-header">';
-		echo "<div class='modal-title text-center size' id='exampleModalLongTitle'>RO-Crate object details</div>";
+		echo "<div class='modal-title text-center size' id='exampleModalLongTitle'>RO-Crate object details  &nbsp; &nbsp;" 
+				. Html::img('@web/img/ro-crate.svg', ['width'=>'15%'])."</div>";
 		echo '</div>';
+		echo '<div class="rocrate-description">RO-Crate is a community effort to establish a lightweight approach to packaging research data with their metadata. For more details please visit the official '. Html::a('RO-Crate webpage','http://www.researchobject.org/ro-crate/', ['target'=>'_blank']).'.</div>';
 		echo '<div class="inputs">';
 		echo '<div class="modal-body modal-size">';
 		echo  '<div class="row body-row">';
-		echo     "<span class='col-md-7 field-row'>Software public URL $required $software_icon  : </span>";
+		echo     "<span class='col-md-7 field-row'>$soft_type public URL $required $software_icon  : </span>";
 		echo		 '<span class="col-md-5" >'.$form->field($model,'software_url')->label("")->textInput(['value'=>$image_url, 'disabled'=>$disabled, 'disabled'=>$disabled_fields]).'</span>
 				</div>';
+		echo  '<div class="row body-row">
+					<span class="col-md-7 field-row"> Public URL of the output dataset:</span> 
+					<span class="col-md-5">'. $form->field($model,'output')->label("")
+					->textInput(['value'=>$model->output, 'disabled'=>$disabled_fields]).'</span>';
+		echo	'</div>';
+		echo  "<div class='row body-row'>
+					<span class='col-md-7 field-row'> Publication DOI $publication_icon :</span> 
+					<span class='col-md-5'>". $form->field($model,'publication')->label("")
+					->textInput(['value'=>$model->publication, 'disabled'=>$disabled_fields])."</span>
+				</div>";
 		echo "<div class='input-file-fields'>";
 		$i=0;
 				
@@ -125,16 +164,6 @@ class ROCrateModal
 			}
 		}
 		echo "</div>";
-		echo  '<div class="row body-row">
-					<span class="col-md-7 field-row"> Public URL of the output dataset:</span> 
-					<span class="col-md-5">'. $form->field($model,'output')->label("")
-					->textInput(['value'=>$model->output, 'disabled'=>$disabled_fields]).'</span>';
-		echo	'</div>';
-		echo  "<div class='row body-row'>
-					<span class='col-md-7 field-row'> Publication DOI $publication_icon :</span> 
-					<span class='col-md-5'>". $form->field($model,'publication')->label("")
-					->textInput(['value'=>$model->publication, 'disabled'=>$disabled_fields])."</span>
-				</div>";
 		echo '</div>';
 		echo '</div>';
 		echo '<div class="modal-footer">';

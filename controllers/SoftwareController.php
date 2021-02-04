@@ -28,6 +28,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\RunHistory;
 use app\models\SoftwareInput;
+use app\models\WorkflowInput;
 use app\models\Workflow;
 use yii\data\Pagination;
 
@@ -1653,10 +1654,21 @@ class SoftwareController extends Controller
         
         $model=new RoCrate();
         $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
-        $software_id=$history->software_id;
-        $software=Software::find()->where(['id'=>$software_id])->one();
-        $fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
-        $fields=Software::getRerunFieldValues($jobid,$fields);
+        if($history->type=='job')
+        {
+            $software_id=$history->software_id;
+            $software=Software::find()->where(['id'=>$software_id])->one();
+            $fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+            $fields=Software::getRerunFieldValues($jobid,$fields);
+        }
+        else
+        {
+            $workflow_id=$history->software_id;
+            $software=Workflow::find()->where(['id'=>$workflow_id])->one();
+            $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow_id])->orderBy(['position'=> SORT_ASC])->all();
+            $fields=Workflow::getRerunFieldValues($jobid,$fields);
+           
+        }
 
        
         $input_data=[];
@@ -1682,18 +1694,32 @@ class SoftwareController extends Controller
             $software_name=$_POST['softname'];
             $software_version=$_POST['softversion'];
             $software_url=$model->software_url;
-            foreach ($model->input as $input_name=>$input_url) 
+            
+            if($model->input)
             {
-               $input_data[$input_name]['url']=$input_url;
-                 
+                foreach ($model->input as $input_name=>$input_url) 
+                {
+                   $input_data[$input_name]['url']=$input_url;
+                     
+                }
             }
            
 
             $output_data=$model->output;
             $publication=$model->publication;
-        
-            $result=ROCrate::CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
-            $software=$result[0];
+            if($history->type=='job')
+            {
+                $result=ROCrate::CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+            }
+            else
+            {
+                $result=ROCrate::CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+            }
+            
+            //$workflow=$result[0];
+
+            // print_r($workflow);
+            // exit(0);
 
             Yii::$app->session->setFlash('success', "$result[1]");
         }
