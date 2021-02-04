@@ -172,7 +172,9 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 <footer class="footer bg-light">
     <div class="container">
         <p class="pull-left">&copy; Athena RC <?= date('Y') ?></p>
-        <p class="col-md-offset-4 col-md-3"><?=$footerImageLink?></p>
+        <p class="powered col-md-2">Powered by  <?= Html::a('Schema', 'https://github.com/athenarc/schema', 
+        ['target'=>'_blank'])?></p>
+        <p class="col-md-offset-2 col-md-3"><?=$footerImageLink?></p>
         <p class="col-md-offset-1 col-md-2"><?=Html::a('Privacy & cookie policy','https://egci-beta.imsi.athenarc.gr/index.php?r=site/privacy')?></p>
         <p class="pull-right"><?=$twitter_link?>&nbsp;<?=$youtube_link?></p>
     </div>
