@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\SoftwareInput;
 use app\models\Software;
@@ -60,20 +61,14 @@ class RoCrate extends \yii\db\ActiveRecord
         ];
     }
 
-    public function CreateROObject($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication)
+    public function CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication)
     {
         
         $software=Software::find()->where(['name'=>$software_name])->andWhere(['version'=>$software_version])->one();
         $software_id=$software->id;
         $docker=$software->docker_or_local;
-        if(empty($software))
-        {
-            $software=Workflow::find()->where(['name'=>$software_name])->andWhere(['version'=>$software_version])->one();
-        
-        }
-
         $software_description=$software->description;
-        $location=empty($software->location)?"$software->cwl_path":"$software->location";
+        $location=$software->cwl_path;
 		$creator=explode('@',$software->uploaded_by)[0];
         
         
@@ -142,8 +137,97 @@ class RoCrate extends \yii\db\ActiveRecord
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
         exec($command,$out,$ret);
+
+        // print_r($out);
+        // exit(0);
 		
 		return [$software, $success];
+
+    }
+
+    public function CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication)
+    {
+        
+        $workflow=Workflow::find()->where(['name'=>$software_name])->andWhere(['version'=>$software_version])->one();
+        $workflow_id=$workflow->id;
+       
+
+        $workflow_description=$workflow->description;
+        $location=$workflow->original_file;
+        $creator=explode('@',$workflow->uploaded_by)[0];
+        $url = Url::base('https');
+        $image=$url. "/img/workflows/$workflow->visualize";
+        
+        
+
+        $ROCratesFolder=Yii::$app->params['ROCratesFolder'];
+
+        if (!is_dir($ROCratesFolder))
+        {
+            exec("mkdir $ROCratesFolder");
+        }
+        exec("chmod 777 $ROCratesFolder -R 2>&1",$out,$ret);
+
+        $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow_id])->orderBy(['position'=> SORT_ASC])->all();
+        $fields=Workflow::getRerunFieldValues($jobid,$fields);
+        $field_names=[];
+        foreach ($fields as $field) 
+        {
+           $field_names[]=$field->name;
+        }
+        
+        $arguments=['software_name'=>$software_name, 
+                    'software_version'=>$software_version,
+                    'software_description'=>$workflow_description, 
+                    'software_url'=>$software_url,
+                    'output_data'=>['id'=>uniqid(), 'data'=>$output_data], 
+                    'publication'=>$publication, 
+                    'ROCratesFolder'=>$ROCratesFolder, 
+                    'location'=>$location,
+                    'creator'=>$creator, 
+                    'jobid'=>$jobid,
+                    'input_data'=>$input_data, 
+                    'number_of_inputs'=>count($input_data),
+                    'field_names'=>$field_names,
+                    'image'=>$image
+                    
+                    
+        ];
+
+
+        $username=User::getCurrentUser()['username'];
+
+        $query=Yii::$app->db->createCommand()->delete('ro_crate',["jobid" => $jobid])->execute();
+     
+        $query=Yii::$app->db->createCommand()->insert('ro_crate',
+        [
+            "username"=>$username,
+            "jobid" => $jobid,
+            'date'=>'NOW()',
+            'output'=>$output_data,
+            'input'=>json_encode($input_data),
+            'publication'=>$publication,
+            'software_url'=>$software_url,
+        ]
+        )->execute();
+        
+
+        $filepath=Yii::$app->params['ROCratesFolder']. 'arguments.json';
+        $arguments_file = fopen($filepath, "w");
+        fwrite($arguments_file, json_encode($arguments));
+        fclose($arguments_file);
+
+        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . 
+        "ro-crate.py ";
+        $command.= "2>&1";       
+
+        $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
+        Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
+
+        exec($command,$out,$ret);
+
+        
+        return [$workflow, $success];
 
     }
 }

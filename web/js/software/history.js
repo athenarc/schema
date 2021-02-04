@@ -7,7 +7,7 @@ $(document).ready(function() {
 		var datatarget=$(this).attr('data-target');
 		var modal=$(datatarget);
 		modal.modal();
-		var jobid=datatarget.split('-').pop()
+		var jobid=datatarget.split('-').pop();
 		var submitbutton=$("#submit-" + jobid);
 		submitbutton.removeClass("disabled");
 	});

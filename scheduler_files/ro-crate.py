@@ -25,11 +25,7 @@ with open('/data/docker/RO-crates/arguments.json') as f:
   data = json.load(f)
 
 
-# inputs=data['input_data']['0']
-# print(data['input_data']['0'])
 
-
-# print(data['software_description'])
 
 wf_path = data['location']
 files_list = []
@@ -43,6 +39,8 @@ wf_crate.isBasedOn = data['software_url']
 wf_crate.name = data['software_name']
 wf_crate.description=data['software_description']
 wf_crate.creator=data['creator']
+print(data['image'])
+wf_crate.image = data['image']
 
 main_entity = entity.Entity(wf_crate, data['software_url'],
             properties={
@@ -52,7 +50,7 @@ main_entity = entity.Entity(wf_crate, data['software_url'],
                 "@type": ["File", "SoftwareSourceCode"],
                 "input": [ "{@id: #" + data['input_data']["%s"%x]['id']+"}" for x in data['field_names']],
                 "output": [{"@id": "#" + data['output_data']['id']}],
-                "version": data['version']
+                "version": data['software_version']
                 },
                  )
 
