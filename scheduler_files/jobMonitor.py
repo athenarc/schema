@@ -36,7 +36,7 @@ status=out[2]
 status_code=0
 cpu=0
 memory=0
-while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBackOff') and (status!="ContainerCannotRun") and (status!="RunContainerError"):
+while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBackOff') and (status!="ContainerCannotRun") and (status!="RunContainerError") and (status!="OOMKilled"):
     
     code=0
     command="kubectl top pod --no-headers " + podid 
@@ -79,8 +79,18 @@ while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBack
         status='Canceled'
         break
     #If it is running, get the status
-    out=out.split(' ')
-    status=out[2]
+    out=out.strip().split('\n')
+    if len(out)>1:
+        for line in out:
+            line=line.split(' ')
+            status=line[2]
+            print(out)
+            if status=='OOMKilled':
+                break
+    else:
+        out=out[0]
+        out=out.split(' ')
+        status=out[2]
 
 if status!='Canceled':
     #Get start and end times
@@ -113,6 +123,10 @@ if status=='Canceled':
 if status=='Complete':
     query="UPDATE run_history SET ram=" + str(memory) + ", cpu=" + str(cpu) + ", start='" + start +"', stop='" + str(end) + "', status='" + status +"' WHERE jobid='" + jobid + "'"
     status_code=0
+
+elif status=='OOMKilled':
+    query="UPDATE run_history SET stop='NOW()', status='Out_of_RAM', remote_status_code=-10 WHERE jobid='" + jobid + "'"
+    status_code=-10
 else:
     query="UPDATE run_history SET stop='NOW()', status='Error', remote_status_code=-9 WHERE jobid='" + jobid + "'"
     status_code=-2
@@ -122,7 +136,7 @@ conn.commit()
 
 conn.close()
 
-if status!='Canceled':
+if (status!='Canceled'):
     #Get logs
     command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
     try:

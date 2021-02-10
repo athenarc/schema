@@ -904,6 +904,7 @@ class Software extends \yii\db\ActiveRecord
         // print_r($statsCommand);
         // exit(0);
         shell_exec(sprintf('%s > /dev/null 2>&1 &', $statsCommand));
+        // shell_exec(sprintf('%s > /data/zagganas/testlogs.txt 2>&1 &', $statsCommand));
 
         
         /*
@@ -955,19 +956,18 @@ class Software extends \yii\db\ActiveRecord
         unset($output);
 
         
-        $podString=(explode('/',(explode(' ',$podString))[0]))[1];
-        
+        // $podString=(explode('/',(explode(' ',$podString))[0]))[1];        
 
-        exec('sudo -u ' . Yii::$app->params['systemUser'] . ' kubectl get pods --no-headers 2>&1',$output,$ret);
+        exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
 
 
         foreach ($output as $out)
         {   
             // print_r($out);
             // print_r("<br />");
-            if (strpos($out,$podString)!== false)
+            if (strpos($out,$jobName)!== false)
             {
-                $podString=preg_split('/[\s]+/', $out)[0];
+                $podString=explode(' ', $out)[0];
                 break;
             }
 
@@ -975,7 +975,10 @@ class Software extends \yii\db\ActiveRecord
 
         // print_r($podString);
         // exit(0);
-
+        // exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers -l job-name=$jobName 2>&1 | tr -s ' ' ",$output,$ret);
+        // print_r($output);
+        // exit(0);
+        // $podString=explode(' ',$output)[0];
 
         return [$podString,'', $machineType];
 
