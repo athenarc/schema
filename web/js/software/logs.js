@@ -91,7 +91,7 @@ $(document).ready(function()
               
               
                     status=$("#status-value").text(); 
-                    if ( (status == "Completed") || (status == "Error") || (status == "ImagePullBackOff") || (status == "Terminating") || (status == "Canceled") )
+                    if ( (status == "Completed") || (status == "Error") || (status == "ImagePullBackOff") || (status == "Terminating") || (status == "Canceled") || (status=="OOMKilled"))
                     {
                         clearInterval(refId);
                         setTimeout(cleanUp(),2000);
