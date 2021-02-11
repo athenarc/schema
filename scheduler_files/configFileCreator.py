@@ -103,7 +103,7 @@ def createFile(name,machineType,image,
 	manifest_data['kind']='Job'
 	manifest_data['metadata']={'name': jobName}
 
-	manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':1}
+	manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':0}
 	if len(volumes)!=0:
 		manifest_data['spec']['template']['spec']['volumes']=volumes
 	if imagePullSecrets:
