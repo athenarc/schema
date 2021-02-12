@@ -16,7 +16,7 @@ Headers::begin() ?>
 ['title'=>$this->title,
 'buttons'=>
 	[
-		 ['fontawesome_class'=>'<i class="fas fa-file"></i>','name'=> 'Downloaded Datasets', 
+		 ['fontawesome_class'=>'<i class="fa fa-history" aria-hidden="true"></i>','name'=> 'Downloaded Datasets', 
 	 	'action'=>['filebrowser/dataset-history'],
 	    'options'=>['class'=>'btn btn-default'], 'type'=>'a'], 
 		['fontawesome_class'=>'<i class="fas fa-upload"></i>','name'=> 'Upload Dataset', 

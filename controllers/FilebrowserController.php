@@ -116,75 +116,9 @@ class FilebrowserController extends Controller
         return $this->render('index',['connectorRoute' => 'connector','messages'=>[]]);
     }
 
-    public function actionGetCovidData()
-    {
-        $userFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0];
+    
 
-        // $user=User::getCurrentUser()['username'];
-        $origin=Yii::$app->params['userDataPath'] . '/covid19_data/';
-        // $destination=$userFolder . '/covid19_data/';
-        exec("cp -a $origin $userFolder");
-        // exec("chmod 777 $userFolder -R 2>&1",$out,$ret);
-        // print_r($out);
-        // exit(0);
-
-        return $this->render('index',['connectorRoute' => 'connector','messages'=>[]]);
-    }
-
-    public function actionRequestDataset()
-    {
-        $model = new CovidDatasetApplication();
-
-        if (($model->load(Yii::$app->request->post())) && ($model->validate()) ) 
-        {
-            $model->username=Userw::getCurrentUser()['username'];
-            $model->status=0;
-            $model->submission_date='NOW()';
-            $model->save();
-
-            $musername=explode('@',$model->username)[0];
-            $message="User <strong>$musername</strong> applied for a new COVID-19 dataset.";
-            $url=Url::to(['/filebrowser/covid-application-details','id'=>$model->id]);
-
-            foreach (User::getAdminIds() as $admin)
-            {
-                Notification::notify($admin, $message, '0' ,$url);
-            }
-
-            $messages=[['message'=>'Applicaton submitted successfully!', 'class'=>'success']];
-
-            return $this->render('index',['connectorRoute' => 'connector','messages'=>$messages]);
-        }
-
-        return $this->render('dataset_application', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionCovidListApplications()
-    {
-        $query=CovidDatasetApplication::find();
-
-        $countQuery = clone $query;
-        $pages = new Pagination(['totalCount' => $countQuery->count()]);
-        $applications = $query->offset($pages->offset)
-            ->limit($pages->limit)
-            ->all();
-
-        return $this->render('covid_application_list', 
-            [
-                'applications' => $applications,
-                'pages' => $pages,
-        ]);
-
-    }
-
-    public function actionCovidApplicationDetails($id)
-    {
-        $application=CovidDatasetApplication::find()->where(['id'=>$id])->one();
-
-        return $this->render('covid_application_details',['application'=>$application]);
-    }
+    
 
     public function actionSelectMountpoint($username)
     {
