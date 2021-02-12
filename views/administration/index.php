@@ -46,11 +46,11 @@ Headers::begin() ?>
 <br />
 <?= ToolButton::createButton("Ticket support administration", "",['/ticket-admin/index']) ?>
 <br />
-<?= ToolButton::createButton("COVID-19 dataset requests", "",['/filebrowser/covid-list-applications']) ?>
-<br />
 <?= ToolButton::createButton("Dockerhub image requests", "",['/administration/dockerhub-image-list']) ?>
 <br />
 <?= ToolButton::createButton("External data repositories", "",['/administration/external-repositories']) ?>
+<br />
+<?= ToolButton::createButton("System configuration", "",['/administration/system-configuration']) ?>
 <br />
 <!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
 <br /> -->
