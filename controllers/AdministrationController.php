@@ -14,6 +14,7 @@ use app\models\User;
 use yii\data\Pagination;
 use app\models\Notification;
 use app\models\UploadDatasetDefaults;
+use app\models\SystemConfiguration;
 
 
 class AdministrationController extends Controller
@@ -125,6 +126,37 @@ class AdministrationController extends Controller
         }
 
         return $this->render('external_repositories', ['providers'=>$providers, 'number_of_providers'=>$number_of_providers]);
+        
+    }
+
+
+     public function actionSystemConfiguration()
+    {
+        
+        $configuration=SystemConfiguration::find()->one();
+        $no_configuration=false;
+        if (empty($configuration))
+        {
+            $no_configuration=true;
+            $configuration=new SystemConfiguration;
+        }
+        
+        if ($configuration->load(Yii::$app->request->post()))
+        {
+            if ($no_configuration)
+            {
+                $configuration->save(false);
+            }
+            else
+            {
+                $configuration->update(false);
+            }
+            Yii::$app->session->setFlash('success', 'System configuration has been succesfully saved');
+            return $this->redirect(['administration/index']);
+        }
+        
+
+        return $this->render('system_configuration', ['configuration'=>$configuration]);
         
     }
 
