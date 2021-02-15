@@ -29,4 +29,65 @@ font-size: 25px;
 {
 font-size:15px; 
 margin-bottom:10px;
+}
+
+.helix_hide
+{
+	display: none;
+}
+
+.zenodo_hide
+{
+	display: none;
+}
+
+.url_hide
+{
+	display: none;
+}
+
+
+.padding-top
+{
+	margin-top: 20px!important;
+}
+
+
+.red-border
+{
+	border:solid 1px #a94442; 
+}
+
+.message_folder_helix
+{
+	padding-left: 0px;
+	color:#a94442;
+}
+
+.message_folder_zenodo
+{
+	padding-left: 0px;
+	color:#a94442;
+}
+
+.message_folder_url
+{
+	padding-left: 0px;
+	color:#a94442;
+}
+
+
+
+.dataset-input-size
+{
+	border:1px solid #ccc;
+	border-radius: 4px;
+	width: 70%;
+	height: 34px;
+	padding-bottom: 5px;
+}
+
+.modal-message
+{
+	font-size: 25px;
 }	

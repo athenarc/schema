@@ -202,5 +202,50 @@ class DownloadDataset extends \yii\db\ActiveRecord
         return ['error'=>$error,'warning'=>$warning,'success'=>$success, 'title'=>$title,'version'=>$version];
      }
 
+    public function downloadFromUrl($folder,$dataset_id,$provider)
+    {
+        $error='';
+        $warning='';
+        $success='';
+       
+        if (empty($folder))
+        {
+            $warning="You must choose a folder to store the dataset";
+            return ['warning'=>$warning];
+        }
+        else
+        {
+            $title=basename($dataset_id);
+            $version="0";
+            
+            
+            $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Downloads_from_Url/";
+            
+            if(!file_exists($finalFolder))
+            {
+                exec("mkdir $finalFolder");
+            }
+
+            
+            $command="wget -nc -P $finalFolder $dataset_id";
+            exec($command,$out,$ret);
+
+            
+
+            if ($ret!=0)
+            {
+                $warning="The file could not be downloaded";
+            }
+            else
+            {
+            $success='The dataset has been successfully downloaded';
+
+            }
+            
+        }
+        
+        return ['error'=>$error,'warning'=>$warning,'success'=>$success, 'version'=>'', 'title'=>''];
+    }
+
 
 }
