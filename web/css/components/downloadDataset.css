@@ -90,4 +90,20 @@ margin-bottom:10px;
 .modal-message
 {
 	font-size: 25px;
+}
+
+.mount-field-url
+{
+	padding-left: 15px;
 }	
+
+.mount-field-zenodo
+{
+	padding-left: 15px;
+}	
+
+.mount-field-helix
+{
+	padding-left: 15px;
+}	
+
