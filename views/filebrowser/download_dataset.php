@@ -113,7 +113,7 @@ if(!empty($datasets))
   ?>
   <div class="row helix_field">&nbsp;</div>
   <div class="row helix_field helix_hide">
-      <div class="col-md-4 labels"> Dataset id<?=$required?> <?=$help_id?></div> 
+      <div class="col-md-4 labels"> Dataset ID<?=$required?> <?=$help_id?></div> 
       <div class="col-md-8"><?=$form->field($model,'dataset_id')->textInput(['class'=>'form-control'])->label("")?></div>
   </div>
   <div class="row body-row helix_field helix_hide">
@@ -148,7 +148,7 @@ if(!empty($datasets))
 
   
   <div class="row zenodo_field zenodo_hide padding-top">
-      <div class="col-md-4 labels"> Dataset id<?=$required?> <?=$help_id?></div> 
+      <div class="col-md-4 labels"> Dataset ID<?=$required?> <?=$help_id?></div> 
       <div class="col-md-8"><?=$form->field($model,'dataset_id')->textInput(['class'=>'form-control'])->label("")?></div>
   </div>
   <div class="row body-row zenodo_field">
@@ -183,7 +183,7 @@ if(!empty($datasets))
 
   
    <div class="row url_field url_hide padding-top">
-      <div class="col-md-4 labels"> Dataset id<?=$required?> <?=$help_id?></div> 
+      <div class="col-md-4 labels"> Dataset URL<?=$required?> <?=$help_id?></div> 
       <div class="col-md-8"><?=$form->field($model,'dataset_id')->textInput(['class'=>'form-control'])->label("")?></div>
   </div>
   <div class="row body-row url_field url_hide">
