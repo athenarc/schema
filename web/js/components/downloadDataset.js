@@ -111,9 +111,6 @@ $(document).ready(function()
 		
 
 
-		var datasetfolder=$("#helix-mount").val();
-		var submit=0;
-
 		if($(".hidden_element_box").is(':empty'))
 		{
 			
@@ -122,15 +119,8 @@ $(document).ready(function()
 			$(".blue-rounded-textbox").addClass('red-border');
 		}
 
-		if(datasetfolder=='')
-		{
-			
-			event.preventDefault();
-			$("#message-folder-helix").removeClass('hidden');
-			$(".mount-field-helix").css("border-color", "#a94442");
-		}
 
-		if(!$(".hidden_element_box").is(':empty') && !(datasetfolder==''))
+		if(!$(".hidden_element_box").is(':empty'))
 		{
 			
 			$('.modal').modal({
@@ -219,21 +209,6 @@ $(document).ready(function()
 
 	$("#zenodo-form").submit(function(event){
 		
-		var datasetfolder=$("#zenodo-mount").val();
-		var submit=0;
-
-
-		if(datasetfolder=='')
-		{
-			event.preventDefault();
-			$("#message-folder-zenodo").removeClass('hidden');
-			$(".mount-field-zenodo").css("border-color", "#a94442");
-			
-		}
-		
-
-		if(!(datasetfolder==''))
-		{
 			
 			$('.modal').modal({
     			backdrop: 'static',
@@ -248,7 +223,7 @@ $(document).ready(function()
         			$('.modal').modal('hide');
         		}
         	}, 2000);
-		}
+		
 
 	});
 
@@ -296,22 +271,7 @@ $(document).ready(function()
 
 	$("#url-form").submit(function(event){
 		
-		var datasetfolder=$("#url-mount").val();
-		var submit=0;
-
-
-		if(datasetfolder=='')
-		{
-			event.preventDefault();
-			$("#message-folder-url").removeClass('hidden');
-			$(".mount-field-url").css("border-color", "#a94442");
-			
-		}
 		
-
-		if(!(datasetfolder==''))
-		{
-			
 			$('.modal').modal({
     			backdrop: 'static',
    				keyboard: false
@@ -325,7 +285,7 @@ $(document).ready(function()
         			$('.modal').modal('hide');
         		}
         	}, 2000);
-		}
+		
 
 	});
 

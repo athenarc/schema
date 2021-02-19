@@ -87,12 +87,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
         $title='';
         $version='';
        
-        if (empty($folder))
-        {
-            $warning="You must choose a folder to store the dataset";
-            return ['warning'=>$warning];
-        }
-        elseif (!$content->success==1)
+        if (!$content->success==1)
         {
             $error='The dataset id you provided is not valid';
             return ['error'=>$error];
@@ -152,12 +147,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
 
         $status=$response->headers['http-code'];
 
-        if (empty($folder))
-        {
-            $warning="You must choose a folder to store the dataset";
-            return ['warning'=>$warning];
-        }
-        elseif ($status!='200')
+        if ($status!='200')
         {
             $error=json_decode($response->content,true)['message'];
             return ['error'=>$error];
@@ -208,41 +198,35 @@ class DownloadDataset extends \yii\db\ActiveRecord
         $warning='';
         $success='';
        
-        if (empty($folder))
+        
+        $title=basename($dataset_id);
+        $version="0";
+        
+        
+        $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Downloads_from_Url/";
+        
+        if(!file_exists($finalFolder))
         {
-            $warning="You must choose a folder to store the dataset";
-            return ['warning'=>$warning];
+            exec("mkdir $finalFolder");
+        }
+
+        
+        $command="wget -nc -P $finalFolder $dataset_id";
+        exec($command,$out,$ret);
+
+        
+
+        if ($ret!=0)
+        {
+            $warning="The file could not be downloaded";
         }
         else
         {
-            $title=basename($dataset_id);
-            $version="0";
-            
-            
-            $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Downloads_from_Url/";
-            
-            if(!file_exists($finalFolder))
-            {
-                exec("mkdir $finalFolder");
-            }
+        $success='The dataset has been successfully downloaded';
 
-            
-            $command="wget -nc -P $finalFolder $dataset_id";
-            exec($command,$out,$ret);
-
-            
-
-            if ($ret!=0)
-            {
-                $warning="The file could not be downloaded";
-            }
-            else
-            {
-            $success='The dataset has been successfully downloaded';
-
-            }
-            
         }
+            
+        
         
         return ['error'=>$error,'warning'=>$warning,'success'=>$success, 'version'=>'', 'title'=>''];
     }

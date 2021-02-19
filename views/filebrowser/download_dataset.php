@@ -122,7 +122,7 @@ if(!empty($datasets))
       <?=Html::textInput('dataset_helix',$isystemMount,['id' => 'helix-mount','class'=>'mount-field-helix dataset-input-size','readonly'=>true,]).'&nbsp;&nbsp;' 
       . Html::a("$select_icon Select",'javascript:void(0);',['class'=>'select-mount-button-helix btn btn-success btn-md']).'&nbsp'
       . Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-mount-button-helix btn btn-danger btn-md'])?>
-      <div class="col-md-8 message_folder_helix hidden" id='message-folder-helix'> Dataset folder can not be blank </div>
+     
       </div>
   </div> 
   <div class="row helix_field helix_hide">&nbsp;</div>
@@ -151,20 +151,20 @@ if(!empty($datasets))
       <div class="col-md-4 labels"> Dataset ID<?=$required?> <?=$help_id?></div> 
       <div class="col-md-8"><?=$form->field($model,'dataset_id')->textInput(['class'=>'form-control'])->label("")?></div>
   </div>
-  <div class="row body-row zenodo_field">
+  <div class="row body-row zenodo_field zenodo_hide">
       <div class="col-md-4 label-dataset">Select dataset folder<?=$required?> <?=$help_dataset_folder?></div>
       <div class="col-md-8">
       <?=Html::textInput('dataset_zenodo',$isystemMount,['id' => 'zenodo-mount','class'=>'mount-field-zenodo
         dataset-input-size','readonly'=>true,]).'&nbsp;&nbsp;' 
       . Html::a("$select_icon Select",'javascript:void(0);',['class'=>'select-mount-button-zenodo btn btn-success btn-md']).'&nbsp'
       . Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-mount-button-zenodo btn btn-danger btn-md'])?>
-      <div class="col-md-8 message_folder_zenodo hidden" id='message-folder-zenodo'> Dataset folder can not be blank </div>
+      
       </div>
 
   </div>
   <div class="row zenodo_field zenodo_hide">&nbsp;</div>
   <div class="row zenodo_field zenodo_hide">&nbsp;</div>
-  <div class="form-group zenodo_field text-center">
+  <div class="form-group zenodo_field zenodo_hide text-center">
               <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary', 'name'=>'zenodo-submit']) ?>
   </div>
 
@@ -193,13 +193,12 @@ if(!empty($datasets))
         dataset-input-size','readonly'=>true,]).'&nbsp;&nbsp;' 
       . Html::a("$select_icon Select",'javascript:void(0);',['class'=>'select-mount-button-url btn btn-success btn-md']).'&nbsp'
       . Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-mount-button-url btn btn-danger btn-md'])?>
-      <div class="col-md-8 message_folder_url hidden" id='message-folder-url'> Dataset folder can not be blank </div>
       </div>
 
   </div>
   <div class="row">&nbsp;</div>
   <div class="row">&nbsp;</div>
-  <div class="form-group url_field text-center">
+  <div class="form-group url_field url_hide text-center">
               <?= Html::submitButton("$submit_icon Submit", ['class' => 'btn btn-primary', 'name'=>'url-submit']) ?>
   </div>
 
