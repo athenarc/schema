@@ -44,8 +44,8 @@ Headers::begin() ?>
 		'action'=>['filebrowser/upload-dataset'],
 	     'options'=>['class'=>'btn btn-default upload-dataset',], 'type'=>'a'],
 	    ['fontawesome_class'=>'<i class="fas fa-download"></i>','name'=> 'Download Dataset', 
-	 	'action'=>null,
-	    'options'=>['class'=>'btn btn-default download-dataset', 'data-target'=>"#download-modal"], 'type'=>'a'],
+	 	'action'=>['filebrowser/download-dataset'],
+	    'options'=>['class'=>'btn btn-default download-dataset'], 'type'=>'a'],
 
 	]
 ])
@@ -76,6 +76,5 @@ foreach ($messages as $message)
 ]) ?>
 
 <?php
-DownloadDatasetModal::addModal();
 ?>  
 

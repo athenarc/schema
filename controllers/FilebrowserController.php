@@ -154,27 +154,44 @@ class FilebrowserController extends Controller
     public function actionDownloadDataset()
     {
         $model=new DownloadDataset();
+        $datasets=['Helix'=>'Helix', 'Zenodo'=>'Zenodo', 'Url'=>'Any Url'];
+        $username=Userw::getCurrentUser()['username'];
 
         if (($model->load(Yii::$app->request->post())))
         {
             $user_id=Userw::getCurrentUser()['id'];
-            $folder=$_POST['osystemmount'];
+            
             $dataset_id=$model->dataset_id;
-            $provider=$model->provider;
+            $provider=$_POST['provider_name'];
 
             if ($provider=='Helix')
             {    
+                $folder=$_POST['dataset_helix'];
                 $result=DownloadDataset::downloadHelixDataset($folder,$dataset_id,$provider);
+            }
+            elseif($provider=='Zenodo')
+            {
+                $folder=$_POST['dataset_zenodo'];
+                $result=DownloadDataset::downloadZenodoDataset($folder,$dataset_id,$provider);
             }
             else
             {
-                $result=DownloadDataset::downloadZenodoDataset($folder,$dataset_id,$provider);
+                $folder=$_POST['dataset_url'];
+                $result=DownloadDataset::downloadFromUrl($folder,$dataset_id,$provider);
+                
             }
 
             if(!empty($result['success']))
             {
-                $model->version=$result['version'];
-                $model->name=$result['title'];
+                if($result['version'])
+                {
+                    $model->version=$result['version'];
+                }
+                if($result['title'])
+                {
+                    $model->name=$result['title'];
+                }
+                
                 $model->folder_path=$folder;
                 $model->provider=$provider;
                 $model->dataset_id=$dataset_id;
@@ -183,22 +200,22 @@ class FilebrowserController extends Controller
                 $model->save();
             }
 
+            if (!empty($result['error']))
+            {
+                Yii::$app->session->setFlash('danger', $result['error']);
+            }
+            elseif (!empty($result['warning']))
+            {
+                Yii::$app->session->setFlash('warning', $result['warning']);
+            }
+            else
+            {
+                Yii::$app->session->setFlash('success', $result['success']);
+            }
+            return $this->redirect(['filebrowser/index']);
         }
-
-        if (!empty($result['error']))
-        {
-            Yii::$app->session->setFlash('danger', $result['error']);
-        }
-        elseif (!empty($result['warning']))
-        {
-            Yii::$app->session->setFlash('warning', $result['warning']);
-        }
-        else
-        {
-            Yii::$app->session->setFlash('success', $result['success']);
-        }
-
-        return $this->redirect(['filebrowser/index']);
+        
+        return $this->render('download_dataset', ['model'=>$model, 'datasets'=>$datasets, 'username'=>$username]);
     }
 
     public function actionAutoCompleteSubjects($expansion, $max_num, $term)

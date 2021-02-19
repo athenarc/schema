@@ -37,9 +37,10 @@ class DownloadDatasetModal
 	public static function addModal()
 	{
 		$username=User::getCurrentUser()['username'];
-		$datasets=['Helix'=>'Helix', 'Zenodo'=>'Zenodo'];
+		$datasets=['Helix'=>'Helix', 'Zenodo'=>'Zenodo', 'Url'=>'Any Url'];
 		$select_icon='<i class="fas fa-folder-open"></i>';
 		$clear_icon='<i class="fas fa-times"></i>';
+		$help_icon='<i class="fa fa-question-circle" title="The ID of the dataset in the public repository or the URL if the '.htmlspecialchars('"Any URL"').' option is selected"></i>';
 		$osystemMount='';
 
 		$model=new DownloadDataset;
@@ -62,9 +63,9 @@ class DownloadDatasetModal
 				 <span class="col-md-7" >'. $form->field($model,'provider')
 				 ->dropdownList($datasets, ['class'=>'form-control'])->label("").'</span>
 				</div>';
-		echo  '<div class="row body-row">
-					<span class="col-md-4"> Dataset id:</span> 
-					<span class="col-md-7">'. $form->field($model,'dataset_id')
+		echo  '<div class="row body-row">';
+		echo			"<span class='col-md-4'> Dataset id $help_icon:</span>"; 
+		echo			'<span class="col-md-7">'. $form->field($model,'dataset_id')
 					->textInput(['class'=>'form-control'])->label("").'</span>
 				</div>';
 		echo  '<span class="row body-row">
@@ -78,7 +79,7 @@ class DownloadDatasetModal
 			 	</span>';
 		echo '</div>';
 		echo '<div class="modal-footer">';
-		echo '<div class="modal-loading hidden"><b>Downloading files <i class="fas fa-spinner fa-spin"></i></b></div>';
+		// echo '<div class="modal-loading hidden"><b>Downloading files <i class="fas fa-spinner fa-spin"></i></b></div>';
 		echo Html::submitButton("Download",['class'=>"btn btn-success", 'id'=>'download-button']);
 		echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>";
 		echo '</div>';
