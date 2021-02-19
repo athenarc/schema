@@ -203,7 +203,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
         $version="0";
         
         
-        $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Downloads_from_Url/";
+        $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/';
         
         if(!file_exists($finalFolder))
         {
