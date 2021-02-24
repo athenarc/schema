@@ -108,7 +108,7 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
     }
 
 
-    public static function uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation)
+    public static function uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation)
     {
         $error='';
         $success='';
@@ -128,7 +128,6 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
             ->setData(['title' => $title, 
                 'notes'=>$description,
                 'closed_tag'=>$subjects,
-                'name'=>$dataset_id, 
                 'datacite.creator.creator_name'=>$creator,
                 'datacite.creator.creator_affiliation'=>$affiliation, 
                 'datacite.contact_email'=>$contact_email,
@@ -150,6 +149,7 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
             
             $id=$content['result']['id'];
 
+            session_write_close();
             foreach($files as $file)
             {
                 $id=$content['result']['id'];
@@ -162,6 +162,7 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
                 ->send();
                 
             }
+            session_start();
 
             $content=json_decode($response->content, true);
 

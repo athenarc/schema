@@ -51,7 +51,7 @@ Headers::begin() ?>
 	],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 <div class="table-responsive">
 	<table class="table table-striped">

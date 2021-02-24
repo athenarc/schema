@@ -52,7 +52,7 @@ Headers::begin() ?>
    
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 /*
  * Users are able to view the name, version, start date, end date, mountpoint 
