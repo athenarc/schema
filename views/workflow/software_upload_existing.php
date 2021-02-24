@@ -46,7 +46,7 @@ Headers::begin() ?>
 ['title'=>$this->title, 
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 <div class="software_upload">
 

@@ -102,7 +102,7 @@ Headers::begin() ?>
 	],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 
 

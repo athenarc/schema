@@ -47,7 +47,7 @@ Headers::begin() ?>
 ['title'=>$this->title, 
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 <div class="software_upload">
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
