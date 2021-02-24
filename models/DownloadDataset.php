@@ -103,6 +103,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
 
             exec("mkdir $finalFolder");
 
+            session_write_close();
             foreach ($resources as $res)
             {
                 if (empty($res->mimetype))
@@ -128,6 +129,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
                    
                 }
             }
+            session_start();
         }
         
         return ['error'=>$error,'warning'=>$warning,'success'=>$success,'title'=>$title,'version'=>$version];
@@ -166,6 +168,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
                 exec("mkdir $finalFolder");
             }
             
+            session_write_close();
             foreach ($resources as $res)
             {
                 
@@ -186,6 +189,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
                 }
             
             }
+            session_start();
                     
         }
         
@@ -210,10 +214,10 @@ class DownloadDataset extends \yii\db\ActiveRecord
             exec("mkdir $finalFolder");
         }
 
-        
+        session_write_close();
         $command="wget -nc -P $finalFolder $dataset_id";
         exec($command,$out,$ret);
-
+        session_start();
         
 
         if ($ret!=0)

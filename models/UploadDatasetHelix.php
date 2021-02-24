@@ -149,6 +149,7 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
             
             $id=$content['result']['id'];
 
+            session_write_close();
             foreach($files as $file)
             {
                 $id=$content['result']['id'];
@@ -161,6 +162,7 @@ class UploadDatasetHelix extends \yii\db\ActiveRecord
                 ->send();
                 
             }
+            session_start();
 
             $content=json_decode($response->content, true);
 
