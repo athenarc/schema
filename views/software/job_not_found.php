@@ -50,7 +50,7 @@ Headers::begin() ?>
     ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 
 <div class="row"><div class="col-md-12 text-center"><h3>We could not find a job with an id <?=$jobid?> in our system.</h3></div></div>

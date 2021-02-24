@@ -48,7 +48,7 @@ Headers::begin() ?>
    
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 <div class="software_upload">
 
     

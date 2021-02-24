@@ -57,11 +57,9 @@ $help_doi_zenodo='<i class="fa fa-question-circle" title="Optional. Did your pub
 
 
 
-?>
 
-<!--  // $form=ActiveForm::begin(['action'=>['filebrowser/upload-dataset'], 'method'=> 'POST', 'options' => ['enctype'=>'multipart/form-data']]); -->
   
-<?Headers::begin() ?>
+Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
     'buttons'=>
@@ -71,7 +69,7 @@ $help_doi_zenodo='<i class="fa fa-question-circle" title="Optional. Did your pub
     ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 
 

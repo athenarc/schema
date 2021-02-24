@@ -39,8 +39,7 @@ $this->title = "Request Image";
 $submit_icon='<i class="fas fa-check"></i>';
 $cancel_icon='<i class="fas fa-times"></i>';
 
- $form = ActiveForm::begin();?>
-<? 
+$form = ActiveForm::begin();
 Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
@@ -53,7 +52,7 @@ Headers::begin() ?>
     ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 
 

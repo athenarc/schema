@@ -49,7 +49,7 @@ Headers::begin() ?>
    
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 <br />
 <div class="software_edit">

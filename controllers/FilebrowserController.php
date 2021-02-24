@@ -271,7 +271,6 @@ class FilebrowserController extends Controller
             $api_key=$model->api_key;
             $title=$model->title;
             $description=$model->description;
-            $dataset_id=rand(1,10000);
             $publication_doi=$model->publication_doi;
             $private=$model->private;
             $license=$model->license;
@@ -279,7 +278,7 @@ class FilebrowserController extends Controller
             $creator=$model->creator;
             $contact_email=$model->contact_email;
             $affiliation=$model->affiliation;
-            $result=UploadDatasetHelix::uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description, $dataset_id,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation);
+            $result=UploadDatasetHelix::uploadHelixDataset($dataset_path,$provider,$api_key, $title, $description,$publication_doi,$private,$license,$subjects,$creator,$contact_email,$affiliation);
             
             if (!empty($result['error']))
             {
