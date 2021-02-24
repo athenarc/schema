@@ -210,6 +210,7 @@ class UploadDatasetZenodo extends \yii\db\ActiveRecord
             $deposit_id=$content['id'];
             
             $error_file='';
+            session_write_close();
             foreach($files as $file)
             {
               $client = new Client(['baseUrl' => $files_link]);
@@ -240,6 +241,7 @@ class UploadDatasetZenodo extends \yii\db\ActiveRecord
                   return ['error'=>$content];
                 }
             }
+            session_start();
            
             $success='The dataset has been successfully uploaded to Zenodo.';
             return ['success'=>$success];
