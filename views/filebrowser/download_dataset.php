@@ -48,11 +48,10 @@ $help_dataset_folder='<i class="fa fa-question-circle" title="The dataset should
 
 
 
-?>
 
 
   
-<?Headers::begin() ?>
+Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
     'buttons'=>
@@ -62,7 +61,7 @@ $help_dataset_folder='<i class="fa fa-question-circle" title="The dataset should
     ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 
 
 

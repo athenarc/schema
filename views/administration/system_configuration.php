@@ -40,8 +40,7 @@ $submit_button='<i class="fas fa-check"></i>';
 
 
 
-?>
-<<?Headers::begin() ?>
+Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
     'buttons'=>
@@ -51,7 +50,7 @@ $submit_button='<i class="fas fa-check"></i>';
     ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end()?>
 <div class="row">&nbsp;</div>
 
 <?php $form=ActiveForm::begin()?>
