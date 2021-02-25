@@ -208,7 +208,8 @@ foreach ($software as $name=>$uploader)
 ?> 
 			<td class="col-md-3 software-button-container $disabledClass"><?=(!empty($_SESSION['selected_project']) || (Yii::$app->params['standalone'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['software/edit-software','name'=>$name, 'version'=>$versions[$first_key]]),$name,'software') : ''?>&nbsp;
-				 <?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
+				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
+				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('analyze',Url::to(['profiler/provide-inputs','name'=>$name, 'version'=>$versions[$first_key]]) ) : ''?>
 			</td>
 			<?=Html::hiddenInput('hiddenUrl',Url::base('http'),['class'=>'hidden_url']);?>
 		</tr>
@@ -271,6 +272,20 @@ foreach ($descriptions as $soft)
 		{
 			$link=Url::to(['software/edit-software','name'=>$name,'version'=>$version]);
 			$id='hidden-edit-link-' . $name . '-' . $version;
+			echo Html::hiddenInput('$id',$link,['id'=>$id]);
+		}
+	}
+?>
+</div>
+
+<div id="hidden_analyze_links">
+<?php
+	foreach ($indicators as $name=>$versions)
+	{
+		foreach ($versions as $version=>$versionIndicators)
+		{
+			$link=Url::to(['profiler/provide-inputs','name'=>$name,'version'=>$version]);
+			$id='hidden-analyze-link-' . $name . '-' . $version;
 			echo Html::hiddenInput('$id',$link,['id'=>$id]);
 		}
 	}

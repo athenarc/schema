@@ -22,90 +22,6 @@
 
 
 $(document).ready(function() {
-	$("#software-start-run-button").click(function(){
-
-		var disabled = $(this).attr('disabled');
-		if (!disabled)
-		{
-			totalFields=Number($("#hidden_fieldsNum").val());
-			for (i=0; i<totalFields; i++)
-	        {
-	        	var fieldID="#field-" + i;
-	            var field=$(fieldID);
-	            field.addClass('disabled-box');
-	            field.prop('readonly',true);
-	        }
-	        $("#systemmount").addClass('disabled-box');
-	        $("#memory").addClass('disabled-box');
-	        $("#cores").addClass('disabled-box');
-	        $("#systemmount").prop('readonly',true);
-	        $("#memory").prop('readonly',true);
-	        $("#cores").prop('readonly',true);
-			$("#command-text-box").prop('readonly',true)
-			$("#command-text-box").addClass('disabled-box');
-			$(".add-example-link").hide();
-			$("#software_commands_form").submit();
-		}
-
-	
-	});
-
-	//if the example button is pressed make the command box active
-	// $(".software-example-button").click(function(){
-	// 	$("#active-run-form").show();
-	// 	$("#select-active-form-btn").addClass('active-tab');
-	// 	$("#non-active-run-form").hide();
-	// 	$("#select-non-active-form-btn").removeClass('active-tab');
-		
-	// 	var commands=$("#hidden_example_input").val();
-	// 	$("#command-text-box").val(commands);
-	// 	$("#command-text-box").prop('readonly',true)
-	// 	$("#command-text-box").addClass('disabled-box');
-	// 	$("#software_commands_form").submit();
-	
-	// });
-
-	//on submit show command box
-	// if ($("#command-text-box").prop('readonly')==true)
-	// {
-	// 	$("#command-text-box").addClass('disabled-box');
-	// 	$("#active-run-form").show();
-	// 	$("#non-active-run-form").hide();
-	// 	// $("#select-active-form-btn").addClass('disabled-btn');
-	// 	// $("#select-non-active-form-btn").addClass('disabled-btn');
-	// }
-
-	// $("#select-active-form-btn").click(function(){
-	// 	if ($("#select-active-form-btn").hasClass('disabled-btn')==false)
-	// 	{
-	// 		$("#active-run-form").show();
-	// 		$("#select-active-form-btn").addClass('active-tab');
-	// 		$("#non-active-run-form").hide();
-	// 		$("#select-non-active-form-btn").removeClass('active-tab');
-			
-	// 	}
-
-	// });
-
-	// $("#select-non-active-form-btn").click(function(){
-	// 	if ($("#select-non-active-form-btn").hasClass('disabled-btn')==false)
-	// 	{
-	// 		// var command=$("#command-text-box").val();
-	// 		// var tokens=command.split(" ");
-	// 		// var total=tokens.length;
-	// 		// var i;
-
-	// 		// for (i=0; i<=total; i++)
-	// 		// {
-	// 		// 	$("#field-" + i).val(tokens[i]);
-	// 		// }
-	// 		$("#active-run-form").hide();
-	// 		$("#select-active-form-btn").removeClass('active-tab');
-	// 		$("#non-active-run-form").show();
-	// 		$("#select-non-active-form-btn").addClass('active-tab');
-	// 	}
-
-	// });
 
 	$(".select-mount-button").click(function(){
 		var disabled = $(this).attr('disabled');
@@ -213,13 +129,8 @@ $(document).ready(function() {
 	});
 
 	$(".select-file-btn").click(function(){
-		
 		var mount='';
-		if ($("#iosystemmount").length)
-			mount=$("#iosystemmount").val();
-
-		if ($("#isystemmount").length)
-			mount=$("#isystemmount").val();
+		mount=$("#systemmount").val();
 
 		var disabled = $(this).attr('disabled');
 		if (!disabled)
@@ -314,5 +225,13 @@ $(document).ready(function() {
 			$(".non-required").removeClass('hidden');
 		}
 		});
+
+	if ($("#existingProfileModal").length!=0)
+	{
+		$("#existingProfileModal").modal({
+			"backdrop":"static",
+			"keyboard":false
+		});
+	}
 
 });

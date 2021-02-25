@@ -86,11 +86,6 @@ $projectAdd='<i class="fas fa-plus"></i>&nbsp;New project';
 
 // $softwareAdd.='</div>';
 
-$runIcon='<i class="fas fa-play"></i>';
-$editIcon='<i class="fas fa-edit"></i>';
-$visualizeIcon='<i class="fas fa-eye"></i>';
-$deleteIcon='';
-
 Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
@@ -200,12 +195,10 @@ foreach ($workflows as $name=>$uploader)
 
 ?> 
 			<td class="software-button-container $disabledClass">
-				<span class="software-visualizations">
-				 <?=Html::a(" <span style='color:white'> $visualizeIcon Visualize </span>",null, ['id'=>'software-instructions', 'class'=>'btn btn-primary']);?> 
-    												&nbsp;</span>
 				<?=(!empty($_SESSION['selected_project']) || (Yii::$app->params['standalone'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['workflow/edit-workflow','name'=>$name, 'version'=>$versions[$first_key]]),$name) : ''?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
+				<?=SoftIndexButton::button('visualize')?>
 			</td>
 			<?=Html::hiddenInput('hiddenUrl',Url::base('http'),['class'=>'hidden_url']);?>
 		</tr>

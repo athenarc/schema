@@ -42,26 +42,44 @@ class SoftIndexButton
 		if ($type=='run')
 		{
 			$icon='<i class="fas fa-play"></i>';
-			$text="$icon Run";
-			$class='btn btn-success btn-md run-button';
+			$text="$icon";
+			$class='btn run-button';
+			$title="Run";
 			// $hidden_input=Html::hiddenInput('run_hidden',Url::to([$link]),['class'=>'run_hidden']);
 
 		}
 		elseif ($type=='edit')
 		{
 			$icon='<i class="fas fa-edit"></i>';
-			$text="$icon Edit";
-			$class='btn btn-secondary btn-md edit-button';
+			$text="$icon";
+			$class='btn edit-button';
+			$title="Edit";
 			// $hidden_input=Html::hiddenInput('edit_hidden',Url::to(['software/edit-software', 'name'=>$image_name]),['class'=>'edit_hidden']);
 		}
 		elseif ($type=='delete')
 		{
 			$icon='<i class="fas fa-times"></i>';
-			$text="$icon Delete";
-			$class='btn btn-secondary btn-md delete-button';
+			$text="$icon";
+			$class='btn delete-button';
+			$title="Delete";
 			$link='javascript:void(0);';
 		}
-		echo Html::a($text,$link,['class'=>$class]);
+		elseif ($type=='analyze')
+		{
+			$icon='<i class="fas fa-chart-line"></i>';
+			$text="$icon";
+			$class='btn analyze-button';
+			$title="Analyze";
+		}
+		elseif ($type=='visualize')
+		{
+			$icon='<i class="fas fa-eye"></i>';
+			$text="$icon";
+			$class='btn visualize-button';
+			$title="Visualize";
+			$link='javascript:void(0);';
+		}
+		echo Html::a($text,$link,['class'=>$class,'title'=>$title]);
 		// if ($type=='edit')
 		// {
 		// 	echo $hidden_input;

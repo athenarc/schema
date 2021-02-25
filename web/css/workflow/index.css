@@ -161,7 +161,20 @@
 	display:none;
 }
 
-.run-button, .edit-button, .delete-button
+.run-button
 {
-	font-size:12px !important;
+	font-size: 16px !important;
+	color: green !important;
+}
+
+.edit-button, .delete-button, .analyze-button
+{
+	font-size: 16px !important;
+	color: #6c757d !important;
+}
+
+.visualize-button
+{
+	font-size: 16px !important;
+	color: #337ab7 !important; 
 }

@@ -96,11 +96,16 @@ $(document).ready(function()
 			var selector ='hidden-edit-link-'+ name + '-' + version;
 			selector=$.escapeSelector(selector);
 			var editLink=$('#' + selector).val();
+
+
+			var selector ='hidden-analyze-link-'+ name + '-' + version;
+			selector=$.escapeSelector(selector);
+			var editLink=$('#' + selector).val();
 			// var editInput=buttonContainer.children('.edit_hidden').val();
 			// window.alert(editInput);
 			// var editLink=editInput + '&version=' + version;
 			// alert(buttonContainer.children('.run-button').html());
-			buttonContainer.children('.edit-button').attr('href', editLink);
+			buttonContainer.children('.analyze-button').attr('href', editLink);
 
 			var indicatorSelector ='hidden-indicators-'+ name + '-' + version;
 			selector=$.escapeSelector(indicatorSelector);
