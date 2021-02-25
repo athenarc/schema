@@ -167,7 +167,7 @@ $(document).ready(function()
 
 	});
 
-	$(".software-visualizations").click(function() { 
+	$(".visualize-button").click(function() { 
 
 		var grandparent=$(this).parent().parent();
 		var name=grandparent.children('.software-name-column').children('.software-name').html();
