@@ -89,7 +89,7 @@ def createFile(jobName,jobConf,command):
     if len(volumes)!=0:
         manifest_data['spec']['template']['spec']['volumes']=volumes
     if imagePullSecrets:
-        manifest_data['spec']['template']['spec']['imagePullSecrets'] = [{'name':imagePullSecrets}]
+        manifest_data['spec']['template']['spec']['imagePullSecrets'] = imagePullSecrets
     manifest_data['spec']['template']['spec']['containers']=containers
     # manifest_data['spec']['template']['spec']['nodeSelector']={'machine-type': machineType}
     manifest_data['spec']['template']['spec']['restartPolicy']='Never'
