@@ -207,7 +207,7 @@ for jobCommand in jobConf['commands']:
 
 
         record.append(str(memory))
-        gname=jobConf['folder'] + 'final.txt'
+        gname=jobConf['folder'] + 'final-' + jobConf['id'] + '.txt'
 
         g=open(gname,'a')
         g.write('|'.join(record) + '\n')

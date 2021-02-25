@@ -212,8 +212,6 @@ class SoftwareProfiler extends Model
                         {
 
                             $tmpArray=explode(';',$fvalue);
-                            // print_r($tmpArray);
-                            // exit(0);
                             $finalValue='';
                             /*
                              * if the value is separate from the prefix,

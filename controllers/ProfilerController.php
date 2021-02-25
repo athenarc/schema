@@ -162,8 +162,8 @@ class ProfilerController extends \yii\web\Controller
             $totalErrors=SoftwareProfiler::createAnalysis($software,$fields,$systemMount,$included);
             $errors=$totalErrors[0];
             $runErrors=$totalErrors[1];
-            // print_r($errors);
-            exit(0);
+            
+            
             if (empty($errors))
             {
                 if (empty($runErrors))
