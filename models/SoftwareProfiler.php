@@ -63,6 +63,7 @@ class SoftwareProfiler extends Model
         $data['workdir']=$software->workingdir;
         $data['fileSizes']=$fileSizes;
         $data['included']=$included;
+        $data['memLimit']=Yii::$app->params['classifierMemLimit'];
 
 
         if (!empty($errors))
@@ -86,10 +87,15 @@ class SoftwareProfiler extends Model
          * Run the scripts and retun errors
          */
         $profiler="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "profiler.py $file";
-        $profilerLog="$folder/log-$pid.txt";
+        $profilerLog="$folder/profiler-log-$pid.txt";
         shell_exec(sprintf("%s > $profilerLog 2>&1 &", $profiler));
         
-        $software->profiled=true;
+        $classifier="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "classifier.py $file";
+        $classifierLog="$folder/classifier-log-$pid.txt";
+        shell_exec(sprintf("%s > $classifierLog 2>&1 &", $classifier));
+
+        $software->profiled=false;
+        $software->model_fields=$included;
         $software->profile_id=$pid;
         $software->save(false);
 
@@ -431,6 +437,72 @@ class SoftwareProfiler extends Model
             }
         }
         return [$new,$errors,$fileSizes];
+    }
+
+    public static function getMachineType($fields,$software,$jobFolder,$isystemMount,$iosystemMount,$maxMem)
+    {
+        // $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+
+        if ($maxMem>=64)
+        {
+            return 'fat-node';
+        }
+        if (!$software->profiled)
+        {
+            return 'converged-node';
+        }
+        
+        /*
+         * Save fields values to be used 
+         * for prediction.
+         */
+        $modelLine=[];
+        $folder= (!empty($iosystemMount))? $iosystemMount : $isystemMount;
+        $folder=trim($folder,"'");
+        /*
+         * For file fields calculate their size in bytes
+         */
+        foreach ($software->model_fields as $findex)
+        {
+            $field=$fields[$findex];
+            $value=$fields[$findex]->value;
+
+            if ($field->field_type=='File')
+            {
+                $file=$folder . '/' . $value;
+                exec("ls -la $file | cut -d ' ' -f 5",$out,$ret);
+                $size=$out[0];
+                unset($out);
+
+                $modelLine[]=$file;
+                $modelLine[]=$size;
+
+            }
+            else
+            {
+                $modelLine[]=$field->value;
+            }
+        }
+        /*
+         * Write fields to a file inside the job folder
+         */
+        $modelLine=implode('|',$modelLine);
+        
+        $modelFieldsFile=$jobFolder . '/modelFields.txt';
+        file_put_contents($modelFieldsFile, $modelLine);
+
+        /*
+         * Predict node type
+         */
+        $model=Yii::$app->params['profilesFolderPath'] . "/$software->name/$software->version/model-$software->profile_id.pkl";
+        $scaler=Yii::$app->params['profilesFolderPath'] . "/$software->name/$software->version/scaler-$software->profile_id.pkl";
+        
+        $command=Yii::$app->params['scriptsFolder'] . "/node-selector.py $model $scaler $modelFieldsFile 2>&1";
+        exec($command,$nodeOut,$ret);
+        
+        $nodeType=$nodeOut[0];
+
+        return $nodeType;
     }
   
 }

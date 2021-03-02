@@ -10,7 +10,7 @@ In order to install SCHeMa you need:
 * a docker registry configured with TLS and basic authentication (or see below for installation instructions for a private local registry)
 * an Apache server with PHP 7.2 installed on the cluster master or another machine that has access to the "kubectl" command
 * a PostgreSQL database server
-* python 2.7 and docker installed
+* python 3 and docker installed
 * a local directory exposed via NFS (called local NFS from here on) to the cluster so that Kubernetes pods can read/write data from/on it ([tutorial](https://help.ubuntu.com/community/SettingUpNFSHowTo))
 * a system user with sudo permissions that is able to run docker and kubectl without using sudo.
 * a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) in k8s namespace ```wes``` and [TESK](https://github.com/EMBL-EBI-TSI/TESK) in k8s namespace ```tes```, for workflow and task execution respectively.
@@ -26,11 +26,12 @@ The node running the installation of SCHeMa should have the following PHP packag
 
 ### Required Python packages
 The node running the installation of SCHeMa should have the following Python packages installed:
-* python-ruamel.yaml
-* python-psycopg2
-* python-yaml
-* python-requests
+* python3-ruamel.yaml
+* python3-psycopg2
+* python3-yaml
+* python3-requests
 * rocrate (install with pip3)
+* python3-sklearn
 
 ### Other packages required:
 * cwltool

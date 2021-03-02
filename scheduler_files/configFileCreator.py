@@ -109,7 +109,6 @@ def createFile(name,machineType,image,
 	if imagePullSecrets:
 		manifest_data['spec']['template']['spec']['imagePullSecrets'] = imagePullSecrets
 	manifest_data['spec']['template']['spec']['containers']=containers
-	# manifest_data['spec']['template']['spec']['nodeSelector']={'machine-type': machineType}
 	manifest_data['spec']['template']['spec']['restartPolicy']='Never'
 
 	#if memory is large, add tolerations:
@@ -117,7 +116,8 @@ def createFile(name,machineType,image,
 		tolerations=[]
 		tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
 		manifest_data['spec']['template']['spec']['tolerations']=tolerations
-		manifest_data['spec']['template']['spec']['nodeSelector']={'node-type':'fat-node'}
+	if machineType!='converged-node':
+		manifest_data['spec']['template']['spec']['nodeSelector']={'node-type':machineType}
 	
 	g=open(yamlName,'w')
 	yaml.dump(manifest_data, g, default_flow_style=False)
