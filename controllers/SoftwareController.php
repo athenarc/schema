@@ -52,6 +52,7 @@ use app\models\SoftwareInput;
 use app\models\WorkflowInput;
 use app\models\Workflow;
 use yii\data\Pagination;
+use app\models\SoftwareProfiler;
 
 class SoftwareController extends Controller
 {
@@ -478,8 +479,6 @@ class SoftwareController extends Controller
                 }
             }
         }
-        // print_r($fields);
-        // exit(0);
 
         $container_command='';
         $errors=[];
@@ -522,11 +521,6 @@ class SoftwareController extends Controller
                 }
             }
         }
-
-        /*
-         * If the form has posted but the commands box is empty, then add error in the error list
-         */
-        // $errors=(isset($_POST['commands'])) ? $softwareModel::checkErrors($commands) : [];
 
 
         /*
@@ -602,12 +596,12 @@ class SoftwareController extends Controller
             
             $jobid=uniqid();
             $result=Software::createAndRunJob($container_command, $fields, 
-            $name, $version, $jobid, $user, 
-            $podid, $machineType, 
-            $isystemMount, $isystemMountField,
-            $osystemMount, $osystemMountField,
-            $iosystemMount, $iosystemMountField,
-            $project,$maxMem,$maxCores);
+                                                $name, $version, $jobid, $user, 
+                                                $podid, $machineType, 
+                                                $isystemMount, $isystemMountField,
+                                                $osystemMount, $osystemMountField,
+                                                $iosystemMount, $iosystemMountField,
+                                                $project,$maxMem,$maxCores);
 
             $runPodId=$result[0];
             $runError=$result[1];

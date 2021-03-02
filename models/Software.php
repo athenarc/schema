@@ -813,18 +813,18 @@ class Software extends \yii\db\ActiveRecord
         /* 
          * Get image repository location from the DB
          */
-        $query=new Query;
+        // $query=new Query;
 
-        $query->select(['id','image', 'workingdir', 'imountpoint','omountpoint'])
-              ->from('software')
-              ->where(['name'=>$name])
-              ->andWhere(['version'=>$version]);
-        $row=$query->one();
-        $image=$row['image'];
-        $workingdir=$row['workingdir'];
-        $imountpoint=$row['imountpoint'];
-        $omountpoint=$row['omountpoint'];
-        $softwareId=$row['id'];
+        // $query->select(['id','image', 'workingdir', 'imountpoint','omountpoint'])
+        //       ->from('software')
+        //       ->where(['name'=>$name])
+        //       ->andWhere(['version'=>$version]);
+        $software=Software::find()->where(['name'=>$name, 'version'=>$version])->one();
+        $image=$software->image;
+        $workingdir=$software->workingdir;
+        $imountpoint=$software->imountpoint;
+        $omountpoint=$software->omountpoint;
+        $softwareId=$software->id;
         
         $iomountpoint='';
         if ((!empty($imountpoint)) || (empty($omountpoint)))
@@ -873,6 +873,8 @@ class Software extends \yii\db\ActiveRecord
         // $fieldValues=implode("\n",$fieldValues);
         $fieldValues=json_encode($fieldValues,JSON_UNESCAPED_SLASHES);
 
+        $machineType=SoftwareProfiler::getMachineType($fields,$software,$folder,$isystemMount,$iosystemMount,$maxMem);
+
         $filename=$folder . 'fields.txt';
         file_put_contents($filename, $fieldValues);
 
@@ -883,22 +885,11 @@ class Software extends \yii\db\ActiveRecord
 
         file_put_contents($filename, $commands);
 
-        // $filename=$folder . 'user.txt';
-
-        // file_put_contents($filename, User::getCurrentUser()['username']);
-
-        // $filename=$folder . 'startTime.txt';
-
-        // $dateTime= date("F j, Y, H:i:s");
-
-        // file_put_contents($filename, $dateTime);
 
 
         exec("chmod 777 $folder -R");
 
 
-        // print_r($osystemMount);
-        // exit(0);
         /*
          * Classify software, create YAML job configuration file,
          * send the file to Kubernetes to run and get the machine type.
@@ -909,7 +900,7 @@ class Software extends \yii\db\ActiveRecord
             $imountpoint, $isystemMount,
             $omountpoint, $osystemMount,
             $iomountpoint, $iosystemMount,
-            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp']];
+            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],$machineType];
 
         $schedulerCommand=$scheduler . ' ' . implode(' ',$arguments) . " 2>&1";
 
@@ -946,8 +937,8 @@ class Software extends \yii\db\ActiveRecord
         /*
          * Get the pod ID by using the job name.
          */
-        $podString=$output[0];
-        $machineType=$output[1];
+        // $podString=$output[0];
+        // $machineType=$output[1];
         
 
         $query=Yii::$app->db->createCommand()->insert('run_history',

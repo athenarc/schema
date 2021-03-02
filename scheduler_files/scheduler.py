@@ -20,7 +20,6 @@
 #  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 #
 ####################################################################################
-import classifier as cf
 import configFileCreator as cfile
 import sys
 import subprocess
@@ -41,6 +40,7 @@ iosystemMount=sys.argv[12]
 maxMem=sys.argv[13]
 maxCores=sys.argv[14]
 nfsIp=sys.argv[15]
+machineType=sys.argv[16]
 # secJobid=sys.argv[10]
 
 
@@ -49,10 +49,8 @@ nfsIp=sys.argv[15]
 
 ####DONE decide machine type based on the taglist
 # machineType=cf.decideServerPool(tagList)
-if int(maxMem) > 64:
-    machineType='fat-node'
-else:
-    machineType='converged-node'
+# if int(maxMem) > 64:
+#     machineType='fat-node'
 
 ###DONE create yaml file
 yamlFile=cfile.createFile(name,machineType,image,
@@ -63,8 +61,8 @@ yamlFile=cfile.createFile(name,machineType,image,
 						maxMem,maxCores,nfsIp)
 # exit(0)
 ####DOING deploy
-subprocess.call(['kubectl','create','-f',yamlFile])
-print(machineType)
+k8sRetCode=subprocess.call(['kubectl','create','-f',yamlFile])
+exit(k8sRetCode)
 
 
 # ####todo collect stats

@@ -153,7 +153,7 @@ class ProfilerController extends \yii\web\Controller
                         $fields[$index]->value=$field_values[$index];
                     }
                 }
-                
+
             }
 
             $username=explode('@',$user)[0];
@@ -162,7 +162,6 @@ class ProfilerController extends \yii\web\Controller
             $totalErrors=SoftwareProfiler::createAnalysis($software,$fields,$systemMount,$included);
             $errors=$totalErrors[0];
             $runErrors=$totalErrors[1];
-            
             
             if (empty($errors))
             {
@@ -180,7 +179,7 @@ class ProfilerController extends \yii\web\Controller
                 Yii::$app->session->setFlash($type, $message);
                 return $this->redirect(['software/index']);
             }
-
+            
         }
 
 
