@@ -35,4 +35,4 @@ COPY entrypoint.sh /
 
 COPY . /data/www/schema
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
