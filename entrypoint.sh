@@ -16,7 +16,7 @@ if [[ "${USER_ID}" != '0' ]]; then
       sed -e '/^scheme:/d' -i $NSS_WRAPPER_PASSWD
       echo "scheme:x:${USER_ID}:${GROUP_ID}:Scheme user:/data/www/schema:/bin/sh" >> $NSS_WRAPPER_PASSWD
    fi
-   export LD_PRELOAD=libnss_wrapper.so
+   export LD_PRELOAD=/usr/lib64/libnss_wrapper.so
  fi
 
 exec php /data/www/schema/yii serve 0.0.0.0:8080
