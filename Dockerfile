@@ -37,4 +37,4 @@ COPY sudo /usr/local/bin
 
 COPY . /data/www/schema
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["php", "/data/www/schema/yii", "serve", "0.0.0.0:8080"]
