@@ -31,7 +31,8 @@ RUN composer create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic
 
 # Schema uses 'sudo', this is a workarround to make it work. A more proper solution should be devised
 RUN useradd schema && yum install -y sudo
+COPY entrypoint.sh /
 
 COPY . /data/www/schema
 
-ENTRYPOINT ["php", "/data/www/schema/yii", "serve", "0.0.0.0:8080"]
+ENTRYPOINT ["entrypoint.sh"]
