@@ -30,7 +30,7 @@ RUN composer create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic
     composer require alexantr/yii2-elfinder
 
 # Schema uses 'sudo', this is a workarround to make it work. A more proper solution should be devised
-RUN useradd schema && yum install -y sudo
+RUN useradd schema && yum install -y sudo nss_wrapper
 COPY entrypoint.sh /
 
 COPY . /data/www/schema
