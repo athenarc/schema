@@ -1,0 +1,12 @@
+#!/bin/bash
+
+shift 2
+
+if [ $? -ne 0 ];
+then
+  echo "ERROR: Use $0 -u <USER> <COMMAND> <PARAMETERS...>" >&2
+  echo "ERROR: <USER> is ignored, and this is not changing the user" >&2
+  exit 1
+fi
+
+exec $*
