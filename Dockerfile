@@ -29,6 +29,9 @@ RUN composer create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic
     composer require --prefer-dist yiisoft/yii2-httpclient && \
     composer require alexantr/yii2-elfinder
 
+# Schema uses 'sudo', this is a workarround to make it work. A more proper solution should be devised
+RUN useradd schema && yum install -y sudo
+
 COPY . /data/www/schema
 
 ENTRYPOINT ["php", "/data/www/schema/yii", "serve", "0.0.0.0:8080"]
