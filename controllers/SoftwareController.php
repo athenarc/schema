@@ -1053,10 +1053,6 @@ class SoftwareController extends Controller
         $user=User::getCurrentUser()['username'];
 
 
-
-        
-
-        
         // $inactiveJobs=Software::getInactiveJobs();
         // print_r($inactiveJobs);
         // exit(0);
@@ -1076,44 +1072,8 @@ class SoftwareController extends Controller
                 ->limit($pagination->limit)
                 ->all();
 
-        $rocrates=[];
-        $softwares=[];
-        $field_matrix=[];
-        $soft_types=[];
-        $job_ids=array_column($results, 'jobid');
-
-
-        foreach ($results as $result)
-        {
-            if($result->type=='job')
-            {
-                $software=Software::find()->where(['id'=>$result->software_id])->one();
-                $soft_type='Software';
-                $fields=SoftwareInput::find()->where(['softwareid'=>$result->software_id])->orderBy(['position'=> SORT_ASC])->all();
-                $fields=Software::getRerunFieldValues($result->jobid,$fields);
-
-
-            }
-            elseif ($result->type=='workflow')
-            {
-                $workflow=Workflow::find()->where(['id'=>$result->software_id])->one();
-                $soft_type='Workflow';
-                $fields=WorkflowInput::find()->where(['workflow_id'=>$result->software_id])->orderBy(['position'=> SORT_ASC])->all();
-                $fields=Workflow::getRerunFieldValues($result->jobid,$fields);
-            }
-
-            if ($result->type=='job' || $result->type=='workflow')
-            {
-
-                $rocrates[$result->jobid]=RoCrate::find()->where(['jobid'=>$result->jobid])->one();
-                $softwares[$result->jobid]=$software;
-                $field_matrix[$result->jobid]=$fields;
-                $soft_types[$result->jobid]=$soft_type;
-            }
-             
-        }
-
-        return $this->render('history',['results'=>$results,'pagination'=>$pagination,'available'=>$available,'available_workflows'=>$available_workflows,'crate_id'=>$crate_id, 'rocrates'=>$rocrates, 'softwares'=>$softwares, 'field_matrix'=>$field_matrix, 'soft_types'=>$soft_types]);
+        
+        return $this->render('history',['results'=>$results,'pagination'=>$pagination,'available'=>$available,'available_workflows'=>$available_workflows,'crate_id'=>$crate_id]);
     }
 
     public function actionRerun($jobid)
@@ -1237,9 +1197,6 @@ class SoftwareController extends Controller
             ])
             ->count();
         $type=1;
-
-
-
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>'',
