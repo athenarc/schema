@@ -1,0 +1,12 @@
+.btn-run, .btn-experiment-exists
+{
+	font-size: 16px !important;
+	color: green !important;
+}
+
+.btn-details, .btn-experiment-new
+{
+	font-size: 16px !important;
+	color: #6c757d !important;
+}
+

@@ -25,6 +25,8 @@ namespace app\models;
 use Yii;
 use yii\db\Query;
 
+
+
 /**
  * This is the model class for table "run_history".
  *
@@ -45,6 +47,7 @@ use yii\db\Query;
  */
 class RunHistory extends \yii\db\ActiveRecord
 {
+    public $rocrate_fields=[];
     /**
      * {@inheritdoc}
      */
