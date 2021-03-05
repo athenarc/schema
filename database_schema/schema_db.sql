@@ -16,6 +16,30 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: hist_type; Type: TYPE; Schema: public; Owner: schema
+--
+
+CREATE TYPE public.hist_type AS ENUM (
+    'job',
+    'workflow'
+);
+
+
+ALTER TYPE public.hist_type OWNER TO schema;
+
+--
+-- Name: visibility_types; Type: TYPE; Schema: public; Owner: schema
+--
+
+CREATE TYPE public.visibility_types AS ENUM (
+    'private',
+    'public'
+);
+
+
+ALTER TYPE public.visibility_types OWNER TO schema;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
