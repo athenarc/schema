@@ -33,11 +33,9 @@ use yii\widgets\LinkPager;
 use app\components\Headers;
 use app\components\RoCrateModal;
 use app\models\RoCrate;
-use app\components\SoftIndexButton;
 
 $this->title="Job history";
 
-echo Html::cssFile('@web/css/software/history.css');
 $this->registerJsFile('@web/js/software/history.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 /*
  * Users are able to view the name, version, start date, end date, mountpoint 
@@ -104,7 +102,7 @@ if (!empty($results))
  */
 
 $play_icon='<i class="fas fa-play"></i>';
-$experiment_icon='<i class="fa fa-flask" aria-hidden="true"></i>';
+$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
 $details_icon='<i class="fas fa-eye"></i>';
 
 
@@ -113,11 +111,11 @@ $details_icon='<i class="fas fa-eye"></i>';
 	{
 		if ($res->status=='Complete')
 		{
-			$completed=true;
+			$completed='';
 		}
 		else
 		{
-			$completed=false;
+			$completed='hidden';
 		}
 		$key=$res['software_id'];
 	?>
@@ -167,33 +165,32 @@ $details_icon='<i class="fas fa-eye"></i>';
 						<?php
 								if (empty($res->status))
 								{
-
 						?>
-									<?= Html::a("$play_icon",[$controller . '/reattach','jobid'=>$res->jobid],['class'=>'btn btn-run', 'title'=>'Re-attach' ])?>
-									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-details', 'title'=>'Details'])?>
+									<?= Html::a("$play_icon",[$controller . '/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md', 'title'=>'Re-attach' ])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									
 						<?php
 								}
 								else
 								{
 						?>			<?= Html::a("$play_icon",[$controller . '/rerun','jobid'=>$res->jobid],
-									['class'=>'btn btn-run', 'title'=>'Re-run'])?>
-									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-details', 'title'=>'Details'])?>
+									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									<?php
-									$experiment=$rocrates[$res->jobid];
-
-									if (!empty($experiment) && $completed) 
+									$experiment=RoCrate::find()->where(['jobid'=>$res->jobid])->one(); 
+									if (!empty($experiment)) 
 									{
-										echo Html::a("$experiment_icon", null,
-										['class'=>"btn btn-experiment-exists experiment", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Edit the RO-crate object of this run', 'id'=>"$res->jobid", ]);
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:rgb(127, 255, 0)"></i>';
+										$title='Edit the RO-crate object of this run';
 									}
-									elseif (empty($experiment) && $completed) 
+									else
 									{
-										echo Html::a("$experiment_icon", null,
-										['class'=>"btn btn-experiment-new experiment", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment', 'id'=>"$res->jobid", ]);
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
+										$title='Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment';
 									}
 									?>
-									
+									<?= Html::a("$experiment_icon", null,
+										['class'=>"btn btn-secondary btn-md experiment $completed", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>"$title", 'id'=>"$res->jobid", ])?>
 						<?php
 								}
 						?>
@@ -222,8 +219,8 @@ $details_icon='<i class="fas fa-eye"></i>';
 								if (empty($res->status))
 								{
 						?>
-									<?= Html::a("$play_icon",['workflow/reattach','jobid'=>$res->jobid],['class'=>'btn btn-run', 'title'=>'Re-attach'])?>
-									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-details', 'title'=>'Details'])?>
+									<?= Html::a("$play_icon",['workflow/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md', 'title'=>'Re-attach'])?>
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'btn btn-secondary btn-md', 'title'=>'Details'])?>
 									
 						<?php
 								}
@@ -231,24 +228,23 @@ $details_icon='<i class="fas fa-eye"></i>';
 								{
 
 						?>			<?= Html::a("$play_icon",['workflow/rerun','jobid'=>$res->jobid],
-									['class'=>'btn btn-run', 'title'=>'Re-run'])?>	
-									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-details', 'title'=>'Details'])?>
+									['class'=>'btn btn-success btn-md', 'title'=>'Re-run'])?>	
+									<?= Html::a("$details_icon",['software/job-details', 'jobid'=>$res->jobid],['class'=>'			btn btn-secondary btn-md', 'title'=>'Details'])?>
 									<?php
-
-									$experiment=$rocrates[$res->jobid];
-
-									if (!empty($experiment) && $completed) 
+									$experiment=RoCrate::find()->where(['jobid'=>$res->jobid])->one(); 
+									if (!empty($experiment)) 
 									{
-										echo Html::a("$experiment_icon", null,
-										['class'=>"btn btn-experiment-exists experiment", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Edit the RO-crate object of this run', 'id'=>"$res->jobid", ]);
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:rgb(127, 255, 0)"></i>';
+										$title='Edit the RO-crate object of this run';
 									}
-									elseif (empty($experiment) && $completed) 
+									else
 									{
-										echo Html::a("$experiment_icon", null,
-										['class'=>"btn btn-experiment-new experiment", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>'Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment', 'id'=>"$res->jobid", ]);
+										$experiment_icon='<i class="fa fa-flask" aria-hidden="true" style="color:white"></i>';
+										$title='Save the run in an RO-crate object, to facilitate the reproducibility of the corresponding experiment';
 									}
 									?>
-									
+									<?= Html::a("$experiment_icon", null,
+										['class'=>"btn btn-secondary btn-md experiment $completed", 'data-target'=>"#experiment-modal-$res->jobid", 'title'=>"$title", 'id'=>"$res->jobid", ])?>
 						<?php
 								}
 						?>
@@ -287,14 +283,9 @@ else
 <?php
 foreach ($results as $result) 
 {
-
 	if ($result->type=='job' || $result->type=='workflow')
 	{
-		$software=$softwares[$result->jobid];
-		$soft_type=$soft_types[$result->jobid];
-		$model=$rocrates[$result->jobid];
-		$fields=$field_matrix[$result->jobid];
-		RoCrateModal::addModal($result, $model, $fields, $software, $soft_type);
+		RoCrateModal::addModal($result->jobid);
 	}
 }
 

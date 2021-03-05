@@ -41,7 +41,7 @@ use yii\widgets\ActiveForm;
 
 class ROCrateModal
 {
-	public static function addModal($result,$model, $fields, $software, $soft_type)
+	public static function addModal($jobid)
 	{
 		$software_icon='<i class="fas fa-question-circle" title="Software url to a public repository like dockerhub"></i>';
 		$publication_icon='<i class="fas fa-question-circle" title="Include the DOI of the publication that describes the experiment"></i>';
@@ -50,14 +50,32 @@ class ROCrateModal
 		$download_icon='<i class="fas fa-download"></i>';
 		$required='<span style="color:red">*</span>';
 
+		$history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+		$software_id=$history->software_id;
+
 		$public_url='';
 		$image_url='';
 
-		$history=$result;
-		$jobid=$history->jobid;
+		if($history->type=='job')
+		{
+			$software=Software::find()->where(['id'=>$software_id])->one();
+			$soft_type='Software';
+			$fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+			$fields=Software::getRerunFieldValues($jobid,$fields);
+		}
+		elseif ($history->type=='workflow')
+		{
+			$workflow=Workflow::find()->where(['id'=>$software_id])->one();
+			$soft_type='Workflow';
+			$fields=WorkflowInput::find()->where(['workflow_id'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
+			$fields=Workflow::getRerunFieldValues($jobid,$fields);
+			
+		}
 		
-		$software_id=$history->software_id;
+		
+		$model=RoCrate::find()->where(['jobid'=>$jobid])->one();
 
+		//print_r($history->jobid);
 		$disabled_fields=false;
 		if(!empty($model))
 		{
