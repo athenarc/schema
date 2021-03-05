@@ -30,6 +30,9 @@ from sklearn.metrics import classification_report
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 from sklearn import svm
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
 
 import csv
 import sys
@@ -100,7 +103,7 @@ try:
     if has_header:
         next(reader)
 
-    print("=> Reading benign samples file ("+bsamples_file.name+")")
+    print("=> Reading samples file ("+bsamples_file.name+")")
     bsamples_read = 0
     for bsample in bsamples_it:
         if len(bsample)!=0: #avoid empty lines (separators between different benchmarks)
@@ -154,7 +157,9 @@ g.close()
 print("=> Normalizing inputs...")
 min_max_scaler = preprocessing.MinMaxScaler()
 X = min_max_scaler.fit_transform(X)
+# X= SelectKBest(chi2, k=1).fit_transform(X, y)
 print("\t- Done.")
+print(X)
 
 # data set split 
 print("=> Splitting dataset...")
@@ -163,7 +168,7 @@ print("\t- Done.")
 
 # selecting classification method
 
-class_approaches=["log_regression", "log_regression_cs", "random_forest", "random_forest_cs", "svm"]
+class_approaches=["log_regression", "log_regression_cs","svm","random_forest", "random_forest_cs"]
 
 
 # # grid search for optimal hyperparameters
@@ -176,7 +181,7 @@ for class_approach in class_approaches:
     if class_approach == "log_regression" or class_approach == "log_regression_cs": # logistic regression / logistic regression cost sensitive
         # params for cross-validation
         tuned_parameters = {
-            "max_iter": [60, 80, 100, 120, 140, 160, 180, 200, 220, 240],
+            "max_iter": [2000,3000,10000],
             "solver": ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
         }
         # determine classifier
@@ -222,7 +227,12 @@ for class_approach in class_approaches:
     best_params[i]=clf.best_params_
     best_scores[i]=clf.best_score_
 
+    predictions=clf.predict(testX)
     i=i+1
+    
+for row_index, (input, prediction, label) in enumerate(zip (testX, predictions, testy)):
+  if prediction != label:
+    print('Row', row_index, 'has been classified as ', prediction, 'and should be ', label)
 
 best_score=0
 best_clf=''
