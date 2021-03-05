@@ -81,9 +81,9 @@ X = np.array(features)
 X_std = (X - scaler['min']) / (scaler['max'] - scaler['min'])
 X= X_std * (1 - 0) + 0
 
+
 result=model.predict(X)
 nodeType=classes[result[0]]
-
 print(nodeType)
 
 
