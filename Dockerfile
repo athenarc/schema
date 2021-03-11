@@ -17,7 +17,7 @@ RUN yum install -y epel-release && \
       zip unzip gcc python3-devel git && \
     ln -s /usr/bin/php72 /usr/bin/php
 
-RUN pip2 install ruamel.yaml psycopg2-binary pyyaml requests && pip3 install rocrate cwltool
+RUN pip2 install ruamel.yaml psycopg2-binary pyyaml requests && pip3 install rocrate cwltool psycopg2-binary
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
