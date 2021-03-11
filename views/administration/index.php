@@ -73,5 +73,16 @@ Headers::begin() ?>
 <br />
 <?= ToolButton::createButton("System configuration", "",['/administration/system-configuration']) ?>
 <br />
+<?php
+if (isset(Yii::$app->params['metrics_url']) && (!empty(Yii::$app->params['metrics_url'])))
+{
+?>
+
+	<?= ToolButton::createButton("Cluster Metrics", "", Yii::$app->params['metrics_url'], ['target'=>'_blank']) ?>
+	<br />
+
+<?php
+}
+?>
 <!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
 <br /> -->
