@@ -43,7 +43,7 @@ class AdministrationController extends Controller
     /**
      * {@inheritdoc}
      */
-    public $freeAccess = true;
+    public $freeAccess = false;
     public function behaviors()
     {
         return [
