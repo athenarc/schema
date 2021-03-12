@@ -14,7 +14,7 @@ RUN yum install -y epel-release && \
     yum update -y && \
     yum -y install python2 python2-pip python3-pip libpq-devel \
       php72 php72-php-mbstring php72-php-xml php72-php-gd php72-php-pgsql php72-php-json php72-php-pecl-yaml \
-      zip unzip gcc python3-devel git && \
+      zip unzip gcc python3-devel git graphviz && \
     ln -s /usr/bin/php72 /usr/bin/php
 
 RUN pip2 install ruamel.yaml psycopg2-binary pyyaml requests && pip3 install rocrate cwltool psycopg2-binary
