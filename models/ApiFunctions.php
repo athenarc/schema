@@ -85,7 +85,16 @@ class ApiFunctions extends Model
 
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $task;
         exec("mkdir $tmpFolder",$out,$ret);
-        exec("chmod 777 $tmpFolder -R");
+
+        ini_set("error_log", "/dev/stderr");
+        if ( $ret != 0) {
+            error_log($ret." ".implode($out));
+        }
+
+        exec("chmod 777 $tmpFolder -R",$out,$ret);
+        if ( $ret != 0) {
+            error_log($ret." ".implode($out));
+        }
 
         /*
          * Call a script that monitors the job

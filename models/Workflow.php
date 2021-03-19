@@ -290,8 +290,18 @@ class Workflow extends \yii\db\ActiveRecord
         $dataFolder=Yii::$app->params['tmpWorkflowPath'] . '/' . str_replace(' ','-',$workflow->name) . '/' . str_replace(' ','-',$workflow->version) . '/';
         $nid=uniqid();
         $tmpFolder=Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/' . $nid ;
+
+        exec('mkdir -p ' . Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/', $out, $ret);
+        ini_set("error_log", "/dev/stderr");
+        if ( $ret != 0) {
+            error_log($ret." ".implode($out));
+        }
+
         $command="cp -r $dataFolder $tmpFolder";
         exec($command, $out, $ret);
+        if ( $ret != 0) {
+            error_log($ret." ".implode($out));
+        }
 
         /*
          * Return all files in a list

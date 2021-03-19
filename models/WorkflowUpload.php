@@ -174,6 +174,12 @@ class WorkflowUpload extends \yii\db\ActiveRecord
 
         exec($command,$out,$ret);
 
+        ini_set("error_log", "/dev/stderr");
+        if ( $ret != 0) {
+            error_log("ERROR while running: ".$command);
+            error_log($ret." ".implode($out));
+        }
+
         $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();;
         $workflow_id=$workflow->id;
         $name="workflow" . $workflow_id;
