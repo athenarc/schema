@@ -75,7 +75,8 @@ if workflowExtension not in workAllowedExt:
                 subprocess.call(['gzip','-d','-k','-f', workflowPath])
         else:
             subprocess.call(['gzip','-d','-k','-f', workflowPath])
-        
+    elif workflowExtension=='tar':
+        subprocess.call(['tar','xvf',workflowPath, '-C', folder])
 
     # print(folder)
     workFile,retCode,content=wuf.getMainWorkflowFile(folder,workAllowedExt)
