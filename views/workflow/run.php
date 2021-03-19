@@ -24,7 +24,7 @@
 use app\components\ArgumentsWidget;
 use app\components\JobResourcesWidget;
 
-use Yii;
+#use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Form;
