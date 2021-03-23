@@ -444,6 +444,27 @@ ALTER TABLE public.run_history_id_seq OWNER TO schema;
 
 ALTER SEQUENCE public.run_history_id_seq OWNED BY public.run_history.id;
 
+--
+-- Name: system_configuration; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.system_configuration (
+    id integer NOT NULL,
+    admin_email character varying(128)
+);
+
+ALTER TABLE public.system_configuration OWNER TO schema;
+
+CREATE SEQUENCE public.system_configuration_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE public.system_configuration_id_seq OWNER TO schema;
+
+ALTER SEQUENCE public.system_configuration_id_seq OWNED BY public.system_configuration.id;
 
 --
 -- Name: software; Type: TABLE; Schema: public; Owner: schema
@@ -1110,6 +1131,12 @@ ALTER TABLE ONLY public.ro_crate ALTER COLUMN id SET DEFAULT nextval('public.ro_
 
 ALTER TABLE ONLY public.run_history ALTER COLUMN id SET DEFAULT nextval('public.run_history_id_seq'::regclass);
 
+--
+-- Name: system_configuration id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.system_configuration ALTER COLUMN id SET DEFAULT nextval('public.system_configuration_id_seq'::regclass);
+
 
 --
 -- Name: software id; Type: DEFAULT; Schema: public; Owner: schema
@@ -1651,6 +1678,11 @@ CREATE INDEX lock_id_idx ON public.operation_locks USING btree (id);
 
 CREATE INDEX lock_op_idx ON public.operation_locks USING btree (operation);
 
+--
+-- Name: name_idx; Type: INDEX; Schema: public; Owner: schema
+--
+
+CREATE INDEX admin_email_idx ON public.system_configuration USING btree (admin_email);
 
 --
 -- Name: name_idx; Type: INDEX; Schema: public; Owner: schema
