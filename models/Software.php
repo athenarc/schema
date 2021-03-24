@@ -267,7 +267,7 @@ class Software extends \yii\db\ActiveRecord
         // return $rows;
     }
 
-    public function getAvailableSoftware()
+    public static function getAvailableSoftware()
     {
         $query=new Query;
 

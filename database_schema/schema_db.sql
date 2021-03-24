@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
+-- Dumped from database version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,24 +17,53 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
+
+
+--
 -- Name: hist_type; Type: TYPE; Schema: public; Owner: schema
 --
 
 CREATE TYPE public.hist_type AS ENUM (
     'job',
-    'workflow'
+    'workflow',
+    'remote-tesk-job',
+    'remote-schema-job'
 );
 
 
 ALTER TYPE public.hist_type OWNER TO schema;
 
 --
+-- Name: maturity_type; Type: TYPE; Schema: public; Owner: schema
+--
+
+CREATE TYPE public.maturity_type AS ENUM (
+    'developing',
+    'testing',
+    'production'
+);
+
+
+ALTER TYPE public.maturity_type OWNER TO schema;
+
+--
 -- Name: visibility_types; Type: TYPE; Schema: public; Owner: schema
 --
 
 CREATE TYPE public.visibility_types AS ENUM (
-    'private',
-    'public'
+    'public',
+    'private'
 );
 
 
@@ -114,45 +143,6 @@ CREATE TABLE public.auth_rule (
 
 
 ALTER TABLE public.auth_rule OWNER TO schema;
-
---
--- Name: covid_dataset_application; Type: TABLE; Schema: public; Owner: schema
---
-
-CREATE TABLE public.covid_dataset_application (
-    id bigint NOT NULL,
-    email character varying(200),
-    link text,
-    description text,
-    status smallint,
-    username character varying(200),
-    name text,
-    submission_date timestamp without time zone
-);
-
-
-ALTER TABLE public.covid_dataset_application OWNER TO schema;
-
---
--- Name: covid_dataset_application_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
---
-
-CREATE SEQUENCE public.covid_dataset_application_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.covid_dataset_application_id_seq OWNER TO schema;
-
---
--- Name: covid_dataset_application_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
---
-
-ALTER SEQUENCE public.covid_dataset_application_id_seq OWNED BY public.covid_dataset_application.id;
-
 
 --
 -- Name: download_dataset; Type: TABLE; Schema: public; Owner: schema
@@ -469,7 +459,10 @@ CREATE TABLE public.software (
     covid19 boolean DEFAULT false,
     original_image character varying(200),
     docker_or_local boolean DEFAULT false,
-    instructions text
+    instructions text,
+    profiled boolean DEFAULT false,
+    profile_id character varying(30) DEFAULT NULL::character varying,
+    model_fields integer[]
 );
 
 
@@ -590,6 +583,40 @@ ALTER TABLE public.software_upload_id_seq OWNER TO schema;
 --
 
 ALTER SEQUENCE public.software_upload_id_seq OWNED BY public.software_upload.id;
+
+
+--
+-- Name: system_configuration; Type: TABLE; Schema: public; Owner: schema
+--
+
+CREATE TABLE public.system_configuration (
+    id integer NOT NULL,
+    admin_email text
+);
+
+
+ALTER TABLE public.system_configuration OWNER TO schema;
+
+--
+-- Name: system_configuration_id_seq; Type: SEQUENCE; Schema: public; Owner: schema
+--
+
+CREATE SEQUENCE public.system_configuration_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.system_configuration_id_seq OWNER TO schema;
+
+--
+-- Name: system_configuration_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: schema
+--
+
+ALTER SEQUENCE public.system_configuration_id_seq OWNED BY public.system_configuration.id;
 
 
 --
@@ -1056,13 +1083,6 @@ ALTER SEQUENCE public.workflows_id_seq OWNED BY public.workflow.id;
 
 
 --
--- Name: covid_dataset_application id; Type: DEFAULT; Schema: public; Owner: schema
---
-
-ALTER TABLE ONLY public.covid_dataset_application ALTER COLUMN id SET DEFAULT nextval('public.covid_dataset_application_id_seq'::regclass);
-
-
---
 -- Name: download_dataset id; Type: DEFAULT; Schema: public; Owner: schema
 --
 
@@ -1130,6 +1150,13 @@ ALTER TABLE ONLY public.software_inputs ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.software_upload ALTER COLUMN id SET DEFAULT nextval('public.software_upload_id_seq'::regclass);
+
+
+--
+-- Name: system_configuration id; Type: DEFAULT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.system_configuration ALTER COLUMN id SET DEFAULT nextval('public.system_configuration_id_seq'::regclass);
 
 
 --
@@ -1210,170 +1237,6 @@ ALTER TABLE ONLY public.workflow_upload ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- Data for Name: upload_dataset_defaults; Type: TABLE DATA; Schema: public; Owner: schema
---
-
-COPY public.upload_dataset_defaults (id, provider, provider_id, default_community, default_community_id, name, enabled) FROM stdin;
-2	Helix			Helix	f
-1	Zenodo			Zenodo	f
-\.
-
-
---
--- Name: covid_dataset_application_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.covid_dataset_application_id_seq', 1, false);
-
-
---
--- Name: download_dataset_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.download_dataset_id_seq', 1, true);
-
-
---
--- Name: helix_subjects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.helix_subjects_id_seq', 1410, true);
-
-
---
--- Name: image_request_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.image_request_id_seq', 1, false);
-
-
---
--- Name: notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.notification_id_seq', 20, true);
-
-
---
--- Name: notification_recipient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.notification_recipient_id_seq', 1, false);
-
-
---
--- Name: ro_crate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.ro_crate_id_seq', 3, true);
-
-
---
--- Name: run_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.run_history_id_seq', 1169, true);
-
-
---
--- Name: software_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.software_id_seq', 76, true);
-
-
---
--- Name: software_inputs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.software_inputs_id_seq', 445, true);
-
-
---
--- Name: software_upload_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.software_upload_id_seq', 75, true);
-
-
---
--- Name: ticket_body_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.ticket_body_id_seq', 7, true);
-
-
---
--- Name: ticket_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.ticket_file_id_seq', 1, false);
-
-
---
--- Name: ticket_head_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.ticket_head_id_seq', 8, true);
-
-
---
--- Name: upload_dataset_defaults_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.upload_dataset_defaults_id_seq', 2, true);
-
-
---
--- Name: upload_dataset_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.upload_dataset_id_seq', 1, true);
-
-
---
--- Name: upload_dataset_zenodo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.upload_dataset_zenodo_id_seq', 1, true);
-
-
---
--- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.user_id_seq', 41, true);
-
-
---
--- Name: user_visit_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.user_visit_log_id_seq', 277, true);
-
-
---
--- Name: workflow_inputs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.workflow_inputs_id_seq', 228, true);
-
-
---
--- Name: workflow_upload_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.workflow_upload_id_seq', 50, true);
-
-
---
--- Name: workflows_id_seq; Type: SEQUENCE SET; Schema: public; Owner: schema
---
-
-SELECT pg_catalog.setval('public.workflows_id_seq', 52, true);
-
-
---
 -- Name: auth_assignment auth_assignment_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
 --
 
@@ -1411,14 +1274,6 @@ ALTER TABLE ONLY public.auth_item
 
 ALTER TABLE ONLY public.auth_rule
     ADD CONSTRAINT auth_rule_pkey PRIMARY KEY (name);
-
-
---
--- Name: covid_dataset_application covid_dataset_application_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
---
-
-ALTER TABLE ONLY public.covid_dataset_application
-    ADD CONSTRAINT covid_dataset_application_pkey PRIMARY KEY (id);
 
 
 --
@@ -1499,6 +1354,14 @@ ALTER TABLE ONLY public.software
 
 ALTER TABLE ONLY public.software_upload
     ADD CONSTRAINT software_upload_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: system_configuration system_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: schema
+--
+
+ALTER TABLE ONLY public.system_configuration
+    ADD CONSTRAINT system_configuration_pkey PRIMARY KEY (id);
 
 
 --
@@ -1833,4 +1696,9 @@ ALTER TABLE ONLY public.user_visit_log
 --
 -- PostgreSQL database dump complete
 --
+
+COPY public.upload_dataset_defaults (id, provider, provider_id, default_community, default_community_id, name, enabled) FROM stdin;
+2	Helix	f9568efd-8852-47ff-b572-4b821db6a0cb	ELIXIR-GR	b8637063-6b03-4c04-ad46-97244eab5873	Helix	f
+1	Zenodo		ELIXIR-GR		Zenodo	t
+\.
 
