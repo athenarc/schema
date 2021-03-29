@@ -60,7 +60,8 @@ wf_crate.isBasedOn = data['software_url']
 wf_crate.name = data['software_name']
 wf_crate.description=data['software_description']
 wf_crate.creator=data['creator']
-print(data['image'])
+
+# if (data['image'] is not None):
 wf_crate.image = data['image']
 
 main_entity = entity.Entity(wf_crate, data['software_url'],

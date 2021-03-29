@@ -124,6 +124,7 @@ class RoCrate extends \yii\db\ActiveRecord
                     'number_of_inputs'=>count($input_data),
                     'field_names'=>$field_names,
                     'version'=>$software_version,
+                    'image'=>null,
                     
         ];
 
@@ -152,15 +153,19 @@ class RoCrate extends \yii\db\ActiveRecord
 
         $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . 
         "ro-crate.py ";
-        $command.= "2>&1";       
+        $command.= "2>&1";   
+
+        exec($command,$out,$ret);    
+
+        // print_r($out);
+        // exit(0);
 
         $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
-        exec($command,$out,$ret);
+        // exec($command,$out,$ret);
 
-        // print_r($out);
-        // exit(0);
+        
 		
 		return [$software, $success];
 
