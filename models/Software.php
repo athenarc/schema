@@ -342,41 +342,6 @@ class Software extends \yii\db\ActiveRecord
         return $results;
     }
 
-    // public static function getSoftwareDescriptions($softUser)
-    // {
-    //     $query=new Query;
-
-    //     $query->select('name,version,description')
-    //           ->from('software')
-    //           ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
-    //     if ($softUser!='admin')
-    //     {
-    //         $query->where(['visibility'=>'public'])
-    //               ->orWhere(['and',['visibility'=>'private','uploaded_by'=>$softUser]]);
-    //     }
-    //     // echo $query->createCommand()->getRawSql();
-    //     // exit(0);
-
-    //     $rows=$query->all();
-    //     $results=[];
-    //     foreach ($rows as $row)
-    //     {
-    //         $name=$row['name'];
-    //         $version=$row['version'];
-    //         $description=$row['description'];
-    //         $results[]=['name'=>$name, 'version'=>$version, 'description'=>$description];
-    //         // $results[$name][$uploader][$version[0]]=$visibility;
-    //     }
-        
-    //     // print_r($results);
-    //     // exit(0);
-
-        
-    //     return $results;
-
-    //     // return $rows;
-    // }
-
     /*
      * Get the fields needed for the edit software form 
      */
@@ -540,7 +505,9 @@ class Software extends \yii\db\ActiveRecord
                 }
                 else
                 {
-                    #if the field is not of array type
+                    /*
+                     * if the field is not of array type
+                     */
                     if (!$field->is_array)
                     {
                         if ($field->separate)
@@ -611,8 +578,7 @@ class Software extends \yii\db\ActiveRecord
                             {
 
                                 $tmpArray=explode(';',$field->value);
-                                // print_r($tmpArray);
-                                // exit(0);
+                                
                                 $finalValue='';
                                 /*
                                  * if the value is separate from the prefix,
@@ -807,18 +773,11 @@ class Software extends \yii\db\ActiveRecord
          * Scheduler (python) script physical location
          */
         $scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "scheduler.py";
-        // $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "probe_stats.py";
         $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "jobMonitor.py";
         
         /* 
          * Get image repository location from the DB
          */
-        // $query=new Query;
-
-        // $query->select(['id','image', 'workingdir', 'imountpoint','omountpoint'])
-        //       ->from('software')
-        //       ->where(['name'=>$name])
-        //       ->andWhere(['version'=>$version]);
         $software=Software::find()->where(['name'=>$name, 'version'=>$version])->one();
         $image=$software->image;
         $workingdir=$software->workingdir;
