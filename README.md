@@ -32,6 +32,7 @@ The node running the installation of SCHeMa should have the following Python pac
 * python3-requests
 * rocrate (install with pip3)
 * python3-sklearn
+* dockertarpusher (install with pip3)
 
 ### Other packages required:
 * cwltool

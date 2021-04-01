@@ -46,6 +46,11 @@ ftpuser=ftp['username']
 ftppass=ftp['password']
 ftpdomain=ftp['domain']
 
+namespaces=config.get('namespaces',None)
+teskNamespace=None
+if namespaces is not None:
+    teskNamespace=namespaces.get('tesk',None)
+
 jobid=sys.argv[1]
 wesEndpoint=sys.argv[2]
 teskEndpoint=sys.argv[3]
@@ -60,7 +65,7 @@ response = requests.get(workflowUrl,headers=headers)
 body=json.loads(response.content)
 status=body['state']
 
-while (status!='COMPLETE') and (status!='EXECUTOR_ERROR') and (status!='CANCELED'):
+while (status!='COMPLETE') and (status!='EXECUTOR_ERROR') and (status!='SYSTEM_ERROR') and (status!='CANCELED'):
     time.sleep(5)
     response = requests.get(workflowUrl,headers=headers)
     body=json.loads(response.content)
@@ -132,7 +137,7 @@ if (status=='COMPLETE'):
     
     ram/=len(taskLogs);
     cpu/=len(taskLogs);
-    kube_command='kubectl get pods -n tesk --no-headers | tr -s " "'
+    kube_command='kubectl get pods -n ' + teskNamespace + ' --no-headers | tr -s " "'
     try:
         out=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
     except subprocess.CalledProcessError as exc:
@@ -156,7 +161,7 @@ if (status=='COMPLETE'):
         if task not in taskIds:
             continue
 
-        kube_command='kubectl -n tesk logs ' + pod
+        kube_command='kubectl -n' + teskNamespace + ' logs ' + pod
         # print(kube_command)
         try:
             logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
@@ -167,7 +172,7 @@ if (status=='COMPLETE'):
 
         subtasks=[task, task+'-ex-00', task + '-outputs-filer', task + '-inputs-filer']
         for subtask in subtasks:
-            kube_command='kubectl -n tesk delete job ' + subtask
+            kube_command='kubectl -n' + teskNamespace + ' delete job ' + subtask
             try:
                 logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError as exc:

@@ -1,4 +1,25 @@
-# import uuid
+#!/usr/bin/python3
+####################################################################################
+#
+#  Copyright (c) 2018 Thanasis Vergoulis & Konstantinos Zagganas &  Loukas Kavouras
+#  for the Information Management Systems Institute, "Athena" Research Center.
+#  
+#  This file is part of SCHeMa.
+#  
+#  SCHeMa is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#  
+#  SCHeMa is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+#
+####################################################################################
 import json
 import yaml
 import os
@@ -10,6 +31,11 @@ config=json.load(configFile)
 configFile.close()
 
 imagePullSecrets = config.get('imagePullSecrets', [])
+namespaces=config.get('namespaces',None)
+
+jobNamespace=None
+if namespaces is not None:
+    jobNamespace=namespaces.get('jobs',None)
 
 
 def createFile(name,machineType,image,
@@ -101,8 +127,8 @@ def createFile(name,machineType,image,
     manifest_data['apiVersion']='batch/v1'
     manifest_data['kind']='Job'
     manifest_data['metadata']={'name': jobName}
-    if inContainer:
-        manifest_data['metadata']['namespace']='schema'
+    if jobNamespace is not None:
+        manifest_data['metadata']['namespace']=jobNamespace
 
     manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':0}
     if len(volumes)!=0:
@@ -123,7 +149,5 @@ def createFile(name,machineType,image,
     g=open(yamlName,'w')
     yaml.dump(manifest_data, g, default_flow_style=False)
     g.close()
-
-    exit(0)
     
     return yamlName

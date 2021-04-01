@@ -922,14 +922,23 @@ class Software extends \yii\db\ActiveRecord
                 ]
             )->execute();
 
-
+        // print_r($statsCommand);
+        // exit(0);
 
         unset($output);
 
         
-        // $podString=(explode('/',(explode(' ',$podString))[0]))[1];        
+        if (isset(Yii::$app->params['namespaces']['jobs']))
+        {
+            $namespace=Yii::$app->params['namespaces']['jobs'];
 
-        exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers -n $namespace 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+        }
+        else
+        {
+            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+        }
+        
 
 
         foreach ($output as $out)
@@ -960,9 +969,21 @@ class Software extends \yii\db\ActiveRecord
      */
     public function getLogs($podid)
     {
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+        if (isset(Yii::$app->params['namespaces']['jobs']))
+        {
+            $namespace=Yii::$app->params['namespaces']['jobs'];
 
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid 2>&1",$output,$ret);
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid -n $namespace 2>&1",$logs,$ret);
+
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid -n $namespace 2>&1",$output,$ret);
+        }
+        else
+        {
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid 2>&1",$output,$ret);
+        }
+        
 
         $splt=preg_split('/[\s]+/', $output[0]);
         $status=$splt[2];
