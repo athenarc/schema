@@ -675,10 +675,7 @@ class SoftwareController extends Controller
 
         $dropdown=[
                 'public'=>'Everyone',
-                'private' => 'Only me',];
-        $command_drop=[
-            'cwl'=>'the CWL file',
-            'image' => 'the docker image'
+                'private' => 'Only me',
 
         ];
 
@@ -757,8 +754,7 @@ class SoftwareController extends Controller
          * Render the form
          */
         return $this->render('software_upload', [
-                    'model' => $model,'dropdown'=> $dropdown, 'dois'=>$dois, 'command_drop'=>$command_drop,
-        ]);
+                    'model' => $model,'dropdown'=> $dropdown, 'dois'=>$dois,]);
     }
 
     public function actionUploadExisting()
@@ -767,10 +763,7 @@ class SoftwareController extends Controller
 
         $dropdown=[
                 'public'=>'Everyone',
-                'private' => 'Only me',];
-        $command_drop=[
-            'cwl'=>'the CWL file',
-            'image' => 'the docker image'
+                'private' => 'Only me',
 
         ];
 
@@ -862,8 +855,7 @@ class SoftwareController extends Controller
          * Render the form
          */
         return $this->render('software_upload_existing', [
-                    'model' => $model,'dropdown'=> $dropdown, 'dois'=>$dois, 'command_drop'=>$command_drop,
-                    'image_drop'=>$image_drop,
+                    'model' => $model,'dropdown'=> $dropdown, 'dois'=>$dois, 'image_drop'=>$image_drop,
         ]);
     }
 

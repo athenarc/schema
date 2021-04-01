@@ -91,7 +91,6 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             [['biotools'],'string','max'=>255],
             [['iomount'],'boolean'],
             [['mpi'],'boolean'],
-            [['commandRetrieval'],'required'],
             [['version'], 'uniqueSoftware'],
         ];
     }
@@ -116,7 +115,6 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             'workingdir'=>'Working directory (inside the container). If left empty, /data will be used.',
             'description'=> 'Software description * ',
             'imageInDockerHub'=>'Image exists in DockerHub and is specified in the CWL file',
-            'commandRetrieval' => 'Retrieve command from',
             'iomount' => 'Image requires disk I/O',
             'mpi' => 'Software uses OpenMPI',
             'covid19' => 'Software is related to COVID-19 research',
@@ -137,7 +135,6 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $imageFileName=$this->quotes('');
         $imageFileExt=$this->quotes('');
         $cwlFileName=$this->quotes('');
-        $this->commandRetrieval=$this->quotes($this->commandRetrieval);
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
         $this->biotools=$this->quotes($this->biotools);
 
@@ -192,7 +189,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $username=$this->quotes($username);
 
         $arguments=[$this->name, $this->version, $imageFileName, $imageFileExt, $cwlFileName, 
-                    $username, $this->visibility, $this->imountpoint, $this->omountpoint, $this->commandRetrieval,
+                    $username, $this->visibility, $this->imountpoint, $this->omountpoint,
                     $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";

@@ -71,7 +71,6 @@ echo $form->errorSummary($model);
                 ?>
         <br /><br />
         <?= $form->field($model, 'visibility')->dropDownList($dropdown) ?>
-        <?= $form->field($model,'commandRetrieval')-> dropDownList($command_drop) ?>
         <?= $form->field($model, 'iomount') -> checkbox(['id'=>'iomount']) ?>
         <div class='mount-fields'>
             <?= $form->field($model, 'imountpoint') ?>

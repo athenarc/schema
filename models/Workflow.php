@@ -922,11 +922,9 @@ class Workflow extends \yii\db\ActiveRecord
             
     }
 
-    public function getAvailableWorkflows()
+    public static function getAvailableWorkflows()
     {
         $workflows=self::find()->all();
-        // echo $query->createCommand()->getRawSql();
-        // exit(0);
 
         $results=[];
         foreach ($workflows as $workflow)
@@ -942,7 +940,6 @@ class Workflow extends \yii\db\ActiveRecord
         }
         
         return $results;
-        // return $rows;
     }
 
     public static function enclose($string)
