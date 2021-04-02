@@ -1702,3 +1702,7 @@ COPY public.upload_dataset_defaults (id, provider, provider_id, default_communit
 1	Zenodo		ELIXIR-GR		Zenodo	t
 \.
 
+COPY public."user" (id, username, auth_key, password_hash, confirmation_token, status, superadmin, created_at, updated_at, registration_ip, bind_to_ip, email, email_confirmed) FROM stdin;
+1   superadmin  MFX3Dn168FhsDR8SJnZATvEy2lInPFOG    $2y$13$xzcFBSIxOCJooOqQPnczB.lJ6nOeBTDUAUwr635RYj4D3IdJKlzZC    \N  1   1   1617364665  1617364665  10.1.75.0       \N  0
+\.
+
