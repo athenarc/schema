@@ -115,18 +115,13 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         $menuItems[]=['label' => 'Login', 'url'=> ['/user-management/auth/login']];
     }
     
-    if(User::hasRole("PlatformUser", $superAdminAllowed = true) || 
-        User::hasRole("Admin", $superAdminAllowed = true))
-    {
-        $menuItems[]=['label' => 'Software', 'url' => ['/software/index']];
-        $menuItems[]=['label' => 'Workflows', 'url' => ['/workflow/index']];
-        $menuItems[]=['label' => 'Data','url' => ['/filebrowser/index']];
-        $menuItems[]=['label' => 'Job history','url' => ['/software/history']];
-        $menuItems[]=['label' => 'Help', 
-                      'url' => 'https://docs.google.com/document/d/1NokaxEG5e2O5Wmv6OPnOlJlmw5lKt6JGBjMMiCgvnkI/edit?usp=sharing',
-                      'linkOptions' => ['target'=>'_blank']];
-        // $menuItems[]=['label' => 'Account settings', 'url' => ['/personal/index']];
-    }
+    $menuItems[]=['label' => 'Software', 'url' => ['/software/index']];
+    $menuItems[]=['label' => 'Workflows', 'url' => ['/workflow/index']];
+    $menuItems[]=['label' => 'Data','url' => ['/filebrowser/index']];
+    $menuItems[]=['label' => 'Job history','url' => ['/software/history']];
+    $menuItems[]=['label' => 'Help', 
+                  'url' => 'https://docs.google.com/document/d/1NokaxEG5e2O5Wmv6OPnOlJlmw5lKt6JGBjMMiCgvnkI/edit?usp=sharing',
+                  'linkOptions' => ['target'=>'_blank']];
 
     if(User::hasRole("Admin", $superAdminAllowed = true)){
        $menuItems[]=['label' => 'Admin Options', 'url' => ['/administration/index']];
