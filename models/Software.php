@@ -346,7 +346,7 @@ class Software extends \yii\db\ActiveRecord
      * Get the fields needed for the edit software form 
      */
 
-    public function getSoftwareEditFields($name, $version)
+    public static function getSoftwareEditFields($name, $version)
     {
         $query=new Query;
 
@@ -360,7 +360,7 @@ class Software extends \yii\db\ActiveRecord
         return $rows;
     }
 
-    public function getSoftwarePreviousCwl($name, $version)
+    public static function getSoftwarePreviousCwl($name, $version)
     {
         $query=new Query;
 
@@ -437,7 +437,7 @@ class Software extends \yii\db\ActiveRecord
      * If the user has uploaded a CWL file, 
      * then get the custom form fields.
      */
-    public function getSoftwareFields($name,$version)
+    public static function getSoftwareFields($name,$version)
     {
         $query=new Query;
 
@@ -454,7 +454,7 @@ class Software extends \yii\db\ActiveRecord
      * If the user has uploaded a CWL file, 
      * then get the docker image script name.
      */
-    public function getScript($name,$version)
+    public static function getScript($name,$version)
     {
         $query=new Query;
 
@@ -481,7 +481,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Check if the commands posted are empty.
      */
-    public function createCommand($script,$emptyFields,$fields,$mountpoint)
+    public static function createCommand($script,$emptyFields,$fields,$mountpoint)
     {   
 
         $errors=[];
@@ -760,7 +760,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * This function creates the job YAML file and sends it to Kubernetes
      */
-    public function createAndRunJob($commands, $fields,
+    public static function createAndRunJob($commands, $fields,
                                     $name, $version, $jobid, $user, 
                                     $podid, $machineType, 
                                     $isystemMount, $isystemMountField,
@@ -967,7 +967,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Get pod logs by using the pod ID
      */
-    public function getLogs($podid)
+    public static function getLogs($podid)
     {
         if (isset(Yii::$app->params['namespaces']['jobs']))
         {
@@ -996,7 +996,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Erase job after it is completed or terminated.
      */
-    public function cleanUp($name,$jobid,$status)
+    public static function cleanUp($name,$jobid,$status)
     {
         $folder=$userFolder=Yii::$app->params['tmpFolderPath'] . "/$jobid/";
 
@@ -1096,7 +1096,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Check is podid is running
      */
-    public function isAlreadyRunning($podid)
+    public static function isAlreadyRunning($podid)
     {
         if ($podid=='')
         {
@@ -1149,7 +1149,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function listDirectories($directory)
+    public static function listDirectories($directory)
     {
         // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
@@ -1172,7 +1172,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function softwareRemove($name,$version)
+    public static function softwareRemove($name,$version)
     {
         
         $encname=$this->enclose($name);
@@ -1209,7 +1209,7 @@ class Software extends \yii\db\ActiveRecord
         return [$success,$error];
     }
 
-    public function getRerunData($jobid)
+    public static function getRerunData($jobid)
     {
         $query=new Query;
         $result=$query->select(['command','imountpoint', 'omountpoint', 'iomountpoint', 'softname', 'softversion', 'machinetype','project','max_ram','max_cpu'])
@@ -1287,7 +1287,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function updateExampleFields($name,$version,$values)
+    public static function updateExampleFields($name,$version,$values)
     {
 
         $query=new Query;
@@ -1322,7 +1322,7 @@ class Software extends \yii\db\ActiveRecord
         return $result['has_example'];
 
     }
-    public function uploadedBy($name,$version)
+    public static function uploadedBy($name,$version)
     {
         $query=new Query;
         $result=$query->select(['uploaded_by'])
@@ -1598,7 +1598,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function listFiles($directory)
+    public static function listFiles($directory)
     {
         // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);

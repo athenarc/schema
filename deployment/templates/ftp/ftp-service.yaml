@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.ftp.app_name }}
+  name: {{ .Values.ftp.app_name }}
+spec:
+  ports:
+  - port: 20
+    name: "data-ftp"
+    protocol: TCP
+    targetPort: 20
+  - port: 20110
+    name: "passv-ftp"
+    protocol: TCP
+    targetPort: 20110
+  - port: 21
+    name: "active-ftp"
+    protocol: TCP
+    targetPort: 21
+  selector:
+    app: {{ .Values.ftp.app_name }}
+  type: ClusterIP

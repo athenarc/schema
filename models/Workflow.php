@@ -212,7 +212,7 @@ class Workflow extends \yii\db\ActiveRecord
      * Returns a nested list of files to be used in the 
      * select file popup.
      */
-    public function listFiles($directory)
+    public static function listFiles($directory)
     {
         $files = scandir($directory);
         $results=[];
@@ -245,7 +245,7 @@ class Workflow extends \yii\db\ActiveRecord
     /*
      * Returns a list of files recursively (absolute paths)
      */
-    public function listFilesNonNested($directory)
+    public static function listFilesNonNested($directory)
     {
         
         $files = scandir($directory);
