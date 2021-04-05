@@ -21,6 +21,7 @@ In order to be able to install SCHeMa you need:
 kubectl create namespace schema
 ```
 2. Edit ```deployment/values.yaml``` and fill the values appropriate for your installation in the following fields:
+
 | Name   | Description |
 | ------ | :-----------: |
 | domain | The ingress domain name to deploy the apps |
@@ -45,6 +46,7 @@ kubectl create namespace schema
 | ftp.deployment.username | Your FTP username |
 | ftp.deployment.password | Your FTP password |
 Note: you can either create Persistent Volume Claims (PVC) with the appropriate names in ```values.yaml``` or you can allow the helm chart to create them automatically.
+
 3. Deploy the Helm chart with 
 ```bash
 helm install schema-app deployment -f deployment/values.yaml
@@ -58,6 +60,7 @@ kubectl create secret docker-registry registry-creds --docker-server=<your-regis
 kubectl get pods -n schema -l app=schema
 ```
 6. Edit ```deployment/config-files/configuration.json``` and fill the appropriate values:
+
 | Name   | Description |
 | ------ | :-----------: |
 | registry | Url of the private registry |
@@ -74,14 +77,17 @@ kubectl get pods -n schema -l app=schema
 | ftp-creds | Array of FTP credentials used for remote TES-like API (at least the local FTP credentials) |
 | namespaces | Leave unchanged |
 Then, copy the file to the pod:
+
 ```bash
 kubectl -n schema cp deployment/config-files/configuration.json <schema-pod-id>:/app/web/schema/scheduler_files
 ```
+
 7. Edit ```deployment/config-files/db.php``` and add the database credentials. Leave the hostname unchanged. Copy to the pod:
 ```bash
 kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/schema/config/
 ```
 8. Edit ```deployment/config-files/params.php``` and fill the appropriate values:
+
 | Name   | Description |
 | ------ | :-----------: |
 | ftpIp | Leave unchanged |
@@ -91,6 +97,7 @@ kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/sch
 | standaloneResources | Maximum resources for job pods when running in standalone mode |
 | metrics_url | Link to a metrics server dashboard of your choice (leave blank if not available) |
 | namespaces| Leave unchanged |
+
 and copy the file to the pod:
 ```bash
 kubectl -n schema cp deployment/config-files/params.php <schema-pod-id>:/app/web/schema/config/
@@ -100,6 +107,7 @@ kubectl -n schema cp deployment/config-files/params.php <schema-pod-id>:/app/web
 kubectl -n schema exec -it <schema-pod-id> psql -h postgres.schema.svc.cluster.local -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
 ```
 
+After all steps have been completed the app should be running as expected. By default a superadministrator account is created and you can login using "superadmin" as username and password. Please change it as soon as possible after logging in. 
 
 
 ## Installing on a machine
