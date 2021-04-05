@@ -1,0 +1,31 @@
+{{- if  .Values.schema.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    {{- if .Values.schema.ingress.https.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.schema.ingress.https.issuer }}
+    kubernetes.io/tls-acme: {{ quote .Values.schema.ingress.https.enabled}}
+    {{- end }}
+  name: {{ .Values.schema.app_name }}-ingress
+  namespace: {{ .Values.namespace }}
+spec:
+  rules:
+  - host: {{ .Values.schema.app_name }}.{{ .Values.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.schema.app_name }}-svc
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  {{- if .Values.schema.ingress.https.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.schema.app_name }}.{{ .Values.domain }}
+    secretName: {{ .Values.schema.app_name }}-ingress-secret
+  {{- end }}
+{{- end }}

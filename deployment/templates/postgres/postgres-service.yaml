@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.postgres.app_name }}
+  name: {{ .Values.postgres.app_name }}
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+    {{- if eq .Values.postgres.service.type "NodePort" }}
+    nodePort: {{ .Values.postgres.service.nodePort }}
+    {{- end}}
+  selector:
+    app: {{ .Values.postgres.app_name }}
+  type: {{ .Values.postgres.service.type }}

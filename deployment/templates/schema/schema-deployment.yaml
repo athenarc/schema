@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.schema.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.schema.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.schema.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.schema.app_name }}
+    spec:
+      serviceAccountName: {{ .Values.schema.app_name }}-kubectl
+      containers:
+      - image: {{ .Values.schema.deployment.image }}
+        name: schema
+        env:
+          - name: CLUSTER_ENDPOINT
+            value: {{ .Values.schema.deployment.cluster_endpoint }}
+        volumeMounts:
+          - mountPath: /data
+            name: schema-volume
+      volumes:
+        - name: schema-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.schema.volume.name }}
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: schema-regcreds

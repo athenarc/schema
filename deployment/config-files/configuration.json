@@ -1,0 +1,40 @@
+{
+	
+	"registry": "<registry host name>",
+	"registryAuth":
+	{
+		"username": "***",
+		"password": "***"
+	},
+	"database": 
+	{
+		"host":"postgres.schema.svc.cluster.local",
+		"username": "***",
+		"password": "***",
+		"database": "***"
+	},
+	"localftp":
+	{
+		"domain": "ftp.schema.svc.cluster.local",
+		"username": "***",
+		"password": "***"
+	},
+	"imagePullSecrets":
+	[
+		{"name": "registry-creds"}
+	],
+	"ftp-creds":
+	{
+		"postgres.schema.svc.cluster.local":
+		{
+			"username": "****",
+			"password": "****"
+		}
+	},
+	"namespaces":
+	{
+		"registry":"schema",
+		"jobs": "schema",
+		"tesk": "tesk"
+	}
+}
