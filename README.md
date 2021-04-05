@@ -24,27 +24,27 @@ kubectl create namespace schema
 
 | Name   | Description |
 | ------ | ----------- |
-| domain | The ingress domain name to deploy the apps |
-| schema.volume.deploy_volume | Whether to deploy a storage volume for the user data in SCHeMa |
-| schema.volume.size | size of the volume (e.g. 50Gi) |
-| schema.volume.storageClass | The name of the ReadWriteMany storageClass |
-| postgres.volume.deploy_volume | Whether to deploy a storage volume for the DB data |
-| postgres.volume.size | same as schema.volume.size for the DB volume |
-| postgres.volume.storageClass | Same as schema.volume.storageClass
-| postgres.deployment.dbUsername | Username of the DB user |
-| postgres.deployment.dbPassword | Password of the DB user |
-| postgres.deployment.dbName | Name of the DB |
-| cluster_endpoint | Endpoint of the Kubernetes api server (e.g. https://xxx.xxx.xxx.xxx:443)
-| registry.data_volume.deploy_volume | Whether to deploy a storage volume for the registry data |
-| registry.data_volume.size | same as schema.volume.size for the registry data volume |
-| registry.data_volume.storageClass | Same as schema.volume.storageClass for the registry data volume |
-| registry.credentials_volume.deploy_volume | Whether to deploy a storage volume for the registry authentication credentials |
-| registry.credentials_volume.storageClass | Same as schema.volume.storageClass |
-| registry.credentials_volume.size | We do not recommend anything greater than 10M  for this volume |
-| registry.deployment.username | Your registry username |
-| registry.deployment.password | Your registry password |
-| ftp.deployment.username | Your FTP username |
-| ftp.deployment.password | Your FTP password |
+| **domain** | The ingress domain name to deploy the apps |
+| **schema.volume.deploy\_volume** | Whether to deploy a storage volume for the user data in SCHeMa |
+| **schema.volume.size** | size of the volume (e.g. 50Gi) |
+| **schema.volume.storageClass** | The name of the ReadWriteMany storageClass |
+| **postgres.volume.deploy\_volume** | Whether to deploy a storage volume for the DB data |
+| **postgres.volume.size** | same as schema.volume.size for the DB volume |
+| **postgres.volume.storageClass** | Same as schema.volume.storageClass
+| **postgres.deployment.dbUsername** | Username of the DB user |
+| **postgres.deployment.dbPassword** | Password of the DB user |
+| **postgres.deployment.dbName** | Name of the DB |
+| **cluster\_endpoint** | Endpoint of the Kubernetes api server (e.g. https://xxx.xxx.xxx.xxx:443)
+| **registry.data\_volume.deploy\_volume** | Whether to deploy a storage volume for the registry data |
+| **registry.data\_volume.size** | same as schema.volume.size for the registry data volume |
+| **registry.data\_volume.storageClass** | Same as schema.volume.storageClass for the registry data volume |
+| **registry.credentials\_volume.deploy\_volume** | Whether to deploy a storage volume for the registry authentication credentials |
+| **registry.credentials\_volume.storageClass** | Same as schema.volume.storageClass |
+| **registry.credentials\_volume.size** | We do not recommend anything greater than 10M  for this volume |
+| **registry.deployment.username** | Your registry username |
+| **registry.deployment.password** | Your registry password |
+| **ftp.deployment.username** | Your FTP username |
+| **ftp.deployment.password** | Your FTP password |
 
 
 Note: you can either create Persistent Volume Claims (PVC) with the appropriate names in ```values.yaml``` or you can allow the helm chart to create them automatically.
@@ -65,19 +65,19 @@ kubectl get pods -n schema -l app=schema
 
 | Name   | Description |
 | ------ | ----------- |
-| registry | Url of the private registry |
-| registryAuth.username | Private registry username (same as ```values.yaml```) |
-| registryAuth.password | Private registry password (same as ```values.yaml```) |
-| database.host | Host of the database (leave unchanged unless you are using an external database server) |
-| database.username | Username of the database user |
-| database.password | Password of the database user |
-| database.database | Name of the database |
-| localftp.domain | Leave unchanged |
-| localftp.username | FTP username (same as ```values.yaml```) |
-| localftp.password | FTP password (same as ```values.yaml```) |
-| imagePullSecrets | Array of K8s secrets for pulling images (at least "registry-creds" is required) |
-| ftp-creds | Array of FTP credentials used for remote TES-like API (at least the local FTP credentials) |
-| namespaces | Leave unchanged |
+| **registry** | URL of the private registry |
+| **registryAuth.username** | Private registry username (same as ```values.yaml```) |
+| **registryAuth.password** | Private registry password (same as ```values.yaml```) |
+| **database.host** | Host of the database (leave unchanged unless you are using an external database server) |
+| **database.username** | Username of the database user |
+| **database.password** | Password of the database user |
+| **database.database** | Name of the database |
+| **localftp.domain** | Leave unchanged |
+| **localftp.username** | FTP username (same as ```values.yaml```) |
+| **localftp.password** | FTP password (same as ```values.yaml```) |
+| **imagePullSecrets** | Array of K8s secrets for pulling images (at least "registry-creds" is required) |
+| **ftp-creds** | Array of FTP credentials used for remote TES-like API (at least the local FTP credentials) |
+| **namespaces** | Leave unchanged |
 
 
 Then, copy the file to the pod:
@@ -94,13 +94,13 @@ kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/sch
 
 | Name   | Description |
 | ------ | ----------- |
-| ftpIp | Leave unchanged |
-| teskEndpoint | The URL of your TESK installation |
-| wesEndpoint | The URL of your cwl-WES installation |
-| standalone | Leave to "true" (unless you are running the [CLIMA](https://github.com/athenarc/clima) project management system.) |
-| standaloneResources | Maximum resources for job pods when running in standalone mode |
-| metrics_url | Link to a metrics server dashboard of your choice (leave blank if not available) |
-| namespaces| Leave unchanged |
+| **ftpIp** | Leave unchanged |
+| **teskEndpoint** | The URL of your TESK installation |
+| **wesEndpoint** | The URL of your cwl-WES installation |
+| **standalone** | Leave to "true" (unless you are running the [CLIMA](https://github.com/athenarc/clima) project management system.) |
+| **standaloneResources** | Maximum resources for job pods when running in standalone mode |
+| **metrics\_url** | Link to a metrics server dashboard of your choice (leave blank if not available) |
+| **namespaces** | Leave unchanged |
 
 
 and copy the file to the pod:
