@@ -15,7 +15,7 @@ schema:
 
   deployment:
     replicaCount: 1
-    image: schema-registry.egci-endpoints.imsi.athenarc.gr/schema:0.6.3
+    image: diwis/schema:0.5
     cluster_endpoint: https://your_k8s_api_endpoint:443
 
   service:
@@ -89,6 +89,6 @@ ftp:
   app_name: ftp
 
   deployment:
-      image: schema-registry.egci-endpoints.imsi.athenarc.gr/schema-ftp:1
+      image: diwis/schema-ftp:1
       username: tesk-1
       password: Z6fsH6MG
