@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ftp.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.ftp.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ftp.app_name }}
+    spec:
+      containers:
+      - image: {{ .Values.ftp.deployment.image }}
+        name: ftp
+        env:
+          - name: FTP_USER
+            value: {{ .Values.ftp.deployment.username }}
+          - name: FTP_PASS
+            value: {{ .Values.ftp.deployment.password }}
+          - name: LOCAL_UMASK
+            value: "000"
+          - name: PASV_PROMISCUOUS
+            value: "YES"
+          - name: PASV_MIN_PORT
+            value: "20110"
+          - name: PASV_MAX_PORT
+            value: "20110"
+          - name: PASV_ADDRESS
+            value: {{ .Values.ftp.app_name }}.{{ .Values.namespace }}.svc.cluster.local
+          - name: PASV_ADDR_RESOLVE
+            value: "YES"
+        ports:
+        - containerPort: 21
+          protocol: TCP
+          name: "ftp-server"
+        - containerPort: 20
+          protocol: TCP
+          name: "ftp-passive"
+        volumeMounts:
+          - mountPath: /data
+            name: schema-volume
+      volumes:
+        - name: schema-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.schema.volume.name }}
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: schema-regcreds
