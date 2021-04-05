@@ -4,7 +4,7 @@
   <br />
 </p>
 
-## Installing with Helm (recommended)
+## Deploying with Helm (recommended)
 This helm chart includes the main SCHeMa web interface, along with a private docker registry, a postgres database server and an FTP server (for use by TESK).
 
 ### Prerequisites
@@ -15,7 +15,7 @@ In order to be able to install SCHeMa you need:
 * a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) in k8s namespace ```wes``` and [TESK](https://github.com/EMBL-EBI-TSI/TESK) in k8s namespace ```tes```, for workflow and task execution respectively.
 * an [NGINX ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/) with [cert-manager](https://cert-manager.io/docs/installation/kubernetes/) installed (see here: https://dev.to/chrisme/setting-up-nginx-ingress-w-automatically-generated-letsencrypt-certificates-on-kubernetes-4f1k)
 
-### Installing
+### Deployment
 1. Create a new namespace (schema) with 
 ```bash 
 kubectl create namespace schema
@@ -23,7 +23,7 @@ kubectl create namespace schema
 2. Edit ```deployment/values.yaml``` and fill the values appropriate for your installation in the following fields:
 
 | Name   | Description |
-| ------ | :-----------: |
+| ------ | ----------- |
 | domain | The ingress domain name to deploy the apps |
 | schema.volume.deploy_volume | Whether to deploy a storage volume for the user data in SCHeMa |
 | schema.volume.size | size of the volume (e.g. 50Gi) |
@@ -45,6 +45,8 @@ kubectl create namespace schema
 | registry.deployment.password | Your registry password |
 | ftp.deployment.username | Your FTP username |
 | ftp.deployment.password | Your FTP password |
+
+
 Note: you can either create Persistent Volume Claims (PVC) with the appropriate names in ```values.yaml``` or you can allow the helm chart to create them automatically.
 
 3. Deploy the Helm chart with 
@@ -62,7 +64,7 @@ kubectl get pods -n schema -l app=schema
 6. Edit ```deployment/config-files/configuration.json``` and fill the appropriate values:
 
 | Name   | Description |
-| ------ | :-----------: |
+| ------ | ----------- |
 | registry | Url of the private registry |
 | registryAuth.username | Private registry username (same as ```values.yaml```) |
 | registryAuth.password | Private registry password (same as ```values.yaml```) |
@@ -76,6 +78,8 @@ kubectl get pods -n schema -l app=schema
 | imagePullSecrets | Array of K8s secrets for pulling images (at least "registry-creds" is required) |
 | ftp-creds | Array of FTP credentials used for remote TES-like API (at least the local FTP credentials) |
 | namespaces | Leave unchanged |
+
+
 Then, copy the file to the pod:
 
 ```bash
@@ -89,7 +93,7 @@ kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/sch
 8. Edit ```deployment/config-files/params.php``` and fill the appropriate values:
 
 | Name   | Description |
-| ------ | :-----------: |
+| ------ | ----------- |
 | ftpIp | Leave unchanged |
 | teskEndpoint | The URL of your TESK installation |
 | wesEndpoint | The URL of your cwl-WES installation |
@@ -98,10 +102,12 @@ kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/sch
 | metrics_url | Link to a metrics server dashboard of your choice (leave blank if not available) |
 | namespaces| Leave unchanged |
 
+
 and copy the file to the pod:
 ```bash
 kubectl -n schema cp deployment/config-files/params.php <schema-pod-id>:/app/web/schema/config/
 ```
+
 9. Create the database structure and add required data:
 ```bash
 kubectl -n schema exec -it <schema-pod-id> psql -h postgres.schema.svc.cluster.local -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
@@ -110,7 +116,7 @@ kubectl -n schema exec -it <schema-pod-id> psql -h postgres.schema.svc.cluster.l
 After all steps have been completed the app should be running as expected. By default a superadministrator account is created and you can login using "superadmin" as username and password. Please change it as soon as possible after logging in. 
 
 
-## Installing on a machine
+## Installing on a dedicated machine (Deprecated)
 ### Prerequisites
 In order to install SCHeMa you need:
 * an operational Kubernetes cluster or minikube cluster ([tutorial](https://www.howtoforge.com/how-to-install-kubernetes-with-minikube-on-ubuntu-1804-lts/)) with metrics-server installed
