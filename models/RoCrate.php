@@ -60,7 +60,7 @@ class RoCrate extends \yii\db\ActiveRecord
         return [
             [['username', 'jobid', 'software_url', 'input', 'publication', 'output'], 'string'],
             [['date'], 'safe'],
-         	[['software_url','output', 'input'],'url'],
+            [['software_url','output', 'input'],'url'],
             [['software_url','input'],'required'],
             ['local_download', 'boolean'],
             
@@ -90,7 +90,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $docker=$software->docker_or_local;
         $software_description=$software->description;
         $location=$software->cwl_path;
-		$creator=explode('@',$software->uploaded_by)[0];
+        $creator=explode('@',$software->uploaded_by)[0];
         
         
 
@@ -146,28 +146,26 @@ class RoCrate extends \yii\db\ActiveRecord
         )->execute();
         
 
-        $filepath=Yii::$app->params['ROCratesFolder']. 'arguments.json';
+        $filepath=Yii::$app->params['ROCratesFolder'] . $jobid . '-arguments.json';
         $arguments_file = fopen($filepath, "w");
         fwrite($arguments_file, json_encode($arguments));
         fclose($arguments_file);
 
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . 
-        "ro-crate.py ";
-        $command.= "2>&1";   
+        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "ro-crate.py $filepath 2>&1";   
 
         exec($command,$out,$ret);    
 
         // print_r($out);
         // exit(0);
 
-        $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
+        $success="ROCrate object has been created. You can download the ROCrate object by clicking " . 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
         // exec($command,$out,$ret);
 
         
-		
-		return [$software, $success];
+        
+        return [$software, $success];
 
     }
 
@@ -238,14 +236,12 @@ class RoCrate extends \yii\db\ActiveRecord
         )->execute();
         
 
-        $filepath=Yii::$app->params['ROCratesFolder']. 'arguments.json';
+        $filepath=Yii::$app->params['ROCratesFolder'] . $jobid . '-arguments.json';
         $arguments_file = fopen($filepath, "w");
         fwrite($arguments_file, json_encode($arguments));
         fclose($arguments_file);
 
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . 
-        "ro-crate.py ";
-        $command.= "2>&1";       
+        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "ro-crate.py $filepath 2>&1";       
 
         $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";

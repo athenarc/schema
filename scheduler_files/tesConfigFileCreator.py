@@ -31,6 +31,10 @@ config=json.load(configFile)
 configFile.close()
 
 imagePullSecrets = config.get('imagePullSecrets', [])
+namespaces=config.get('namespaces',None)
+jobNamespace=None
+if namespaces is not None:
+    jobNamespace=namespaces.get('jobs',None)
 
 
 def createFile(data,mounts,folder,jobid,nfsIp,maxCores,maxMem):
@@ -44,7 +48,10 @@ def createFile(data,mounts,folder,jobid,nfsIp,maxCores,maxMem):
     except:
         return 11,'',''
     
-
+    if os.path.exists('/data/containerized'):
+        inContainer=True
+    else:
+        inContainer=False
 
 
     volumes=[]
@@ -53,11 +60,17 @@ def createFile(data,mounts,folder,jobid,nfsIp,maxCores,maxMem):
     for mount in mounts:
         local=mount[0]
         mpath=mount[1]
-        volume={'name': jobName + '-nfs-storage-' + str(i)}
-        volume['nfs']={'server': nfsIp, 'path': local}
-        volumeMount={'name': volume['name'], 'mountPath': mpath}
-        volumes.append(volume)
-        volumeMounts.append(volumeMount)
+        if inContainer:
+            volume={'name': jobName + '-volume', 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
+            volumes.append(volume)
+            mount={'name': volume['name'], 'mountPath': mpath, 'subPath': local.replace('/data/','')}
+            mounts.append(mount)
+        else:
+            volume={'name': jobName + '-nfs-storage-' + str(i)}
+            volume['nfs']={'server': nfsIp, 'path': local}
+            volumeMount={'name': volume['name'], 'mountPath': mpath}
+            volumes.append(volume)
+            volumeMounts.append(volumeMount)
         i+=1
 
     
@@ -140,6 +153,8 @@ def createFile(data,mounts,folder,jobid,nfsIp,maxCores,maxMem):
     manifest_data['apiVersion']='batch/v1'
     manifest_data['kind']='Job'
     manifest_data['metadata']={'name': jobName}
+    if jobNamespace is not None:
+        manifest_data['metadata']['namespace']=jobNamespace
 
     manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':1}
     if len(volumes)!=0:

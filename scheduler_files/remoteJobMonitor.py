@@ -33,6 +33,11 @@ configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
 
+namespaces=config.get('namespaces',None)
+teskNamespace=None
+if namespaces is not None:
+    teskNamespace=namespaces.get('tesk',None)
+
 db=config['database']
 host=db['host']
 dbuser=db['username']
@@ -109,7 +114,7 @@ if (status=='COMPLETE'):
     # clean up tesk jobs after keeping their logs
     subtasks=[jobid, jobid+'-ex-00', jobid + '-outputs-filer', jobid + '-inputs-filer']
     for subtask in subtasks:
-        kube_command='kubectl -n tesk delete job ' + subtask
+        kube_command='kubectl -n ' + teskNamespace + ' delete job ' + subtask
         try:
             logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as exc:

@@ -20,20 +20,9 @@
 #  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 #
 ####################################################################################
-# from sklearn.datasets import make_classification
-# from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LogisticRegression
-# from sklearn.svm import SVC
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.model_selection import GridSearchCV
-# from sklearn.metrics import classification_report
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
-# from sklearn import svm
-
-# import csv
 import sys
-# import math
 import numpy as np
 import pickle
 import subprocess

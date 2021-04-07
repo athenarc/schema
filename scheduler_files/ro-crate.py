@@ -38,11 +38,10 @@ from rocrate.model import contextentity
 import rocrate.rocrate as roc
 
 
+argsFile=sys.argv[1]
 
-	
 
-
-with open('/data/docker/RO-crates/arguments.json') as f:
+with open(argsFile) as f:
   data = json.load(f)
 
 
@@ -84,25 +83,26 @@ for x in data['field_names']:
     if (data['input_data']["%s"%x]['type']=='File'):
         input_entity = entity.Entity(wf_crate, '', 
         properties={"@id": "#"+data['input_data']["%s"%x]['id'],
-        "@type": 'FormalParameter',
-        'name': data['input_data']["%s"%x]['name'],
-        'url': data['input_data']["%s"%x]['url'],
+                    "@type": 'FormalParameter',
+                    'name': data['input_data']["%s"%x]['name'],
+                    'url': data['input_data']["%s"%x]['url'],
      })
     else:
         input_entity = entity.Entity(wf_crate, '', 
         properties={"@id": "#"+data['input_data']["%s"%x]['id'],
-        "@type": 'FormalParameter',
-        'name': data['input_data']["%s"%x]['name'],
+                    "@type": 'FormalParameter',
+                    'name': data['input_data']["%s"%x]['name'],
      })
     wf_crate._add_context_entity(input_entity)
 
 output_entity = entity.Entity(wf_crate, '', 
         properties={"@id": "#" + data['output_data']['id'],
-        "@type": 'FormalParameter',
-        'url': data['output_data']['data'],
+                    "@type": 'FormalParameter',
+                    'url': data['output_data']['data'],
      })
 wf_crate._add_context_entity(output_entity)
 
-wf_crate.write_zip(data['ROCratesFolder']+'/'+ data['jobid'])
-command=['chmod','777', data['ROCratesFolder']+'.zip']
+outFile=data['ROCratesFolder']+'/'+ data['jobid']
+wf_crate.write_zip(outFile)
+command=['chmod','777', outFile +'.zip']
 subprocess.call(command)

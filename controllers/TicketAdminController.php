@@ -23,16 +23,16 @@
 
 namespace app\controllers;
 
-// use ricco\ticket\Mailer;
 use app\models\TicketBody;
 use app\models\TicketHead;
 use app\models\User;
-// use app\models\Module;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
 use app\models\Notification;
 use app\models\TicketConfig;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use webvimark\modules\UserManagement\models\User as Userw;
 
 /**
@@ -48,24 +48,50 @@ class TicketAdminController extends Controller
     /**
      * @return array
      */
+    // public function behaviors()
+    // {
+    //     return [
+    //         'access' => [
+    //             'class' => \yii\filters\AccessControl::className(),
+    //             'rules' => [
+    //                 [
+    //                     'allow' => true,
+    //                     'matchCallback' => function ($rule, $action) {
+    //                         if (!in_array(Yii::$app->user->getId(), User::getAdminIds())) {
+    //                             return false;
+    //                         }
+
+    //                         return true;
+    //                     }
+    //                 ],
+    //             ],
+
+    //         ],
+    //     ];
+    // }
+    public $freeAccess = false;
     public function behaviors()
     {
         return [
+            'ghost-access'=> [
+                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+            ],
             'access' => [
-                'class' => \yii\filters\AccessControl::className(),
+                'class' => AccessControl::className(),
+                'only' => ['logout'],
                 'rules' => [
                     [
+                        'actions' => ['logout'],
                         'allow' => true,
-                        'matchCallback' => function ($rule, $action) {
-                            if (!in_array(Yii::$app->user->getId(), User::getAdminIds())) {
-                                return false;
-                            }
-
-                            return true;
-                        }
+                        'roles' => ['@'],
                     ],
                 ],
-
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
             ],
         ];
     }
@@ -79,10 +105,18 @@ class TicketAdminController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = (new TicketHead())->dataProviderAdmin();
-        Url::remember();
+        if (Userw::hasRole("Admin", $superAdminAllowed = true))
+        {
+            $dataProvider = (new TicketHead())->dataProviderAdmin();
+            Url::remember();
 
-        return $this->render('index', ['dataProvider' => $dataProvider]);
+            return $this->render('index', ['dataProvider' => $dataProvider]);
+        }
+        else
+        {
+            Yii::$app->session->setFlash('danger', "You are not allowed to manage.");
+            return $this->redirect(['administration/index']);
+        }
     }
 
     /**
