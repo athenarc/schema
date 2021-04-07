@@ -42,9 +42,15 @@ host=db['host']
 dbuser=db['username']
 passwd=db['password']
 dbname=db['database']
+namespaces=config.get('namespaces',None)
+jobNamespace=None
+if namespaces is not None:
+    jobNamespace=namespaces.get('jobs',None)
 
-
-command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+if jobNamespace is not None:
+    command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
+else:
+    command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
 try:
     out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
 except subprocess.CalledProcessError as exc:
@@ -60,7 +66,10 @@ memory=0
 while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBackOff') and (status!="ContainerCannotRun") and (status!="RunContainerError") and (status!="OOMKilled"):
     
     code=0
-    command="kubectl top pod --no-headers " + podid 
+    if jobNamespace is not None:
+        command="kubectl top pod --no-headers " + podid + ' -n ' + jobNamespace
+    else:
+        command="kubectl top pod --no-headers " + podid 
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -90,7 +99,10 @@ while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBack
     
     time.sleep(1)
 
-    command="kubectl get pod --no-headers " + podid + " | tr -s ' '"
+    if jobNamespace is not None:
+        command="kubectl get pod --no-headers " + podid + " -n " + jobNamespace +  " | tr -s ' '"
+    else:
+        command="kubectl get pod --no-headers " + podid + " | tr -s ' '"
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -115,15 +127,21 @@ while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBack
 
 if status!='Canceled':
     #Get start and end times
-    command="kubectl get job " + jobName + " -o=jsonpath='{.status.completionTime}'"
+    if jobNamespace is not None:
+        command="kubectl get job " + jobName + " -o=jsonpath='{.status.completionTime}' -n " + jobNamespace
+    else:
+        command="kubectl get job " + jobName + " -o=jsonpath='{.status.completionTime}'"
 
     try:
         endOut=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
         print(exc.output)
     end=endOut.replace('T',' ').replace('Z',' ').strip()
-
-    command="kubectl get job " + jobName + " -o=jsonpath='{.status.startTime}'"
+    
+    if jobNamespace is not None:
+        command="kubectl get job " + jobName + " -o=jsonpath='{.status.startTime}' -n " + jobNamespace
+    else:
+        command="kubectl get job " + jobName + " -o=jsonpath='{.status.startTime}'"
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -136,6 +154,7 @@ if status!='Canceled':
 
 conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
 cur=conn.cursor()
+
 if status=='Canceled':
     #everything is done with PHP on the interface
     pass
@@ -159,7 +178,10 @@ conn.close()
 
 if (status!='Canceled'):
     #Get logs
-    command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+    if jobNamespace is not None:
+        command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
+    else:
+        command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -169,14 +191,15 @@ if (status!='Canceled'):
     out=out.split(' ')
     podid=out[0]
 
-
-    command="kubectl logs " + podid + " 2>&1"
+    if jobNamespace is not None:
+        command="kubectl logs " + podid + " -n " + jobNamespace + " 2>&1"
+    else:
+        command="kubectl logs " + podid + " 2>&1"
 
     try:
         logs=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
         print(exc.output)
-
 
     logFile=folder + '/logs.txt'
     g=open(logFile,'w')

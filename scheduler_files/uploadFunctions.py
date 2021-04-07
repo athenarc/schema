@@ -277,7 +277,7 @@ def inputStore(softName,softVersion, inputs):
 
     return 0
 
-def imageStoreAndClassify(name,version,image,script,user,visibility,
+def imageStore(name,version,image,script,user,visibility,
                 workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions):
     
     softFull=name+ '-' + version
