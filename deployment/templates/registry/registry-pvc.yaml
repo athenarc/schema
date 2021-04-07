@@ -1,0 +1,31 @@
+{{- if .Values.registry.data_volume.deploy_volume }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.registry.data_volume.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.registry.data_volume.storageClass }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.registry.data_volume.size }}
+{{- end }}
+---
+
+{{- if .Values.registry.credentials_volume.deploy_volume }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.registry.credentials_volume.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.registry.credentials_volume.storageClass }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.registry.credentials_volume.size }}
+
+{{- end }}

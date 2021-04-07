@@ -1,0 +1,36 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: schema
+  labels:
+    app: registry
+  name: registry
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: registry
+  type: ClusterIP
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.registry.app_name }}
+  name: {{ .Values.registry.app_name }}-svc
+spec:
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+      {{- if eq .Values.registry.service.type "NodePort" }}
+      nodePort: {{ .Values.registry.service.nodePort }}
+      {{- end}}
+  selector:
+    app: {{ .Values.registry.app_name }}
+  type: {{ .Values.registry.service.type }}
+

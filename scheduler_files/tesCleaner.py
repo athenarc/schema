@@ -23,7 +23,23 @@
 import subprocess
 
 def cleanJob(mounts,folder,jobName):
-    command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+    configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
+    configFile=open(configFileName,'r')
+    config=json.load(configFile)
+    configFile.close()
+
+    db=config['database']
+    namespaces=config.get('namespaces',None)
+    jobNamespace=None
+    if namespaces is not None:
+        jobNamespace=namespaces.get('jobs',None)
+
+
+    if jobNamespace is not None:
+        command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
+    else:
+        command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+    
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -33,8 +49,10 @@ def cleanJob(mounts,folder,jobName):
     out=out.split(' ')
     podid=out[0]
 
-
-    command="kubectl logs " + podid + " 2>&1"
+    if jobNamespace is not None:
+        command="kubectl logs " + podid + " -n " + jobNamespace + " 2>&1"
+    else:
+        command="kubectl logs " + podid + " 2>&1"
 
     try:
         logs=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')

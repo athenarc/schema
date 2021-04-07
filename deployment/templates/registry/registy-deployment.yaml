@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.registry.app_name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.registry.app_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.registry.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.registry.app_name }}
+    spec:
+      initContainers:
+      - image: {{ .Values.registry.deployment.initImage }}
+        name: init-auth
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c", "htpasswd -Bbc /auth/htpasswd $REG_USER $REG_PASS"]
+        env:
+          # - name: HTPASSWD_STR
+          #   value: testuser:$2y$05$A7cNPdhhfL9ip14riKE6c.Q4rI2KepYRe/3htUh26emuJAJZCsSWe
+          - name: REG_USER
+            value: {{ .Values.registry.deployment.username }}
+          - name: REG_PASS
+            value: {{ .Values.registry.deployment.password }}
+        volumeMounts:
+        - name: htpasswd-volume
+          mountPath: /auth
+
+      containers:
+      - image: {{ .Values.registry.deployment.image }}
+        name: registry
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: REGISTRY_AUTH_HTPASSWD_REALM
+          value: "registry-realm"
+        - name: REGISTRY_AUTH_HTPASSWD_PATH
+          value: "/auth/htpasswd"
+        - name: REGISTRY_STORAGE_DELETE_ENABLED
+          value: "true"
+        ports:
+          - containerPort: 5000
+        volumeMounts:
+        - name: htpasswd-volume
+          mountPath: /auth
+        - name: data-volume
+          mountPath: /var/lib/registry
+    
+      volumes:
+      - name: htpasswd-volume
+        persistentVolumeClaim:
+          claimName: {{ .Values.registry.credentials_volume.name }}
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: {{ .Values.registry.data_volume.name }}
+            

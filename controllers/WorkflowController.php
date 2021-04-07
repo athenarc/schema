@@ -222,41 +222,6 @@ class WorkflowController extends Controller
         // print_r($outFolder);
         // exit(0);
 
-        /*
-         * contMount variables contain the mountpoints inside the container as specified during the addition process
-         * SystemMount variableσ contain the local path that will be mounted to the container.
-         */
-        // $containerMounts=$softwareModel::getContainerMountpoint($name,$version);
-
-        /* 
-         * Fix this when there is an example
-         */
-        // if ($example)
-        // {
-        //     $iosystemMountField='';
-        //     $isystemMountField='';
-        //     $osystemMountField='';
-        //     /*
-        //      * If iomount is empty, then see if imount and omount are filled
-        //      */
-        //     if (!empty($iocontMount))
-        //     {
-        //         $iosystemMountField='examples/' . $name . '/' . $version . '/io/';
-        //     }
-        //     else 
-        //     {
-        //         if (!empty($icontMount)) 
-        //         {
-        //             $isystemMountField='examples/' . $name . '/' . $version . '/input/';
-        //         }
-        //         if (!empty($ocontMount)) 
-        //         {
-        //             $osystemMountField='examples/' . $name . '/' . $version . '/output/';
-        //         }
-        //     }
-            
-        // }
-        
 
         if ($example)
         {
@@ -454,13 +419,6 @@ class WorkflowController extends Controller
             }
         }
 
-        // print_r($workflowParams);
-        // exit(0);
-        /*
-         * If the form has posted but the commands box is empty, then add error in the error list
-         */
-        // $errors=(isset($_POST['commands'])) ? $softwareModel::checkErrors($commands) : [];
-
 
         /*
          * Get the user-data folder of the current user.
@@ -540,14 +498,6 @@ class WorkflowController extends Controller
          */
 
 
-
-        // print_r($iocontMount);
-        // print_r("<br />");
-        // print_r($icontMount);
-        // print_r("<br />");
-        // print_r($ocontMount);
-        // print_r("<br />");
-        // exit(0);
         $type=3;
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 

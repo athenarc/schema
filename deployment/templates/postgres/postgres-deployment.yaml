@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.app_name }}
+    spec:
+      initContainers:
+      - name: volume-permissions
+        image: busybox
+        command: ["chown", "-R", "999:999", "/var/lib/postgresql/data"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+          - name: postgres-volume
+            mountPath: /var/lib/postgresql/data
+      containers:
+      - image: {{ .Values.postgres.deployment.image }}
+        name: postgres
+        env:
+          - name: POSTGRES_USER
+            value: {{ .Values.postgres.deployment.dbUsername }}
+          - name: POSTGRES_PASSWORD
+            value: {{ .Values.postgres.deployment.dbPassword }}
+          - name: POSTGRES_DB
+            value: {{ .Values.postgres.deployment.dbName }}
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres-volume
+        
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.volume.name }}
+      restartPolicy: Always

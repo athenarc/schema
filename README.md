@@ -4,7 +4,120 @@
   <br />
 </p>
 
-## Prerequisites
+## Deploying with Helm (recommended)
+This helm chart includes the main SCHeMa web interface, along with a private docker registry, a postgres database server and an FTP server (for use by TESK).
+
+### Prerequisites
+In order to be able to install SCHeMa you need:
+* an operational Kubernetes cluster or minikube cluster ([tutorial](https://www.howtoforge.com/how-to-install-kubernetes-with-minikube-on-ubuntu-1804-lts/)) with metrics-server installed
+* a ReadWriteMany Kubernetes StorageClass (like NFS)
+* Helm v.3 and greater
+* a [cwl-WES](https://github.com/elixir-cloud-aai/cwl-WES) (see below) in k8s namespace ```wes``` and [TESK](https://github.com/EMBL-EBI-TSI/TESK) in k8s namespace ```tes```, for workflow and task execution respectively.
+* an [NGINX ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/) with [cert-manager](https://cert-manager.io/docs/installation/kubernetes/) installed (see here: https://dev.to/chrisme/setting-up-nginx-ingress-w-automatically-generated-letsencrypt-certificates-on-kubernetes-4f1k)
+
+### Deployment
+1. Create a new namespace (schema) with 
+```bash 
+kubectl create namespace schema
+```
+2. Edit ```deployment/values.yaml``` and fill the values appropriate for your installation in the following fields:
+
+| Name   | Description |
+| ------ | ----------- |
+| **domain** | The ingress domain name to deploy the apps |
+| **schema.volume.deploy\_volume** | Whether to deploy a storage volume for the user data in SCHeMa |
+| **schema.volume.size** | size of the volume (e.g. 50Gi) |
+| **schema.volume.storageClass** | The name of the ReadWriteMany storageClass |
+| **postgres.volume.deploy\_volume** | Whether to deploy a storage volume for the DB data |
+| **postgres.volume.size** | same as schema.volume.size for the DB volume |
+| **postgres.volume.storageClass** | Same as schema.volume.storageClass
+| **postgres.deployment.dbUsername** | Username of the DB user |
+| **postgres.deployment.dbPassword** | Password of the DB user |
+| **postgres.deployment.dbName** | Name of the DB |
+| **cluster\_endpoint** | Endpoint of the Kubernetes api server (e.g. https://xxx.xxx.xxx.xxx:443)
+| **registry.data\_volume.deploy\_volume** | Whether to deploy a storage volume for the registry data |
+| **registry.data\_volume.size** | same as schema.volume.size for the registry data volume |
+| **registry.data\_volume.storageClass** | Same as schema.volume.storageClass for the registry data volume |
+| **registry.credentials\_volume.deploy\_volume** | Whether to deploy a storage volume for the registry authentication credentials |
+| **registry.credentials\_volume.storageClass** | Same as schema.volume.storageClass |
+| **registry.credentials\_volume.size** | We do not recommend anything greater than 10M  for this volume |
+| **registry.deployment.username** | Your registry username |
+| **registry.deployment.password** | Your registry password |
+| **ftp.deployment.username** | Your FTP username |
+| **ftp.deployment.password** | Your FTP password |
+
+
+Note: you can either create Persistent Volume Claims (PVC) with the appropriate names in ```values.yaml``` or you can allow the helm chart to create them automatically.
+
+3. Deploy the Helm chart with 
+```bash
+helm install schema-app deployment -f deployment/values.yaml
+```
+4. Using the registry credentials you entered in ```values.yaml``` create a secret in Kubernetes for SCHeMa to be able to pull images from the private registry (Helm will create the registry at https://registry.schema.your-domain.com):
+```bash
+kubectl create secret docker-registry registry-creds --docker-server=<your-registry-url> --docker-username=<your-username> --docker-password=<your-password> -n schema
+```
+5. Get the id of the SCHeMa pod:
+```bash
+kubectl get pods -n schema -l app=schema
+```
+6. Edit ```deployment/config-files/configuration.json``` and fill the appropriate values:
+
+| Name   | Description |
+| ------ | ----------- |
+| **registry** | URL of the private registry |
+| **registryAuth.username** | Private registry username (same as ```values.yaml```) |
+| **registryAuth.password** | Private registry password (same as ```values.yaml```) |
+| **database.host** | Host of the database (leave unchanged unless you are using an external database server) |
+| **database.username** | Username of the database user |
+| **database.password** | Password of the database user |
+| **database.database** | Name of the database |
+| **localftp.domain** | Leave unchanged |
+| **localftp.username** | FTP username (same as ```values.yaml```) |
+| **localftp.password** | FTP password (same as ```values.yaml```) |
+| **imagePullSecrets** | Array of K8s secrets for pulling images (at least "registry-creds" is required) |
+| **ftp-creds** | Array of FTP credentials used for remote TES-like API (at least the local FTP credentials) |
+| **namespaces** | Leave unchanged |
+
+
+Then, copy the file to the pod:
+
+```bash
+kubectl -n schema cp deployment/config-files/configuration.json <schema-pod-id>:/app/web/schema/scheduler_files
+```
+
+7. Edit ```deployment/config-files/db.php``` and add the database credentials. Leave the hostname unchanged. Copy to the pod:
+```bash
+kubectl -n schema cp deployment/config-files/db.php <schema-pod-id>:/app/web/schema/config/
+```
+8. Edit ```deployment/config-files/params.php``` and fill the appropriate values:
+
+| Name   | Description |
+| ------ | ----------- |
+| **ftpIp** | Leave unchanged |
+| **teskEndpoint** | The URL of your TESK installation |
+| **wesEndpoint** | The URL of your cwl-WES installation |
+| **standalone** | Leave to "true" (unless you are running the [CLIMA](https://github.com/athenarc/clima) project management system.) |
+| **standaloneResources** | Maximum resources for job pods when running in standalone mode |
+| **metrics\_url** | Link to a metrics server dashboard of your choice (leave blank if not available) |
+| **namespaces** | Leave unchanged |
+
+
+and copy the file to the pod:
+```bash
+kubectl -n schema cp deployment/config-files/params.php <schema-pod-id>:/app/web/schema/config/
+```
+
+9. Create the database structure and add required data:
+```bash
+kubectl -n schema exec -it <schema-pod-id> psql -h postgres.schema.svc.cluster.local -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
+```
+
+After all steps have been completed the app should be running as expected. By default a superadministrator account is created and you can login using "superadmin" as username and password. Please change it as soon as possible after logging in. 
+
+
+## Installing on a dedicated machine (Deprecated)
+### Prerequisites
 In order to install SCHeMa you need:
 * an operational Kubernetes cluster or minikube cluster ([tutorial](https://www.howtoforge.com/how-to-install-kubernetes-with-minikube-on-ubuntu-1804-lts/)) with metrics-server installed
 * a docker registry configured with TLS and basic authentication (or see below for installation instructions for a private local registry)
@@ -32,6 +145,7 @@ The node running the installation of SCHeMa should have the following Python pac
 * python3-requests
 * rocrate (install with pip3)
 * python3-sklearn
+* dockertarpusher (install with pip3)
 
 ### Other packages required:
 * cwltool

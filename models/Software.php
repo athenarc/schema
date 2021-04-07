@@ -342,46 +342,11 @@ class Software extends \yii\db\ActiveRecord
         return $results;
     }
 
-    // public static function getSoftwareDescriptions($softUser)
-    // {
-    //     $query=new Query;
-
-    //     $query->select('name,version,description')
-    //           ->from('software')
-    //           ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
-    //     if ($softUser!='admin')
-    //     {
-    //         $query->where(['visibility'=>'public'])
-    //               ->orWhere(['and',['visibility'=>'private','uploaded_by'=>$softUser]]);
-    //     }
-    //     // echo $query->createCommand()->getRawSql();
-    //     // exit(0);
-
-    //     $rows=$query->all();
-    //     $results=[];
-    //     foreach ($rows as $row)
-    //     {
-    //         $name=$row['name'];
-    //         $version=$row['version'];
-    //         $description=$row['description'];
-    //         $results[]=['name'=>$name, 'version'=>$version, 'description'=>$description];
-    //         // $results[$name][$uploader][$version[0]]=$visibility;
-    //     }
-        
-    //     // print_r($results);
-    //     // exit(0);
-
-        
-    //     return $results;
-
-    //     // return $rows;
-    // }
-
     /*
      * Get the fields needed for the edit software form 
      */
 
-    public function getSoftwareEditFields($name, $version)
+    public static function getSoftwareEditFields($name, $version)
     {
         $query=new Query;
 
@@ -395,7 +360,7 @@ class Software extends \yii\db\ActiveRecord
         return $rows;
     }
 
-    public function getSoftwarePreviousCwl($name, $version)
+    public static function getSoftwarePreviousCwl($name, $version)
     {
         $query=new Query;
 
@@ -472,7 +437,7 @@ class Software extends \yii\db\ActiveRecord
      * If the user has uploaded a CWL file, 
      * then get the custom form fields.
      */
-    public function getSoftwareFields($name,$version)
+    public static function getSoftwareFields($name,$version)
     {
         $query=new Query;
 
@@ -489,7 +454,7 @@ class Software extends \yii\db\ActiveRecord
      * If the user has uploaded a CWL file, 
      * then get the docker image script name.
      */
-    public function getScript($name,$version)
+    public static function getScript($name,$version)
     {
         $query=new Query;
 
@@ -516,7 +481,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Check if the commands posted are empty.
      */
-    public function createCommand($script,$emptyFields,$fields,$mountpoint)
+    public static function createCommand($script,$emptyFields,$fields,$mountpoint)
     {   
 
         $errors=[];
@@ -540,7 +505,9 @@ class Software extends \yii\db\ActiveRecord
                 }
                 else
                 {
-                    #if the field is not of array type
+                    /*
+                     * if the field is not of array type
+                     */
                     if (!$field->is_array)
                     {
                         if ($field->separate)
@@ -611,8 +578,7 @@ class Software extends \yii\db\ActiveRecord
                             {
 
                                 $tmpArray=explode(';',$field->value);
-                                // print_r($tmpArray);
-                                // exit(0);
+                                
                                 $finalValue='';
                                 /*
                                  * if the value is separate from the prefix,
@@ -794,7 +760,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * This function creates the job YAML file and sends it to Kubernetes
      */
-    public function createAndRunJob($commands, $fields,
+    public static function createAndRunJob($commands, $fields,
                                     $name, $version, $jobid, $user, 
                                     $podid, $machineType, 
                                     $isystemMount, $isystemMountField,
@@ -807,18 +773,11 @@ class Software extends \yii\db\ActiveRecord
          * Scheduler (python) script physical location
          */
         $scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "scheduler.py";
-        // $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "probe_stats.py";
         $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "jobMonitor.py";
         
         /* 
          * Get image repository location from the DB
          */
-        // $query=new Query;
-
-        // $query->select(['id','image', 'workingdir', 'imountpoint','omountpoint'])
-        //       ->from('software')
-        //       ->where(['name'=>$name])
-        //       ->andWhere(['version'=>$version]);
         $software=Software::find()->where(['name'=>$name, 'version'=>$version])->one();
         $image=$software->image;
         $workingdir=$software->workingdir;
@@ -963,14 +922,23 @@ class Software extends \yii\db\ActiveRecord
                 ]
             )->execute();
 
-
+        // print_r($statsCommand);
+        // exit(0);
 
         unset($output);
 
         
-        // $podString=(explode('/',(explode(' ',$podString))[0]))[1];        
+        if (isset(Yii::$app->params['namespaces']['jobs']))
+        {
+            $namespace=Yii::$app->params['namespaces']['jobs'];
 
-        exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers -n $namespace 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+        }
+        else
+        {
+            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+        }
+        
 
 
         foreach ($output as $out)
@@ -999,11 +967,23 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Get pod logs by using the pod ID
      */
-    public function getLogs($podid)
+    public static function getLogs($podid)
     {
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+        if (isset(Yii::$app->params['namespaces']['jobs']))
+        {
+            $namespace=Yii::$app->params['namespaces']['jobs'];
 
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid 2>&1",$output,$ret);
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid -n $namespace 2>&1",$logs,$ret);
+
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid -n $namespace 2>&1",$output,$ret);
+        }
+        else
+        {
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+
+            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid 2>&1",$output,$ret);
+        }
+        
 
         $splt=preg_split('/[\s]+/', $output[0]);
         $status=$splt[2];
@@ -1016,7 +996,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Erase job after it is completed or terminated.
      */
-    public function cleanUp($name,$jobid,$status)
+    public static function cleanUp($name,$jobid,$status)
     {
         $folder=$userFolder=Yii::$app->params['tmpFolderPath'] . "/$jobid/";
 
@@ -1116,7 +1096,7 @@ class Software extends \yii\db\ActiveRecord
     /*
      * Check is podid is running
      */
-    public function isAlreadyRunning($podid)
+    public static function isAlreadyRunning($podid)
     {
         if ($podid=='')
         {
@@ -1169,7 +1149,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function listDirectories($directory)
+    public static function listDirectories($directory)
     {
         // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
@@ -1192,7 +1172,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function softwareRemove($name,$version)
+    public static function softwareRemove($name,$version)
     {
         
         $encname=$this->enclose($name);
@@ -1229,7 +1209,7 @@ class Software extends \yii\db\ActiveRecord
         return [$success,$error];
     }
 
-    public function getRerunData($jobid)
+    public static function getRerunData($jobid)
     {
         $query=new Query;
         $result=$query->select(['command','imountpoint', 'omountpoint', 'iomountpoint', 'softname', 'softversion', 'machinetype','project','max_ram','max_cpu'])
@@ -1307,7 +1287,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function updateExampleFields($name,$version,$values)
+    public static function updateExampleFields($name,$version,$values)
     {
 
         $query=new Query;
@@ -1342,7 +1322,7 @@ class Software extends \yii\db\ActiveRecord
         return $result['has_example'];
 
     }
-    public function uploadedBy($name,$version)
+    public static function uploadedBy($name,$version)
     {
         $query=new Query;
         $result=$query->select(['uploaded_by'])
@@ -1618,7 +1598,7 @@ class Software extends \yii\db\ActiveRecord
 
     }
 
-    public function listFiles($directory)
+    public static function listFiles($directory)
     {
         // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);

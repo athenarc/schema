@@ -1,0 +1,14 @@
+{{- if .Values.postgres.volume.deploy_volume }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.postgres.volume.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.postgres.volume.storageClass }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.postgres.volume.size }}
+{{- end }}
