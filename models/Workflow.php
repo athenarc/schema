@@ -212,7 +212,7 @@ class Workflow extends \yii\db\ActiveRecord
      * Returns a nested list of files to be used in the 
      * select file popup.
      */
-    public function listFiles($directory)
+    public static function listFiles($directory)
     {
         $files = scandir($directory);
         $results=[];
@@ -245,7 +245,7 @@ class Workflow extends \yii\db\ActiveRecord
     /*
      * Returns a list of files recursively (absolute paths)
      */
-    public function listFilesNonNested($directory)
+    public static function listFilesNonNested($directory)
     {
         
         $files = scandir($directory);
@@ -922,11 +922,9 @@ class Workflow extends \yii\db\ActiveRecord
             
     }
 
-    public function getAvailableWorkflows()
+    public static function getAvailableWorkflows()
     {
         $workflows=self::find()->all();
-        // echo $query->createCommand()->getRawSql();
-        // exit(0);
 
         $results=[];
         foreach ($workflows as $workflow)
@@ -942,7 +940,6 @@ class Workflow extends \yii\db\ActiveRecord
         }
         
         return $results;
-        // return $rows;
     }
 
     public static function enclose($string)

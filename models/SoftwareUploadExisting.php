@@ -116,7 +116,6 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             'workingdir'=>'Working directory (inside the container). If left empty, /data will be used.',
             'description'=> 'Software description * ',
             'imageInDockerHub'=>'Image exists in DockerHub and is specified in the CWL file',
-            'commandRetrieval' => 'Retrieve command from',
             'iomount' => 'Image requires disk I/O',
             'mpi' => 'Software uses OpenMPI',
             'covid19' => 'Software is related to COVID-19 research',
@@ -135,7 +134,6 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $this->imountpoint=$this->quotes($this->imountpoint);
         $this->omountpoint=$this->quotes($this->omountpoint);
         $cwlFileName=$this->quotes('');
-        $this->commandRetrieval=$this->quotes('cwl');
         $previous=Software::find()->where(['image'=>$this->image])->one();
         $workingdir=$previous->workingdir;
         $original=$previous->original_image;
@@ -191,8 +189,9 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
 
         $arguments=[
             $this->name, $this->version, $this->image, $cwlFileName, 
-            $username, $this->visibility, $this->imountpoint, $this->omountpoint, $this->commandRetrieval,
-            $this->description, $this->biotools, $doiFile, $mpi, $workingdir,$original,$dockerhub,$this->covid19, $this->instructions];
+            $username, $this->visibility, $this->imountpoint, $this->omountpoint,
+            $this->description, $this->biotools, $doiFile, $mpi, $workingdir,
+            $original,$dockerhub,$this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
         $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ";

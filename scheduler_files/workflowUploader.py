@@ -49,7 +49,7 @@ configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json
 configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
-containerMount=config['workflowContainerMount']
+# containerMount=config['workflowContainerMount']
 
 workAllowedExt=set(['yaml','cwl'])
 # Get the folder where the file was uploaded
@@ -87,7 +87,7 @@ else:
     workFile=workflowPath
 
 print('Workfile: ' + workFile)
-workFile=workFile.replace(containerMount['local'],containerMount['wesContainer'])
+# workFile=workFile.replace(containerMount['local'],containerMount['wesContainer'])
 
 wuf.workflowStore(workName,workVersion,workFile,user,visibility,
                 description,biotools,doiFile,github_link,covid19,workflowPath,instructions)

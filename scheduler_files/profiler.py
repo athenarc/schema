@@ -35,10 +35,20 @@ jobConfFile.close()
 
 def createFile(jobName,jobConf,command):
     
+    if os.path.exists('/data/containerized'):
+        inContainer=True
+    else:
+        inContainer=False
+
     configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
     configFile=open(configFileName,'r')
     config=json.load(configFile)
     configFile.close()
+
+    namespaces=config.get('namespaces',None)
+    jobNamespace=None
+    if namespaces is not None:
+        jobNamespace=namespaces.get('jobs',None)
 
     imagePullSecrets = config.get('imagePullSecrets', [])
     image=jobConf['image']
@@ -52,42 +62,47 @@ def createFile(jobName,jobConf,command):
 
     volumes=[]
     mounts=[]
-    if iomountPoint!='':
-        # volume={'name': jobName + '-storage'}
-        # volume['hostPath']={'path': iosystemMount, 'type':'Directory'}
-        # mount={'name': volume['name'], 'mountPath': iomountPoint}
+    if not inContainer:
+        if iomountPoint!='':
+            volume={'name': jobName + '-nfs-storage'}
+            volume['nfs']={'server': nfsIp, 'path': iosystemMount}
+            mount={'name': volume['name'], 'mountPath': iomountPoint}
 
-        
-        volume={'name': jobName + '-nfs-storage'}
-        volume['nfs']={'server': nfsIp, 'path': iosystemMount}
-        mount={'name': volume['name'], 'mountPath': iomountPoint}
+            volumes.append(volume)
+            mounts.append(mount)
+            
+        else:
+            if imountPoint!='':
+                volume={'name': jobName + '-nfs-input-storage'}
+                volume['nfs']={'server': nfsIp, 'path': isystemMount}
+                mount={'name': volume['name'], 'mountPath': imountPoint}
 
-        volumes.append(volume)
-        mounts.append(mount)
-        
+                volumes.append(volume)
+                mounts.append(mount)
+            
+            if omountPoint!='':
+                volume={'name': jobName + '-nfs-output-storage'}
+                volume['nfs']={'server': nfsIp, 'path': osystemMount}
+                mount={'name': volume['name'], 'mountPath': omountPoint}
+
+                volumes.append(volume)
+                mounts.append(mount)
     else:
-        if imountPoint!='':
-            # volume={'name': jobName + '-input-storage'}
-            # volume['hostPath']={'path': isystemMount, 'type':'Directory'}
-            # mount={'name': volume['name'], 'mountPath': imountPoint}
+        volume={'name': jobName + '-volume', 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
+        volumes.append(volume)
 
-            volume={'name': jobName + '-nfs-input-storage'}
-            volume['nfs']={'server': nfsIp, 'path': isystemMount}
-            mount={'name': volume['name'], 'mountPath': imountPoint}
-
-            volumes.append(volume)
+        if iomountPoint!='':
+            mount={'name': volume['name'], 'mountPath': iomountPoint, 'subPath': iosystemMount.replace('/data/','')}
             mounts.append(mount)
-        if omountPoint!='':
-            # volume={'name': jobName + '-output-storage'}
-            # volume['hostPath']={'path': osystemMount, 'type':'Directory'}
-            # mount={'name': volume['name'], 'mountPath': omountPoint}
-
-            volume={'name': jobName + '-nfs-output-storage'}
-            volume['nfs']={'server': nfsIp, 'path': osystemMount}
-            mount={'name': volume['name'], 'mountPath': omountPoint}
-
-            volumes.append(volume)
-            mounts.append(mount)
+            
+        else:
+            if imountPoint!='':
+                mount={'name': volume['name'], 'mountPath': imountPoint, 'subPath': isystemMount.replace('/data/','')}
+                mounts.append(mount)
+            
+            if omountPoint!='':
+                mount={'name': volume['name'], 'mountPath': omountPoint, 'subPath': osystemMount.replace('/data/','')}
+                mounts.append(mount)
     # print(volumes)
     # exit(0)
     containers=[]
@@ -105,6 +120,8 @@ def createFile(jobName,jobConf,command):
     manifest_data['apiVersion']='batch/v1'
     manifest_data['kind']='Job'
     manifest_data['metadata']={'name': jobName}
+    if jobNamespace is not None:
+        manifest_data['metadata']['namespace']=jobNamespace
 
     manifest_data['spec']={'template':{'spec':{}}, 'backoffLimit':0}
     if len(volumes)!=0:
@@ -140,7 +157,10 @@ for jobCommand in jobConf['commands']:
     subprocess.call(command)
     #find podid and count memory
     while(podid=='No'):
-        command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+        if jobNamespace is not None:
+            command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
+        else:
+            command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
         try:
             out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
         except subprocess.CalledProcessError as exc:
@@ -156,7 +176,10 @@ for jobCommand in jobConf['commands']:
     while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBackOff') and (status!="ContainerCannotRun") and (status!="RunContainerError") and (status!="OOMKilled"):
         
         code=0
-        command="kubectl top pod --no-headers " + podid 
+        if jobNamespace is not None:
+            command="kubectl top pod --no-headers " + podid + ' -n ' + jobNamespace
+        else:
+            command="kubectl top pod --no-headers " + podid 
         try:
             out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
         except subprocess.CalledProcessError as exc:
@@ -185,7 +208,10 @@ for jobCommand in jobConf['commands']:
         
         time.sleep(1)
 
-        command="kubectl get pod --no-headers " + podid + " | tr -s ' '"
+        if jobNamespace is not None:
+            command="kubectl get pod --no-headers " + podid + " -n " + jobNamespace +  " | tr -s ' '"
+        else:
+            command="kubectl get pod --no-headers " + podid + " | tr -s ' '"
         try:
             out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
         except subprocess.CalledProcessError as exc:
