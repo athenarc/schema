@@ -55,7 +55,7 @@ RUN composer create-project --prefer-dist yiisoft/yii2-app-basic schema
 # Clone the schema repo and merge files to the app created in the previous tep
 RUN git clone https://github.com/athenarc/schema.git schema_repo
 
-RUN cp schema_repo/* schema -r
+COPY . /app/web/schema/
 
 RUN rm -rf schema_repo
 
@@ -70,11 +70,19 @@ RUN sed -i "s|DocumentRoot /app/web|DocumentRoot /app/web/schema/web |g" /etc/ap
 # Increase php post/file upload limit and restart apache
 RUN sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 50G |g" /usr/local/etc/php/php.ini-production
 
-RUN sed -i "s|post_max_size = 2M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-production
+RUN sed -i "s|post_max_size = 8M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-production
 
-RUN sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 50G |g" /usr/local/etc/php/php.ini-development
+RUN sed -i "s|display_errors = Off|display_errors = On |g" /usr/local/etc/php/php.ini-production
 
-RUN sed -i "s|post_max_size = 2M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-development
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+# RUN sed -i "s|error_reporting = E_ALL|error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT|g" /usr/local/etc/php/php.ini-production
+
+# RUN sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 50G |g" /usr/local/etc/php/php.ini-development
+
+# RUN sed -i "s|post_max_size = 8M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-development
+
+# RUN sed -i "s|error_reporting = E_ALL|error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT|g" /usr/local/etc/php/php.ini-development
 
 RUN service apache2 restart
 

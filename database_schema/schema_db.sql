@@ -35,10 +35,10 @@ COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance betwe
 --
 
 CREATE TYPE public.hist_type AS ENUM (
-    'job',
-    'workflow',
-    'remote-tesk-job',
-    'remote-schema-job'
+	'job',
+	'workflow',
+	'remote-tesk-job',
+	'remote-schema-job'
 );
 
 
@@ -49,9 +49,9 @@ ALTER TYPE public.hist_type OWNER TO schema;
 --
 
 CREATE TYPE public.maturity_type AS ENUM (
-    'developing',
-    'testing',
-    'production'
+	'developing',
+	'testing',
+	'production'
 );
 
 
@@ -62,8 +62,8 @@ ALTER TYPE public.maturity_type OWNER TO schema;
 --
 
 CREATE TYPE public.visibility_types AS ENUM (
-    'public',
-    'private'
+	'public',
+	'private'
 );
 
 
@@ -78,9 +78,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.auth_assignment (
-    item_name character varying(64) NOT NULL,
-    user_id integer NOT NULL,
-    created_at integer
+	item_name character varying(64) NOT NULL,
+	user_id integer NOT NULL,
+	created_at integer
 );
 
 
@@ -91,14 +91,14 @@ ALTER TABLE public.auth_assignment OWNER TO schema;
 --
 
 CREATE TABLE public.auth_item (
-    name character varying(64) NOT NULL,
-    type integer NOT NULL,
-    description text,
-    rule_name character varying(64),
-    data text,
-    created_at integer,
-    updated_at integer,
-    group_code character varying(64)
+	name character varying(64) NOT NULL,
+	type integer NOT NULL,
+	description text,
+	rule_name character varying(64),
+	data text,
+	created_at integer,
+	updated_at integer,
+	group_code character varying(64)
 );
 
 
@@ -109,8 +109,8 @@ ALTER TABLE public.auth_item OWNER TO schema;
 --
 
 CREATE TABLE public.auth_item_child (
-    parent character varying(64) NOT NULL,
-    child character varying(64) NOT NULL
+	parent character varying(64) NOT NULL,
+	child character varying(64) NOT NULL
 );
 
 
@@ -121,10 +121,10 @@ ALTER TABLE public.auth_item_child OWNER TO schema;
 --
 
 CREATE TABLE public.auth_item_group (
-    code character varying(64) NOT NULL,
-    name character varying(255) NOT NULL,
-    created_at integer,
-    updated_at integer
+	code character varying(64) NOT NULL,
+	name character varying(255) NOT NULL,
+	created_at integer,
+	updated_at integer
 );
 
 
@@ -135,10 +135,10 @@ ALTER TABLE public.auth_item_group OWNER TO schema;
 --
 
 CREATE TABLE public.auth_rule (
-    name character varying(64) NOT NULL,
-    data text,
-    created_at integer,
-    updated_at integer
+	name character varying(64) NOT NULL,
+	data text,
+	created_at integer,
+	updated_at integer
 );
 
 
@@ -149,14 +149,14 @@ ALTER TABLE public.auth_rule OWNER TO schema;
 --
 
 CREATE TABLE public.download_dataset (
-    id integer NOT NULL,
-    dataset_id text,
-    provider text,
-    user_id integer,
-    folder_path text,
-    date timestamp without time zone,
-    name text,
-    version text
+	id integer NOT NULL,
+	dataset_id text,
+	provider text,
+	user_id integer,
+	folder_path text,
+	date timestamp without time zone,
+	name text,
+	version text
 );
 
 
@@ -167,12 +167,12 @@ ALTER TABLE public.download_dataset OWNER TO schema;
 --
 
 CREATE SEQUENCE public.download_dataset_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.download_dataset_id_seq OWNER TO schema;
@@ -189,8 +189,8 @@ ALTER SEQUENCE public.download_dataset_id_seq OWNED BY public.download_dataset.i
 --
 
 CREATE TABLE public.helix_subjects (
-    id integer NOT NULL,
-    name text
+	id integer NOT NULL,
+	name text
 );
 
 
@@ -201,12 +201,12 @@ ALTER TABLE public.helix_subjects OWNER TO schema;
 --
 
 CREATE SEQUENCE public.helix_subjects_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.helix_subjects_id_seq OWNER TO schema;
@@ -223,11 +223,11 @@ ALTER SEQUENCE public.helix_subjects_id_seq OWNED BY public.helix_subjects.id;
 --
 
 CREATE TABLE public.image_request (
-    id integer NOT NULL,
-    details text,
-    user_name text,
-    date timestamp without time zone,
-    dock_link character varying(200)
+	id integer NOT NULL,
+	details text,
+	user_name text,
+	date timestamp without time zone,
+	dock_link character varying(200)
 );
 
 
@@ -238,12 +238,12 @@ ALTER TABLE public.image_request OWNER TO schema;
 --
 
 CREATE SEQUENCE public.image_request_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.image_request_id_seq OWNER TO schema;
@@ -260,8 +260,8 @@ ALTER SEQUENCE public.image_request_id_seq OWNED BY public.image_request.id;
 --
 
 CREATE TABLE public.migration (
-    version character varying(180) NOT NULL,
-    apply_time integer
+	version character varying(180) NOT NULL,
+	apply_time integer
 );
 
 
@@ -272,14 +272,14 @@ ALTER TABLE public.migration OWNER TO schema;
 --
 
 CREATE TABLE public.notification (
-    id bigint NOT NULL,
-    recipient_id integer NOT NULL,
-    message text,
-    seen boolean DEFAULT false,
-    type integer,
-    created_at timestamp without time zone,
-    read_at timestamp without time zone,
-    url text
+	id bigint NOT NULL,
+	recipient_id integer NOT NULL,
+	message text,
+	seen boolean DEFAULT false,
+	type integer,
+	created_at timestamp without time zone,
+	read_at timestamp without time zone,
+	url text
 );
 
 
@@ -290,11 +290,11 @@ ALTER TABLE public.notification OWNER TO schema;
 --
 
 CREATE SEQUENCE public.notification_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.notification_id_seq OWNER TO schema;
@@ -311,11 +311,11 @@ ALTER SEQUENCE public.notification_id_seq OWNED BY public.notification.id;
 --
 
 CREATE SEQUENCE public.notification_recipient_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.notification_recipient_id_seq OWNER TO schema;
@@ -332,8 +332,8 @@ ALTER SEQUENCE public.notification_recipient_id_seq OWNED BY public.notification
 --
 
 CREATE TABLE public.operation_locks (
-    id text,
-    operation text
+	id text,
+	operation text
 );
 
 
@@ -344,14 +344,14 @@ ALTER TABLE public.operation_locks OWNER TO schema;
 --
 
 CREATE TABLE public.ro_crate (
-    id integer NOT NULL,
-    username text,
-    jobid text,
-    date timestamp without time zone,
-    software_url text,
-    input text,
-    publication text,
-    output text
+	id integer NOT NULL,
+	username text,
+	jobid text,
+	date timestamp without time zone,
+	software_url text,
+	input text,
+	publication text,
+	output text
 );
 
 
@@ -362,12 +362,12 @@ ALTER TABLE public.ro_crate OWNER TO schema;
 --
 
 CREATE SEQUENCE public.ro_crate_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.ro_crate_id_seq OWNER TO schema;
@@ -384,31 +384,31 @@ ALTER SEQUENCE public.ro_crate_id_seq OWNED BY public.ro_crate.id;
 --
 
 CREATE TABLE public.run_history (
-    id bigint NOT NULL,
-    username character varying(50),
-    start timestamp without time zone,
-    stop timestamp without time zone,
-    command text,
-    status character varying(50),
-    imountpoint character varying(200),
-    jobid character varying(20),
-    softname character varying(100),
-    softversion character varying(80),
-    ram double precision,
-    cpu integer,
-    machinetype character varying,
-    project character varying,
-    max_ram double precision,
-    max_cpu double precision,
-    omountpoint character varying(200),
-    iomountpoint character varying(200),
-    software_id integer,
-    mpi_proc_per_node integer,
-    mpi_proc integer,
-    type public.hist_type,
-    field_values_json text,
-    image text,
-    remote_status_code integer
+	id bigint NOT NULL,
+	username character varying(50),
+	start timestamp without time zone,
+	stop timestamp without time zone,
+	command text,
+	status character varying(50),
+	imountpoint character varying(200),
+	jobid character varying(20),
+	softname character varying(100),
+	softversion character varying(80),
+	ram double precision,
+	cpu integer,
+	machinetype character varying,
+	project character varying,
+	max_ram double precision,
+	max_cpu double precision,
+	omountpoint character varying(200),
+	iomountpoint character varying(200),
+	software_id integer,
+	mpi_proc_per_node integer,
+	mpi_proc integer,
+	type public.hist_type,
+	field_values_json text,
+	image text,
+	remote_status_code integer
 );
 
 
@@ -419,11 +419,11 @@ ALTER TABLE public.run_history OWNER TO schema;
 --
 
 CREATE SEQUENCE public.run_history_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.run_history_id_seq OWNER TO schema;
@@ -440,29 +440,29 @@ ALTER SEQUENCE public.run_history_id_seq OWNED BY public.run_history.id;
 --
 
 CREATE TABLE public.software (
-    id integer NOT NULL,
-    name character varying(100),
-    image character varying(200),
-    script text,
-    version character varying(80),
-    uploaded_by character varying(255),
-    visibility public.visibility_types,
-    workingdir character varying(200),
-    imountpoint character varying(200),
-    description text,
-    cwl_path character varying(150),
-    has_example boolean DEFAULT false,
-    biotools character varying(255),
-    dois text,
-    omountpoint character varying(200),
-    mpi boolean DEFAULT false,
-    covid19 boolean DEFAULT false,
-    original_image character varying(200),
-    docker_or_local boolean DEFAULT false,
-    instructions text,
-    profiled boolean DEFAULT false,
-    profile_id character varying(30) DEFAULT NULL::character varying,
-    model_fields integer[]
+	id integer NOT NULL,
+	name character varying(100),
+	image character varying(200),
+	script text,
+	version character varying(80),
+	uploaded_by character varying(255),
+	visibility public.visibility_types,
+	workingdir character varying(200),
+	imountpoint character varying(200),
+	description text,
+	cwl_path character varying(150),
+	has_example boolean DEFAULT false,
+	biotools character varying(255),
+	dois text,
+	omountpoint character varying(200),
+	mpi boolean DEFAULT false,
+	covid19 boolean DEFAULT false,
+	original_image character varying(200),
+	docker_or_local boolean DEFAULT false,
+	instructions text,
+	profiled boolean DEFAULT false,
+	profile_id character varying(30) DEFAULT NULL::character varying,
+	model_fields integer[]
 );
 
 
@@ -473,11 +473,11 @@ ALTER TABLE public.software OWNER TO schema;
 --
 
 CREATE SEQUENCE public.software_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.software_id_seq OWNER TO schema;
@@ -494,20 +494,20 @@ ALTER SEQUENCE public.software_id_seq OWNED BY public.software.id;
 --
 
 CREATE TABLE public.software_inputs (
-    id bigint NOT NULL,
-    name character varying(100),
-    softwareid integer,
-    "position" integer,
-    field_type character varying(15),
-    prefix character varying(50),
-    default_value character varying(150),
-    example character varying(150),
-    optional boolean DEFAULT false,
-    separate boolean DEFAULT true,
-    enum_fields text,
-    is_array boolean DEFAULT false,
-    array_separator character varying(5) DEFAULT NULL::character varying,
-    nested_array_binding boolean DEFAULT false
+	id bigint NOT NULL,
+	name character varying(100),
+	softwareid integer,
+	"position" integer,
+	field_type character varying(15),
+	prefix character varying(50),
+	default_value character varying(150),
+	example character varying(150),
+	optional boolean DEFAULT false,
+	separate boolean DEFAULT true,
+	enum_fields text,
+	is_array boolean DEFAULT false,
+	array_separator character varying(5) DEFAULT NULL::character varying,
+	nested_array_binding boolean DEFAULT false
 );
 
 
@@ -518,11 +518,11 @@ ALTER TABLE public.software_inputs OWNER TO schema;
 --
 
 CREATE SEQUENCE public.software_inputs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.software_inputs_id_seq OWNER TO schema;
@@ -539,26 +539,26 @@ ALTER SEQUENCE public.software_inputs_id_seq OWNED BY public.software_inputs.id;
 --
 
 CREATE TABLE public.software_upload (
-    id integer NOT NULL,
-    name character varying(100),
-    version character varying(80),
-    image character varying(200),
-    script text,
-    uploaded_by character varying(255),
-    date timestamp without time zone,
-    visibility public.visibility_types,
-    workingdir character varying(200),
-    imountpoint character varying(200),
-    description text,
-    cwl_path character varying(150),
-    biotools character varying(255),
-    dois text,
-    omountpoint character varying(200),
-    mpi boolean DEFAULT false,
-    original_image character varying(200),
-    covid19 boolean DEFAULT false,
-    docker_or_local boolean DEFAULT false,
-    instructions text
+	id integer NOT NULL,
+	name character varying(100),
+	version character varying(80),
+	image character varying(200),
+	script text,
+	uploaded_by character varying(255),
+	date timestamp without time zone,
+	visibility public.visibility_types,
+	workingdir character varying(200),
+	imountpoint character varying(200),
+	description text,
+	cwl_path character varying(150),
+	biotools character varying(255),
+	dois text,
+	omountpoint character varying(200),
+	mpi boolean DEFAULT false,
+	original_image character varying(200),
+	covid19 boolean DEFAULT false,
+	docker_or_local boolean DEFAULT false,
+	instructions text
 );
 
 
@@ -569,11 +569,11 @@ ALTER TABLE public.software_upload OWNER TO schema;
 --
 
 CREATE SEQUENCE public.software_upload_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.software_upload_id_seq OWNER TO schema;
@@ -590,8 +590,8 @@ ALTER SEQUENCE public.software_upload_id_seq OWNED BY public.software_upload.id;
 --
 
 CREATE TABLE public.system_configuration (
-    id integer NOT NULL,
-    admin_email text
+	id integer NOT NULL,
+	admin_email text
 );
 
 
@@ -602,12 +602,12 @@ ALTER TABLE public.system_configuration OWNER TO schema;
 --
 
 CREATE SEQUENCE public.system_configuration_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.system_configuration_id_seq OWNER TO schema;
@@ -624,12 +624,12 @@ ALTER SEQUENCE public.system_configuration_id_seq OWNED BY public.system_configu
 --
 
 CREATE TABLE public.ticket_body (
-    id integer NOT NULL,
-    id_head integer NOT NULL,
-    name_user character varying(255),
-    text text,
-    client integer DEFAULT 0,
-    date timestamp(0) without time zone
+	id integer NOT NULL,
+	id_head integer NOT NULL,
+	name_user character varying(255),
+	text text,
+	client integer DEFAULT 0,
+	date timestamp(0) without time zone
 );
 
 
@@ -640,11 +640,11 @@ ALTER TABLE public.ticket_body OWNER TO schema;
 --
 
 CREATE SEQUENCE public.ticket_body_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.ticket_body_id_seq OWNER TO schema;
@@ -661,10 +661,10 @@ ALTER SEQUENCE public.ticket_body_id_seq OWNED BY public.ticket_body.id;
 --
 
 CREATE TABLE public.ticket_file (
-    id integer NOT NULL,
-    id_body integer NOT NULL,
-    "fileName" character varying(255) NOT NULL,
-    document_name character varying(255)
+	id integer NOT NULL,
+	id_body integer NOT NULL,
+	"fileName" character varying(255) NOT NULL,
+	document_name character varying(255)
 );
 
 
@@ -675,11 +675,11 @@ ALTER TABLE public.ticket_file OWNER TO schema;
 --
 
 CREATE SEQUENCE public.ticket_file_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.ticket_file_id_seq OWNER TO schema;
@@ -696,13 +696,13 @@ ALTER SEQUENCE public.ticket_file_id_seq OWNED BY public.ticket_file.id;
 --
 
 CREATE TABLE public.ticket_head (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    department character varying(255),
-    topic character varying(255),
-    status integer DEFAULT 0,
-    date_update timestamp(0) without time zone DEFAULT NULL::timestamp without time zone,
-    page text
+	id integer NOT NULL,
+	user_id integer NOT NULL,
+	department character varying(255),
+	topic character varying(255),
+	status integer DEFAULT 0,
+	date_update timestamp(0) without time zone DEFAULT NULL::timestamp without time zone,
+	page text
 );
 
 
@@ -713,11 +713,11 @@ ALTER TABLE public.ticket_head OWNER TO schema;
 --
 
 CREATE SEQUENCE public.ticket_head_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.ticket_head_id_seq OWNER TO schema;
@@ -734,13 +734,13 @@ ALTER SEQUENCE public.ticket_head_id_seq OWNED BY public.ticket_head.id;
 --
 
 CREATE TABLE public.upload_dataset_defaults (
-    id integer NOT NULL,
-    provider text,
-    provider_id text,
-    default_community text,
-    default_community_id text,
-    name text,
-    enabled boolean DEFAULT true
+	id integer NOT NULL,
+	provider text,
+	provider_id text,
+	default_community text,
+	default_community_id text,
+	name text,
+	enabled boolean DEFAULT true
 );
 
 
@@ -751,12 +751,12 @@ ALTER TABLE public.upload_dataset_defaults OWNER TO schema;
 --
 
 CREATE SEQUENCE public.upload_dataset_defaults_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.upload_dataset_defaults_id_seq OWNER TO schema;
@@ -773,21 +773,21 @@ ALTER SEQUENCE public.upload_dataset_defaults_id_seq OWNED BY public.upload_data
 --
 
 CREATE TABLE public.upload_dataset_helix (
-    id integer NOT NULL,
-    dataset_id text,
-    provider text,
-    user_id integer,
-    api_key text,
-    date timestamp without time zone,
-    description text,
-    license text,
-    affiliation text,
-    subject text,
-    contact_email text,
-    creator text,
-    publication_doi text,
-    private boolean,
-    title text
+	id integer NOT NULL,
+	dataset_id text,
+	provider text,
+	user_id integer,
+	api_key text,
+	date timestamp without time zone,
+	description text,
+	license text,
+	affiliation text,
+	subject text,
+	contact_email text,
+	creator text,
+	publication_doi text,
+	private boolean,
+	title text
 );
 
 
@@ -798,12 +798,12 @@ ALTER TABLE public.upload_dataset_helix OWNER TO schema;
 --
 
 CREATE SEQUENCE public.upload_dataset_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.upload_dataset_id_seq OWNER TO schema;
@@ -820,22 +820,22 @@ ALTER SEQUENCE public.upload_dataset_id_seq OWNED BY public.upload_dataset_helix
 --
 
 CREATE TABLE public.upload_dataset_zenodo (
-    id integer NOT NULL,
-    provider text,
-    title text,
-    creators text,
-    upload_type text,
-    publication_type text,
-    image_type text,
-    access_rights text,
-    license text,
-    access_conditions text,
-    dataset_id text,
-    date timestamp without time zone,
-    embargo_date timestamp without time zone,
-    api_key text,
-    doi text,
-    description text
+	id integer NOT NULL,
+	provider text,
+	title text,
+	creators text,
+	upload_type text,
+	publication_type text,
+	image_type text,
+	access_rights text,
+	license text,
+	access_conditions text,
+	dataset_id text,
+	date timestamp without time zone,
+	embargo_date timestamp without time zone,
+	api_key text,
+	doi text,
+	description text
 );
 
 
@@ -846,12 +846,12 @@ ALTER TABLE public.upload_dataset_zenodo OWNER TO schema;
 --
 
 CREATE SEQUENCE public.upload_dataset_zenodo_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.upload_dataset_zenodo_id_seq OWNER TO schema;
@@ -868,19 +868,19 @@ ALTER SEQUENCE public.upload_dataset_zenodo_id_seq OWNED BY public.upload_datase
 --
 
 CREATE TABLE public."user" (
-    id integer NOT NULL,
-    username character varying(255) NOT NULL,
-    auth_key character varying(32) NOT NULL,
-    password_hash character varying(255) NOT NULL,
-    confirmation_token character varying(255),
-    status integer DEFAULT 1 NOT NULL,
-    superadmin smallint DEFAULT 0,
-    created_at integer NOT NULL,
-    updated_at integer NOT NULL,
-    registration_ip character varying(15),
-    bind_to_ip character varying(255),
-    email character varying(128),
-    email_confirmed smallint DEFAULT 0 NOT NULL
+	id integer NOT NULL,
+	username character varying(255) NOT NULL,
+	auth_key character varying(32) NOT NULL,
+	password_hash character varying(255) NOT NULL,
+	confirmation_token character varying(255),
+	status integer DEFAULT 1 NOT NULL,
+	superadmin smallint DEFAULT 0,
+	created_at integer NOT NULL,
+	updated_at integer NOT NULL,
+	registration_ip character varying(15),
+	bind_to_ip character varying(255),
+	email character varying(128),
+	email_confirmed smallint DEFAULT 0 NOT NULL
 );
 
 
@@ -891,11 +891,11 @@ ALTER TABLE public."user" OWNER TO schema;
 --
 
 CREATE SEQUENCE public.user_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.user_id_seq OWNER TO schema;
@@ -912,15 +912,15 @@ ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
 --
 
 CREATE TABLE public.user_visit_log (
-    id integer NOT NULL,
-    token character varying(255) NOT NULL,
-    ip character varying(15) NOT NULL,
-    language character(2) NOT NULL,
-    user_agent character varying(255) NOT NULL,
-    user_id integer,
-    visit_time integer NOT NULL,
-    browser character varying(30),
-    os character varying(20)
+	id integer NOT NULL,
+	token character varying(255) NOT NULL,
+	ip character varying(15) NOT NULL,
+	language character(2) NOT NULL,
+	user_agent character varying(255) NOT NULL,
+	user_id integer,
+	visit_time integer NOT NULL,
+	browser character varying(30),
+	os character varying(20)
 );
 
 
@@ -931,11 +931,11 @@ ALTER TABLE public.user_visit_log OWNER TO schema;
 --
 
 CREATE SEQUENCE public.user_visit_log_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.user_visit_log_id_seq OWNER TO schema;
@@ -952,21 +952,21 @@ ALTER SEQUENCE public.user_visit_log_id_seq OWNED BY public.user_visit_log.id;
 --
 
 CREATE TABLE public.workflow (
-    id bigint NOT NULL,
-    name character varying(100),
-    version character varying(80),
-    location text,
-    uploaded_by character varying(255),
-    visibility public.visibility_types,
-    description text,
-    has_example boolean DEFAULT false,
-    biotools character varying(255),
-    dois text,
-    covid19 boolean DEFAULT false,
-    github_link text,
-    original_file text,
-    instructions text,
-    visualize text
+	id bigint NOT NULL,
+	name character varying(100),
+	version character varying(80),
+	location text,
+	uploaded_by character varying(255),
+	visibility public.visibility_types,
+	description text,
+	has_example boolean DEFAULT false,
+	biotools character varying(255),
+	dois text,
+	covid19 boolean DEFAULT false,
+	github_link text,
+	original_file text,
+	instructions text,
+	visualize text
 );
 
 
@@ -977,18 +977,18 @@ ALTER TABLE public.workflow OWNER TO schema;
 --
 
 CREATE TABLE public.workflow_inputs (
-    id bigint NOT NULL,
-    name character varying(100),
-    workflow_id integer,
-    "position" integer,
-    field_type character varying(15),
-    prefix character varying(50),
-    default_value character varying(150),
-    example character varying(150),
-    optional boolean DEFAULT false,
-    separate boolean DEFAULT true,
-    enum_fields text,
-    is_array boolean DEFAULT false
+	id bigint NOT NULL,
+	name character varying(100),
+	workflow_id integer,
+	"position" integer,
+	field_type character varying(15),
+	prefix character varying(50),
+	default_value character varying(150),
+	example character varying(150),
+	optional boolean DEFAULT false,
+	separate boolean DEFAULT true,
+	enum_fields text,
+	is_array boolean DEFAULT false
 );
 
 
@@ -999,11 +999,11 @@ ALTER TABLE public.workflow_inputs OWNER TO schema;
 --
 
 CREATE SEQUENCE public.workflow_inputs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.workflow_inputs_id_seq OWNER TO schema;
@@ -1020,20 +1020,20 @@ ALTER SEQUENCE public.workflow_inputs_id_seq OWNED BY public.workflow_inputs.id;
 --
 
 CREATE TABLE public.workflow_upload (
-    id integer NOT NULL,
-    name character varying(100),
-    version character varying(80),
-    location text,
-    uploaded_by character varying(255),
-    date timestamp without time zone,
-    visibility public.visibility_types,
-    description text,
-    biotools character varying(255),
-    dois text,
-    covid19 boolean DEFAULT false,
-    github_link text,
-    original_file text,
-    instructions text
+	id integer NOT NULL,
+	name character varying(100),
+	version character varying(80),
+	location text,
+	uploaded_by character varying(255),
+	date timestamp without time zone,
+	visibility public.visibility_types,
+	description text,
+	biotools character varying(255),
+	dois text,
+	covid19 boolean DEFAULT false,
+	github_link text,
+	original_file text,
+	instructions text
 );
 
 
@@ -1044,12 +1044,12 @@ ALTER TABLE public.workflow_upload OWNER TO schema;
 --
 
 CREATE SEQUENCE public.workflow_upload_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	AS integer
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.workflow_upload_id_seq OWNER TO schema;
@@ -1066,11 +1066,11 @@ ALTER SEQUENCE public.workflow_upload_id_seq OWNED BY public.workflow_upload.id;
 --
 
 CREATE SEQUENCE public.workflows_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 
 ALTER TABLE public.workflows_id_seq OWNER TO schema;
@@ -1241,7 +1241,7 @@ ALTER TABLE ONLY public.workflow_upload ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.auth_assignment
-    ADD CONSTRAINT auth_assignment_pkey PRIMARY KEY (item_name, user_id);
+	ADD CONSTRAINT auth_assignment_pkey PRIMARY KEY (item_name, user_id);
 
 
 --
@@ -1249,7 +1249,7 @@ ALTER TABLE ONLY public.auth_assignment
 --
 
 ALTER TABLE ONLY public.auth_item_child
-    ADD CONSTRAINT auth_item_child_pkey PRIMARY KEY (parent, child);
+	ADD CONSTRAINT auth_item_child_pkey PRIMARY KEY (parent, child);
 
 
 --
@@ -1257,7 +1257,7 @@ ALTER TABLE ONLY public.auth_item_child
 --
 
 ALTER TABLE ONLY public.auth_item_group
-    ADD CONSTRAINT auth_item_group_pkey PRIMARY KEY (code);
+	ADD CONSTRAINT auth_item_group_pkey PRIMARY KEY (code);
 
 
 --
@@ -1265,7 +1265,7 @@ ALTER TABLE ONLY public.auth_item_group
 --
 
 ALTER TABLE ONLY public.auth_item
-    ADD CONSTRAINT auth_item_pkey PRIMARY KEY (name);
+	ADD CONSTRAINT auth_item_pkey PRIMARY KEY (name);
 
 
 --
@@ -1273,7 +1273,7 @@ ALTER TABLE ONLY public.auth_item
 --
 
 ALTER TABLE ONLY public.auth_rule
-    ADD CONSTRAINT auth_rule_pkey PRIMARY KEY (name);
+	ADD CONSTRAINT auth_rule_pkey PRIMARY KEY (name);
 
 
 --
@@ -1281,7 +1281,7 @@ ALTER TABLE ONLY public.auth_rule
 --
 
 ALTER TABLE ONLY public.download_dataset
-    ADD CONSTRAINT download_dataset_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT download_dataset_pkey PRIMARY KEY (id);
 
 
 --
@@ -1289,7 +1289,7 @@ ALTER TABLE ONLY public.download_dataset
 --
 
 ALTER TABLE ONLY public.helix_subjects
-    ADD CONSTRAINT helix_subjects_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT helix_subjects_pkey PRIMARY KEY (id);
 
 
 --
@@ -1297,7 +1297,7 @@ ALTER TABLE ONLY public.helix_subjects
 --
 
 ALTER TABLE ONLY public.image_request
-    ADD CONSTRAINT image_request_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT image_request_pkey PRIMARY KEY (id);
 
 
 --
@@ -1305,7 +1305,7 @@ ALTER TABLE ONLY public.image_request
 --
 
 ALTER TABLE ONLY public.migration
-    ADD CONSTRAINT migration_pkey PRIMARY KEY (version);
+	ADD CONSTRAINT migration_pkey PRIMARY KEY (version);
 
 
 --
@@ -1313,7 +1313,7 @@ ALTER TABLE ONLY public.migration
 --
 
 ALTER TABLE ONLY public.notification
-    ADD CONSTRAINT notification_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT notification_pkey PRIMARY KEY (id);
 
 
 --
@@ -1321,7 +1321,7 @@ ALTER TABLE ONLY public.notification
 --
 
 ALTER TABLE ONLY public.ro_crate
-    ADD CONSTRAINT ro_crate_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT ro_crate_pkey PRIMARY KEY (id);
 
 
 --
@@ -1329,7 +1329,7 @@ ALTER TABLE ONLY public.ro_crate
 --
 
 ALTER TABLE ONLY public.run_history
-    ADD CONSTRAINT run_history_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT run_history_pkey PRIMARY KEY (id);
 
 
 --
@@ -1337,7 +1337,7 @@ ALTER TABLE ONLY public.run_history
 --
 
 ALTER TABLE ONLY public.software_inputs
-    ADD CONSTRAINT software_inputs_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT software_inputs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1345,7 +1345,7 @@ ALTER TABLE ONLY public.software_inputs
 --
 
 ALTER TABLE ONLY public.software
-    ADD CONSTRAINT software_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT software_pkey PRIMARY KEY (id);
 
 
 --
@@ -1353,7 +1353,7 @@ ALTER TABLE ONLY public.software
 --
 
 ALTER TABLE ONLY public.software_upload
-    ADD CONSTRAINT software_upload_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT software_upload_pkey PRIMARY KEY (id);
 
 
 --
@@ -1361,7 +1361,7 @@ ALTER TABLE ONLY public.software_upload
 --
 
 ALTER TABLE ONLY public.system_configuration
-    ADD CONSTRAINT system_configuration_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT system_configuration_pkey PRIMARY KEY (id);
 
 
 --
@@ -1369,7 +1369,7 @@ ALTER TABLE ONLY public.system_configuration
 --
 
 ALTER TABLE ONLY public.ticket_body
-    ADD CONSTRAINT ticket_body_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT ticket_body_pkey PRIMARY KEY (id);
 
 
 --
@@ -1377,7 +1377,7 @@ ALTER TABLE ONLY public.ticket_body
 --
 
 ALTER TABLE ONLY public.ticket_file
-    ADD CONSTRAINT ticket_file_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT ticket_file_pkey PRIMARY KEY (id);
 
 
 --
@@ -1385,7 +1385,7 @@ ALTER TABLE ONLY public.ticket_file
 --
 
 ALTER TABLE ONLY public.ticket_head
-    ADD CONSTRAINT ticket_head_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT ticket_head_pkey PRIMARY KEY (id);
 
 
 --
@@ -1393,7 +1393,7 @@ ALTER TABLE ONLY public.ticket_head
 --
 
 ALTER TABLE ONLY public.upload_dataset_defaults
-    ADD CONSTRAINT upload_dataset_defaults_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT upload_dataset_defaults_pkey PRIMARY KEY (id);
 
 
 --
@@ -1401,7 +1401,7 @@ ALTER TABLE ONLY public.upload_dataset_defaults
 --
 
 ALTER TABLE ONLY public.upload_dataset_helix
-    ADD CONSTRAINT upload_dataset_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT upload_dataset_pkey PRIMARY KEY (id);
 
 
 --
@@ -1409,7 +1409,7 @@ ALTER TABLE ONLY public.upload_dataset_helix
 --
 
 ALTER TABLE ONLY public.upload_dataset_zenodo
-    ADD CONSTRAINT upload_dataset_zenodo_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT upload_dataset_zenodo_pkey PRIMARY KEY (id);
 
 
 --
@@ -1417,7 +1417,7 @@ ALTER TABLE ONLY public.upload_dataset_zenodo
 --
 
 ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
 --
@@ -1425,7 +1425,7 @@ ALTER TABLE ONLY public."user"
 --
 
 ALTER TABLE ONLY public.user_visit_log
-    ADD CONSTRAINT user_visit_log_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT user_visit_log_pkey PRIMARY KEY (id);
 
 
 --
@@ -1433,7 +1433,7 @@ ALTER TABLE ONLY public.user_visit_log
 --
 
 ALTER TABLE ONLY public.workflow_inputs
-    ADD CONSTRAINT workflow_inputs_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT workflow_inputs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1441,7 +1441,7 @@ ALTER TABLE ONLY public.workflow_inputs
 --
 
 ALTER TABLE ONLY public.workflow_upload
-    ADD CONSTRAINT workflow_upload_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT workflow_upload_pkey PRIMARY KEY (id);
 
 
 --
@@ -1449,7 +1449,7 @@ ALTER TABLE ONLY public.workflow_upload
 --
 
 ALTER TABLE ONLY public.workflow
-    ADD CONSTRAINT workflows_pkey PRIMARY KEY (id);
+	ADD CONSTRAINT workflows_pkey PRIMARY KEY (id);
 
 
 --
@@ -1618,7 +1618,7 @@ CREATE INDEX workflow_version_upload_idx ON public.workflow_upload USING btree (
 --
 
 ALTER TABLE ONLY public.auth_assignment
-    ADD CONSTRAINT auth_assignment_item_name_fkey FOREIGN KEY (item_name) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT auth_assignment_item_name_fkey FOREIGN KEY (item_name) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1626,7 +1626,7 @@ ALTER TABLE ONLY public.auth_assignment
 --
 
 ALTER TABLE ONLY public.auth_assignment
-    ADD CONSTRAINT auth_assignment_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT auth_assignment_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1634,7 +1634,7 @@ ALTER TABLE ONLY public.auth_assignment
 --
 
 ALTER TABLE ONLY public.auth_item_child
-    ADD CONSTRAINT auth_item_child_child_fkey FOREIGN KEY (child) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT auth_item_child_child_fkey FOREIGN KEY (child) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1642,7 +1642,7 @@ ALTER TABLE ONLY public.auth_item_child
 --
 
 ALTER TABLE ONLY public.auth_item_child
-    ADD CONSTRAINT auth_item_child_parent_fkey FOREIGN KEY (parent) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT auth_item_child_parent_fkey FOREIGN KEY (parent) REFERENCES public.auth_item(name) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1650,7 +1650,7 @@ ALTER TABLE ONLY public.auth_item_child
 --
 
 ALTER TABLE ONLY public.auth_item
-    ADD CONSTRAINT auth_item_rule_name_fkey FOREIGN KEY (rule_name) REFERENCES public.auth_rule(name) ON UPDATE CASCADE ON DELETE SET NULL;
+	ADD CONSTRAINT auth_item_rule_name_fkey FOREIGN KEY (rule_name) REFERENCES public.auth_rule(name) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -1658,7 +1658,7 @@ ALTER TABLE ONLY public.auth_item
 --
 
 ALTER TABLE ONLY public.auth_item
-    ADD CONSTRAINT fk_auth_item_group_code FOREIGN KEY (group_code) REFERENCES public.auth_item_group(code) ON UPDATE CASCADE ON DELETE SET NULL;
+	ADD CONSTRAINT fk_auth_item_group_code FOREIGN KEY (group_code) REFERENCES public.auth_item_group(code) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -1666,7 +1666,7 @@ ALTER TABLE ONLY public.auth_item
 --
 
 ALTER TABLE ONLY public.ticket_file
-    ADD CONSTRAINT fk_id_body FOREIGN KEY (id_body) REFERENCES public.ticket_body(id) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT fk_id_body FOREIGN KEY (id_body) REFERENCES public.ticket_body(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1674,7 +1674,7 @@ ALTER TABLE ONLY public.ticket_file
 --
 
 ALTER TABLE ONLY public.ticket_body
-    ADD CONSTRAINT fk_ticket_body FOREIGN KEY (id_head) REFERENCES public.ticket_head(id) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT fk_ticket_body FOREIGN KEY (id_head) REFERENCES public.ticket_head(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1682,7 +1682,7 @@ ALTER TABLE ONLY public.ticket_body
 --
 
 ALTER TABLE ONLY public.ticket_head
-    ADD CONSTRAINT fk_ticket_head FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+	ADD CONSTRAINT fk_ticket_head FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -1690,7 +1690,7 @@ ALTER TABLE ONLY public.ticket_head
 --
 
 ALTER TABLE ONLY public.user_visit_log
-    ADD CONSTRAINT user_visit_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+	ADD CONSTRAINT user_visit_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -1703,6 +1703,6 @@ COPY public.upload_dataset_defaults (id, provider, provider_id, default_communit
 \.
 
 COPY public."user" (id, username, auth_key, password_hash, confirmation_token, status, superadmin, created_at, updated_at, registration_ip, bind_to_ip, email, email_confirmed) FROM stdin;
-1   superadmin  MFX3Dn168FhsDR8SJnZATvEy2lInPFOG    $2y$13$xzcFBSIxOCJooOqQPnczB.lJ6nOeBTDUAUwr635RYj4D3IdJKlzZC    \N  1   1   1617364665  1617364665  10.1.75.0       \N  0
+1	superadmin	qp1mUYE-Cj8RDerpSLwlkQxGj1IpMSLa	$2y$13$d2WwMshDtaj26VqO.S/J0u2rncMTmTynG2yChbPAw0Hq5xqyDngIO	\N	1	1	1617897478	1617897478	10.1.2.0		\N	0
 \.
 

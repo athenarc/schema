@@ -15,7 +15,7 @@ schema:
 
   deployment:
     replicaCount: 1
-    image: diwis/schema:0.5
+    image: diwis/schema:20210408.2
     cluster_endpoint: https://your_k8s_api_endpoint:443
 
   service:
