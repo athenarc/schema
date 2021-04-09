@@ -188,7 +188,7 @@ class Workflow extends \yii\db\ActiveRecord
      * Returns a list of folders to be used in the 
      * select folder popup
      */
-    public function listDirectories($directory)
+    public static function listDirectories($directory)
     {
         $files = scandir($directory);
         $results=[];
