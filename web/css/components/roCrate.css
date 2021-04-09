@@ -57,3 +57,14 @@ margin-bottom:20px;
 {
 	padding-left: 20px;
 }
+
+.public-field
+{
+	padding-top: 14px;
+}
+
+.close-button
+{
+	margin-bottom: 1px;
+	height: 28px;
+}

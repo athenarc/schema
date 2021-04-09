@@ -121,6 +121,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         $menuItems[]=['label' => 'Workflows', 'url' => ['/workflow/index']];
         $menuItems[]=['label' => 'Data','url' => ['/filebrowser/index']];
         $menuItems[]=['label' => 'Job history','url' => ['/software/history']];
+        $menuItems[]=['label' => 'RO-Crate objects','url' => ['/software/ro-crate-history']];
         $menuItems[]=['label' => 'Help', 
                       'url' => 'https://docs.google.com/document/d/1NokaxEG5e2O5Wmv6OPnOlJlmw5lKt6JGBjMMiCgvnkI/edit?usp=sharing',
                       'linkOptions' => ['target'=>'_blank']];

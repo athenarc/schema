@@ -67,6 +67,7 @@ main_entity = entity.Entity(wf_crate, data['software_url'],
             properties={
                 "@id": data['software_url'],
                 "name": data['software_name'],
+                "experiment_description": data['experiment_description'],
                 "citation": data['publication'],  
                 "@type": ["File", "SoftwareSourceCode"],
                 "input": [ "{@id: #" + data['input_data']["%s"%x]['id']+"}" for x in data['field_names']],
