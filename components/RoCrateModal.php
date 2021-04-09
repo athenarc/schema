@@ -46,8 +46,13 @@ class ROCrateModal
 		$software_icon='<i class="fas fa-question-circle" title="Software url to a public repository like dockerhub"></i>';
 		$publication_icon='<i class="fas fa-question-circle" title="Include the DOI of the publication that describes the experiment"></i>';
 		$download_icon='<i class="fas fa-question-circle" title="Download a local copy of the RO-Crate object to be produced"></i>';
-		$edit_icon='<i class="fas fa-pencil-alt"></i>';
-		$download_icon='<i class="fas fa-download"></i>';
+
+		$private_icon='<i class="fas fa-question-circle" title="If checked, the ro-crate object will be visible by all users in the page rendered by the menu item RO-crate objects. Else, only the creator will be able to see it on the same page."></i>';
+
+		$edit_icon='<i class="fas fa-pencil-alt" title="Edit"></i>';
+		$close_icon='<i class="fas fa-times" title="Close"></i>';
+		$save_icon='<i class="fas fa-save" title="Save"></i>';
+		$download_rocrate='<i class="fas fa-download" title="Download"></i>';
 		$required='<span style="color:red">*</span>';
 
 		$history=RunHistory::find()->where(['jobid'=>$jobid])->one();
@@ -133,6 +138,10 @@ class ROCrateModal
         	$fields_folder.=$history->iomountpoint;
         }
         
+        if($model->public==null)
+        {
+        	$public_value=true;
+        }
         
 
        	echo Html::cssFile('@web/css/components/roCrate.css');
@@ -161,11 +170,6 @@ class ROCrateModal
 					<span class="col-md-5">'. $form->field($model,'output')->label("")
 					->textInput(['value'=>$model->output, 'disabled'=>$disabled_fields]).'</span>';
 		echo	'</div>';
-		echo  "<div class='row body-row'>
-					<span class='col-md-7 field-row'> Publication DOI $publication_icon :</span> 
-					<span class='col-md-5'>". $form->field($model,'publication')->label("")
-					->textInput(['value'=>$model->publication, 'disabled'=>$disabled_fields])."</span>
-				</div>";
 		echo "<div class='input-file-fields'>";
 		$i=0;
 				
@@ -176,7 +180,7 @@ class ROCrateModal
 			{
 
 				echo  "<div class='row body-row'>";
-				echo "<span class='col-md-7 field-row'> Public URL for input $field->name $required : </span>";
+				echo "<span class='col-md-7 field-row'> Public URL for input <i>$field->name</i> $required : </span>";
 				echo "<span class='col-md-5'>" . $form->field($model,"input[$field->name]")->label("")
 				->textInput(['id'=>'field-' . $i, 'value'=>empty($field_to_url[$field->name])?'':$field_to_url[$field->name], 'disabled'=>$disabled_fields]) . '</span>';
 				echo "<span class='col-md-12 local-file'>".empty($fields_file)?" ": "Used file: ". $fields_folder . '' . $fields_file[$field->name]."  </span>";
@@ -185,25 +189,39 @@ class ROCrateModal
 				$i++;
 			}
 		}
+		echo  "<div class='row body-row'>
+					<span class='col-md-7 field-row'> Publication DOI $publication_icon :</span> 
+					<span class='col-md-5'>". $form->field($model,'publication')->label("")
+					->textInput(['value'=>$model->publication, 'disabled'=>$disabled_fields])."</span>
+			</div>";
+		echo  "<div class='row body-row'>
+					<span class='col-md-7 field-row'> Experiment description:</span> 
+					<span class='col-md-5'>". $form->field($model,'experiment_description')->label("")
+					->textarea(['columns'=>6, 'value'=>$model->experiment_description, 'disabled'=>$disabled_fields, 'id'=>'experiment-description-field'])."</span>
+			</div>";
+		echo  "<div class='row body-row'>";
+		echo "<span class='col-md-7 field-row'> Public in SCHeMa $private_icon : </span>";
+		echo "<span class='col-md-5 public-field'>" . $form->field($model,'public')->checkBox(['label'=>'', 'checked'=>$model->public, 'disabled'=>$disabled_fields]). '</span>';
+		echo "</div>";
 		echo "</div>";
 		echo '</div>';
 		echo '</div>';
 		echo '<div class="modal-footer">';
 		if(!$disabled_fields)
 		{
-			echo Html::a("Submit",'javascript:void(0);',['class'=>"btn btn-success experiment-submit-btn", 'id'=>"submit-$jobid"]);
+			echo Html::a("$save_icon",'javascript:void(0);',['class'=>"btn btn-success experiment-submit-btn", 'id'=>"submit-$jobid"]);
 		}
 		else
 		{
-			echo Html::a("Submit",'javascript:void(0);',['class'=>"btn btn-success experiment-submit-btn hidden", 'id'=>"submit-$jobid"]);
+			echo Html::a("$save_icon",'javascript:void(0);',['class'=>"btn btn-success experiment-submit-btn hidden", 'id'=>"submit-$jobid"]);
 			echo "<div class='edit-buttons'>";
-			echo Html::a("$download_icon Download RoCrate",['software/download-rocrate', 'jobid'=>$jobid],
+			echo Html::a("$download_rocrate",['software/download-rocrate', 'jobid'=>$jobid],
 				['class'=>"btn btn-success download-rocrate"]);
-			echo Html::a("$edit_icon Edit RoCrate",'javascript:void(0);',
+			echo Html::a("$edit_icon",'javascript:void(0);',
 				['class'=>"btn btn-warning edit-rocrate",]);
 			echo "</div>";
 		}
-		echo "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>";
+		echo "<button type='button' class='btn btn-secondary close-button' data-dismiss='modal'>$close_icon</button>";
 		echo '</div>';
 		echo '</div>';
 		echo '</div>';

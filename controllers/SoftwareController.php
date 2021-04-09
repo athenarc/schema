@@ -1714,18 +1714,19 @@ class SoftwareController extends Controller
 
             $output_data=$model->output;
             $publication=$model->publication;
+            $public_value=$model->public;
+            $experiment_description=$model->experiment_description;
+
             if($history->type=='job')
             {
-                $result=ROCrate::CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+                $result=ROCrate::CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_description,$public_value);
             }
             else
             {
-                $result=ROCrate::CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication);
+                $result=ROCrate::CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_descriptio,$public_value);
             }
-            
-            //$workflow=$result[0];
 
-            // print_r($workflow);
+            // print_r($model);
             // exit(0);
 
             Yii::$app->session->setFlash('success', "$result[1]");
@@ -1739,6 +1740,46 @@ class SoftwareController extends Controller
         $filepath=Yii::$app->params['ROCratesFolder']. $jobid .'.zip';
         $filename=$jobid .'.zip';
         return Yii::$app->response->sendFile($filepath,$filename);
+    }
+
+    public function actionRoCrateHistory()
+    {
+        // $query=RunHistory::find()->where(['username'=>$user])->orderBy(['start'=>SORT_DESC]);
+        // $count = $query->count();
+        // $pagination = new Pagination(['totalCount' => $count]);
+        // $results = $query->offset($pagination->offset)
+        //         ->limit($pagination->limit)
+        //         ->all();
+        $username=User::getCurrentUser()['username'];
+        $query=RoCrate::find()->orderBy(['date'=>SORT_DESC]);
+        $count = $query->count();
+        $pagination = new Pagination(['totalCount' => $count]);
+        $ro_crates = $query->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+        $results_user=[];
+        $results_public=[];
+        foreach ($ro_crates as $ro_crate) 
+        {   
+            
+            if($ro_crate->username==$username)
+            {
+                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+
+                $results_user[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
+                'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
+            }
+            elseif ($ro_crate->public==true) 
+            {
+                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+
+                $results_public[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
+                'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
+            }  
+        }
+        // print_r($results_public);
+        // exit(0);
+        return $this->render('ro_crate_history', ['results_user'=>$results_user, 'results_public'=>$results_public, 'pagination'=>$pagination]);
     }
 
 

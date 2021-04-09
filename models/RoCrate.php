@@ -63,6 +63,8 @@ class RoCrate extends \yii\db\ActiveRecord
             [['software_url','output', 'input'],'url'],
             [['software_url','input'],'required'],
             ['local_download', 'boolean'],
+            ['public', 'boolean'],
+            ['experiment_description', 'string']
             
         ];
     }
@@ -82,7 +84,7 @@ class RoCrate extends \yii\db\ActiveRecord
         ];
     }
 
-    public function CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication)
+    public function CreateROObjectSoftware($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_description,$public_value)
     {
         
         $software=Software::find()->where(['name'=>$software_name])->andWhere(['version'=>$software_version])->one();
@@ -125,6 +127,7 @@ class RoCrate extends \yii\db\ActiveRecord
                     'field_names'=>$field_names,
                     'version'=>$software_version,
                     'image'=>null,
+                    'experiment_description'=>$experiment_description,
                     
         ];
 
@@ -142,6 +145,8 @@ class RoCrate extends \yii\db\ActiveRecord
             'input'=>json_encode($input_data),
             'publication'=>$publication,
             'software_url'=>$software_url,
+            'experiment_description'=>$experiment_description,
+            'public'=>$public_value,
         ]
         )->execute();
         
@@ -169,7 +174,7 @@ class RoCrate extends \yii\db\ActiveRecord
 
     }
 
-    public function CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication)
+    public function CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_description,$public_value)
     {
         
         $workflow=Workflow::find()->where(['name'=>$software_name])->andWhere(['version'=>$software_version])->one();
@@ -213,7 +218,8 @@ class RoCrate extends \yii\db\ActiveRecord
                     'input_data'=>$input_data, 
                     'number_of_inputs'=>count($input_data),
                     'field_names'=>$field_names,
-                    'image'=>$image
+                    'image'=>$image,
+                    'experiment_description'=>$experiment_description,
                     
                     
         ];
@@ -232,6 +238,8 @@ class RoCrate extends \yii\db\ActiveRecord
             'input'=>json_encode($input_data),
             'publication'=>$publication,
             'software_url'=>$software_url,
+            'experiment_description'=>$experiment_description,
+            'public'=>$public_value,
         ]
         )->execute();
         
