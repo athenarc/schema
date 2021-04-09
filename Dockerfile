@@ -76,13 +76,9 @@ RUN sed -i "s|display_errors = Off|display_errors = On |g" /usr/local/etc/php/ph
 
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
-# RUN sed -i "s|error_reporting = E_ALL|error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT|g" /usr/local/etc/php/php.ini-production
-
-# RUN sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 50G |g" /usr/local/etc/php/php.ini-development
-
-# RUN sed -i "s|post_max_size = 8M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-development
-
-# RUN sed -i "s|error_reporting = E_ALL|error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT|g" /usr/local/etc/php/php.ini-development
+# Since OpenShift annot listen to <1024, we'll use port 8080 (thanks Alvaro Gonzales!)
+RUN sed -i "s|Listen 80|Listen 8080|" /etc/apache2/ports.conf
+RUN sed -i "s|<VirtualHost \*:80>|<VirtualHost *:8080>|" /etc/apache2/sites-available/000-default.conf
 
 RUN service apache2 restart
 
