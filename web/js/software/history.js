@@ -64,9 +64,17 @@ $(document).ready(function() {
 		form=$(this).closest('form');
 		var id=form.attr('id');
 		var inputs = document.getElementById(form.attr('id')).getElementsByTagName("input");
+		var experiment = document.getElementById(form.attr('id')).getElementsByTagName("textarea");
+		
+		$(experiment).each(function(){
+			$(this).removeAttr('disabled');
+		});
+		
+		
 		$(inputs).each(function() {
-		$(this).removeAttr('disabled');
+			$(this).removeAttr('disabled');
    		});
+   		
    		submitbutton=$(this).parent().parent().children().removeClass('hidden');
    		//window.alert(submitbutton.attr('id'));
    		editbuttons=$(this).parent().addClass('hidden');
