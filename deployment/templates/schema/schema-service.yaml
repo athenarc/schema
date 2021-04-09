@@ -9,7 +9,7 @@ spec:
   ports:
   - port: 8080
     protocol: TCP
-    targetPort: 80
+    targetPort: 8080
     {{- if eq .Values.schema.service.type "NodePort" }}
     nodePort: {{ .Values.schema.service.nodePort }}
     {{- end}}
