@@ -1723,7 +1723,7 @@ class SoftwareController extends Controller
             }
             else
             {
-                $result=ROCrate::CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_descriptio,$public_value);
+                $result=ROCrate::CreateROObjectWorkflow($jobid, $software_name,$software_version,$software_url,$input_data,$output_data,$publication,$experiment_description,$public_value);
             }
 
             // print_r($model);
