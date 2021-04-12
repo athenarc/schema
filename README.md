@@ -116,6 +116,7 @@ kubectl -n schema cp deployment/config-files/params.php <schema-pod-id>:/app/web
 ```bash
 kubectl -n schema exec -it <schema-pod-id> psql -h postgres.schema.svc.cluster.local -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
 ```
+10. Run the same command for all migration files ```/app/web/schema/database-schema/migration-xx.sql``` in order. If you are upgrading to the latest version of SCHeMa, please run the miagration files that have been published since the last version.
 
 After all steps have been completed the app should be running as expected. By default a superadministrator account is created and you can login using "superadmin" as username and password. Please change it as soon as possible after logging in. 
 
