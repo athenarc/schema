@@ -25,6 +25,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\Software;
 
 /**
  * This is the model class for table "upload_dataset".
@@ -86,11 +87,11 @@ class SoftwareProfiler extends Model
         /*
          * Run the scripts and retun errors
          */
-        $profiler="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "profiler.py $file";
+        $profiler=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "profiler.py $file");
         $profilerLog="$folder/profiler-log-$pid.txt";
         shell_exec(sprintf("%s > $profilerLog 2>&1 &", $profiler));
         
-        $classifier="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "classifier.py $file";
+        $classifier=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "classifier.py $file");
         $classifierLog="$folder/classifier-log-$pid.txt";
         shell_exec(sprintf("%s > $classifierLog 2>&1 &", $classifier));
 

@@ -150,7 +150,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             $encName=$this->enclose($this->name);
             $encVersion=$this->enclose($this->version);
 
-            $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "inputReplacer.py $encName $encVersion $encfileName 2>&1";
+            $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "inputReplacer.py $encName $encVersion $encfileName 2>&1");
 
             
             // print_r($command);

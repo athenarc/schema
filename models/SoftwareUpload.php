@@ -193,7 +193,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
                     $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "imageUploader.py ";
+        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
