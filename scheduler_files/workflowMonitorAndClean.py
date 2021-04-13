@@ -184,7 +184,10 @@ if (status=='COMPLETE'):
     for i in range(1,len(taskSteps)):
         g.write('>>Step ' + str(i) + ': ' + taskIds[taskSteps[i]] + ' logs\n')
         g.write('------------------------\n')
-        g.write(podLogs[taskSteps[i]] + '\n')
+        try:
+          g.write(podLogs[taskSteps[i]] + '\n')
+        except KeyError:
+          g.write("NOLOG\n")
     g.close()
 
     sql="UPDATE run_history SET start='" + start +  "', stop='" + stop + "', status='Complete', ram=" + str(ram) + ",cpu=" + str(cpu) +  "WHERE jobid='" + jobid + "'"
