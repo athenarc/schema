@@ -35,6 +35,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\models\Workflow;
 use yii\helpers\BaseFilehelper;
+use app\models\Software;
 
 /**
  * This is the model class for table "software_upload".
@@ -162,7 +163,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
                     $username, $this->visibility, $this->description, $this->biotools, $doiFile, $this->covid19,$this->github_link,$this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "workflowUploader.py ";
+        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "workflowUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
