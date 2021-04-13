@@ -258,7 +258,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
 
     public static function clusterSetup($jobid)
     {
-        $script="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "setupMpiCluster.py";
+        $script=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "setupMpiCluster.py");
 
         $folder=Yii::$app->params['tmpFolderPath'] . "$jobid/";
 
@@ -323,7 +323,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
         $kubeCommand="kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c ";
         // print_r($podCommand);
         // exit(0);
-        $fullCommand='sudo -u ' . Yii::$app->params['systemUser'] . ' ' . $kubeCommand . $podCommand;
+        $fullCommand=Software::sudoWrap($kubeCommand . $podCommand);
 
 
         // print_r($fullCommand);
@@ -339,8 +339,8 @@ class SoftwareMpi extends \yii\db\ActiveRecord
         $yaml=$folder . $jobName . '.yaml';
 
         $arguments=[$tmpfolder,$yaml,$jobidquoted];
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . 
-                        '/mpiMonitorAndClean.py ' . implode(' ',$arguments);
+        $command=Yii::$app->params['scriptsFolder'] . '/mpiMonitorAndClean.py ' . implode(' ',$arguments)
+        $command=Software::sudoWrap($command);
 
         // exec($command,$out,$ret);
         // print_r($command);
@@ -363,7 +363,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
         $kubeCommand="kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c ";
         // print_r($podCommand);
         // exit(0);
-        $fullCommand='sudo -u ' . Yii::$app->params['systemUser'] . ' ' . $kubeCommand . $podCommand;
+        $fullCommand=Software::sudoWrap($kubeCommand . $podCommand);
 
 
         // print_r($fullCommand);
@@ -398,7 +398,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
 
     public static function checkJobRunning()
     {
-        $command="sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods -n mpi-cluster --no-headers";
+        $command=Software::sudoWrap("kubectl get pods -n mpi-cluster --no-headers");
         session_write_close();
         exec($command,$out,$ret);
         session_start();
@@ -407,8 +407,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
             return false;
         }
 
-        $command='sudo -u ' . Yii::$app->params['systemUser'] .
-                " kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "ps aux | grep mpiexec 2>&1" 2>&1';
+        $command=Software::sudoWrap("kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "ps aux | grep mpiexec 2>&1" 2>&1');
         session_write_close();
         exec($command,$psout,$ret);
         session_start();
@@ -470,8 +469,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
             else
             {
                 $status='Running';
-                $command='sudo -u ' . Yii::$app->params['systemUser'] .
-                        " kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "cat /logs.txt" 2>&1';
+                $command=Software::sudoWrap("kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "cat /logs.txt" 2>&1');
                 
                 exec($command,$logs,$ret);
                 // print_r($out);
@@ -548,8 +546,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
         // file_put_contents($filename, $dateTime);
         #Clear job
 
-        $command='sudo -u ' . Yii::$app->params['systemUser'] .
-                        " kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "cat /logs.txt" 2>&1';
+        $command=Software::sudoWrap("kubectl exec --request-timeout='0' -n mpi-cluster mpi-master -c mpi-master -- /bin/sh -c" . ' "cat /logs.txt" 2>&1');
         exec($command,$logs,$ret);
 
         $logs=implode("\n",$logs);
@@ -559,7 +556,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
         $jobName=strtolower($history->softname). '-' . $jobid;
         $yaml=$folder . '/' . $jobName . '.yaml';
 
-        $command="sudo -u " . Yii::$app->params['systemUser'] ." kubectl delete -f $yaml -n mpi-cluster";
+        $command=Software::sudoWrap("kubectl delete -f $yaml -n mpi-cluster");
         session_write_close();
         exec($command,$out,$ret);
         session_start();
@@ -569,7 +566,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
 
     public static function anotherJobRunning()
     {
-        $command="sudo -u " . Yii::$app->params['systemUser'] .' kubectl get pods -n mpi-cluster --no-headers 2>&1';
+        $command=Software::sudoWrap('kubectl get pods -n mpi-cluster --no-headers 2>&1');
 
         exec($command,$out,$ret);
         // print_r($command);
@@ -613,7 +610,7 @@ class SoftwareMpi extends \yii\db\ActiveRecord
     public static function getInactiveJobs()
     {
 
-        $command='sudo -u '. Yii::$app->params['systemUser'] . ' kubectl get jobs --no-headers 2>&1';
+        $command=Software::sudoWrap('kubectl get jobs --no-headers 2>&1');
         
         exec($command,$output,$ret);
 

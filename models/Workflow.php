@@ -27,6 +27,7 @@ use Yii;
 use webvimark\modules\UserManagement\models\User;
 use yii\httpclient\Client;
 use yii\db\Query;
+use app\models\Software;
 
 /**
  * This is the model class for table "workflow".
@@ -583,7 +584,7 @@ class Workflow extends \yii\db\ActiveRecord
 
 
 
-        $monitorScript=$scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py";
+        $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py");
         $arguments=[
             $monitorScript, self::enclose($jobid),self::enclose(Yii::$app->params['wesEndpoint']),
             self::enclose(Yii::$app->params['teskEndpoint']), self::enclose($outFolder), self::enclose($tmpFolder)];
