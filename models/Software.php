@@ -772,8 +772,8 @@ class Software extends \yii\db\ActiveRecord
         /*
          * Scheduler (python) script physical location
          */
-        $scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "scheduler.py";
-        $stats="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "jobMonitor.py";
+        $scheduler=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "scheduler.py");
+        $stats=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "jobMonitor.py");
         
         /* 
          * Get image repository location from the DB
@@ -931,12 +931,14 @@ class Software extends \yii\db\ActiveRecord
         if (isset(Yii::$app->params['namespaces']['jobs']))
         {
             $namespace=Yii::$app->params['namespaces']['jobs'];
+            $command=self::sudoWrap("kubectl get pods --no-headers -n $namespace 2>&1") . " | grep $jobName | tr -s ' ' ";
 
-            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers -n $namespace 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+            exec($command,$output,$ret);
         }
         else
         {
-            exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers 2>&1 | grep $jobName | tr -s ' ' ",$output,$ret);
+            $command=self::sudoWrap("kubectl get pods --no-headers 2>&1") . " | grep $jobName | tr -s ' ' ";
+            exec($command,$output,$ret);
         }
         
 
@@ -972,16 +974,21 @@ class Software extends \yii\db\ActiveRecord
         if (isset(Yii::$app->params['namespaces']['jobs']))
         {
             $namespace=Yii::$app->params['namespaces']['jobs'];
+            $logsCommand=self::sudoWrap("kubectl logs $podid -n $namespace 2>&1");
+            $command=self::sudoWrap("kubectl get pods --no-headers $podid -n $namespace 2>&1");
 
-            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid -n $namespace 2>&1",$logs,$ret);
+            exec($logsCommand,$logs,$ret);
 
-            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid -n $namespace 2>&1",$output,$ret);
+            exec($command,$output,$ret);
         }
         else
         {
-            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+            $logsCommand=self::sudoWrap("kubectl logs $podid 2>&1");
+            $command=self::sudoWrap("kubectl get pods --no-headers $podid 2>&1");
+            
+            exec($logsCommand,$logs,$ret);
 
-            exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers $podid 2>&1",$output,$ret);
+            exec($command,$output,$ret);
         }
         
 
@@ -1010,7 +1017,7 @@ class Software extends \yii\db\ActiveRecord
         if ($status=='Completed')
         {       
         
-            $command="sudo -u " . Yii::$app->params['systemUser'] ." kubectl describe job $jobName 2>&1";
+            $command=self::sudoWrap("kubectl describe job $jobName 2>&1");
             exec($command, $output, $ret);
             // print_r($output);
             // exit(0);
@@ -1085,11 +1092,12 @@ class Software extends \yii\db\ActiveRecord
                 // )->getRawSql());
 
         $podid=self::runningPodIdByJob($name,$jobid);
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl logs $podid 2>&1",$logs,$ret);
+        $command=self::sudoWrap("kubectl logs $podid 2>&1");
+        exec($command,$logs,$ret);
         file_put_contents($folder . 'logs.txt', implode("\n",$logs));
 
-
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl delete -f $yaml",$out,$ret);
+        $command=self::sudoWrap("kubectl delete -f $yaml");
+        exec($command,$out,$ret);
 
     }
 
@@ -1107,7 +1115,8 @@ class Software extends \yii\db\ActiveRecord
          * The following could have been implemented by using the "--no-headers"
          * flag and checking whether the output is empty instead of count($output)==1.
          */
-        exec("sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods $podid 2>&1",$output,$ret);
+        $command=self::sudoWrap("kubectl get pods $podid 2>&1");
+        exec($command,$output,$ret);
         if (count($output)==1)
         {
             return false;
@@ -1124,7 +1133,7 @@ class Software extends \yii\db\ActiveRecord
     public static function runningPodIdByJob($name,$jobid)
     {
         $podid='';
-        $command="sudo -u " . Yii::$app->params['systemUser'] ." kubectl get pods --no-headers 2>&1";
+        $command=self::sudoWrap("kubectl get pods --no-headers 2>&1");
 
         exec($command,$out,$ret);
 
@@ -1178,7 +1187,7 @@ class Software extends \yii\db\ActiveRecord
         $encname=$this->enclose($name);
         $encversion=$this->enclose($version);
 
-        $command="sudo -u " . Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "imageRemover.py $encname $encversion 2>&1";
+        $command=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageRemover.py $encname $encversion 2>&1");
 
         $success='';
         $error='';
@@ -1337,7 +1346,7 @@ class Software extends \yii\db\ActiveRecord
     public static function getInactiveJobs()
     {
 
-        $command='sudo -u '. Yii::$app->params['systemUser'] . ' kubectl get jobs --no-headers 2>&1';
+        $command=self::sudoWrap('kubectl get jobs --no-headers 2>&1');
         
         exec($command,$output,$ret);
 
@@ -1637,5 +1646,17 @@ class Software extends \yii\db\ActiveRecord
     public static function enclose($string)
     {
         return "'" . $string . "'";
+    }
+
+    public static function sudoWrap($command)
+    {
+        if (file_exists('/data/containerized'))
+        {
+            return $command;
+        }
+        else
+        {
+            return "sudo -u ". Yii::$app->params['systemUser'] . " " . $command;
+        }
     }
 }

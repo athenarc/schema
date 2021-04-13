@@ -194,7 +194,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             $original,$dockerhub,$this->covid19, $this->instructions];
 
         // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
-        $command="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ";
+        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 

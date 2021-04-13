@@ -25,6 +25,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\Software;
 
 /**
  * This is the model class for table "upload_dataset".
@@ -91,7 +92,7 @@ class ApiFunctions extends Model
          * Call a script that monitors the job
          * and fills the DB when the job is complete
          */
-        $monitorScript=$scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "/remoteJobMonitor.py";
+        $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/remoteJobMonitor.py");
         $arguments=[$monitorScript, Software::enclose($task), Software::enclose(Yii::$app->params['teskEndpoint']), Software::enclose($tmpFolder)];
         $monitorCommand=implode(' ',$arguments);
         // print_r($monitorCommand);
@@ -129,7 +130,7 @@ class ApiFunctions extends Model
          */
         $cores=$quotas[0]['cores']*1000;
         $mem=$quotas[0]['ram'];
-        $script=$scheduler="sudo -u ". Yii::$app->params['systemUser'] . " " . Yii::$app->params['scriptsFolder'] . "/schema-tes.py";
+        $script=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/schema-tes.py");
         $arguments=[$script,$dataFile, $folder, $jobid, Yii::$app->params['nfsIp'], $cores, $mem];
         $command=implode(' ',$arguments);
         // print_r($command);

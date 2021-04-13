@@ -1,7 +1,7 @@
 # Default values for schema.
 
 namespace: schema
-domain: your.domain-name.com
+domain: your.domain-name.com 
 
 # This is the app for the main schema interface
 schema:
