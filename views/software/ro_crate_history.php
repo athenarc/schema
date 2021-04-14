@@ -29,7 +29,7 @@ use app\components\Headers;
 use webvimark\modules\UserManagement\models\User;
 
 
-echo Html::CssFile('@web/css/software/ro-crate-history.css');
+
 
 $this->title="RO-crate objects";
 
@@ -51,6 +51,8 @@ Headers::begin() ?>
 <?php Headers::end()?>
 
 
+
+
 <?php
 
 if (!empty($results_user) || !empty($results_public))
@@ -58,8 +60,7 @@ if (!empty($results_user) || !empty($results_public))
 	
 	if(!empty($results_user))
 	{?>
-		
-		<div class="row subtitle"> <h3> My objects</h3> </div>
+		<h3> My objects</h3>
 		<div class="row">&nbsp;</div>
 		
 
@@ -78,9 +79,19 @@ if (!empty($results_user) || !empty($results_public))
 			<tbody>
 		<?php
 		foreach ($results_user as $res)
-		{?>
+		{
+			if($res['public']==1)
+			{
+				$public='<i class="fas fa-lock-open" title="This object is public in SCHeMa"></i>';
+			}
+			else
+			{
+				$public='<i class="fas fa-lock" title="This object is visible by the uploader in SCHeMa"></i>';
+			}
+
+		?>
 				<tr>
-					<td class="col-md-2 matrix-entries"><?=$res['softname']?></td>
+					<td class="col-md-2 matrix-entries"><?=$public?> &nbsp; <?=$res['softname']?></td>
 					<td class="col-md-2 matrix-entries" ><?=explode(' ', $res['date'])[0]?></td>
 					<?php
 					if(strlen($res['experiment_description'])>200)
@@ -108,7 +119,8 @@ if (!empty($results_user) || !empty($results_public))
 	}
 	if (!empty($results_public))
 	{?>
-		<div class="row subtitle"> <h3> Public objects by other users </h3> </div>
+		<h3> Public objects by other users </h3>
+		<div class="row">&nbsp;</div>
 		<div class="table-responsive">
 			<table class="table table-striped" >
 			<thead>
