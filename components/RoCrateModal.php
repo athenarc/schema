@@ -86,6 +86,7 @@ class ROCrateModal
 		{
 			$disabled_fields=true;
 		}
+
 		
 		$disabled=false;
 		if ((!empty($software)) && (empty($model->software_url)))
@@ -114,6 +115,7 @@ class ROCrateModal
         if(empty($model))
         {
             $model=new RoCrate();
+            $model->public=1;
         }
         else
         {
