@@ -36,17 +36,33 @@ use app\components\NotificationWidget;
 
 
 
-$footerImage=Html::img('@web/img/elixir-dark.png',['class'=>'footer-elixir-image']);
+$footerImage=Html::img(Yii::$app->params['logo-footer'],['class'=>'footer-elixir-image']);
 $footerImageLink=Html::a($footerImage,'https://elixir-greece.org',['target'=>'_blank']);
-$twitter_icon='<i class="fab fa-twitter fa-2x"></i>';
-$twitter_link=Html::a($twitter_icon,'https://twitter.com/ELIXIRGR_Comp',
-    ['target'=>'_blank']);
-$youtube_icon='<i class="fab fa-youtube fa-2x" style="color:red"></i>';
-$youtube_link=Html::a($youtube_icon,'https://www.youtube.com/channel/UC6ek-jYFfq0FDEcSJF4UEuw',
-    ['target'=>'_blank']);
+if (isset(Yii::$app->params['twitter_url']))
+{
+    $twitter_icon='<i class="fab fa-twitter fa-2x"></i>';
+    $twitter_link=Html::a($twitter_icon,Yii::$app->params['twitter_url'],['target'=>'_blank']);
+}
+else
+{
+    $twitter_icon='';
+    $twitter_link='';
+}
+if (isset(Yii::$app->params['youtube_url']))
+{
+    $youtube_icon='<i class="fab fa-youtube fa-2x" style="color:red"></i>';
+    $youtube_link=Html::a($youtube_icon,Yii::$app->params['youtube_url'],['target'=>'_blank']);
+}
+else
+{
+    $youtube_icon='';
+    $youtube_link='';
+}
+
 echo Html::cssFile('@web/css/components/notificationWidget.css');
 $this->registerJsFile('@web/js/components/notificationWidget.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 //$this->registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Yii::$app->params['favicon']]);
 
 
 
@@ -96,7 +112,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 
     NavBar::begin([
         // 'brandLabel' => Yii::$app->name,
-        'brandLabel' => Html::img('@web/img/schema-logo-03.png',['class'=>"navbar-logo"]),
+        'brandLabel' => Html::img(Yii::$app->params['logo-header'],['class'=>"navbar-logo"]),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             // 'class' => 'navbar-default navbar-fixed-top',
@@ -191,7 +207,7 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
 
 <footer class="footer bg-light">
     <div class="container">
-        <p class="pull-left">&copy; Athena RC <?= date('Y') ?></p>
+        <p class="pull-left">&copy; <?=Yii::$app->params['copyright']?></p>
         <p class="powered col-md-2">Powered by  <?= Html::a('SCHeMa', 'https://github.com/athenarc/schema', 
         ['target'=>'_blank'])?></p>
         <p class="col-md-offset-2 col-md-3"><?=$footerImageLink?></p>
