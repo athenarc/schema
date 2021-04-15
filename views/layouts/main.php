@@ -61,9 +61,10 @@ else
 
 echo Html::cssFile('@web/css/components/notificationWidget.css');
 $this->registerJsFile('@web/js/components/notificationWidget.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
-//$this->registerJsFile('@web/js/software/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
-$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Yii::$app->params['favicon']]);
-
+if (isset(Yii::$app->params['favicon']) && (!empty(Yii::$app->params['favicon'])))
+{
+    $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Yii::$app->params['favicon']]);
+}
 
 
 
@@ -110,9 +111,10 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         
     }
 
+    $headerLogo=(isset(Yii::$app->params['logo-header']) && !empty(Yii::$app->params['logo-header'])) ? Yii::$app->params['logo-header'] : '@web/img/schema-logo-03.png';
     NavBar::begin([
         // 'brandLabel' => Yii::$app->name,
-        'brandLabel' => Html::img(Yii::$app->params['logo-header'],['class'=>"navbar-logo"]),
+        'brandLabel' => Html::img($headerLogo,['class'=>"navbar-logo"]),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             // 'class' => 'navbar-default navbar-fixed-top',
