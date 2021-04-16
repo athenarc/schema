@@ -39,6 +39,8 @@ use app\models\SoftwareEdit;
 use app\models\SoftwareRemove;
 use app\models\ImageRequest;
 use yii\helpers\Url;
+use app\models\Page;
+use app\models\SystemConfiguration;
 use webvimark\modules\UserManagement\models\User as Userw;
 use app\models\RunHistory;
 use app\models\SoftwareInput;
@@ -99,7 +101,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $config=SystemConfiguration::find()->one();
+        $id=$config->home_page;
+        $page=Page::find()->where(['id'=>$id])->one();
+        
+        return $this->render('index',['page'=>$page]);
     }
     
     /**
