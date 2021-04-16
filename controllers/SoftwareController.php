@@ -1744,12 +1744,6 @@ class SoftwareController extends Controller
 
     public function actionRoCrateHistory()
     {
-        // $query=RunHistory::find()->where(['username'=>$user])->orderBy(['start'=>SORT_DESC]);
-        // $count = $query->count();
-        // $pagination = new Pagination(['totalCount' => $count]);
-        // $results = $query->offset($pagination->offset)
-        //         ->limit($pagination->limit)
-        //         ->all();
         $username=User::getCurrentUser()['username'];
         $query=RoCrate::find()->orderBy(['date'=>SORT_DESC]);
         $count = $query->count();
@@ -1777,8 +1771,7 @@ class SoftwareController extends Controller
                 'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
             }  
         }
-        // print_r($results_public);
-        // exit(0);
+        
         return $this->render('ro_crate_history', ['results_user'=>$results_user, 'results_public'=>$results_public, 'pagination'=>$pagination]);
     }
 

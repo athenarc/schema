@@ -26,8 +26,11 @@ use yii\widgets\LinkPager;
 use yii\bootstrap\NavBar;
 use yii\bootstrap\Nav;
 use yii\helpers\Url;
+
 use yii\widgets\ActiveForm;
-use app\components\Headers;  
+use app\components\Headers;
+use app\components\MagicSearchBox;
+use webvimark\modules\UserManagement\models\User as Userw;  
 
 
 
@@ -38,7 +41,8 @@ $this->title="System configuration";
 $back_button='<i class="fas fa-arrow-left"> </i>';
 $submit_button='<i class="fas fa-check"></i>';
 
-
+echo Html::CssFile('@web/css/site/configure.css');
+$this->registerJsFile('@web/js/site/configure.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 
 Headers::begin() ?>
 <?php echo Headers::widget(
@@ -54,10 +58,19 @@ Headers::begin() ?>
 <div class="row">&nbsp;</div>
 
 <?php $form=ActiveForm::begin()?>
-<div class="text-center"><h3>Administration Email</h3></div>
-<div class="col-md-offset-3 col-md-6 text-center">
-		<?=$form->field($configuration, 'admin_email')->textInput()->label('')?>
+
+<div class="row">
+	<div class="col-md-12 text-center"><h3>Administration Email</h3></div>
+	<div class="col-md-offset-3 col-md-6 text-center">
+			<?=$form->field($configuration, 'admin_email')->textInput()->label('')?>
+	</div>
+	<div class="col-md-offset-3 col-md-6 text-center">
+			<?= $form->field($configuration,'home_page')->dropDownList($pages,['prompt'=>'Please select a page', 'disabled'=>(empty($pages))? true : false ])?>
+			<?= $form->field($configuration,'help_page')->dropDownList($pages,['prompt'=>'Please select a page', 'disabled'=>(empty($pages))? true : false ])?>
+			<?= Html::a('Manage pages', ['/administration/manage-pages'], ['class'=>'btn btn-secondary']) ?>
+	</div>
 </div>
+
 <div class="row">&nbsp;</div>
 <div class="row">&nbsp;</div>
 <div class="col-md-12 form-group text-center">
@@ -68,3 +81,9 @@ $form = ActiveForm::end();
 ?>
 
 
+
+
+
+	
+
+	
