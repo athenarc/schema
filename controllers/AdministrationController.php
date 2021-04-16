@@ -24,6 +24,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\helpers\Url;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -33,6 +34,7 @@ use app\models\ContactForm;
 use app\models\ImageRequest;
 use app\models\User;
 use yii\data\Pagination;
+use app\models\Page;
 use app\models\Notification;
 use app\models\UploadDatasetDefaults;
 use app\models\SystemConfiguration;
@@ -155,6 +157,7 @@ class AdministrationController extends Controller
     {
         
         $configuration=SystemConfiguration::find()->one();
+        $pages=Page::getPagesDropdown();
         $no_configuration=false;
         if (empty($configuration))
         {
@@ -177,8 +180,94 @@ class AdministrationController extends Controller
         }
         
 
-        return $this->render('system_configuration', ['configuration'=>$configuration]);
+        return $this->render('system_configuration', ['configuration'=>$configuration, 'pages'=>$pages]);
         
+    }
+    
+
+    public function actionManagePages()
+    {
+        $pages=Page::find()->all();
+
+        return $this->render('manage-pages',['pages'=>$pages]);
+
+    }
+
+    public function actionAddPage()
+    {
+        $model=new Page;
+        $form_params =
+        [
+            'action' => URL::to(['administration/add-page']),
+            'options' => 
+            [
+                'class' => 'add_page_form',
+                'id'=> "add_page_form"
+            ],
+            'method' => 'POST'
+        ];
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate())
+        {
+            $model->save();
+            $this->redirect(['administration/manage-pages']);
+        }
+
+        return $this->render('add-page',['model'=>$model,'form_params'=>$form_params]);
+        
+    }
+    public function actionEditPage($id)
+    {
+        $page=Page::find()->where(['id'=>$id])->one();
+
+        if (empty($page))
+        {
+            return $this->render('error_page_exist');
+        }
+
+        $form_params =
+        [
+            'action' => URL::to(['administration/edit-page', 'id'=>$id]),
+            'options' => 
+            [
+                'class' => 'edit_page_form',
+                'id'=> "edit_page_form"
+            ],
+            'method' => 'POST'
+        ];
+
+        if ($page->load(Yii::$app->request->post()) && $page->validate())
+        {
+            $page->save();
+            $this->redirect(['administration/manage-pages']);
+        }
+
+        return $this->render('edit-page',['page'=>$page,'form_params'=>$form_params]);
+    }
+    public function actionDeletePage($id)
+    {
+        $page=Page::find()->where(['id'=>$id])->one();
+
+        if (empty($page))
+        {
+            return $this->render('error_page_exist');
+        }
+
+        $page->delete();
+        $this->redirect(['administration/manage-pages']);
+
+        
+    }
+    public function actionViewPage($id)
+    {
+        $page=Page::find()->where(['id'=>$id])->one();
+
+        if (empty($page))
+        {
+            return $this->render('error_page_exist');
+        }
+
+        return $this->render('view-page',['page'=>$page]);
     }
 
 
