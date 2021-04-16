@@ -35,8 +35,15 @@ $this->title = 'SCHeMa scheduler';
 
 
 
+if(empty($page->content))
+{
+	echo "";
+}
+else
+{
+	echo $page->content;
+}
 
-echo $page->content;
 ?>
 
 
