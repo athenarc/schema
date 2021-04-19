@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=postgres.schema.svc.cluster.local;dbname=***',
-    'username' => '***',
-    'password' => '***',
+    'dsn' => 'pgsql:host=postgres.schema.svc.cluster.local;dbname={{ .Values.postgres.deployment.dbName }}',
+    'username' => '{{ .Values.postgres.deployment.dbUsername }}',
+    'password' => '{{ .Values.postgres.deployment.dbPassword }}',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)

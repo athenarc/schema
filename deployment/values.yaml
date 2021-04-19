@@ -28,10 +28,14 @@ schema:
       enabled: true
       issuer: letsencrypt-prod # Insert your certificate cluster issuer (see https://dev.to/chrisme/setting-up-nginx-ingress-w-automatically-generated-letsencrypt-certificates-on-kubernetes-4f1k )
 
+#IP of the local NFS exposing dir
+nfsIp: <NFS server IP>
+
 
 # This is the docker registry deployed along with schema
 registry:
   app_name: registry
+  url: <registry host name>
 
   data_volume:
     deploy_volume: true
@@ -92,3 +96,18 @@ ftp:
       image: diwis/schema-ftp:1
       username: tesk-1
       password: Z6fsH6MG
+
+tesk:
+  url: <TESK installation URL>
+
+wes:
+  url: <WES installation URL>
+
+standalone:
+  isStandalone: true
+  resources:
+    maxCores: 8
+    maxRam: 16
+
+metrics:
+  url: <metrics_url>
