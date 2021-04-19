@@ -1,0 +1,7 @@
+apiVersion: v1
+stringData:
+  .dockerconfigjson: {{ template "imagePullSecret" . }}
+kind: Secret
+metadata:
+  name: registry-creds
+type: kubernetes.io/dockerconfigjson

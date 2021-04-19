@@ -16,21 +16,21 @@ return [
     'workflowsFolder' => '/data/docker/workflows',
     'archivedWorkflowsFolder' => '/data/docker/archived_workflows',
     'systemUser' => 'root',
-    'nfsIp' => '****',
+    'nfsIp' => '{{ .Values.nfsIp }}',
     /*
      * Change the following parameters according to your installation
      */
     'ftpIp' => 'ftp.schema.svc.cluster.local',
-    'teskEndpoint' => '<your_tesk_installation_url>',
-    'wesEndpoint' => '<your_wes_installation_url>',
-    'standalone' => true,
+    'teskEndpoint' => '{{ .Values.tesk.url }}',
+    'wesEndpoint' => '{{ .Values.wes.url }}',
+    'standalone' => {{ .Values.standalone.isStandalone }},
     'standaloneResources'=>
     [
-        'maxCores'=> 8,
-        'maxRam' => 16,
+        'maxCores'=> {{ .Values.standalone.resources.maxCores }},
+        'maxRam' => {{ .Values.standalone.resources.maxRam }},
     ],
     'classifierMemLimit'=>8,
-    'metrics_url' => '*******',
+    'metrics_url' => '{{ .Values.metrics.url }}',
     'namespaces' => [
         'jobs'=>'schema'
     ]
