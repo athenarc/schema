@@ -1,3 +1,4 @@
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 {{- if  .Values.schema.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -28,4 +29,5 @@ spec:
     - {{ .Values.schema.app_name }}.{{ .Values.domain }}
     secretName: {{ .Values.schema.app_name }}-ingress-secret
   {{- end }}
+{{- end }}
 {{- end }}
