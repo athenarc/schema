@@ -91,7 +91,7 @@ postgres:
 # FTP service deployed alongside schema for TESK file access
 ftp:
   app_name: ftp
-
+  active: true
   deployment:
       image: diwis/schema-ftp:1
       username: tesk-1
