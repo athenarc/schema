@@ -1,5 +1,5 @@
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 {{- if  .Values.registry.ingress.enabled }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -29,5 +29,22 @@ spec:
     - {{ .Values.registry.app_name }}.{{ .Values.domain }}
     secretName: {{ .Values.registry.app_name }}-ingress-secret
   {{- end }}
+{{- else if .Capabilities.APIVersions.Has "route.openshift.io/v1/Route" -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.registry.app_name }}-ingress
+spec:
+  host: {{ .Values.registry.app_name }}-{{ .Values.schema.app_name }}.{{ .Values.domain }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Values.registry.app_name }}-svc
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress: []
 {{- end }}
 {{- end }}
