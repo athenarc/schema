@@ -36,8 +36,8 @@ spec:
         - name: schema-volume
           persistentVolumeClaim:
             claimName: {{ .Values.schema.volume.name }}
-        - name: configuration
-          configMap:
+        - name: schema-config
+          secret:
             defaultMode: 420
             items:
               - key: configuration.json
@@ -46,7 +46,7 @@ spec:
                 path: db.php
               - key: params.php
                 path: params.php
-            name: configuration
+            secretName: schema-config
       restartPolicy: Always
       imagePullSecrets:
         - name: schema-regcreds
