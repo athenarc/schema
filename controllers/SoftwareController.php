@@ -1753,12 +1753,17 @@ class SoftwareController extends Controller
                 ->all();
         $results_user=[];
         $results_public=[];
+        
         foreach ($ro_crates as $ro_crate) 
         {   
             
             if($ro_crate->username==$username)
             {
                 $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+                if (empty($software_run))
+                {
+                    continue;
+                }
 
                 $results_user[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
                 'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
@@ -1766,6 +1771,10 @@ class SoftwareController extends Controller
             elseif ($ro_crate->public==true) 
             {
                 $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+                if (empty($software_run))
+                {
+                    continue;
+                }
 
                 $results_public[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
                 'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];

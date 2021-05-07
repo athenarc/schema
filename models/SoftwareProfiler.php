@@ -444,7 +444,7 @@ class SoftwareProfiler extends Model
     {
         // $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
 
-        if ($maxMem>=64)
+        if ($maxMem>=512)
         {
             return 'fat-node';
         }

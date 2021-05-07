@@ -52,8 +52,7 @@ Headers::begin() ?>
    
 ])
 ?>
-<?php Headers::end()?>
-
+<?php Headers::end();
 /*
  * Users are able to view the name, version, start date, end date, mountpoint 
  * and running status of their previous software executions. 
