@@ -1184,8 +1184,8 @@ class Software extends \yii\db\ActiveRecord
     public static function softwareRemove($name,$version)
     {
         
-        $encname=$this->enclose($name);
-        $encversion=$this->enclose($version);
+        $encname=self::enclose($name);
+        $encversion=self::enclose($version);
 
         $command=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageRemover.py $encname $encversion 2>&1");
 
