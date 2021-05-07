@@ -174,6 +174,9 @@ class WorkflowUpload extends \yii\db\ActiveRecord
 
 
         exec($command,$out,$ret);
+        // print_r($out);
+        // print_r("<br />");
+        // exit(0);
 
         $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();;
         $workflow_id=$workflow->id;
