@@ -895,8 +895,16 @@ class Workflow extends \yii\db\ActiveRecord
         $folder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid . '/';
 
         $file=$folder . 'fields.txt';
+        if (file_exists($file))
+        {  
+            $content=file_get_contents($file);
+        }
+        else
+        {
+            return false;
+        }
 
-        $content=file_get_contents($file);
+        
         // print_r($file);
         $json=json_decode($content,true);
 
