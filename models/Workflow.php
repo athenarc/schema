@@ -101,6 +101,15 @@ class Workflow extends \yii\db\ActiveRecord
     {
         $params=[];
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        /*
+         * We installed schema on a server instead of deploying with helm
+         * and our FTP is jailed, with the root being the user-data folder.
+         * Change does not affect helm deployments, because the parameter does not exist.
+         */
+        if (isset(Yii::$app->params['ftpJailPath']) and (!empty(Yii::$app->params['ftpJailPath'])))
+        {
+            $userFolder=str_replace(Yii::$app->params['ftpJailPath'],'',$userFolder);
+        }
 
         foreach ($fields as $field)
         {
@@ -116,12 +125,12 @@ class Workflow extends \yii\db\ActiveRecord
             {
                 if ($field->field_type=='File')
                 {
-                    $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
+                    $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $field->value];
                     $params[$field->name]=$value;
                 }
                 else if ($field->field_type=='Directory')
                 {
-                    $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $field->value];
+                    $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $field->value];
                     $params[$field->name]=$value;
                 }
                 else if ($field->field_type=='boolean')
@@ -145,7 +154,7 @@ class Workflow extends \yii\db\ActiveRecord
                     $finalArray=[];
                     foreach ($tmpArray as $val)
                     {
-                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $val];
                         $finalArray[]=$value;
                     }
                     
@@ -156,7 +165,7 @@ class Workflow extends \yii\db\ActiveRecord
                     $finalArray=[];
                     foreach ($tmpArray as $val)
                     {
-                        $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . $userFolder . '/' . $val];
+                        $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $val];
                         $finalArray[]=$value;
                     }
                     
