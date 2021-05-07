@@ -66,17 +66,23 @@ class ROCrateModal
 			$software=Software::find()->where(['id'=>$software_id])->one();
 			$soft_type='Software';
 			$fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
-			$fields=Software::getRerunFieldValues($jobid,$fields);
+			if (!empty($fields))
+			{
+				$fields=Software::getRerunFieldValues($jobid,$fields);
+			}
+			
 		}
 		elseif ($history->type=='workflow')
 		{
 			$workflow=Workflow::find()->where(['id'=>$software_id])->one();
 			$soft_type='Workflow';
 			$fields=WorkflowInput::find()->where(['workflow_id'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
-			$fields=Workflow::getRerunFieldValues($jobid,$fields);
+			if (!empty($fields))
+			{
+				$fields=Workflow::getRerunFieldValues($jobid,$fields);
+			}
 			
 		}
-		
 		
 		$model=RoCrate::find()->where(['jobid'=>$jobid])->one();
 
@@ -108,9 +114,6 @@ class ROCrateModal
         }
 		
 		
-
-		
-		
 		$field_to_url=[];
         if(empty($model))
         {
@@ -128,8 +131,15 @@ class ROCrateModal
 		}
 		
 		$fieldspath=Yii::$app->params['tmpFolderPath']. "/". $jobid . "/fields.txt" ;
-        $file = file_get_contents($fieldspath);
-        $fields_file=json_decode($file,true);
+		if (!file_exists($fieldspath))
+		{
+			$fields_file=[];
+		}
+		else
+        {
+        	$file = file_get_contents($fieldspath);
+            $fields_file=json_decode($file,true);
+        }
         $fields_folder='/';
         if (!empty($history->imountpoint))
         {
@@ -174,7 +184,7 @@ class ROCrateModal
 		echo	'</div>';
 		echo "<div class='input-file-fields'>";
 		$i=0;
-				
+		
 		foreach ($fields as $field) 
 		{
 			
