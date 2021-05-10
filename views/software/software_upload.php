@@ -77,7 +77,7 @@ echo $form->errorSummary($model);
             <?= $form->field($model, 'omountpoint') ?>
         </div>
         <!-- <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?> -->
-        <?= $form->field($model, 'mpi') -> checkbox(['id'=>'mpi']) ?>
+        <!-- <?= $form->field($model, 'mpi') -> checkbox(['id'=>'mpi']) ?> -->
         <div class="mpi-warning">
         <div class="row mpi-warning-row">
             <div class="col-md-12">
