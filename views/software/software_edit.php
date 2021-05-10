@@ -73,7 +73,7 @@ Headers::begin() ?>
             <?= $form->field($model, 'imountpoint') ?>
             <?= $form->field($model, 'omountpoint') ?>
         </div>
-    <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?>
+    <!-- <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?> -->
     <?=$form->field($model, 'biotools')->textInput() ?>
     <div class="doi-container">
         <div class="row"><div class="col-md-12"><?= Html::label('Edit relevant dois (optional)') ?></div></div>

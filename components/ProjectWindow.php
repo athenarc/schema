@@ -66,6 +66,7 @@ class ProjectWindow
 
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
         $user=User::getCurrentUser()['username'];
+        $name_inf=Yii::$app->params['name'];
         
         if ($superadmin==1)
         {
@@ -173,7 +174,7 @@ class ProjectWindow
             
             echo '</div>';
             echo '<div class="col-md-12 text-center project-egci-content">';
-            echo Html::a("Create new project in EG-CI", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"]);
+            echo Html::a("Create new project in $name_inf", "https://egci-beta.imsi.athenarc.gr/index.php?r=project%2Fnew-request", ['target'=>"_blank"]);
             echo '</div>';
         echo '</div>';
 
