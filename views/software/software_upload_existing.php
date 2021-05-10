@@ -75,12 +75,12 @@ Headers::begin() ?>
             <?= $form->field($model, 'omountpoint') ?>
         </div>
         <!-- <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?> -->
-        <?= $form->field($model, 'mpi') -> checkbox(['id'=>'mpi']) ?>
-        <div class="mpi-warning row">
+        <!-- <?= $form->field($model, 'mpi') -> checkbox(['id'=>'mpi']) ?> -->
+        <!-- <div class="mpi-warning row">
             <div class=col-md-12>
                 Warning: The image must be built using zagganas/kube-openmpi-schema:0.5 from DockerHub
             </div>
-        </div>
+        </div> -->
         <?= $form->field($model, 'biotools') ?>
         <div class="doi-container">
             <div class="row"><div class="col-md-12"><?= Html::label('Add relevant DOIs (optional)') ?></div></div>
