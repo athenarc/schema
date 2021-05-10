@@ -109,5 +109,7 @@ standalone:
     maxCores: 8
     maxRam: 16
 
+website_name: SCHeMa #Change according to your deployment
+
 metrics:
   url: <metrics_url>
