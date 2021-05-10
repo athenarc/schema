@@ -4,6 +4,7 @@ return [
     /*
      * The following parameters must be left unchanged
      */
+    'name'=> '{{ .Values.wes.url }}',
     'bsDependencyEnabled' => false,
     'adminEmail' => 'admin@example.com',
     'userDataPath' => '/data/docker/user-data/',
