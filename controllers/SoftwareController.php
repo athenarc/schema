@@ -154,6 +154,8 @@ class SoftwareController extends Controller
         $images=Software::getOriginalImages($softUser);
         
         $indicators=Software::getIndicators($softUser);
+
+    
         
                 
 
@@ -1055,15 +1057,19 @@ class SoftwareController extends Controller
 
         // }
         $available=Software::getAvailableSoftware();
+
         $available_workflows=Workflow::getAvailableWorkflows();
         // $results=Software::getUserHistory($user);
-        $query=RunHistory::find()->where(['username'=>$user])->orderBy(['start'=>SORT_DESC]);
+        $query=RunHistory::find()->where(['username'=>$user])
+        ->andWhere(['mpi_proc'=>null])
+        ->orderBy(['start'=>SORT_DESC]);
+
+
         $count = $query->count();
         $pagination = new Pagination(['totalCount' => $count]);
         $results = $query->offset($pagination->offset)
                 ->limit($pagination->limit)
                 ->all();
-
         
         return $this->render('history',['results'=>$results,'pagination'=>$pagination,'available'=>$available,'available_workflows'=>$available_workflows,'crate_id'=>$crate_id]);
     }

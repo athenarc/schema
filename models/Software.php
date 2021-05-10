@@ -107,7 +107,9 @@ class Software extends \yii\db\ActiveRecord
 
         $query->select('name,version,description,image,uploaded_by,visibility')
               ->from('software')
+              ->where(['mpi'=>false])
               ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
+
         if ($softUser!='admin')
         {
             $query->where(['visibility'=>'public'])
@@ -195,6 +197,7 @@ class Software extends \yii\db\ActiveRecord
     {
         $query=new Query;
         $query->select(['name','version','image','original_image','docker_or_local','workingdir'])
+              ->where(['mpi'=>false])
               ->from('software')
               ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
         if ($softUser!='admin')
@@ -272,12 +275,14 @@ class Software extends \yii\db\ActiveRecord
         $query=new Query;
 
         $query->select('id,name,version,mpi')
+              ->where(['mpi'=>false])
               ->from('software');
         // echo $query->createCommand()->getRawSql();
         // exit(0);
 
         $rows=$query->all();
         $results=[];
+        
         foreach ($rows as $row)
         {
             $name=$row['name'];
