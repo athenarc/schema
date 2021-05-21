@@ -67,9 +67,9 @@ while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBack
     
     code=0
     if jobNamespace is not None:
-        command="kubectl top pod --no-headers " + podid + ' -n ' + jobNamespace
+        command="kubectl top pod --use-protocol-buffers --no-headers " + podid + ' -n ' + jobNamespace
     else:
-        command="kubectl top pod --no-headers " + podid 
+        command="kubectl top pod --use-protocol-buffers --no-headers " + podid 
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
@@ -81,7 +81,6 @@ while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBack
             out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
         except subprocess.CalledProcessError as exc:
             code=exc.returncode
-        tokens=out.split(' ')
         topmem=float(tokens[2][:-2])
 
         memmeasure=tokens[2][-2:]

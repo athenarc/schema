@@ -877,10 +877,12 @@ class Software extends \yii\db\ActiveRecord
         $jobName=strtolower($nameNoQuotes) . '-' . $jobid;
         $arguments=[$jobName, $jobid, $folder];
         $statsCommand=$stats . ' ' . implode(' ', $arguments);
-        // print_r($statsCommand);
-        // exit(0);
-        shell_exec(sprintf('%s > /dev/null 2>&1 &', $statsCommand));
-        // shell_exec(sprintf('%s > /data/zagganas/testlogs.txt 2>&1 &', $statsCommand));
+        $monitorLog=$folder . 'monitorLog.txt';
+        /*
+         * Uncomment the following line and comment the other one to debug the monitor
+         */
+        // shell_exec(sprintf("%s > $monitorLog 2>&1 &", $statsCommand));
+        shell_exec(sprintf("%s > /dev/null 2>&1 &", $statsCommand));
 
         
         /*
@@ -1138,7 +1140,16 @@ class Software extends \yii\db\ActiveRecord
     public static function runningPodIdByJob($name,$jobid)
     {
         $podid='';
-        $command=self::sudoWrap("kubectl get pods --no-headers 2>&1");
+        if (isset(Yii::$app->params['namespaces']['jobs']))
+        {
+            $namespace=Yii::$app->params['namespaces']['jobs'];
+            $command=self::sudoWrap("kubectl get pods -n $namespace --no-headers 2>&1");
+        }
+        else
+        {
+            $command=self::sudoWrap("kubectl get pods --no-headers 2>&1");
+        }
+       
 
         exec($command,$out,$ret);
 
