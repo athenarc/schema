@@ -31,8 +31,8 @@ from pathlib import Path
 
 
 from rocrate import rocrate_api
-from rocrate.model.workflow import Workflow
-from rocrate.model.file import File
+# from rocrate.model.workflow import Workflow
+# from rocrate.model.file import File
 from rocrate.model import entity
 from rocrate.model import contextentity
 import rocrate.rocrate as roc
@@ -50,7 +50,7 @@ with open(argsFile) as f:
 wf_path = data['location']
 files_list = []
 
-Workflow.TYPES=["File", "SoftwareSourceCode"]
+# Workflow.TYPES=["File", "SoftwareSourceCode"]
 
 wf_crate = rocrate_api.make_workflow_rocrate(workflow_path=wf_path,wf_type="CWL",include_files=files_list)
 
@@ -77,7 +77,7 @@ main_entity = entity.Entity(wf_crate, data['software_url'],
                  )
 
  
-wf_crate._add_context_entity(main_entity)
+wf_crate.add(main_entity)
 
 
 for x in data['field_names']:
@@ -94,14 +94,14 @@ for x in data['field_names']:
                     "@type": 'FormalParameter',
                     'name': data['input_data']["%s"%x]['name'],
      })
-    wf_crate._add_context_entity(input_entity)
+    wf_crate.add(input_entity)
 
 output_entity = entity.Entity(wf_crate, '', 
         properties={"@id": "#" + data['output_data']['id'],
                     "@type": 'FormalParameter',
                     'url': data['output_data']['data'],
      })
-wf_crate._add_context_entity(output_entity)
+wf_crate.add(output_entity)
 
 outFile=data['ROCratesFolder']+'/'+ data['jobid']
 wf_crate.write_zip(outFile)
