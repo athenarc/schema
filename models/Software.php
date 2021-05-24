@@ -903,8 +903,6 @@ class Software extends \yii\db\ActiveRecord
         /*
          * Get the pod ID by using the job name.
          */
-        // $podString=$output[0];
-        // $machineType=$output[1];
         
 
         $query=Yii::$app->db->createCommand()->insert('run_history',
@@ -949,7 +947,7 @@ class Software extends \yii\db\ActiveRecord
         }
         
 
-
+        $podString='';
         foreach ($output as $out)
         {   
             // print_r($out);
@@ -962,13 +960,11 @@ class Software extends \yii\db\ActiveRecord
 
         }
 
-        // print_r($podString);
-        // exit(0);
-        // exec('sudo -u ' . Yii::$app->params['systemUser'] . " kubectl get pods --no-headers -l job-name=$jobName 2>&1 | tr -s ' ' ",$output,$ret);
-        // print_r($output);
-        // exit(0);
-        // $podString=explode(' ',$output)[0];
-
+        if (empty($podString))
+        {
+            $error="There was an error submitting the job to Kubernetes.<br />Please reload the page and try again or contact an administrator.";
+            return [$podid, $error, $machineType];
+        }
         return [$podString,'', $machineType];
 
     }
