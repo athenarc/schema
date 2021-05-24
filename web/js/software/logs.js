@@ -118,15 +118,16 @@ $(document).ready(function()
                         clearInterval(refId);
                         setTimeout(cleanUp(),2000);
                         totalFields=Number($("#hidden_fieldsNum").val());
-      
-                        for (i=0; i<=totalFields; i++)
+                        var i=0;
+                        for (i=0; i<totalFields; i++)
                         {
                             var fieldID="#field-" + i;
                             var field=$(fieldID);
                             field.removeClass('disabled-box');
-                            if ( (!field.hasClass('file_field')) && (field.hasClass('folder_field')) && (!field.hasClass('array_field')) )
+                            if ( (!field.hasClass('file_field')) && (!field.hasClass('folder_field')) && (!field.hasClass('array_field')) )
                             {
                                 field.prop('readonly',false);
+                                // window.alert(field.prop('readonly'));
                             } 
                             
                         }
@@ -203,7 +204,7 @@ $(document).ready(function()
             var fieldID="#field-" + i;
             var field=$(fieldID);
             field.removeClass('disabled-box');
-            if ( (!field.hasClass('file_field')) && (!field.hasClass('folder_field')) && (!field.hasClass('array_field')))
+            if ( (!field.hasClass('file_field')) && (!field.hasClass('folder_field')) && (!field.hasClass('array_field')) )
             {
                 field.prop('readonly',false);
             } 
