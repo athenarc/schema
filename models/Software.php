@@ -978,26 +978,24 @@ class Software extends \yii\db\ActiveRecord
         {
             $namespace=Yii::$app->params['namespaces']['jobs'];
             $logsCommand=self::sudoWrap("kubectl logs $podid -n $namespace 2>&1");
-            $command=self::sudoWrap("kubectl get pods --no-headers $podid -n $namespace 2>&1");
-
-            exec($logsCommand,$logs,$ret);
-
-            exec($command,$output,$ret);
+            $command=self::sudoWrap("kubectl get pods --no-headers $podid -n $namespace 2>&1");   
         }
         else
         {
             $logsCommand=self::sudoWrap("kubectl logs $podid 2>&1");
             $command=self::sudoWrap("kubectl get pods --no-headers $podid 2>&1");
-            
-            exec($logsCommand,$logs,$ret);
-
-            exec($command,$output,$ret);
         }
-        
+        exec($logsCommand,$logs,$ret);
 
+        exec($command,$output,$ret);
         $splt=preg_split('/[\s]+/', $output[0]);
         $status=$splt[2];
         $time=$splt[4];
+        if ($status=='server')
+        {
+            $status='Completed';
+            $time='N/A';
+        }
         
 
         return [$status,$logs,$time];

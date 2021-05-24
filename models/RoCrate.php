@@ -161,6 +161,8 @@ class RoCrate extends \yii\db\ActiveRecord
         exec($command,$out,$ret);    
 
         // print_r($out);
+        print_r("<br />");
+        // print_r($command);
         // exit(0);
 
         $success="ROCrate object has been created. You can download the ROCrate object by clicking " . 
