@@ -620,13 +620,7 @@ class SoftwareController extends Controller
             $podid=$runPodId;
         }
 
-        // print_r($iocontMount);
-        // print_r("<br />");
-        // print_r($icontMount);
-        // print_r("<br />");
-        // print_r($ocontMount);
-        // print_r("<br />");
-        // exit(0);
+        
         $type=1;
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
