@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=postgres.schema.svc.cluster.local;dbname={{ .Values.postgres.deployment.dbName }}',
+    'dsn' => 'pgsql:host=postgres;dbname={{ .Values.postgres.deployment.dbName }}',
     'username' => '{{ .Values.postgres.deployment.dbUsername }}',
     'password' => '{{ .Values.postgres.deployment.dbPassword }}',
     'charset' => 'utf8',

@@ -21,7 +21,7 @@ return [
     /*
      * Change the following parameters according to your installation
      */
-    'ftpIp' => 'ftp.schema.svc.cluster.local',
+    'ftpIp' => 'ftp',
     'teskEndpoint' => '{{ .Values.tesk.url }}',
     'wesEndpoint' => '{{ .Values.wes.url }}',
     'standalone' => {{ .Values.standalone.isStandalone }},
