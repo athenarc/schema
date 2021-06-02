@@ -13,6 +13,7 @@ spec:
       labels:
         app: {{ .Values.postgres.app_name }}
     spec:
+      {{- if not (hasPrefix "centos" .Values.postgres.deployment.image) }}
       initContainers:
       - name: volume-permissions
         image: busybox
@@ -22,20 +23,20 @@ spec:
         volumeMounts:
           - name: postgres-volume
             mountPath: /var/lib/postgresql/data
+      {{- end }}
       containers:
       - image: {{ .Values.postgres.deployment.image }}
         name: postgres
         env:
-          - name: POSTGRES_USER
+          - name: {{ include "deployment.postgresql_user" . }}
             value: {{ .Values.postgres.deployment.dbUsername }}
-          - name: POSTGRES_PASSWORD
+          - name: {{ include "deployment.postgresql_password" . }}
             value: {{ .Values.postgres.deployment.dbPassword }}
-          - name: POSTGRES_DB
+          - name: {{ include "deployment.postgresql_database" . }}
             value: {{ .Values.postgres.deployment.dbName }}
         volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: postgres-volume
-        
       volumes:
         - name: postgres-volume
           persistentVolumeClaim:
