@@ -17,6 +17,7 @@ schema:
     replicaCount: 1
     image: diwis/schema:20210409.1
     cluster_endpoint: https://your_k8s_api_endpoint:443
+    cluster: true
 
   service:
     type: ClusterIP # Choose between ClusterIP or Nodeport
