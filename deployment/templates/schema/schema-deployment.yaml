@@ -22,7 +22,7 @@ spec:
             value: {{ .Values.schema.deployment.cluster_endpoint }}
         volumeMounts:
           - mountPath: /data
-            name: schema-volume
+            name: {{ .Values.schema.volume.name }}
           - name: schema-config
             mountPath: /app/web/schema/config/db.php
             subPath: db.php
@@ -33,7 +33,7 @@ spec:
             mountPath: /app/web/schema/scheduler_files/configuration.json
             subPath: configuration.json
       volumes:
-        - name: schema-volume
+        - name: {{ .Values.schema.volume.name }}
           persistentVolumeClaim:
             claimName: {{ .Values.schema.volume.name }}
         - name: schema-config
