@@ -6,16 +6,16 @@
 		"username": "{{ .Values.registry.deployment.username }}",
 		"password": "{{ .Values.registry.deployment.password }}"
 	},
-	"database": 
+	"database":
 	{
-		"host":"postgres.schema.svc.cluster.local",
+		"host":"postgres",
 		"username": "{{ .Values.postgres.deployment.dbUsername }}",
 		"password": "{{ .Values.postgres.deployment.dbPassword }}",
 		"database": "{{ .Values.postgres.deployment.dbName }}"
 	},
 	"localftp":
 	{
-		"domain": "ftp.schema.svc.cluster.local",
+		"domain": "ftp",
 		"username": "{{ .Values.ftp.deployment.username }}",
 		"password": "{{ .Values.ftp.deployment.password }}"
 	},
@@ -25,7 +25,7 @@
 	],
 	"ftp-creds":
 	{
-		"ftp.schema.svc.cluster.local":
+		"ftp":
 		{
 			"username": "{{ .Values.ftp.deployment.username }}",
 			"password": "{{ .Values.ftp.deployment.password }}"
