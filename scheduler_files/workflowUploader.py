@@ -63,7 +63,7 @@ folder='/'.join(folderTokens)
 if workflowExtension not in workAllowedExt:
     if workflowExtension=='zip':
         subprocess.call(['unzip','-o',workflowPath, '-d', folder])
-    elif workflowExtension=='gz':    
+    elif workflowExtension=='gz':
         filenameTokens=filename.split('.')
 
         #Check if the file is .tar.gz or simple .gz and uncompress
@@ -75,7 +75,8 @@ if workflowExtension not in workAllowedExt:
                 subprocess.call(['gzip','-d','-k','-f', workflowPath])
         else:
             subprocess.call(['gzip','-d','-k','-f', workflowPath])
-        
+    elif workflowExtension=='tar':
+        subprocess.call(['tar','xvf',workflowPath, '-C', folder])
 
     # print(folder)
     workFile,retCode,content=wuf.getMainWorkflowFile(folder,workAllowedExt)
