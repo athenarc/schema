@@ -53,6 +53,7 @@ use app\models\WorkflowInput;
 use app\models\Workflow;
 use yii\data\Pagination;
 use app\models\SoftwareProfiler;
+use app\models\SystemConfiguration;
 
 class SoftwareController extends Controller
 {
@@ -155,14 +156,14 @@ class SoftwareController extends Controller
         
         $indicators=Software::getIndicators($softUser);
 
-    
+        
         
                 
 
         return $this->render('index',['software' => $software, 'user'=> $user,
                                       'superadmin' => $superadmin,'descriptions'=>$descriptions,
                                       'success'=>'','warning'=>'','error' =>'','indicators'=>$indicators,
-                                      'images'=>$images]);
+                                      'images'=>$images,]);
     }
 
     /**
