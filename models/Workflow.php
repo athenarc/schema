@@ -521,6 +521,11 @@ class Workflow extends \yii\db\ActiveRecord
             $error='Requester not authorized to perform this action. Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
+        else if ($statusCode==404)
+        {
+            $error="Error 404. URL: $url, not found";
+            return ['jobid'=>'','error'=>$error];
+        }
         else if ($statusCode==500)
         {
             $error='An unexpected error occurred. Please contact an administrator';
@@ -567,10 +572,18 @@ class Workflow extends \yii\db\ActiveRecord
         
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid;
         $command="mkdir -p $tmpFolder";
-        exec($command,$ret,$out);
-        $command="chmod 777 $tmpFolder";
-        exec($command,$ret,$out);
+        exec($command,$out,$ret);
+        if ( $ret != 0) {
+            error_log("ERROR while running: '$command'");
+            error_log($ret." ".implode($out));
+        }
 
+        $command="chmod 777 $tmpFolder";
+        exec($command,$out,$ret);
+        if ( $ret != 0) {
+            error_log("ERROR while running: ".$command);
+            error_log($ret." ".implode($out));
+        }
 
         /*
          * Save field values in a file
