@@ -14,6 +14,7 @@ RUN apt update && apt install -y libyaml-dev \
     apache2 \
     cwltool \
     git \
+    graphviz \
     zip \
     unzip \
     libxml2-dev \
