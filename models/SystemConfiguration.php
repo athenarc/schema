@@ -49,6 +49,7 @@ class SystemConfiguration extends \yii\db\ActiveRecord
         return [
             [['admin_email'], 'string'],
             [['admin_email'], 'email'],
+            [['profiler'], 'boolean'],
             [['home_page', 'privacy_page','help_page'], 'integer'],
         ];
     }
@@ -63,6 +64,7 @@ class SystemConfiguration extends \yii\db\ActiveRecord
             'admin_email' => 'Admin Email',
             'home_page' => 'Home page',
             'help_page' => 'Help page',
+            'profiler'=>'',
         ];
     }
 
@@ -78,6 +80,7 @@ class SystemConfiguration extends \yii\db\ActiveRecord
             'admin_email'=>$this->admin_email, 
             'help_page'=>$this->help_page, 
             'home_page'=>$this->home_page, 
+            'profiler'=>$this->profiler, 
         ], "TRUE")->execute();
     }
 
