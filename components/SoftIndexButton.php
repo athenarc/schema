@@ -34,6 +34,7 @@ namespace app\components;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use Yii;
+use app\models\SystemConfiguration;
 
 class SoftIndexButton
 {
@@ -68,8 +69,19 @@ class SoftIndexButton
 		{
 			$icon='<i class="fas fa-chart-line"></i>';
 			$text="$icon";
-			$class='btn analyze-button';
-			$title="Analyze";
+			$config=SystemConfiguration::find()->one();
+        	$profiled=$config->profiler;
+        	if($profiled)
+			{
+				$class='btn analyze-button';
+				$title="Analyze";
+			}
+			else
+			{
+				$class='btn analyze-button disabled';
+				$title="Software profiler is disabled";
+			}
+			
 		}
 		elseif ($type=='visualize')
 		{
