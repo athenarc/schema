@@ -95,6 +95,7 @@ ftp:
   active: true
   deployment:
       image: diwis/schema-ftp:1
+      domain: ftp
       username: tesk-1
       password: Z6fsH6MG
 
