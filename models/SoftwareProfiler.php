@@ -26,6 +26,7 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use app\models\Software;
+use app\models\SystemConfiguration;
 
 /**
  * This is the model class for table "upload_dataset".
@@ -444,11 +445,16 @@ class SoftwareProfiler extends Model
     {
         // $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
 
+        
         if ($maxMem>=512)
         {
             return 'fat-node';
         }
-        if (!$software->profiled)
+
+        $config=SystemConfiguration::find()->one();
+        $profiled=$config->profiler;
+        
+        if ($profiled==false)
         {
             return 'converged-node';
         }

@@ -60,6 +60,10 @@ Headers::begin() ?>
 <?php $form=ActiveForm::begin()?>
 
 <div class="row">
+	<div class="col-md-12 text-center"><h3>Software profiling</h3></div>
+	<div class="col-md-offset-3 col-md-6 text-center">
+			<?=$form->field($configuration, 'profiler')->checkBox()->label('Enable')?>
+	</div>
 	<div class="col-md-12 text-center"><h3>Administration Email</h3></div>
 	<div class="col-md-offset-3 col-md-6 text-center">
 			<?=$form->field($configuration, 'admin_email')->textInput()->label('')?>

@@ -199,6 +199,8 @@ foreach ($software as $name=>$uploader)
 		{
 			$disabledClass='';
 		}
+
+		
 		/*
 		 * Kostis fixed the following:
 		 * if the user has no active projects,
