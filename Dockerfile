@@ -74,6 +74,8 @@ RUN sed -i "s|post_max_size = 8M|post_max_size = 50G |g" /usr/local/etc/php/php.
 
 RUN sed -i "s|display_errors = Off|display_errors = On |g" /usr/local/etc/php/php.ini-production
 
+RUN echo "error_log = /dev/stderr" >> /usr/local/etc/php/php.ini-production
+
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 # Since OpenShift annot listen to <1024, we'll use port 8080 (thanks Alvaro Gonzales!)
