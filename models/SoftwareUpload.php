@@ -171,14 +171,6 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         {
             $cwlFileName=$dataFolder . $this->cwlFile->baseName . '.' . $this->cwlFile->extension;
             $this->cwlFile->saveAs($cwlFileName);
-            // print_r($this->cwlFile);
-            // print_r("<br />");
-
-            // $command="sudo -u user /data/www/schema_test/scheduler_files/cwlReadInputs.py $this->name $this->version $fileName 2>&1";
-
-            // exec($command,$outcwl,$ret);
-            // print_r($command);
-            // exit(0);
 
         }
         $cwlFileName=$this->quotes($cwlFileName);
@@ -192,7 +184,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
                     $username, $this->visibility, $this->imountpoint, $this->omountpoint,
                     $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions];
 
-        // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
+
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
