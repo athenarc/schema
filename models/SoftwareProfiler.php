@@ -443,17 +443,20 @@ class SoftwareProfiler extends Model
 
     public static function getMachineType($fields,$software,$jobFolder,$isystemMount,$iosystemMount,$maxMem)
     {
-        // $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
 
-        
+
         if ($maxMem>=512)
         {
             return 'fat-node';
         }
-
         $config=SystemConfiguration::find()->one();
-        $profiled=$config->profiler;
-        
+
+        if (!$config->profiler)
+        {
+            return 'converged-node';
+        }
+
+        $profiled=$software->profiled;
         if ($profiled==false)
         {
             return 'converged-node';
