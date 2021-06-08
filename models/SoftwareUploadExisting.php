@@ -169,19 +169,10 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         {
             $cwlFileName=$dataFolder . $this->cwlFile->baseName . '.' . $this->cwlFile->extension;
             $this->cwlFile->saveAs($cwlFileName);
-            // print_r($this->cwlFile);
-            // print_r("<br />");
-
-            // $command="sudo -u user /data/www/schema_test/scheduler_files/cwlReadInputs.py $this->name $this->version $fileName 2>&1";
-
-            // exec($command,$outcwl,$ret);
-            // print_r($command);
-            // exit(0);
 
         }
         $cwlFileName=$this->quotes($cwlFileName);
-        // print_r($cwlFileName);
-        // exit(0);
+
         $this->name=$this->quotes($this->name);
         $this->version=$this->quotes($this->version);
         $mpi=($this->mpi=='1') ? $this->quotes('t') : $this->quotes('f');
