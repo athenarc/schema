@@ -189,13 +189,6 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $workflow->visualize="$name.svg";
         $workflow->update();
 
-        print_r($command2);
-        exit(0);
-        // print_r($out);
-        // print_r("<br /><br />");
-        // print_r($ret);
-        // exit(0);
-
 
         $errors='';
         $warning='';
