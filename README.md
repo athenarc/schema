@@ -105,6 +105,7 @@ The node running the installation of SCHeMa should have the following Python pac
 
 ### Other packages required:
 * cwltool
+* graphviz
 
 
 ## Installing a local docker registry with self-signed certificates and basic authentication
