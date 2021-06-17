@@ -528,12 +528,7 @@ class Workflow extends \yii\db\ActiveRecord
         }
         else if ($statusCode==500)
         {
-            $error='An unexpected error occurred. Please contact an administrator';
-            return ['jobid'=>'','error'=>$error];
-        }
-        else if ($statusCode==500)
-        {
-            $error='Error 500. Please contact an administrator';
+            $error='An unexpected error occurred (500). Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==502)
