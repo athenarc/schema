@@ -62,6 +62,8 @@ RUN rm -rf schema_repo
 
 WORKDIR /app/web/schema
 
+RUN ln -s /data/docker/workflows-svg /app/web/schema/web/img/workflows
+
 # Change the composer minimum stability setting
 RUN sed -i "s|\"minimum-stability\": \"stable\"|\"minimum-stability\": \"dev\" |g" composer.json
 
