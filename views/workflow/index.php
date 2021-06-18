@@ -168,7 +168,14 @@ foreach ($workflows as $name=>$uploader)
 		// print_r($upl);
 		// exit(0);
 		$indicatorList=$indicators[$name][$versions[$first_key]];
-		$runLink=Url::to(['workflow/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]);
+
+		if (!isset($_SESSION['selected_project'])) {
+			$selected_project='';
+		} else {
+			$selected_project=$_SESSION['selected_project'];
+		}
+
+		$runLink=Url::to(['workflow/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$selected_project]);
 
 		$visualizeLink=Url::to(['workflow/visualize','name'=>$name, 'version'=>$versions[$first_key]]);
 		
