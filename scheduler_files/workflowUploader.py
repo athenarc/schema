@@ -81,6 +81,7 @@ if workflowExtension not in workAllowedExt:
     # print(folder)
     workFile,retCode,content=wuf.getMainWorkflowFile(folder,workAllowedExt)
     if retCode!=0:
+        print("getMainWorkflowFile method failed with code %d" % retCode)
         exit(retCode)
 
 
@@ -94,6 +95,7 @@ wuf.workflowStore(workName,workVersion,workFile,user,visibility,
                 description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 if 'inputs' not in content:
+    print("Inputs key not in content dictionary")
     exit(2)
 
 inputs=content['inputs']

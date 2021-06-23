@@ -152,8 +152,12 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         }
 
         $command="chmod 777 $dataFolder -R";
-        exec($command,$ret,$outdir); 
-        
+        exec($command,$out,$ret);
+        if ($ret != 0) {
+            error_log("ERROR while running: ".$command);
+            error_log($ret." ".implode($out));
+        }
+
         $workflowFilePath=$this->quotes($workflowFilePath);
         $this->name=$this->quotes($this->name);
         $this->version=$this->quotes($this->version);
@@ -167,16 +171,10 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
-        // print_r($command);
-        // print_r("<br />");
-        // exit(0);
-
-
-
         exec($command,$out,$ret);
         if ($ret != 0) {
           error_log("ERROR while running: ".$command);
-          error_log($ret." ".implode($out));
+          error_log("ERROR (".$ret."): ".implode($out));
         }
 
         $workflow=Workflow::find()->orderBy(['id' => SORT_DESC])->one();;
@@ -186,6 +184,11 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $working_dir=getcwd();
         $command2="cwltool --print-dot ". $dir. " | dot -Tsvg > ". $working_dir . "/img/workflows/$name.svg";
         exec($command2, $out2, $ret2);
+        if ($ret2 != 0) {
+          error_log("ERROR while running: ".$command2);
+          error_log($ret." ".implode($out2));
+        }
+
         $workflow->visualize="$name.svg";
         $workflow->update();
 
