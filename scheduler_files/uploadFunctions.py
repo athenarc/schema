@@ -241,7 +241,7 @@ def inputStore(softName,softVersion, inputs):
         if fieldType not in types:
             #stop execution and return because this is serious
             deleteSavedSoftware(softName,softVersion)
-            print(fieldType)
+            print("Field type: %s not in Types %s" % (fieldType,types))
             return 35
             
             
