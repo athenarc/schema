@@ -196,7 +196,10 @@ class SoftwareUpload extends \yii\db\ActiveRecord
 
 
         exec($command,$out,$ret);
-
+        if ($ret != 0) {
+            error_log("ERROR (".$ret."): While running '".$command."'");
+            error_log(implode(" ", $out));
+        }
 
         // print_r($out);
         // print_r("<br /><br />");
