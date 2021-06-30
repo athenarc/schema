@@ -493,17 +493,25 @@ class Workflow extends \yii\db\ActiveRecord
 
         $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs';
         $client = new Client();
-        $response = $client->createRequest()
-                ->addHeaders(['Content-Type'=>'multipart/form-data','Accept'=>'application/json'])
-                ->addContent('workflow_url',$newLocationFile)
-                ->addFile('workflow_attachment',$newLocation)
-                ->addContent('workflow_params',$workflowParams)
-                ->addContent('workflow_type','CWL')
-                ->addContent('workflow_type_version','v1.0')
-                ->setMethod('POST')
-                ->setUrl($url)
-                ->send();
+        try
+        {
+            $response = $client->createRequest()
+                    ->addHeaders(['Content-Type'=>'multipart/form-data','Accept'=>'application/json'])
+                    ->addContent('workflow_url',$newLocationFile)
+                    ->addFile('workflow_attachment',$newLocation)
+                    ->addContent('workflow_params',$workflowParams)
+                    ->addContent('workflow_type','CWL')
+                    ->addContent('workflow_type_version','v1.0')
+                    ->setMethod('POST')
+                    ->setUrl($url)
+                    ->send();
                 // ->toString();
+        }
+        catch (Exception $e)
+        {
+            $error='Error contacting the WES API. Please try again or contact an administrator';
+            return ['jobid'=>'','error'=>$error];
+        }
 
         $statusCode=$response->getStatusCode();
         if ($statusCode==400)
