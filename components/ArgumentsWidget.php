@@ -400,15 +400,16 @@ class ArgumentsWidget
 				    		{
 				    			$optional_fields='hid';
 				    			$field_name=$field->name;
-
-				    		}
+								$required_class="non-required hidden";
+							}
 				    		else
 				    		{
 				    			$optional_fields='show';
 				    			$field_name="$required_icon $field->name";
+								$required_class="required";
 				    		}?>
-				    		<div class="col-md-6 optional <?=$optional_fields?> text-right"  id='field-names'><span class="required hidden"><?=Html::label($field_name,null,[])?></span>
-				    			<span class="non-required"><?=Html::label($field->name,null,[])?></span>
+							<div class="col-md-6 optional <?=$optional_fields?> text-right"  id='field-names'>
+								<span class="<?=$required_class?>"><?=Html::label($field_name,null,[])?></span>
 				            </div>
 							<?php
 							if ($field->field_type=='boolean')
@@ -507,8 +508,9 @@ class ArgumentsWidget
 				                <?php
 				                }
 							}	
-				            ?>   
+				            ?>
 						</div>
+						<span style='color:red;' class="<?=$required_class?>" id='msg-field-<?=$index?>'></span>
 					<?php
 					$index++;
 					}

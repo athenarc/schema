@@ -26,11 +26,19 @@ $(document).ready(function() {
 		var disabled = $(this).attr('disabled');
 		if (!disabled)
 		{
+			var submit = true;
 			totalFields=Number($("#hidden_fieldsNum").val());
 			for (i=0; i<totalFields; i++)
 	        {
 	        	var fieldID="#field-" + i;
+				var msg_field=$("#msg-field-" + i)
 	            var field=$(fieldID);
+
+				if (msg_field.attr('class') == 'required' && field.val()=="")
+				{
+					msg_field.text("This field is required");
+					submit= false;
+				}
 	            field.addClass('disabled-box');
 	            field.prop('readonly',true);
 	        }
@@ -45,7 +53,10 @@ $(document).ready(function() {
 			$(".add-example-link").hide();
 			// $(".select-file-btn").prop('disabled',true)
 			// $(".clear-file-btn").prop('disabled',true)
-			$("#workflow_arguments_form").submit();
+			if(submit)
+			{
+				$("#workflow_arguments_form").submit();
+			}
 		}
 
 	
