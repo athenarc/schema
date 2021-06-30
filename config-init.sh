@@ -3,6 +3,7 @@ mkdir /data/docker/user-data -p
 mkdir /data/docker/tmp-images -p
 mkdir /data/docker/tmp -p
 mkdir /data/docker/workflows/tmp-workflows -p
+mkdir /data/docker/workflows-svg -p
 mkdir /data/docker/archived_workflows -p
 mkdir /data/docker/profiles -p
 touch /data/containerized
