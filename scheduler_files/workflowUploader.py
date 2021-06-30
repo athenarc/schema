@@ -100,12 +100,18 @@ else: # If 'workflowExtension' is in 'workAllowedExt', so either 'yaml' or 'cwl'
 print('Workfile: ' + workFile)
 # workFile=workFile.replace(containerMount['local'],containerMount['wesContainer'])
 
-wuf.workflowStore(workName,workVersion,workFile,user,visibility,
-                description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
+try:
+    content
+except NameError:
+    print("No content found in workflow");
+    exit(3)
 
 if 'inputs' not in content:
     print("Inputs key not in content dictionary")
     exit(2)
+
+wuf.workflowStore(workName,workVersion,workFile,user,visibility,
+                description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 inputs=content['inputs']
 # print(content)
