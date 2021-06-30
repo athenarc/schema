@@ -27,6 +27,7 @@ import re
 import os.path
 import json
 import os
+import yaml
 
 workName=sys.argv[1]
 workVersion=sys.argv[2]
@@ -84,8 +85,16 @@ if workflowExtension not in workAllowedExt:
         print("getMainWorkflowFile method failed with code %d" % retCode)
         exit(retCode)
 
-
-else:
+else: # If 'workflowExtension' is in 'workAllowedExt', so either 'yaml' or 'cwl'
+    f=open(workflowPath, encoding='utf8', mode='r')
+    try:
+        content=yaml.load(f,Loader=yaml.FullLoader)
+    except Exception as e:
+        print("File: %s " % workflowPath)
+        print("ERROR: %s" % e)
+        exit(11)
+    finally:
+        f.close()
     workFile=workflowPath
 
 print('Workfile: ' + workFile)
