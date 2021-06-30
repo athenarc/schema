@@ -23,6 +23,8 @@
 
 namespace app\models;
 
+use Exception;
+
 use Yii;
 use webvimark\modules\UserManagement\models\User;
 use yii\httpclient\Client;
@@ -536,12 +538,7 @@ class Workflow extends \yii\db\ActiveRecord
         }
         else if ($statusCode==500)
         {
-            $error='An unexpected error occurred. Please contact an administrator';
-            return ['jobid'=>'','error'=>$error];
-        }
-        else if ($statusCode==500)
-        {
-            $error='Error 500. Please contact an administrator';
+            $error='An unexpected error occurred (500). Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==502)
@@ -670,7 +667,13 @@ class Workflow extends \yii\db\ActiveRecord
         $runLog=$data['run_log'];
         $taskLogs=$data['task_logs'];
         $status=$data['state'];
-        $start=new \DateTime($runLog['task_started']);
+
+        try {
+            $start=new \DateTime($runLog['task_started']);
+        } catch (Exception $ex) {
+            $start=new \DateTime($runLog['task_received']);
+        }
+
         $now = new \DateTime();
 
         $running_time=$start->diff($now);

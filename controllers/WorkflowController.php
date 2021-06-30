@@ -32,6 +32,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\filters\AccessControl;
+use yii\httpclient\Client;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\web\UploadedFile;
@@ -533,9 +534,49 @@ class WorkflowController extends Controller
      */
     public function actionCleanUp($name,$jobid,$status)
     {
+        // Call WES to cancel
+        $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs/' . $jobid . '/cancel';
+        $client = new Client();
+        $response = $client->createRequest()
+                ->addHeaders(['Content-Type'=>'application/json','Accept'=>'application/json'])
+                ->setMethod('POST')
+                ->setUrl($url)
+                ->send();
+        $statusCode=$response->getStatusCode();
+        if ($statusCode!=200)
+        {
+            switch($statusCode) {
+                case 400:
+                    $error='Malformed request. Please contact an administrator';
+                    break;
+                case 401:
+                    $error='Request unauthorized. Please contact an administrator';
+                    break;
+                case 403:
+                    $error='Requester not authorized to perform this action. Please contact an administrator';
+                    break;
+                case 404:
+                    $error="Error 404. URL: $url, not found";
+                    break;
+                case 405:
+                    $error="The method is not allowed for the requested URL.";
+                    break;
+                case 500:
+                    $error='Error 500. Please contact an administrator';
+                    break;
+                case 502:
+                    $error='Error 502. Please contact an administrator';
+                    break;
+                default:
+                    $error='Unknown error '.$statusCode;
+            }
+            error_log("While trying: ".$url." this happened ".$error);
+            return;
+        }
+
         $model=new Software;
 
-        // $results=$model::cleanUp($name,$jobid,$status);
+        $results=$model::cleanUp($name,$jobid,$status);
 
     }
 

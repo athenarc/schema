@@ -157,7 +157,10 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             // exit(0);
 
             exec($command,$outcwl,$ret);
-
+            if ($ret != 0) {
+                error_log("ERROR (".$ret.": While running '".$command."'");
+                error_log(implode(" ", $outcwl));
+            }
 
             // Yii::$app->db->createCommand()->update('software',['has_example'=>false], "name='$this->name' AND version='$this->version'")->execute();
             $this->has_example=false;

@@ -59,8 +59,9 @@ $(document).ready(function()
     {
       var jobid=$("#hidden_jobid_input").val();
       var name=$("#hidden_name_input").val();
+      // workflow/clean-up => actionCleanUp
       $.ajax({
-            url: "index.php?r=software/clean-up",
+            url: "index.php?r=workflow/clean-up",
             type: "GET",
             data: { "jobid": jobid, "name": name, "status": "Canceled"},
             dataType: "html",
