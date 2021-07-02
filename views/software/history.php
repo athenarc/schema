@@ -216,7 +216,7 @@ $details_icon='<i class="fas fa-eye"></i>';
 						?>
 								<td class="col-md-3" style="text-align: right;">
 						<?php
-								if (empty($res->status))
+								if (empty($res->status) || $res->status=='RUNNING')
 								{
 						?>
 									<?= Html::a("$play_icon",['workflow/reattach','jobid'=>$res->jobid],['class'=>'btn btn-success btn-md', 'title'=>'Re-attach'])?>

@@ -699,31 +699,37 @@ class Workflow extends \yii\db\ActiveRecord
                             'name'=>$log['name'],
                             'status' => $log['state'],
                             'description' => $log['description']
-            
                         ];
             }
             else
             {
                 $value=[];
             }
-            
             $logs[]=$value;
             $i++;
         }
 
-        // foreach ($taskLogs[0] as $key => $value)
-        // {
-        //     print_r($key);
-        //     print_r("<br /><br />");
-        //     print_r($value);
-        //     print_r("<br /><br /><br /><br />");
-        // }
-        // print_r([$time,$status,$logs]);
-        // exit(0);
         return [$time,$status,$logs];
 
     }
 
+    public static function checkStatus($status, $job) {
+
+        if(strtoupper($job->status)!=$status) {
+
+            error_log("DB inconsistent: '".strtoupper($job->status)."'!=".$status);
+
+            $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py");
+            $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $job->jobid;
+            $outFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0] . '/' . $job->omountpoint;
+            $arguments=[
+                $monitorScript, self::enclose($job->jobid),self::enclose(Yii::$app->params['wesEndpoint']),
+                self::enclose(Yii::$app->params['teskEndpoint']), self::enclose($outFolder), self::enclose($tmpFolder)];
+            $monitorCommand=implode(' ',$arguments);
+            shell_exec(sprintf('%s >>%s 2>&1 &', $monitorCommand, $tmpFolder.'/workflowMonitorAndClean.log'));
+        }
+
+    }
     
     public static function getWorkflowDescriptions($softUser)
     {
