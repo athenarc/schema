@@ -32,11 +32,12 @@ import urllib.request
 from contextlib import closing
 
 def updateStatus(status, jobid, start=None, stop=None, ram=None, cpu=None):
-    sql="UPDATE run_history SET status=%s, start=%s, stop=%s WHERE jobid=%s"
+
+    sql="UPDATE run_history SET status=%s, start=%s, stop=%s, ram=%s, cpu=%s WHERE jobid=%s"
 
     conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
     cur=conn.cursor()
-    cur.execute(sql,(status, start, stop, jobid))
+    cur.execute(sql,(status, start, stop, ram, cpu, jobid))
     conn.commit()
     conn.close()
 
@@ -86,16 +87,17 @@ response = requests.get(workflowUrl,headers=headers)
 body=json.loads(response.content)
 status=body['state']
 
-updateStatus(status, jobid)
-
 while (status!='COMPLETE') and (status!='EXECUTOR_ERROR') and (status!='SYSTEM_ERROR') and (status!='CANCELED'):
     time.sleep(5)
     response = requests.get(workflowUrl,headers=headers)
     body=json.loads(response.content)
+    runLog=body['run_log']
+    start=runLog['task_started']
     old_status=status
     status=body['state']
+
     if(status!=old_status):
-        updateStatus(status, jobid)
+        updateStatus(status, jobid, start)
 
 runLog=body['run_log']
 taskLogs=body['task_logs']
@@ -106,7 +108,7 @@ start=runLog['task_started']
 if (status=='EXECUTOR_ERROR'):
     updateStatus('Error', jobid, start, 'NOW()')
     #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Error' WHERE jobid='" + jobid + "'"
-elif (status=='CANCELED'):
+elif (status=='CANCELED' or status=='CANCELLING'):
     updateStatus('Canceled', jobid, start, 'NOW()')
     #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Canceled' WHERE jobid='" + jobid + "'"
 elif (status=='COMPLETE'):
@@ -157,7 +159,7 @@ elif (status=='COMPLETE'):
     ram/=len(taskLogs);
     cpu/=len(taskLogs);
 
-    updateStatus('Complete', jobid, start, stop, str(ram), str(cpu))
+    updateStatus('Complete', jobid, start, stop, ram, int(cpu))
 
     # Logs
     kube_command='kubectl get pods -n ' + teskNamespace + ' --no-headers | tr -s " "'
@@ -212,11 +214,3 @@ elif (status=='COMPLETE'):
         except KeyError:
           g.write("NOLOG\n")
     g.close()
-
-    sql="UPDATE run_history SET start='" + start +  "', stop='" + stop + "', status='Complete', ram=" + str(ram) + ",cpu=" + str(cpu) +  "WHERE jobid='" + jobid + "'"
-
-conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
-cur=conn.cursor()
-cur.execute(sql)
-conn.commit()
-conn.close()
