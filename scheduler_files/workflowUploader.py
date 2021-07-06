@@ -27,6 +27,7 @@ import re
 import os.path
 import json
 import os
+import yaml
 
 workName=sys.argv[1]
 workVersion=sys.argv[2]
@@ -84,19 +85,33 @@ if workflowExtension not in workAllowedExt:
         print("getMainWorkflowFile method failed with code %d" % retCode)
         exit(retCode)
 
-
-else:
+else: # If 'workflowExtension' is in 'workAllowedExt', so either 'yaml' or 'cwl'
+    f=open(workflowPath, encoding='utf8', mode='r')
+    try:
+        content=yaml.load(f,Loader=yaml.FullLoader)
+    except Exception as e:
+        print("File: %s " % workflowPath)
+        print("ERROR: %s" % e)
+        exit(11)
+    finally:
+        f.close()
     workFile=workflowPath
 
 print('Workfile: ' + workFile)
 # workFile=workFile.replace(containerMount['local'],containerMount['wesContainer'])
 
-wuf.workflowStore(workName,workVersion,workFile,user,visibility,
-                description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
+try:
+    content
+except NameError:
+    print("No content found in workflow");
+    exit(3)
 
 if 'inputs' not in content:
     print("Inputs key not in content dictionary")
     exit(2)
+
+wuf.workflowStore(workName,workVersion,workFile,user,visibility,
+                description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 inputs=content['inputs']
 # print(content)
