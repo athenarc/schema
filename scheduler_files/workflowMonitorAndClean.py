@@ -31,8 +31,25 @@ import shutil
 import urllib.request
 from contextlib import closing
 
+def updateStatus(status, jobid, start=None, stop=None, ram=None, cpu=None):
+
+    sql="UPDATE run_history SET status=%s, start=%s, stop=%s, ram=%s, cpu=%s WHERE jobid=%s"
+
+    conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
+    cur=conn.cursor()
+    cur.execute(sql,(status, start, stop, ram, cpu, jobid))
+    conn.commit()
+    conn.close()
+
+
 configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
-configFile=open(configFileName,'r')
+
+try:
+    configFile=open(configFileName,'r')
+except FileNotFoundError as fnferr:
+    print("ERROR:",fnferr)
+    exit(5)
+
 config=json.load(configFile)
 configFile.close()
 
@@ -51,11 +68,16 @@ teskNamespace=None
 if namespaces is not None:
     teskNamespace=namespaces.get('tesk',None)
 
-jobid=sys.argv[1]
-wesEndpoint=sys.argv[2]
-teskEndpoint=sys.argv[3]
-outFolder=sys.argv[4]
-logPath=sys.argv[5]
+try:
+    jobid=sys.argv[1]
+    wesEndpoint=sys.argv[2]
+    teskEndpoint=sys.argv[3]
+    outFolder=sys.argv[4]
+    logPath=sys.argv[5]
+except IndexError as ierr:
+    print("ERROR:",ierr)
+    print("Use: %s <JOBID> <WES_ENDPOINT> <TES_ENDPOINT> <OUT_FOLDER> <TMP_FOLDER>" % sys.argv[0])
+    exit(1)
 
 workflowUrl=wesEndpoint + '/ga4gh/wes/v1/runs/' + jobid
 
@@ -69,7 +91,13 @@ while (status!='COMPLETE') and (status!='EXECUTOR_ERROR') and (status!='SYSTEM_E
     time.sleep(5)
     response = requests.get(workflowUrl,headers=headers)
     body=json.loads(response.content)
+    runLog=body['run_log']
+    start=runLog['task_started']
+    old_status=status
     status=body['state']
+
+    if(status!=old_status):
+        updateStatus(status, jobid, start)
 
 runLog=body['run_log']
 taskLogs=body['task_logs']
@@ -78,25 +106,18 @@ outputs=body['outputs']
 start=runLog['task_started']
 
 if (status=='EXECUTOR_ERROR'):
-    sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Error' WHERE jobid='" + jobid + "'"
-if (status=='CANCELED'):
-    sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Canceled' WHERE jobid='" + jobid + "'"
-
-
-if (status=='COMPLETE'):
+    updateStatus('Error', jobid, start, 'NOW()')
+    #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Error' WHERE jobid='" + jobid + "'"
+elif (status=='CANCELED' or status=='CANCELLING'):
+    updateStatus('Canceled', jobid, start, 'NOW()')
+    #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Canceled' WHERE jobid='" + jobid + "'"
+elif (status=='COMPLETE'):
     stop=runLog['task_finished']
-    ram=0.0;
+    ram=0.0
     cpu=0.0
     taskIds={}
     i=1
     taskSteps={}
-    
-    # for key in body:
-    #   print(key)
-    #   print(body[key])
-    #   print('\n\n')
-    
-    
 
     #retrieve workflow outputs
     for output in outputs:
@@ -137,6 +158,10 @@ if (status=='COMPLETE'):
     
     ram/=len(taskLogs);
     cpu/=len(taskLogs);
+
+    updateStatus('Complete', jobid, start, stop, ram, int(cpu))
+
+    # Logs
     kube_command='kubectl get pods -n ' + teskNamespace + ' --no-headers | tr -s " "'
     try:
         out=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
@@ -189,11 +214,3 @@ if (status=='COMPLETE'):
         except KeyError:
           g.write("NOLOG\n")
     g.close()
-
-    sql="UPDATE run_history SET start='" + start +  "', stop='" + stop + "', status='Complete', ram=" + str(ram) + ",cpu=" + str(cpu) +  "WHERE jobid='" + jobid + "'"
-
-conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
-cur=conn.cursor()
-cur.execute(sql)
-conn.commit()
-conn.close()
