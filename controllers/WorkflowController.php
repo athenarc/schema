@@ -523,7 +523,8 @@ class WorkflowController extends Controller
         $project=$history->project;
         // print_r($history->project);
         // exit(0);
-        
+
+        //Workflow::checkStatus($status, $history);
 
         return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time, 'project'=>$project]);
         // return $this->render('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time]);
@@ -1080,6 +1081,9 @@ class WorkflowController extends Controller
          * or assign default values
          */
 
+        $results=Workflow::getLogs($jobid);
+        Workflow::checkStatus($results[1], $history);
+
         $name=$history->softname;
         $version=$history->softversion;
         $project=$history->project;
@@ -1096,7 +1100,6 @@ class WorkflowController extends Controller
          * fill the values for the fields and get back that object
          */
         $fields=Workflow::getRerunFieldValues($jobid,$fields);            
-
 
 
         // $mountExistError=false;
