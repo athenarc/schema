@@ -1245,7 +1245,14 @@ class Software extends \yii\db\ActiveRecord
 
         $file=$folder . 'fields.txt';
 
-        $content=file_get_contents($file);
+        if (file_exists($file))
+        {  
+            $content=file_get_contents($file);
+        }
+        else
+        {
+            return $fields;
+        }
         // print_r($file);
         $json=json_decode($content,true);
 

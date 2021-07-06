@@ -36,7 +36,7 @@ configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json
 configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
-
+print('ok')
 db=config['database']
 host=db['host']
 dbuser=db['username']
@@ -154,25 +154,33 @@ if status!='Canceled':
 
 conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
 cur=conn.cursor()
+sql="SELECT status FROM run_history WHERE jobid='" + jobid + "'"
+cur.execute(sql)
+result=cur.fetchone()
+if result[0]=='Canceled':
+    status='Canceled'
+print(result)
 
 if status=='Canceled':
     #everything is done with PHP on the interface
     pass
-#     query="UPDATE run_history SET stop='NOW()', remote_status_code=-10, status='" + status +"' WHERE jobid='" + jobid + "'"
-#     status_code=-1
-if status=='Complete':
+elif status=='Complete':
     query="UPDATE run_history SET ram=" + str(memory) + ", cpu=" + str(cpu) + ", start='" + start +"', stop='" + str(end) + "', status='" + status +"' WHERE jobid='" + jobid + "'"
     status_code=0
+    cur.execute(query)
+    conn.commit()
 
 elif status=='OOMKilled':
     query="UPDATE run_history SET stop='NOW()', status='Out_of_RAM', remote_status_code=-10 WHERE jobid='" + jobid + "'"
     status_code=-10
+    cur.execute(query)
+    conn.commit()
 else:
     query="UPDATE run_history SET stop='NOW()', status='Error', remote_status_code=-9 WHERE jobid='" + jobid + "'"
     status_code=-2
-# print(query)
-cur.execute(query)
-conn.commit()
+    cur.execute(query)
+    conn.commit()
+
 
 conn.close()
 
