@@ -524,8 +524,6 @@ class WorkflowController extends Controller
         // print_r($history->project);
         // exit(0);
 
-        //Workflow::checkStatus($status, $history);
-
         return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time, 'project'=>$project]);
         // return $this->render('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time]);
     }
@@ -1082,7 +1080,6 @@ class WorkflowController extends Controller
          */
 
         $results=Workflow::getLogs($jobid);
-        Workflow::checkStatus($results[1], $history);
 
         $name=$history->softname;
         $version=$history->softversion;
