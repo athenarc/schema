@@ -295,7 +295,6 @@ class Workflow extends \yii\db\ActiveRecord
          */
         $splitMainName=explode('/',$workflow->location);
         $mainName=end($splitMainName);
-        
         /*
          * Copy files to the new location
          */
@@ -304,7 +303,7 @@ class Workflow extends \yii\db\ActiveRecord
         $tmpFolder=Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/' . $nid ;
         $command="cp -r $dataFolder $tmpFolder";
         exec($command, $out, $ret);
-
+        
         /*
          * Return all files in a list
          */
@@ -925,18 +924,18 @@ class Workflow extends \yii\db\ActiveRecord
         }
         else
         {
-            return false;
+            return $fields;
         }
 
         
         // print_r($file);
-        $json=json_decode($content,true);
+        $json=json_decode($content,false);
 
         foreach ($fields as $field)
         {
             if (!array_key_exists($field->name,$json))
             {
-                return false;
+                return $fields;
             }
 
             if ($field->field_type=='enum')

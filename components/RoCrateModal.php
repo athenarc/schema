@@ -80,6 +80,10 @@ class ROCrateModal
 			if (!empty($fields))
 			{
 				$fields=Workflow::getRerunFieldValues($jobid,$fields);
+				if ($fields==false)
+				{
+					$fields=[];
+				}
 			}
 			
 		}
@@ -184,7 +188,8 @@ class ROCrateModal
 		echo	'</div>';
 		echo "<div class='input-file-fields'>";
 		$i=0;
-		
+		// print_r($history->jobid);
+		// exit(0);
 		foreach ($fields as $field) 
 		{
 			
