@@ -34,11 +34,12 @@ namespace app\components;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use Yii;
+use app\models\Software;
 use app\models\SystemConfiguration;
 
 class SoftIndexButton
 {
-	public static function button($type,$link='',$image_name='')
+	public static function button($type,$link='', $image_name='', $profiled='', $version='' )
 	{
 		if ($type=='run')
 		{
@@ -70,17 +71,27 @@ class SoftIndexButton
 			$icon='<i class="fas fa-chart-line"></i>';
 			$text="$icon";
 			$config=SystemConfiguration::find()->one();
-        	$profiled=$config->profiler;
-        	if($profiled)
+
+        	$profiler=$config->profiler;
+        	if($profiler)
 			{
+				
 				$class='btn analyze-button';
 				$title="Analyze";
+				if($profiled==1)
+				{
+					$text='<i class="fas fa-chart-line" style="color:green"></i>';
+					$title="Profile exists for this software";
+				}
+	
 			}
 			else
 			{
-				$class='btn analyze-button disabled';
-				$title="Software profiler is disabled";
+				$class='btn analyze-button hidden';
+				$title="";
 			}
+
+
 			
 		}
 		elseif ($type=='visualize')
@@ -91,7 +102,8 @@ class SoftIndexButton
 			$title="Visualize";
 			$link='javascript:void(0);';
 		}
-		echo Html::a($text,$link,['class'=>$class,'title'=>$title]);
+		echo Html::a($text,$link,['class'=>$class,'title'=>$title, 'image_name'=>$image_name, 'profiled'=>$profiled, 'version'=>$version]);
+
 		// if ($type=='edit')
 		// {
 		// 	echo $hidden_input;

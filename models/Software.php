@@ -105,7 +105,7 @@ class Software extends \yii\db\ActiveRecord
     {
         $query=new Query;
 
-        $query->select('name,version,description,image,uploaded_by,visibility')
+        $query->select('name,version,description,image,uploaded_by,visibility,profiled')
               ->from('software')
               ->where(['mpi'=>false])
               ->orderBY(['name'=>SORT_ASC, 'uploaded_by'=>SORT_ASC, 'version' =>SORT_DESC]);
@@ -128,6 +128,7 @@ class Software extends \yii\db\ActiveRecord
             $image=$row['image'];
             $uploader=$row['uploaded_by'];
             $visibility=$row['visibility'];
+            $profiled=$row['profiled'];
             
             if (!isset($results[$name]))
             {
@@ -156,6 +157,38 @@ class Software extends \yii\db\ActiveRecord
         return $results;
 
         // return $rows;
+    }
+
+    
+
+    public static function isProfiled()
+    {
+        $query=new Query;
+
+        $query->select(['name', 'version','profiled'])
+              ->from('software')
+              ->where(['mpi'=>false]);
+
+        $results=$query->all();
+
+        $profiled=[];
+
+        foreach($results as $res)
+        {
+            if($res['profiled'])
+            {
+                 $profiled[$res['name']][$res['version']]=1;
+            }
+            else
+            {
+                $profiled[$res['name']][$res['version']]=-1;
+            }
+                       
+        }
+        
+
+        return $profiled;
+
     }
 
     public static function getOriginalImages($softUser)
