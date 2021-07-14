@@ -107,6 +107,11 @@ class SiteController extends Controller
         
         return $this->render('index',['page'=>$page]);
     }
+
+    public function actionUnderConstruction()
+    {
+        return $this->render('under_construction');
+    }
     
     /**
      * Login action.

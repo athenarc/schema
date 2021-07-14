@@ -149,21 +149,26 @@ class SoftwareController extends Controller
 
         $software=$model::getSoftwareNames($softUser);
 
-        // print_r($software);
-        // exit(0);
+        
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         
         $indicators=Software::getIndicators($softUser);
 
-        
-        
-                
+        $profiled=Software::isProfiled();
+     
 
         return $this->render('index',['software' => $software, 'user'=> $user,
                                       'superadmin' => $superadmin,'descriptions'=>$descriptions,
                                       'success'=>'','warning'=>'','error' =>'','indicators'=>$indicators,
-                                      'images'=>$images,]);
+                                      'images'=>$images, 'profiled'=>$profiled]);
+    }
+
+    public function actionIsProfiled($name,$version)
+    {
+        $profiled_value=Software::find()->select('profiled')->where(['name'=>$name])->andWhere(['version'=>$version])->scalar();
+        return $profiled_value;
+        
     }
 
     /**

@@ -101,11 +101,30 @@ $(document).ready(function()
 			var selector ='hidden-analyze-link-'+ name + '-' + version;
 			selector=$.escapeSelector(selector);
 			var editLink=$('#' + selector).val();
-			// var editInput=buttonContainer.children('.edit_hidden').val();
-			// window.alert(editInput);
-			// var editLink=editInput + '&version=' + version;
 			// alert(buttonContainer.children('.run-button').html());
 			buttonContainer.children('.analyze-button').attr('href', editLink);
+			
+
+			$.ajax({
+     			type: "POST",
+     			url:'../web/index.php?r=software%2Fis-profiled&name='+name+'&version='+version,
+     			data: {"type":"check"},
+     			success: function(response){
+	 				if(response==1)
+	 				{
+	 					var button=buttonContainer.children('.analyze-button').attr('profiled',1);
+	 					button.attr('title',"Profile exists for this software")
+	 					$(button).children().css({"color":"green"})
+	 				}
+	 				else
+	 				{
+	 					var button=buttonContainer.children('.analyze-button').attr('profiled',1);
+	 					button.attr('title',"Analyze")
+	 					$(button).children().css({"color":"", "title":"Analyze"})
+	 				}
+     			}
+			});
+			
 
 			var indicatorSelector ='hidden-indicators-'+ name + '-' + version;
 			selector=$.escapeSelector(indicatorSelector);
