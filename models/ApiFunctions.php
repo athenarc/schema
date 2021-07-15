@@ -85,8 +85,8 @@ class ApiFunctions extends Model
         $history->insert();
 
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $task;
-        exec("mkdir $tmpFolder",$out,$ret);
-        exec("chmod 777 $tmpFolder -R");
+        Software::exec_log("mkdir $tmpFolder",$out,$ret);
+        Software::exec_log("chmod 777 $tmpFolder -R");
 
         /*
          * Call a script that monitors the job
@@ -115,10 +115,10 @@ class ApiFunctions extends Model
         $folder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid;
         if (!file_exists($folder))
         {
-            exec("mkdir $folder",$out,$ret);
+            Software::exec_log("mkdir $folder",$out,$ret);
         }
         
-        exec("chmod 777 $folder -R");
+        Software::exec_log("chmod 777 $folder -R");
         /*
          * Save data file
          */
@@ -153,8 +153,8 @@ class ApiFunctions extends Model
         $history->insert();
 
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid;
-        exec("mkdir $tmpFolder",$out,$ret);
-        exec("chmod 777 $tmpFolder -R");
+        Software::exec_log("mkdir $tmpFolder",$out,$ret);
+        Software::exec_log("chmod 777 $tmpFolder -R");
 
         return [200,['id'=>$jobid]];
 

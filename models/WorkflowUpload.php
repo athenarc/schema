@@ -124,7 +124,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         if (!is_dir($dataFolder))
         {
             $command="mkdir -p $dataFolder";
-            exec($command,$ret,$outdir); 
+            Software::exec_log($command,$ret,$outdir);
         }
         //add dois string in a file and pass it on to python
 
@@ -152,11 +152,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         }
 
         $command="chmod 777 $dataFolder -R";
-        exec($command,$out,$ret);
-        if ($ret != 0) {
-            error_log("ERROR while running: ".$command);
-            error_log($ret." ".implode($out));
-        }
+        Software::exec_log($command,$out,$ret);
 
         $workflowFilePath=$this->quotes($workflowFilePath);
         $this->name=$this->quotes($this->name);
@@ -171,7 +167,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
         if ($ret != 0) {
           error_log("ERROR while running: ".$command);
           error_log("ERROR (".$ret."): ".implode($out));
@@ -183,7 +179,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $dir=$workflow->location;
         $working_dir=getcwd();
         $command2="cwltool --print-dot ". $dir. " | dot -Tsvg > ". $working_dir . "/img/workflows/$name.svg";
-        exec($command2, $out2, $ret2);
+        Software::exec_log($command2, $out2, $ret2);
         if ($ret2 != 0) {
           error_log("ERROR while running: ".$command2);
           error_log($ret." ".implode($out2));
@@ -201,7 +197,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         {
             case 0:
                 $success="Workflow successfully uploaded!";
-                exec("rm $doiFile");
+                Software::exec_log("rm $doiFile");
                 break;
             case 2:
                 $errors.="Error: code $ret. ";

@@ -302,7 +302,7 @@ class Workflow extends \yii\db\ActiveRecord
         $nid=uniqid();
         $tmpFolder=Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/' . $nid ;
         $command="cp -r $dataFolder $tmpFolder";
-        exec($command, $out, $ret);
+        Software::exec_log($command, $out, $ret);
         
         /*
          * Return all files in a list
@@ -338,7 +338,7 @@ class Workflow extends \yii\db\ActiveRecord
             if (!isset($allowedExt[$extension]))
             {
                 $command="rm $file";
-                exec($command,$out,$ret);
+                Software::exec_log($command,$out,$ret);
                 continue;
             }
 
@@ -470,17 +470,15 @@ class Workflow extends \yii\db\ActiveRecord
                 }
             }
             $retVal=yaml_emit_file($file,$content);
-            exec("chmod 777 $tmpFolder -R");
+            Software::exec_log("chmod 777 $tmpFolder -R");
 
-
-            
         }
         /*
          * Serialize main workflow file
          */
         $packedFile=$tmpFolder . '/packed_workflow.cwl';
         $command="cwltool --pack $newMain > $packedFile";
-        exec($command, $out, $ret);
+        Software::exec_log($command, $out, $ret);
 
         return [$packedFile,$tmpFolder];
 
@@ -576,18 +574,10 @@ class Workflow extends \yii\db\ActiveRecord
         
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid;
         $command="mkdir -p $tmpFolder";
-        exec($command,$out,$ret);
-        if ( $ret != 0) {
-            error_log("ERROR while running: '$command'");
-            error_log($ret." ".implode($out));
-        }
+        Software::exec_log($command,$out,$ret);
 
         $command="chmod 777 $tmpFolder";
-        exec($command,$out,$ret);
-        if ( $ret != 0) {
-            error_log("ERROR while running: ".$command);
-            error_log($ret." ".implode($out));
-        }
+        Software::exec_log($command,$out,$ret);
 
         /*
          * Save field values in a file
