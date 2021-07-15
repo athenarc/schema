@@ -817,12 +817,12 @@ class Software extends \yii\db\ActiveRecord
 
         if (file_exists($folder))
         {
-            exec("rm -r $folder", $out, $ret);
-            exec("mkdir $folder", $out, $ret);
+            Software::exec_log("rm -r $folder", $out, $ret);
+            Software::exec_log("mkdir $folder", $out, $ret);
         }
         else
         {
-            exec("mkdir $folder", $out, $ret);
+            Software::exec_log("mkdir $folder", $out, $ret);
         }
         
         /*
@@ -851,7 +851,7 @@ class Software extends \yii\db\ActiveRecord
 
 
 
-        exec("chmod 777 $folder -R");
+        Software::exec_log("chmod 777 $folder -R",$out,$ret);
 
 
         /*
@@ -870,7 +870,7 @@ class Software extends \yii\db\ActiveRecord
 
         // print_r($schedulerCommand);
         // exit(0);
-        exec($schedulerCommand,$output,$ret);
+        Software::exec_log($schedulerCommand,$output,$ret);
 
         // print_r($output);
         // exit(0);
@@ -938,12 +938,12 @@ class Software extends \yii\db\ActiveRecord
             $namespace=Yii::$app->params['namespaces']['jobs'];
             $command=self::sudoWrap("kubectl get pods --no-headers -n $namespace 2>&1") . " | grep $jobName | tr -s ' ' ";
 
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
         }
         else
         {
             $command=self::sudoWrap("kubectl get pods --no-headers 2>&1") . " | grep $jobName | tr -s ' ' ";
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
         }
         
 
@@ -985,9 +985,9 @@ class Software extends \yii\db\ActiveRecord
             $logsCommand=self::sudoWrap("kubectl logs $podid 2>&1");
             $command=self::sudoWrap("kubectl get pods --no-headers $podid 2>&1");
         }
-        exec($logsCommand,$logs,$ret);
+        Software::exec_log($logsCommand,$logs,$ret);
 
-        exec($command,$output,$ret);
+        Software::exec_log($command,$output,$ret);
         $splt=preg_split('/[\s]+/', $output[0]);
         $status=$splt[2];
         $time=$splt[4];
@@ -1019,7 +1019,7 @@ class Software extends \yii\db\ActiveRecord
         {       
         
             $command=self::sudoWrap("kubectl describe job $jobName 2>&1");
-            exec($command, $output, $ret);
+            Software::exec_log($command, $output, $ret);
             // print_r($output);
             // exit(0);
             $start='';
@@ -1094,11 +1094,11 @@ class Software extends \yii\db\ActiveRecord
 
         $podid=self::runningPodIdByJob($name,$jobid);
         $command=self::sudoWrap("kubectl logs $podid 2>&1");
-        exec($command,$logs,$ret);
+        Software::exec_log($command,$logs,$ret);
         file_put_contents($folder . 'logs.txt', implode("\n",$logs));
 
         $command=self::sudoWrap("kubectl delete -f $yaml");
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
 
     }
 
@@ -1117,7 +1117,7 @@ class Software extends \yii\db\ActiveRecord
          * flag and checking whether the output is empty instead of count($output)==1.
          */
         $command=self::sudoWrap("kubectl get pods $podid 2>&1");
-        exec($command,$output,$ret);
+        Software::exec_log($command,$output,$ret);
         if (count($output)==1)
         {
             return false;
@@ -1145,7 +1145,7 @@ class Software extends \yii\db\ActiveRecord
         }
        
 
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
 
         foreach ($out as $row)
         {
@@ -1206,7 +1206,7 @@ class Software extends \yii\db\ActiveRecord
         // print_r("<br /><br />");
         // exit(0);
         session_write_close();
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
         session_start();
         // print_r($out);
         // print_r($ret);
@@ -1365,7 +1365,7 @@ class Software extends \yii\db\ActiveRecord
 
         $command=self::sudoWrap('kubectl get jobs --no-headers 2>&1');
         
-        exec($command,$output,$ret);
+        Software::exec_log($command,$output,$ret);
 
         // print_r($output);
         // exit(0);
@@ -1674,6 +1674,15 @@ class Software extends \yii\db\ActiveRecord
         else
         {
             return "sudo -u ". Yii::$app->params['systemUser'] . " " . $command;
+        }
+    }
+
+    public static function exec_log($command, array &$out=null, int &$ret=null)
+    {
+        exec($command,$out,$ret);
+        if ($ret != 0) {
+            error_log("ERROR (".$ret."): While running '".$command."'");
+            error_log(implode(" ", $out));
         }
     }
 }

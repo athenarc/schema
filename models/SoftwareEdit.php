@@ -25,6 +25,7 @@ namespace app\models;
 
 use Yii;
 use yii\db\Query;
+use app\models\Software;
 
 
 /**
@@ -152,15 +153,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
 
             $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "inputReplacer.py $encName $encVersion $encfileName 2>&1");
 
-            
-            // print_r($command);
-            // exit(0);
-
-            exec($command,$outcwl,$ret);
-            if ($ret != 0) {
-                error_log("ERROR (".$ret.": While running '".$command."'");
-                error_log(implode(" ", $outcwl));
-            }
+            Software::exec_log($command,$outcwl,$ret);
 
             // Yii::$app->db->createCommand()->update('software',['has_example'=>false], "name='$this->name' AND version='$this->version'")->execute();
             $this->has_example=false;

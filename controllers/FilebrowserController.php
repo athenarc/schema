@@ -37,6 +37,7 @@ use \app\models\User;
 use app\models\UploadDatasetZenodo;
 use app\models\UploadDatasetHelix;
 use app\models\DownloadDataset;
+use app\models\Software;
 use \app\models\Notification;
 use yii\helpers\Url;
 use yii\data\Pagination;
@@ -128,10 +129,10 @@ class FilebrowserController extends Controller
        
         if (!is_dir($userFolder))
         {
-            exec("mkdir $userFolder");
+            Software::exec_log("mkdir $userFolder");
         }
 
-        exec("chmod 777 $userFolder -R 2>&1",$out,$ret);
+        Software::exec_log("chmod 777 $userFolder -R 2>&1",$out,$ret);
 
 
         return $this->render('index',['connectorRoute' => 'connector','messages'=>[]]);

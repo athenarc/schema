@@ -76,9 +76,9 @@ class SoftwareProfiler extends Model
         $folder=Yii::$app->params['profilesFolderPath'] . '/' . $software->name . '/' . $software->version . '/';
         $file=$folder . $data['id'] . '.json';
 
-        exec("mkdir -p $folder");
-        exec("mkdir -p $folder/manifests");
-        exec("chmod 777 $folder -R");
+        Software::exec_log("mkdir -p $folder");
+        Software::exec_log("mkdir -p $folder/manifests");
+        Software::exec_log("chmod 777 $folder -R");
 
         $data['folder']=$folder;
 
@@ -157,7 +157,7 @@ class SoftwareProfiler extends Model
                                 if ($field->field_type=='File')
                                 {
                                     $local=$systemMount . '/' . $fvalue;
-                                    exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                    Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                     $size=$out[0];
                                     unset($out);
                                     
@@ -185,7 +185,7 @@ class SoftwareProfiler extends Model
                                 if ($field->field_type=='File')
                                 {
                                     $local=$systemMount . '/' . $fvalue;
-                                    exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                    Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                     $size=$out[0];
                                     unset($out);
                                     
@@ -250,7 +250,7 @@ class SoftwareProfiler extends Model
                                         if ($field->field_type=='File')
                                         {
                                             $local=$systemMount . '/' . $val;
-                                            exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                            Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                             $size=$out[0];
                                             unset($out);
                                             
@@ -304,7 +304,7 @@ class SoftwareProfiler extends Model
                                         if ($field->field_type=='File')
                                         {
                                             $local=$systemMount . '/' . $val;
-                                            exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                            Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                             $size=$out[0];
                                             unset($out);
                                             
@@ -359,7 +359,7 @@ class SoftwareProfiler extends Model
                                     if ($field->field_type=='File')
                                     {
                                         $local=$systemMount . '/' . $val;
-                                        exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                        Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                         $size=$out[0];
                                         unset($out);
                                         
@@ -412,7 +412,7 @@ class SoftwareProfiler extends Model
                                     if ($field->field_type=='File')
                                     {
                                         $local=$systemMount . '/' . $val;
-                                        exec("ls -la $local | cut -d ' ' -f 5",$out,$ret);
+                                        Software::exec_log("ls -la $local | cut -d ' ' -f 5",$out,$ret);
                                         $size=$out[0];
                                         unset($out);
                                         
@@ -480,7 +480,7 @@ class SoftwareProfiler extends Model
             if ($field->field_type=='File')
             {
                 $file=$folder . '/' . $value;
-                exec("ls -la $file | cut -d ' ' -f 5",$out,$ret);
+                Software::exec_log("ls -la $file | cut -d ' ' -f 5",$out,$ret);
                 $size=$out[0];
                 unset($out);
 
@@ -508,7 +508,7 @@ class SoftwareProfiler extends Model
         $scaler=Yii::$app->params['profilesFolderPath'] . "/$software->name/$software->version/scaler-$software->profile_id.pkl";
         
         $command=Yii::$app->params['scriptsFolder'] . "/node-selector.py $model $scaler $modelFieldsFile 2>&1";
-        exec($command,$nodeOut,$ret);
+        Software::exec_log($command,$nodeOut,$ret);
         
         $nodeType=$nodeOut[0];
 

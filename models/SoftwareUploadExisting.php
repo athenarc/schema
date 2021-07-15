@@ -149,7 +149,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         if (!is_dir($dataFolder))
         {
             $command="mkdir -p $dataFolder";
-            exec($command,$ret,$outdir); 
+            Software::exec_log($command,$ret,$outdir);
         }
 
 
@@ -188,22 +188,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
-        // print_r($command);
-        // print_r("<br />");
-        // exit(0);
-
-
-
-        exec($command,$out,$ret);
-        if ($ret != 0) {
-            error_log("ERROR (".$ret."): While running '".$command."'");
-            error_log(implode(" ", $out));
-        }
-
-        // print_r($out);
-        // print_r("<br /><br />");
-        // print_r($ret);
-        // exit(0);
+        Software::exec_log($command,$out,$ret);
 
         $errors='';
         $warning='';
@@ -213,7 +198,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         {
             case 0:
                 $success="Image successfully uploaded!";
-                exec("rm $doiFile");
+                Software::exec_log("rm $doiFile");
                 break;
             case 2:
                 $errors.="Error: code $ret. ";
