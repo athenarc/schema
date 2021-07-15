@@ -20,16 +20,16 @@
 #  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 #
 ####################################################################################
-import requests
+from ftplib import FTP
 import sys
 import os
+import re
 import json
-import psycopg2 as psg
 import time
 import subprocess
-import shutil
-import urllib.request
-from contextlib import closing
+import requests
+import psycopg2 as psg
+
 
 def updateStatus(status, jobid, start=None, stop=None, ram=None, cpu=None):
 
@@ -128,23 +128,28 @@ elif (status=='COMPLETE'):
                 url=subOutput['location']
                 localpath=outFolder + '/' + name
                 if outClass=='File':
-                    url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
-                    #this closes the open handle after the block is done
-                    with closing(urllib.request.urlopen(url)) as r:
-                        with open(localpath, 'wb') as f:
-                            shutil.copyfileobj(r, f)
+
+                    with FTP(ftpdomain) as ftp:
+                        ftp.login(ftpuser, ftppass)
+                        # Remove the protocol "ftp://" and the domain
+                        remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                            "/",
+                                            url)
+                        ftp.rename(remotepath,localpath)
         else:
             outClass=outputs[output]['class']
             name=outputs[output]['basename']
             url=outputs[output]['location']
             localpath=outFolder + '/' + name
             if outClass=='File':
-                url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
-                #this closes the open handle after the block is done
-                with closing(urllib.request.urlopen(url)) as r:
-                    with open(localpath, 'wb') as f:
-                        shutil.copyfileobj(r, f)
 
+                with FTP(ftpdomain) as ftp:
+                    ftp.login(ftpuser, ftppass)
+                    # Remove the protocol "ftp://" and the domain
+                    remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                            "/",
+                                            url)
+                    ftp.rename(remotepath,localpath)
 
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
