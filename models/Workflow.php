@@ -675,7 +675,12 @@ class Workflow extends \yii\db\ActiveRecord
 
         $now = new \DateTime();
 
+        if($status=='COMPLETE') {
+            $stop=new \DateTime($runLog['task_finished']);
+            $running_time=$start->diff($stop);
+        } else {
         $running_time=$start->diff($now);
+        }
 
         $time='';
         if ($running_time->m!=0)
