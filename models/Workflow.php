@@ -302,7 +302,7 @@ class Workflow extends \yii\db\ActiveRecord
         $nid=uniqid();
         $tmpFolder=Yii::$app->params['tmpWorkflowPath'] . 'tmp-workflows/' . $nid ;
         $command="cp -r $dataFolder $tmpFolder";
-        Software::exec_log($command, $out, $ret);
+        exec($command, $out, $ret);
         
         /*
          * Return all files in a list
@@ -338,7 +338,7 @@ class Workflow extends \yii\db\ActiveRecord
             if (!isset($allowedExt[$extension]))
             {
                 $command="rm $file";
-                Software::exec_log($command,$out,$ret);
+                exec($command,$out,$ret);
                 continue;
             }
 
@@ -470,15 +470,17 @@ class Workflow extends \yii\db\ActiveRecord
                 }
             }
             $retVal=yaml_emit_file($file,$content);
-            Software::exec_log("chmod 777 $tmpFolder -R");
+            exec("chmod 777 $tmpFolder -R");
 
+
+            
         }
         /*
          * Serialize main workflow file
          */
         $packedFile=$tmpFolder . '/packed_workflow.cwl';
         $command="cwltool --pack $newMain > $packedFile";
-        Software::exec_log($command, $out, $ret);
+        exec($command, $out, $ret);
 
         return [$packedFile,$tmpFolder];
 
@@ -574,10 +576,18 @@ class Workflow extends \yii\db\ActiveRecord
         
         $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid;
         $command="mkdir -p $tmpFolder";
-        Software::exec_log($command,$out,$ret);
+        exec($command,$out,$ret);
+        if ( $ret != 0) {
+            error_log("ERROR while running: '$command'");
+            error_log($ret." ".implode($out));
+        }
 
         $command="chmod 777 $tmpFolder";
-        Software::exec_log($command,$out,$ret);
+        exec($command,$out,$ret);
+        if ( $ret != 0) {
+            error_log("ERROR while running: ".$command);
+            error_log($ret." ".implode($out));
+        }
 
         /*
          * Save field values in a file
@@ -657,13 +667,22 @@ class Workflow extends \yii\db\ActiveRecord
         $taskLogs=$data['task_logs'];
         $status=$data['state'];
 
-        try {
-            $start=new \DateTime($runLog['task_started']);
-        } catch (Exception $ex) {
-            $start=new \DateTime($runLog['task_received']);
-        }
-
         $now = new \DateTime();
+
+        if (isset($runLog['task_started']) || isset($runLog['task_started']))
+        {
+            try {
+                $start=new \DateTime($runLog['task_started']);
+            } catch (Exception $ex) {
+                $start=new \DateTime($runLog['task_received']);
+            }
+        }
+        else 
+        {
+             $start=$now;
+        } 
+
+        
 
         $running_time=$start->diff($now);
 
