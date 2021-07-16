@@ -53,9 +53,9 @@ use app\models\WorkflowInput;
 use app\models\WorkflowUpload;
 use yii\helpers\BaseFileHelper;
 
-
 class WorkflowController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -126,8 +126,8 @@ class WorkflowController extends Controller
         
         if (!is_dir($userFolder))
         {
-            exec("mkdir $userFolder");
-            exec("chmod 777 $userFolder");
+            Software::exec_log("mkdir $userFolder");
+            Software::exec_log("chmod 777 $userFolder");
         }
 
         /**
@@ -230,11 +230,11 @@ class WorkflowController extends Controller
             $exampleFolder=Yii::$app->params['userDataPath'] . '/' .  'workflow_examples/' . $name . '/' . $version . '/input';
             $outFolder='workflow_examples/' . $name . '/' . $version . '/input';
             $folder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name . '/' . $version . '/input';
-            exec("mkdir -p $folder");
-            exec("cp -r $exampleFolder/* $folder",$out,$ret);
+            Software::exec_log("mkdir -p $folder");
+            Software::exec_log("cp -r $exampleFolder/* $folder",$out,$ret);
             // print_r($folder);
             // exit(0);
-            exec("chmod 777 $folder");
+            Software::exec_log("chmod 777 $folder");
 
             
         }
@@ -263,8 +263,7 @@ class WorkflowController extends Controller
          */
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
-        // print_r($fields);
-        // exit(0);
+
         /*
          * If the form has posted load the field values.
          * This was changed because it didn't work with checkboxes.
@@ -282,10 +281,7 @@ class WorkflowController extends Controller
 
         $hasExample=$workflow->has_example;
         $uploadedBy=$workflow->uploaded_by;
-        
 
-        // var_dump($field_values);
-        // exit(0);
         if (!empty($fields))
         {
             $field_count=count($fields);
@@ -296,9 +292,7 @@ class WorkflowController extends Controller
         }
 
         $emptyFields=true;
-        // print_r($_POST);
-        // print_r("<br />");
-        // exit(0);
+
         for ($index=0; $index<$field_count; $index++)
         {
             if ($example)
@@ -388,7 +382,6 @@ class WorkflowController extends Controller
                 }
             }
         }
-       
 
         $errors=[];
         if (empty($fields))
@@ -406,7 +399,6 @@ class WorkflowController extends Controller
             if (!$emptyFields)
             {
                 $workflowParams=Workflow::getParameters($fields);
-                
             }
             else
             {
@@ -419,7 +411,6 @@ class WorkflowController extends Controller
                 }
             }
         }
-
 
         /*
          * Get the user-data folder of the current user.
@@ -807,15 +798,15 @@ class WorkflowController extends Controller
         if (!is_dir($arch_folder))
         {
             $command="mkdir -p $arch_folder";
-            exec($command,$out,$ret);
+            Software::exec_log($command,$out,$ret);
 
             $command="chmod 777 $arch_folder";
-            exec($command,$out,$ret);
+            Software::exec_log($command,$out,$ret);
         }
 
 
         $command="mv $og_folder $arch_folder";
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
         
 
         WorkflowInput::deleteAll(['workflow_id'=>$workflow->id]);
@@ -998,9 +989,9 @@ class WorkflowController extends Controller
             {
                 // $mountExistError=true;
                 $command="mkdir -p $folder";
-                exec($command,$ret,$out);
+                Software::exec_log($command,$ret,$out);
                 $command="chmod 777 $folder";
-                exec($command,$ret,$out);
+                Software::exec_log($command,$ret,$out);
             }
         }
         
@@ -1107,9 +1098,10 @@ class WorkflowController extends Controller
             {
                 // $mountExistError=true;
                 $command="mkdir -p $folder";
-                exec($command,$ret,$out);
+                Software::exec_log($command,$out,$ret);
+
                 $command="chmod 777 $folder";
-                exec($command,$ret,$out);
+                Software::exec_log($command,$out,$ret);
             }
         }
         
@@ -1234,10 +1226,10 @@ class WorkflowController extends Controller
             // print_r($folder);
             // exit(0);
             $command="mkdir -p $folder";
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
 
             $command="chmod 777 $folder";
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
 
             // $i=0;
             // $j=0;
@@ -1366,8 +1358,8 @@ class WorkflowController extends Controller
 
                 if (!is_dir($userFolder))
                 {
-                    exec("mkdir $userFolder");
-                    exec("chmod 777 $userFolder");
+                    Software::exec_log("mkdir $userFolder");
+                    Software::exec_log("chmod 777 $userFolder");
                 }
 
 

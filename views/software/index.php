@@ -207,6 +207,7 @@ foreach ($software as $name=>$uploader)
 			$disabledClass='';
 		}
 
+
 		
 		/*
 		 * Kostis fixed the following:
@@ -215,12 +216,14 @@ foreach ($software as $name=>$uploader)
 		 */
 
 ?> 
-			<td class="col-md-3 software-button-container $disabledClass"><?=(!empty($_SESSION['selected_project']) || (Yii::$app->params['standalone'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
+			<td class="col-md-3 software-button-container <?=$disabledClass?>"><?=(!empty($_SESSION['selected_project']) || (Yii::$app->params['standalone'])) ? SoftIndexButton::button('run',$runLink,$name) : '' ?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('edit',Url::to(['software/edit-software','name'=>$name, 'version'=>$versions[$first_key]]),$name,'software') : ''?>&nbsp;
 				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('delete') : ''?>
-				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('analyze',Url::to(['profiler/provide-inputs','name'=>$name, 'version'=>$versions[$first_key]]) ) : ''?>
+				<?=( ($upl==$user) || ($superadmin==1) ) ? SoftIndexButton::button('analyze',Url::to(['profiler/provide-inputs','name'=>$name, 'version'=>$versions[$first_key]]),
+					$name, $profiled[$name][$versions[$first_key]], $versions[$first_key] ) : ''?>
 			</td>
 			<?=Html::hiddenInput('hiddenUrl',Url::base('http'),['class'=>'hidden_url']);?>
+			<div class="hidden profiled-dropdown"><?=Html::dropDownList($profiled,['id'=>'profiled-dropdown', 'name'=>$name, 'version'=>$versions[$first_key]]);?></div>
 		</tr>
 
 		<!-- <div class="row">&nbsp;</div>
@@ -296,6 +299,11 @@ foreach ($descriptions as $soft)
 			$link=Url::to(['profiler/provide-inputs','name'=>$name,'version'=>$version]);
 			$id='hidden-analyze-link-' . $name . '-' . $version;
 			echo Html::hiddenInput('$id',$link,['id'=>$id]);
+
+			$link=Url::to(['software/is-profiled','name'=>$name,'version'=>$version]);
+			$id='hidden-profiled-link-' . $name . '-' . $version;
+			echo Html::hiddenInput('$id',$link,['id'=>$id]);
+
 		}
 	}
 ?>
