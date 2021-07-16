@@ -125,8 +125,8 @@ class SoftwareController extends Controller
 
         if (!is_dir($userFolder))
         {
-            exec("mkdir $userFolder");
-            exec("chmod 777 $userFolder");
+            Software::exec_log("mkdir $userFolder");
+            Software::exec_log("chmod 777 $userFolder");
         }
 
         /**
@@ -149,21 +149,26 @@ class SoftwareController extends Controller
 
         $software=$model::getSoftwareNames($softUser);
 
-        // print_r($software);
-        // exit(0);
+        
         $descriptions=Software::getSoftwareDescriptions($softUser);
         $images=Software::getOriginalImages($softUser);
         
         $indicators=Software::getIndicators($softUser);
 
-        
-        
-                
+        $profiled=Software::isProfiled();
+     
 
         return $this->render('index',['software' => $software, 'user'=> $user,
                                       'superadmin' => $superadmin,'descriptions'=>$descriptions,
                                       'success'=>'','warning'=>'','error' =>'','indicators'=>$indicators,
-                                      'images'=>$images,]);
+                                      'images'=>$images, 'profiled'=>$profiled]);
+    }
+
+    public function actionIsProfiled($name,$version)
+    {
+        $profiled_value=Software::find()->select('profiled')->where(['name'=>$name])->andWhere(['version'=>$version])->scalar();
+        return $profiled_value;
+        
     }
 
     /**
@@ -314,12 +319,12 @@ class SoftwareController extends Controller
         {
             if (!is_dir($iosystemMount))
             {
-                exec("mkdir -p $iosystemMount");
-                exec("chmod 777 $iosystemMount");
+                Software::exec_log("mkdir -p $iosystemMount");
+                Software::exec_log("chmod 777 $iosystemMount");
             }
             else
             {
-                exec("chmod 777 $iosystemMount -R");
+                Software::exec_log("chmod 777 $iosystemMount -R");
             }
 
         }
@@ -329,12 +334,12 @@ class SoftwareController extends Controller
             {
                 if (!is_dir($isystemMount))
                 {
-                    exec("mkdir -p $isystemMount");
-                    exec("chmod 777 $isystemMount");
+                    Software::exec_log("mkdir -p $isystemMount");
+                    Software::exec_log("chmod 777 $isystemMount");
                 }
                 else
                 {
-                    exec("chmod 777 $isystemMount -R");
+                    Software::exec_log("chmod 777 $isystemMount -R");
                 }
             }
             if (!empty($ocontMount))
@@ -343,12 +348,12 @@ class SoftwareController extends Controller
                 // exit(0);
                 if (!is_dir($osystemMount))
                 {
-                    exec("mkdir -p $osystemMount");
-                    exec("chmod 777 $osystemMount");
+                    Software::exec_log("mkdir -p $osystemMount");
+                    Software::exec_log("chmod 777 $osystemMount");
                 }
                 else
                 {
-                    exec("chmod 777 $osystemMount -R");
+                    Software::exec_log("chmod 777 $osystemMount -R");
                 }
             }
         }
@@ -365,8 +370,8 @@ class SoftwareController extends Controller
             {
                 $folder=$isystemMount;
             }
-            exec("cp -r $exampleFolder/* $folder");
-            exec("chmod 777 $folder");
+            Software::exec_log("cp -r $exampleFolder/* $folder");
+            Software::exec_log("chmod 777 $folder");
             
         }
 
@@ -565,8 +570,8 @@ class SoftwareController extends Controller
 
         if (!is_dir($userFolder))
         {
-            exec("mkdir $userFolder");
-            exec("chmod 777 $userFolder");
+            Software::exec_log("mkdir $userFolder");
+            Software::exec_log("chmod 777 $userFolder");
         }
         $runError='';
         $runPodId='';
@@ -1349,10 +1354,10 @@ class SoftwareController extends Controller
             // print_r($folder);
             // exit(0);
             $command="mkdir -p $folder";
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
 
             $command="chmod 777 $folder";
-            exec($command,$output,$ret);
+            Software::exec_log($command,$output,$ret);
 
             
             $values=[];
