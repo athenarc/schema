@@ -176,9 +176,15 @@ foreach ($software as $name=>$uploader)
 		$image_location=$image_location ? 'dockerHub: ' : 'localImage: ';
 		// print_r($upl);
 		// exit(0);
+
+		if (!isset($_SESSION['selected_project'])) {
+			$selected_project='';
+		} else {
+			$selected_project=$_SESSION['selected_project'];
+		}
+
 		$indicatorList=$indicators[$name][$versions[$first_key]];
-		// $profiled=$profiled[$name][$versions[$first_key]];
-		$runLink=(isset($indicatorList['mpi'])) ? Url::to(['software-mpi/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]) : Url::to(['software/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$_SESSION['selected_project']]);
+		$runLink=(isset($indicatorList['mpi'])) ? Url::to(['software-mpi/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$selected_project]) : Url::to(['software/run','name'=>$name, 'version'=>$versions[$first_key],'project'=>$selected_project]);
 		
 
 ?>
