@@ -124,7 +124,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         if (!is_dir($dataFolder))
         {
             $command="mkdir -p $dataFolder";
-            Software::exec_log($command,$ret,$outdir);
+            Software::exec_log($command,$outdir,$ret);
         }
         //add dois string in a file and pass it on to python
 
