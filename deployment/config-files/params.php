@@ -24,16 +24,16 @@ return [
     'ftpIp' => 'ftp',
     'teskEndpoint' => '{{ .Values.tesk.url }}',
     'wesEndpoint' => '{{ .Values.wes.url }}',
-    'standalone' => {{ .Values.standalone.isStandalone }},
+    'standalone' => '{{ .Values.standalone.isStandalone }}',
     'standaloneResources'=>
     [
-        'maxCores'=> {{ .Values.standalone.resources.maxCores }},
-        'maxRam' => {{ .Values.standalone.resources.maxRam }},
+        'maxCores'=> '{{ .Values.standalone.resources.maxCores }}',
+        'maxRam' => '{{ .Values.standalone.resources.maxRam }}',
     ],
     'classifierMemLimit'=>8,
     'metrics_url' => '{{ .Values.metrics.url }}',
     'namespaces' => [
-        'jobs'=>'schema'
+        'jobs'=>'{{ .Values.namespaces.jobs }}'
     ]
 
 
