@@ -991,9 +991,9 @@ class WorkflowController extends Controller
             {
                 // $mountExistError=true;
                 $command="mkdir -p $folder";
-                Software::exec_log($command,$ret,$out);
+                Software::exec_log($command,$out,$ret);
                 $command="chmod 777 $folder";
-                Software::exec_log($command,$ret,$out);
+                Software::exec_log($command,$out,$ret);
             }
         }
         
