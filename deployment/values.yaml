@@ -1,6 +1,10 @@
 # Default values for schema.
 
 namespace: schema
+namespaces:
+  jobs: schema
+  tesk: tesk
+  registry: schema
 domain: your.domain-name.com 
 
 # This is the app for the main schema interface
