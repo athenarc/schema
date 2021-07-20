@@ -199,7 +199,10 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         {
             case 0:
                 $success="Image successfully uploaded!";
-                Software::exec_log("rm $doiFile");
+                if($doiFile!='\'\'')
+                {
+                    Software::exec_log("rm $doiFile");
+                }
                 break;
             case 2:
                 $errors.="Error: code $ret. ";
