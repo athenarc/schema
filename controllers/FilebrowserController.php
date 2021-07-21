@@ -85,40 +85,47 @@ class FilebrowserController extends Controller
             
         }
 
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $roots = array([
+                'driver' => 'LocalFileSystem',
+                // 'path' => Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . 'uploads',
+                'path' => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
+                //'URL' => Yii::getAlias('@web') . '/uploads/',
+                'mimeDetect' => 'internal',
+                'imgLib' => 'gd',
+                'accessControl' => function ($attr, $path) {
+                    // hide files/folders which begins with dot
+                    return (strpos(basename($path), '.') === 0) ?
+                        !($attr == 'read' || $attr == 'write') :
+                        null;
+                },
+            ]);
+        }
+        else
+        {
+            $roots = array([
+                'driver' => 'FTP',
+                'alias' => explode('@',Userw::getCurrentUser()['username'])[0],
+                'host'   => Yii::$app->params['ftpIp'],
+                'user'   => Yii::$app->params['ftpUser'],
+                'pass'   => Yii::$app->params['ftpPass'],
+                'path'   => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
+                'accessControl' => function ($attr, $path) {
+                    // hide files/folders which begins with dot
+                    return (strpos(basename($path), '.') === 0) ?
+                        !($attr == 'read' || $attr == 'write') :
+                        null;
+                },
+            ]
+            );
+        }
+
         return [
             'connector' => [
                 'class' => ConnectorAction::className(),
                 'options' => [
-                    'roots' => [
-                        [
-                            'driver' => 'LocalFileSystem',
-                            // 'path' => Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . 'uploads',
-                            'path' => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
-                            //'URL' => Yii::getAlias('@web') . '/uploads/',
-                            'mimeDetect' => 'internal',
-                            'imgLib' => 'gd',
-                            'accessControl' => function ($attr, $path) {
-                                // hide files/folders which begins with dot
-                                return (strpos(basename($path), '.') === 0) ?
-                                    !($attr == 'read' || $attr == 'write') :
-                                    null;
-                            },
-                        ],
-                        [
-                            'driver' => 'FTP',
-                            'alias' => 'FTP',
-                            'host'   => Yii::$app->params['ftpIp'],
-                            'user'   => Yii::$app->params['ftpUser'],
-                            'pass'   => Yii::$app->params['ftpPass'],
-                            'path'   => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
-                            'accessControl' => function ($attr, $path) {
-                                // hide files/folders which begins with dot
-                                return (strpos(basename($path), '.') === 0) ?
-                                    !($attr == 'read' || $attr == 'write') :
-                                    null;
-                            },
-                        ],
-                    ],
+                    'roots' => $roots,
                 ],
             ],
             'input' => [

@@ -59,6 +59,7 @@ dbuser=db['username']
 passwd=db['password']
 dbname=db['database']
 ftp=config['localftp']
+ftpLocal=ftp['active']
 ftpuser=ftp['username']
 ftppass=ftp['password']
 ftpdomain=ftp['domain']
@@ -135,7 +136,11 @@ elif (status=='COMPLETE'):
                         remotepath = re.sub("ftp://%s/" % ftpdomain,
                                             "/",
                                             url)
-                        ftp.rename(remotepath,localpath)
+                        if(ftpLocal):
+                            ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                        else:
+                            ftp.rename(remotepath,localpath)
+
         else:
             outClass=outputs[output]['class']
             name=outputs[output]['basename']
@@ -149,7 +154,10 @@ elif (status=='COMPLETE'):
                     remotepath = re.sub("ftp://%s/" % ftpdomain,
                                             "/",
                                             url)
-                    ftp.rename(remotepath,localpath)
+                    if(ftpLocal):
+                        ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                    else:
+                        ftp.rename(remotepath,localpath)
 
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
