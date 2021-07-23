@@ -85,10 +85,9 @@ class FilebrowserController extends Controller
             
         }
 
-        if(Yii::$app->params['ftpLocal'])
-        {
             $roots = array([
                 'driver' => 'LocalFileSystem',
+                'alias' => 'Local '.explode('@',Userw::getCurrentUser()['username'])[0],
                 // 'path' => Yii::getAlias('@webroot') . DIRECTORY_SEPARATOR . 'uploads',
                 'path' => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
                 //'URL' => Yii::getAlias('@web') . '/uploads/',
@@ -101,12 +100,12 @@ class FilebrowserController extends Controller
                         null;
                 },
             ]);
-        }
-        else
+
+        if(Yii::$app->params['ftpLocal'] == false)
         {
-            $roots = array([
+            array_push($roots, [
                 'driver' => 'FTP',
-                'alias' => explode('@',Userw::getCurrentUser()['username'])[0],
+                'alias' => 'FTP '.explode('@',Userw::getCurrentUser()['username'])[0],
                 'host'   => Yii::$app->params['ftpIp'],
                 'user'   => Yii::$app->params['ftpUser'],
                 'pass'   => Yii::$app->params['ftpPass'],
