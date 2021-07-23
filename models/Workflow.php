@@ -224,7 +224,7 @@ class Workflow extends \yii\db\ActiveRecord
      * Returns a list of folders from the FTP to be used in the
      * select folder popup
      */
-    public static function listDirectoriesFTP($directory, $conn_id)
+    public static function listDirectoriesFTP($directory, $conn_id=null)
     {
         $results=[];
         $closeIt = false;
@@ -303,7 +303,7 @@ class Workflow extends \yii\db\ActiveRecord
      * Returns a nested list of files to be used in the 
      * select file popup.
      */
-    public static function listFilesFTP($directory, $conn_id)
+    public static function listFilesFTP($directory, $conn_id=null)
     {
         $results=[];
         $closeIt = false;
