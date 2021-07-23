@@ -196,8 +196,12 @@ class SoftwareController extends Controller
 
     public function actionRun($name, $version)
     {
+		if (!isset($_SESSION['selected_project'])) {
+			$project='';
+		} else {
+			$project=$_SESSION['selected_project'];
+		}
 
-        $project=$_SESSION['selected_project'];
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
         $software_id=$software->id;
         $software_instructions=$software->instructions;
