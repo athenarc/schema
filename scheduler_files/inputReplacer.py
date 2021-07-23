@@ -58,13 +58,15 @@ cur=conn.cursor()
 
 # print(content)
 if 'baseCommand' in content:
-    command=content['baseCommand']
+    if isinstance(content['baseCommand'],list):
+        command=' '.join(content['baseCommand'])
+    else:
+        command=content['baseCommand']
     if (command=='') or (command==None):
         exit(7)
     
     query="UPDATE software SET script=" + quoteEnclose(command) + " WHERE name=" + quoteEnclose(softName) + "AND version=" + quoteEnclose(softVersion)
-    # print(query)
-    # exit(0)
+
     cur.execute(query)
 else:
     exit(8)
@@ -107,12 +109,12 @@ bindingFlag=False
 positionFlag=False
 
 for inpt in inputs:
-    if 'inputBinding' not in inputs[inpt]:
+    if 'inputBinding' not in inpt.keys():
         bindingFlag=True
         continue
         #exit(32)
     
-    binding=inputs[inpt]['inputBinding']
+    binding=inpt['inputBinding']
     # Get position, separate and prefix from inputBinding.
     # If it does not exist, ignore input
     if 'position' not in binding:
@@ -134,11 +136,11 @@ for inpt in inputs:
    
 
     # Get field type and optional
-    if 'type' not in inputs[inpt]:
+    if 'type' not in inpt.keys():
         #stop execution and return because this is serious
         exit(34)
 
-    fieldType=inputs[inpt]['type'].strip()
+    fieldType=inpt['type'].strip()
 
     optional='f'
     if fieldType[-1]=='?':
@@ -154,10 +156,10 @@ for inpt in inputs:
     #get default value
     defaultValue=''
     if (fieldType!='File') and (fieldType!='Directory') and (fieldType!='null'):
-        if 'default' in inputs[inpt]:
-            defaultValue=str(inputs[inpt]['default'])
+        if 'default' in inpt.keys():
+            defaultValue=str(inpt['default'])
 
-    name=quoteEnclose(inpt)
+    name=quoteEnclose(inpt['id'])
     fieldType=quoteEnclose(fieldType)
     prefix=quoteEnclose(prefix)
     defaultValue=quoteEnclose(defaultValue)
