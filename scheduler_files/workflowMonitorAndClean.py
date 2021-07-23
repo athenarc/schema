@@ -20,7 +20,7 @@
 #  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 #
 ####################################################################################
-from ftplib import FTP
+from ftplib import FTP, error_perm
 import sys
 import os
 import re
@@ -139,7 +139,10 @@ elif (status=='COMPLETE'):
                         if(ftpLocal):
                             ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
                         else:
-                            ftp.rename(remotepath,localpath)
+                            try:
+                                ftp.rename(remotepath,localpath)
+                            except error_perm as err_perm:
+                                print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stderr)
 
         else:
             outClass=outputs[output]['class']
@@ -157,7 +160,10 @@ elif (status=='COMPLETE'):
                     if(ftpLocal):
                         ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
                     else:
-                        ftp.rename(remotepath,localpath)
+                        try:
+                            ftp.rename(remotepath,localpath)
+                        except error_perm as err_perm:
+                            print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stderr)
 
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
@@ -200,7 +206,7 @@ elif (status=='COMPLETE'):
             continue
 
         kube_command='kubectl -n' + teskNamespace + ' logs ' + pod
-        # print(kube_command)
+
         try:
             logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as exc:
