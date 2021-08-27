@@ -58,14 +58,13 @@ configFile.close()
 if cwlPath!='':
     cwlContent=uf.cwlReadFile(cwlPath)
     # cImageFull=uf.cwlReturnDockerImage(cwlContent)
-    if (commandRetr=='cwl'):
-        if ('baseCommand' not in cwlContent):
-            exit(12)
+    if ('baseCommand' not in cwlContent):
+        exit(12)
+    else:
+        if isinstance(cwlContent['baseCommand'],list):
+            script=' '.join(cwlContent['baseCommand'])
         else:
-            if isinstance(cwlContent['baseCommand'],list):
-                script=' '.join(cwlContent['baseCommand'])
-            else:
-                script=cwlContent['baseCommand']
+            script=cwlContent['baseCommand']
 else:
     exit(11)
 

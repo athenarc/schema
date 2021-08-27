@@ -667,15 +667,29 @@ class Workflow extends \yii\db\ActiveRecord
         $taskLogs=$data['task_logs'];
         $status=$data['state'];
 
-        try {
-            $start=new \DateTime($runLog['task_started']);
-        } catch (Exception $ex) {
-            $start=new \DateTime($runLog['task_received']);
-        }
-
         $now = new \DateTime();
 
+        if (isset($runLog['task_started']) || isset($runLog['task_started']))
+        {
+            try {
+                $start=new \DateTime($runLog['task_started']);
+            } catch (Exception $ex) {
+                $start=new \DateTime($runLog['task_received']);
+            }
+        }
+        else 
+        {
+             $start=$now;
+        } 
+
+        
+
+        if($status=='COMPLETE') {
+            $stop=new \DateTime($runLog['task_finished']);
+            $running_time=$start->diff($stop);
+        } else {
         $running_time=$start->diff($now);
+        }
 
         $time='';
         if ($running_time->m!=0)
@@ -726,20 +740,28 @@ class Workflow extends \yii\db\ActiveRecord
             $i++;
         }
 
-        // foreach ($taskLogs[0] as $key => $value)
-        // {
-        //     print_r($key);
-        //     print_r("<br /><br />");
-        //     print_r($value);
-        //     print_r("<br /><br /><br /><br />");
-        // }
-        // print_r([$time,$status,$logs]);
-        // exit(0);
         return [$time,$status,$logs];
 
     }
 
-    
+    public static function checkStatus($status, $job) {
+
+        if(strtoupper($job->status)!=$status) {
+
+            error_log("DB inconsistent: '".strtoupper($job->status)."'!=".$status);
+
+            $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py");
+            $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $job->jobid;
+            $outFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0] . '/' . $job->omountpoint;
+            $arguments=[
+                $monitorScript, self::enclose($job->jobid),self::enclose(Yii::$app->params['wesEndpoint']),
+                self::enclose(Yii::$app->params['teskEndpoint']), self::enclose($outFolder), self::enclose($tmpFolder)];
+            $monitorCommand=implode(' ',$arguments);
+            shell_exec(sprintf('%s >>%s 2>&1 &', $monitorCommand, $tmpFolder.'/workflowMonitorAndClean.log'));
+        }
+
+    }
+
     public static function getWorkflowDescriptions($softUser)
     {
         $query=new Query;
@@ -953,13 +975,9 @@ class Workflow extends \yii\db\ActiveRecord
             {
                 $field->value=$json[$field->name];
             }
-            
-
-
         }
-        
+
         return $fields;
-            
     }
 
     public static function getAvailableWorkflows()

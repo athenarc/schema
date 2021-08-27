@@ -145,7 +145,6 @@ elif (status=='COMPLETE'):
                     with open(localpath, 'wb') as f:
                         shutil.copyfileobj(r, f)
 
-
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
     for log in taskLogs:
@@ -202,7 +201,7 @@ elif (status=='COMPLETE'):
                 logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError as exc:
                 print(exc.output)
-                exit(4)
+                continue
     #write logs
     logfile=logPath + '/' + 'logs.txt'
     g=open(logfile,'w')    
