@@ -100,9 +100,9 @@ class RoCrate extends \yii\db\ActiveRecord
 
         if (!is_dir($ROCratesFolder))
         {
-            exec("mkdir $ROCratesFolder");
+            Software::exec_log("mkdir $ROCratesFolder");
         }
-        exec("chmod 777 $ROCratesFolder -R 2>&1",$out,$ret);
+        Software::exec_log("chmod 777 $ROCratesFolder -R 2>&1",$out,$ret);
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
         $fields=Software::getRerunFieldValues($jobid,$fields);
@@ -158,7 +158,7 @@ class RoCrate extends \yii\db\ActiveRecord
 
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "ro-crate.py $filepath 2>&1");   
 
-        exec($command,$out,$ret);    
+        Software::exec_log($command,$out,$ret);
 
         //print_r($out);
         // print_r("<br />");
@@ -168,7 +168,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $success="ROCrate object has been created. You can download the ROCrate object by clicking " . 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
-        // exec($command,$out,$ret);
+        // Software::exec_log($command,$out,$ret);
 
         
         
@@ -195,9 +195,9 @@ class RoCrate extends \yii\db\ActiveRecord
 
         if (!is_dir($ROCratesFolder))
         {
-            exec("mkdir $ROCratesFolder");
+            Software::exec_log("mkdir $ROCratesFolder");
         }
-        exec("chmod 777 $ROCratesFolder -R 2>&1",$out,$ret);
+        Software::exec_log("chmod 777 $ROCratesFolder -R 2>&1",$out,$ret);
 
         $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow_id])->orderBy(['position'=> SORT_ASC])->all();
         $fields=Workflow::getRerunFieldValues($jobid,$fields);
@@ -256,7 +256,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
 
         // print_r($out);
         // exit(0);

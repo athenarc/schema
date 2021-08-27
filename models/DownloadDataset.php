@@ -25,7 +25,7 @@ namespace app\models;
 use Yii;
 use yii\httpclient\Client;
 use webvimark\modules\UserManagement\models\User as Userw;
-
+use app\models\Software;
 
 
 /**
@@ -101,7 +101,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
             $finalFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0] . '/' . $folder . '/'. "Helix_Dataset_" . $dataset_id . '/';
             
 
-            exec("mkdir $finalFolder");
+            Software::exec_log("mkdir $finalFolder");
 
             session_write_close();
             foreach ($resources as $res)
@@ -115,7 +115,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
                     $command="wget -nc -P $finalFolder $res->url";
                 }
 
-                exec($command,$out,$ret);
+                Software::exec_log($command,$out,$ret);
                 
                 if ($ret!=0)
                 {
@@ -165,7 +165,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
             
             if(!is_dir($finalFolder))
             {
-                exec("mkdir $finalFolder");
+                Software::exec_log("mkdir $finalFolder");
             }
             
             session_write_close();
@@ -173,7 +173,7 @@ class DownloadDataset extends \yii\db\ActiveRecord
             {
                 
                 $command="wget -nc -P $finalFolder ". $res['links']['self'];
-                exec($command,$out,$ret);
+                Software::exec_log($command,$out,$ret);
 
                 if ($ret!=0)
                 {
@@ -211,12 +211,12 @@ class DownloadDataset extends \yii\db\ActiveRecord
         
         if(!file_exists($finalFolder))
         {
-            exec("mkdir $finalFolder");
+            Software::exec_log("mkdir $finalFolder");
         }
 
         session_write_close();
         $command="wget -nc -P $finalFolder $dataset_id";
-        exec($command,$out,$ret);
+        Software::exec_log($command,$out,$ret);
         session_start();
         
 
