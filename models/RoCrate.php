@@ -92,7 +92,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $docker=$software->docker_or_local;
         $software_description=$software->description;
         $location=$software->cwl_path;
-        $creator=explode('@',$software->uploaded_by)[0];
+        $creator=$software->uploaded_by;
         
         
 
@@ -185,7 +185,7 @@ class RoCrate extends \yii\db\ActiveRecord
 
         $workflow_description=$workflow->description;
         $location=$workflow->original_file;
-        $creator=explode('@',$workflow->uploaded_by)[0];
+        $creator=$workflow->uploaded_by;
         $url = Url::base('https');
         $image=$url. "/img/workflows/$workflow->visualize";
         
