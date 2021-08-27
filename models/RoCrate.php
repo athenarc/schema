@@ -156,7 +156,7 @@ class RoCrate extends \yii\db\ActiveRecord
         fwrite($arguments_file, json_encode($arguments));
         fclose($arguments_file);
 
-        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . " ro-crate.py $filepath 2>&1");   
+        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "ro-crate.py $filepath 2>&1");   
 
         exec($command,$out,$ret);    
 
@@ -251,7 +251,7 @@ class RoCrate extends \yii\db\ActiveRecord
         fwrite($arguments_file, json_encode($arguments));
         fclose($arguments_file);
 
-        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . " ro-crate.py $filepath 2>&1");       
+        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "ro-crate.py $filepath 2>&1");       
 
         $success="ROCrate object has been created. You can download the ROCrate object by clicking ". 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
