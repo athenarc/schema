@@ -195,3 +195,4 @@ www-data ALL=(<user>) NOPASSWD: <path-to-kubectl>, <path-to-docker>, <path_to_sc
 ```bash
 kubectl create namespace mpi-cluster
 ```
+
