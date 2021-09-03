@@ -8,14 +8,15 @@
 	},
 	"database":
 	{
-		"host":"postgres",
+		"host":"{{ .Values.postgres.app_name }}",
 		"username": "{{ .Values.postgres.deployment.dbUsername }}",
 		"password": "{{ .Values.postgres.deployment.dbPassword }}",
 		"database": "{{ .Values.postgres.deployment.dbName }}"
 	},
 	"localftp":
 	{
-		"domain": "ftp",
+                "active": {{ .Values.ftp.active }},
+		"domain": "{{ .Values.ftp.deployment.domain }}",
 		"username": "{{ .Values.ftp.deployment.username }}",
 		"password": "{{ .Values.ftp.deployment.password }}"
 	},
@@ -25,7 +26,7 @@
 	],
 	"ftp-creds":
 	{
-		"ftp":
+		"{{ .Values.ftp.deployment.domain }}":
 		{
 			"username": "{{ .Values.ftp.deployment.username }}",
 			"password": "{{ .Values.ftp.deployment.password }}"
