@@ -226,22 +226,57 @@ class WorkflowController extends Controller
 
         if ($example)
         {
+            if(Yii::$app->params['ftpLocal'])
+            {
 
-            $exampleFolder=Yii::$app->params['userDataPath'] . '/' .  'workflow_examples/' . $name . '/' . $version . '/input';
-            $outFolder='workflow_examples/' . $name . '/' . $version . '/input';
-            $folder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name . '/' . $version . '/input';
-            Software::exec_log("mkdir -p $folder");
-            Software::exec_log("cp -r $exampleFolder/* $folder",$out,$ret);
-            // print_r($folder);
-            // exit(0);
-            Software::exec_log("chmod 777 $folder");
+                $exampleFolder=Yii::$app->params['userDataPath'] . '/' .  'workflow_examples/' . $name . '/' . $version . '/input';
+                $outFolder='workflow_examples/' . $name . '/' . $version . '/input';
+                $folder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name . '/' . $version . '/input';
+                Software::exec_log("mkdir -p $folder");
+                Software::exec_log("cp -r $exampleFolder/* $folder",$out,$ret);
+                Software::exec_log("chmod 777 $folder");
+            }
+            else
+            {
+                // FTP
+                $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
+                $login_result = ftp_login($conn_id,
+                                        Yii::$app->params['ftpUser'],
+                                        Yii::$app->params['ftpPass']);
 
-            
+                if (!$login_result) {
+                    error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
+                }
+                ftp_pasv($conn_id,true);
+
+
+                if (!@ftp_chdir($conn_id, $folder))
+                {
+                    if (!@ftp_mkdir($conn_id, $folder))
+                    {
+                        error_log("ERROR while creating folder $folder");
+                    }
+                }
+
+                $files = scandir($exampleFolder);
+                $results=[];
+
+                foreach($files as $key => $value)
+                {
+                    if ($value != '.' && $value != '..')
+                    {
+                        $put_return = ftp_put($conn_id, $folder.'/'.$value, $exampleFolder.'/'.$value);
+                        if(!$put_return)
+                        {
+                            error_log("ERROR while transferring the file '$exampleFolder/$value' to ftp://".Yii::$app->params['ftpIp'].$folder.'/'.$value);
+                        }
+                    }
+                }
+
+                ftp_close($conn_id);
+                $conn_id=null;
+            }
         }
-
-
-
-        
 
         /* 
          * Add parameters for the active form
@@ -827,10 +862,15 @@ class WorkflowController extends Controller
         // $model=new Software;
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
 
-        $folders=Workflow::listDirectories($directory);
-        // print_r($directory);
-        // exit(0);
-        
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $folders=Workflow::listDirectories($directory);
+        }
+        else
+        {
+            $folders=Workflow::listDirectoriesFTP($directory, null);
+        }
+
         return $this->renderAjax('folder_list_output',['folders'=>$folders]);
     }
 
@@ -838,32 +878,31 @@ class WorkflowController extends Controller
     {
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
 
-        $files=Workflow::listFiles($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
-        
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $files=Workflow::listFiles($directory);
+        }
+        else
+        {
+            $files=Workflow::listFilesFTP($directory, null);
+        }
+
         return $this->renderAjax('file_list',['files'=>$files, 'caller'=>$caller]);
     }
 
     public function actionSelectFolder($caller)
     {
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
-        // print_r($directory);
-        // exit(0);
-        $folders=Workflow::listDirectories($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
-        
+
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $folders=Workflow::listDirectories($directory);
+        }
+        else
+        {
+            $folders=Workflow::listDirectoriesFTP($directory, null);
+        }
+
         return $this->renderAjax('folder_list',['folders'=>$folders, 'caller'=>$caller,'root'=>$directory]);
     }
 
@@ -886,17 +925,16 @@ class WorkflowController extends Controller
     public function actionSelectFolderMultiple($caller)
     {
         $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
-        // print_r($directory);
-        // exit(0);
-        $folders=Workflow::listDirectories($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
-        
+
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $folders=Workflow::listDirectories($directory);
+        }
+        else
+        {
+            $folders=Workflow::listDirectoriesFTP($directory, null);
+        }
+
         return $this->renderAjax('folder_list_multiple',['folders'=>$folders, 'caller'=>$caller,'root'=>$directory]);
     }
 

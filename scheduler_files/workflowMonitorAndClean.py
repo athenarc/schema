@@ -20,16 +20,16 @@
 #  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 #
 ####################################################################################
-import requests
+from ftplib import FTP, error_perm
 import sys
 import os
+import re
 import json
-import psycopg2 as psg
 import time
 import subprocess
-import shutil
-import urllib.request
-from contextlib import closing
+import requests
+import psycopg2 as psg
+
 
 def updateStatus(status, jobid, start=None, stop=None, ram=None, cpu=None):
 
@@ -59,6 +59,7 @@ dbuser=db['username']
 passwd=db['password']
 dbname=db['database']
 ftp=config['localftp']
+ftpLocal=ftp['active']
 ftpuser=ftp['username']
 ftppass=ftp['password']
 ftpdomain=ftp['domain']
@@ -128,23 +129,41 @@ elif (status=='COMPLETE'):
                 url=subOutput['location']
                 localpath=outFolder + '/' + name
                 if outClass=='File':
-                    url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
-                    #this closes the open handle after the block is done
-                    with closing(urllib.request.urlopen(url)) as r:
-                        with open(localpath, 'wb') as f:
-                            shutil.copyfileobj(r, f)
+
+                    with FTP(ftpdomain) as ftp:
+                        ftp.login(ftpuser, ftppass)
+                        # Remove the protocol "ftp://" and the domain
+                        remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                            "/",
+                                            url)
+                        if(ftpLocal):
+                            ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                        else:
+                            try:
+                                ftp.rename(remotepath,localpath)
+                            except error_perm as err_perm:
+                                print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stderr)
+
         else:
             outClass=outputs[output]['class']
             name=outputs[output]['basename']
             url=outputs[output]['location']
             localpath=outFolder + '/' + name
             if outClass=='File':
-                url=url.replace('ftp://' + ftpdomain, 'ftp://' + ftpuser + ':' + ftppass + '@' + ftpdomain + '/')
-                #this closes the open handle after the block is done
-                with closing(urllib.request.urlopen(url)) as r:
-                    with open(localpath, 'wb') as f:
-                        shutil.copyfileobj(r, f)
 
+            with FTP(ftpdomain) as ftp:
+                ftp.login(ftpuser, ftppass)
+                # Remove the protocol "ftp://" and the domain
+                remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                        "/",
+                                        url)
+                if(ftpLocal):
+                    ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                else:
+                    try:
+                        ftp.rename(remotepath,localpath)
+                    except error_perm as err_perm:
+                        print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stder
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
     for log in taskLogs:
@@ -186,7 +205,7 @@ elif (status=='COMPLETE'):
             continue
 
         kube_command='kubectl -n' + teskNamespace + ' logs ' + pod
-        # print(kube_command)
+
         try:
             logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as exc:
