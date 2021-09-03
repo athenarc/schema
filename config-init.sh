@@ -11,6 +11,7 @@ mkdir /root/.kube/
 chmod 777 /data/docker -R
 
 
+
 ## Create a kubeconfig file in order for www-data to be able to run kubectl commands
 KUBECFG_FILE_NAME="/root/.kube/config"
 SECRETS_FOLDER="/run/secrets/kubernetes.io/serviceaccount"
