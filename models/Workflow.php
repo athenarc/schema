@@ -221,6 +221,51 @@ class Workflow extends \yii\db\ActiveRecord
     }
 
     /*
+     * Returns a list of folders from the FTP to be used in the
+     * select folder popup
+     */
+    public static function listDirectoriesFTP($directory, $conn_id=null)
+    {
+        $results=[];
+        $closeIt = false;
+
+        if ($conn_id==null) {
+            $closeIt = true;
+            $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
+            $login_result = ftp_login($conn_id,
+                                    Yii::$app->params['ftpUser'],
+                                    Yii::$app->params['ftpPass']);
+
+            if (!$login_result) {
+                error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
+            }
+            ftp_pasv($conn_id,true);
+        }
+
+        $files = ftp_rawlist($conn_id, $directory);
+
+        foreach($files as $file) {
+
+            // Get file name from list. If 'ls -l' gives
+            // drwxr-xr-x.   3 user group         4096 Mar 11  2020 ant home
+            // $path will be "${directory}/vagrang home"
+            $path = $directory.'/'.preg_replace("/^(\S+\s+){8}/", "", $file);
+            if($file[0] == 'd') {
+                // If it is a Directory
+                // There must be a better way to do it
+              $result = self::listDirectoriesFTP($path, $conn_id);
+              $results[$path] = $result;
+            }
+        }
+
+        if($closeIt) {
+            ftp_close($conn_id);
+        }
+
+        return $results;
+    }
+
+    /*
      * Returns a nested list of files to be used in the 
      * select file popup.
      */
@@ -252,6 +297,48 @@ class Workflow extends \yii\db\ActiveRecord
 
         return $results;
 
+    }
+
+    /*
+     * Returns a nested list of files to be used in the 
+     * select file popup.
+     */
+    public static function listFilesFTP($directory, $conn_id=null)
+    {
+        $results=[];
+        $closeIt = false;
+
+        if ($conn_id==null) {
+            $closeIt = true;
+            $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
+            $login_result = ftp_login($conn_id,
+                                    Yii::$app->params['ftpUser'],
+                                    Yii::$app->params['ftpPass']);
+
+            if (!$login_result) {
+                error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
+            }
+            ftp_pasv($conn_id,true);
+        }
+
+        $files = ftp_rawlist($conn_id, $directory);
+        $i=0;
+        foreach($files as $file) {
+
+            $path = $directory.'/'.preg_replace("/^(\S+\s+){8}/", "", $file);
+            if($file[0] == 'd') {
+                // If it is a Directory
+                // There must be a better way to do it
+                $result = self::listFilesFTP($path, $conn_id);
+                $results[$path] = $result;
+            }
+            else
+            {
+                $results['file_'.$i]=$path;
+                $i++;
+            }
+        }
+        return $results;
     }
 
     /*
