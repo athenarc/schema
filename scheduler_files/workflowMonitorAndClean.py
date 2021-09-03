@@ -137,7 +137,7 @@ elif (status=='COMPLETE'):
                                             "/",
                                             url)
                         if(ftpLocal):
-                            ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                            ftp.retrbinary("RETR %s" % remotepath, open(localpath, 'wb').write)
                         else:
                             try:
                                 ftp.rename(remotepath,localpath)
@@ -151,19 +151,19 @@ elif (status=='COMPLETE'):
             localpath=outFolder + '/' + name
             if outClass=='File':
 
-            with FTP(ftpdomain) as ftp:
-                ftp.login(ftpuser, ftppass)
-                # Remove the protocol "ftp://" and the domain
-                remotepath = re.sub("ftp://%s/" % ftpdomain,
-                                        "/",
-                                        url)
-                if(ftpLocal):
-                    ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
-                else:
-                    try:
-                        ftp.rename(remotepath,localpath)
-                    except error_perm as err_perm:
-                        print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stder
+                with FTP(ftpdomain) as ftp:
+                    ftp.login(ftpuser, ftppass)
+                    # Remove the protocol "ftp://" and the domain
+                    remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                            "/",
+                                            url)
+                    if(ftpLocal):
+                        ftp.retrbinary("RETR %s" % remotepath, open(localpath, 'wb').write)
+                    else:
+                        try:
+                            ftp.rename(remotepath,localpath)
+                        except error_perm as err_perm:
+                            print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stder)
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
     for log in taskLogs:
