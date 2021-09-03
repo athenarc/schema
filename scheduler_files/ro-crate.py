@@ -52,7 +52,30 @@ files_list = []
 
 # Workflow.TYPES=["File", "SoftwareSourceCode"]
 
-wf_crate = rocrate_api.make_workflow_rocrate(workflow_path=wf_path,wf_type="CWL",include_files=files_list)
+
+#The commented command below created an additional html preview file in previous versions. In the current version
+#the preview file is not created, therefore we call the commands below to include it.
+
+# wf_crate = rocrate_api.make_workflow_rocrate(workflow_path=wf_path,wf_type="CWL",include_files=files_list)
+
+
+cwl=None
+wf_crate = roc.ROCrate(gen_preview=True)
+workflow_path = Path(wf_path)
+wf_file = wf_crate.add_workflow(
+    str(workflow_path), workflow_path.name, fetch_remote=False,
+    main=True, lang="CWL", gen_cwl=(cwl is None)
+)
+
+# if the source is a remote URL then add https://schema.org/codeRepository
+# property to it this can be checked by checking if the source is a URL
+# instead of a local path
+if 'url' in wf_file.properties():
+    wf_file['codeRepository'] = wf_file['url']
+
+# add extra files
+for file_entry in files_list:
+    wf_crate.add_file(file_entry)
 
 
 wf_crate.isBasedOn = data['software_url']

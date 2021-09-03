@@ -92,7 +92,7 @@ class RoCrate extends \yii\db\ActiveRecord
         $docker=$software->docker_or_local;
         $software_description=$software->description;
         $location=$software->cwl_path;
-        $creator=explode('@',$software->uploaded_by)[0];
+        $creator=$software->uploaded_by;
         
         
 
@@ -160,10 +160,10 @@ class RoCrate extends \yii\db\ActiveRecord
 
         Software::exec_log($command,$out,$ret);
 
-        // print_r($out);
-        print_r("<br />");
+        //print_r($out);
+        // print_r("<br />");
         // print_r($command);
-        // exit(0);
+        //exit(0);
 
         $success="ROCrate object has been created. You can download the ROCrate object by clicking " . 
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
@@ -185,7 +185,7 @@ class RoCrate extends \yii\db\ActiveRecord
 
         $workflow_description=$workflow->description;
         $location=$workflow->original_file;
-        $creator=explode('@',$workflow->uploaded_by)[0];
+        $creator=$workflow->uploaded_by;
         $url = Url::base('https');
         $image=$url. "/img/workflows/$workflow->visualize";
         
@@ -257,6 +257,9 @@ class RoCrate extends \yii\db\ActiveRecord
         Html::a('here', ['software/download-rocrate', 'jobid'=>$jobid]). ".";
 
         Software::exec_log($command,$out,$ret);
+
+        // print_r($out);
+        // exit(0);
 
         
         return [$workflow, $success];

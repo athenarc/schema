@@ -151,20 +151,19 @@ elif (status=='COMPLETE'):
             localpath=outFolder + '/' + name
             if outClass=='File':
 
-                with FTP(ftpdomain) as ftp:
-                    ftp.login(ftpuser, ftppass)
-                    # Remove the protocol "ftp://" and the domain
-                    remotepath = re.sub("ftp://%s/" % ftpdomain,
-                                            "/",
-                                            url)
-                    if(ftpLocal):
-                        ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
-                    else:
-                        try:
-                            ftp.rename(remotepath,localpath)
-                        except error_perm as err_perm:
-                            print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stderr)
-
+            with FTP(ftpdomain) as ftp:
+                ftp.login(ftpuser, ftppass)
+                # Remove the protocol "ftp://" and the domain
+                remotepath = re.sub("ftp://%s/" % ftpdomain,
+                                        "/",
+                                        url)
+                if(ftpLocal):
+                    ftp.retrbinary("RETR %s" % url, open(localpath, 'wb').write)
+                else:
+                    try:
+                        ftp.rename(remotepath,localpath)
+                    except error_perm as err_perm:
+                        print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stder
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
     for log in taskLogs:
@@ -221,7 +220,7 @@ elif (status=='COMPLETE'):
                 logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError as exc:
                 print(exc.output)
-                exit(4)
+                continue
     #write logs
     logfile=logPath + '/' + 'logs.txt'
     g=open(logfile,'w')    

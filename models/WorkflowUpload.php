@@ -242,7 +242,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
                 break;
             case 35:
                 $errors.="Error: code $ret. ";
-                $errors.="One of your workflow inputs has an urecognized type specification.";
+                $errors.="One of your workflow inputs has an unrecognized type specification.";
                 // foreach ($out as $line)
                 // {
                 //     $errors.=$line . "<br />";
@@ -251,12 +251,12 @@ class WorkflowUpload extends \yii\db\ActiveRecord
                 break;
             case 36:
                 $errors.="Error: code $ret. ";
-                $errors.="One of your enum workflow inputs has an urecognized type specification.";
+                $errors.="One of your enum workflow inputs has an unrecognized type specification.";
                 $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
             case 37:
                 $errors.="Error: code $ret. ";
-                $errors.="One of your enum workflow inputs has an urecognized specification.";
+                $errors.="One of your enum workflow inputs has an unrecognized specification.";
                 $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
             case 38:
