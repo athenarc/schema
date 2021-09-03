@@ -171,11 +171,11 @@ def inputStore(softName,softVersion, inputs):
         nested_array_binding='f'
         prefix=''
         separate='t'
-        if 'type' not in inputs[inpt]:
+        if 'type' not in inpt.keys():
             #stop execution and return because this is serious
             deleteSavedSoftware(softName,softVersion)
             return 34
-        fieldType=inputs[inpt]['type']
+        fieldType=inpt['type']
         #field type is array
         if isinstance(fieldType,dict):
             if fieldType['type']!='array':
@@ -199,16 +199,16 @@ def inputStore(softName,softVersion, inputs):
             fieldType=fieldType['items']
 
         else:
-            fieldType=inputs[inpt]['type'].strip()
+            fieldType=inpt['type'].strip()
 
         
-        if 'inputBinding' not in inputs[inpt]:
+        if 'inputBinding' not in inpt.keys():
                 bindingFlag=True
                 continue
                 #exit(32)
 
                
-        outerBinding=inputs[inpt]['inputBinding']
+        outerBinding=inpt['inputBinding']
         # Get position, separate and prefix from inputBinding.
         # If it does not exist, ignore input
         if 'position' not in outerBinding:
@@ -248,10 +248,10 @@ def inputStore(softName,softVersion, inputs):
             #get default value
         defaultValue=''
         if (fieldType!='File') and (fieldType!='Directory') and (fieldType!='null'):
-            if 'default' in inputs[inpt]:
-                defaultValue=str(inputs[inpt]['default'])
+            if 'default' in inpt.keys():
+                defaultValue=str(inpt['default'])
 
-        name=quoteEnclose(inpt)
+        name=quoteEnclose(inpt['id'])
         fieldType=quoteEnclose(fieldType)
         prefix=quoteEnclose(prefix)
         defaultValue=quoteEnclose(defaultValue)
