@@ -165,7 +165,8 @@ def inputStore(softName,softVersion, inputs):
     prefixInner=False
 
 
-    for inpt in inputs:
+    for inpt_name in inputs:
+        inpt=inputs[inpt_name]
         is_array='f'
         array_separator=''
         nested_array_binding='f'
@@ -251,7 +252,7 @@ def inputStore(softName,softVersion, inputs):
             if 'default' in inpt.keys():
                 defaultValue=str(inpt['default'])
 
-        name=quoteEnclose(inpt['id'])
+        name=quoteEnclose(inpt_name)
         fieldType=quoteEnclose(fieldType)
         prefix=quoteEnclose(prefix)
         defaultValue=quoteEnclose(defaultValue)
