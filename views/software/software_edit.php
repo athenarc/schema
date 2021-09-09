@@ -76,7 +76,7 @@ Headers::begin() ?>
     <!-- <?= $form->field($model, 'covid19') -> checkbox(['id'=>'covid19', "uncheck"=>'0']) ?> -->
     <?=$form->field($model, 'biotools')->textInput() ?>
     <div class="doi-container">
-        <div class="row"><div class="col-md-12"><?= Html::label('Edit relevant dois (optional)') ?></div></div>
+        <div class="row"><div class="col-md-12"><?= Html::label('Edit relevant DOIs (optional)') ?></div></div>
         <div class="row">
             <div class="col-md-11"><?= Html::input('','doi-input','',['id'=>'doi-input'])?></div>
             <div class="col-md-1 float-right"><?= Html::a('Add','javascript:void(0);',['class'=>'btn btn-secondary','id'=>'doi-add-btn']) ?></div>

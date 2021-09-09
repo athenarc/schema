@@ -81,8 +81,6 @@ Headers::begin() ?>
 <?php Headers::end()?>
 
 
-
-
 <?php 
 ActiveForm::begin($form_params);
 
