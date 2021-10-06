@@ -26,6 +26,7 @@ namespace app\models;
 use Yii;
 use yii\db\Query;
 use app\models\Software;
+use webvimark\modules\UserManagement\models\User;
 
 
 /**
@@ -64,7 +65,15 @@ class SoftwareEdit extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [
+        if (User::hasRole("Admin", $superAdminAllowed = true))
+        {
+            $sharedRules=[
+                [['shared'],'boolean'],
+                [['shared'],'required']
+            ];
+        }
+        
+        $rules=[
             [['description', 'instructions'], 'string',],
             [['description'], 'required',],
             [['visibility'], 'required',],
@@ -74,10 +83,14 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             [['biotools'],'string'],
             [['iomount'],'boolean'],
             [['cwlFile'], 'file', 'extensions' => ['yaml', 'cwl']],
-            [['covid19'],'boolean'],
-            [['covid19'],'required'],
+            [['shared'],'boolean'],
+            [['shared'],'required'],
 
         ];
+
+        $rules=array_merge($rules,$sharedRules);
+
+        return $rules;
     }
 
     /**
@@ -103,7 +116,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             'omountpoint' => 'Output folder mount point (folder inside the container where users can find the output). Leave empty if no mount is required',
             'iomount' => 'Image requires disk I/O',
             'cwlFile' => 'Upload a new CWL definition file * ',
-            'covid19' => 'Software is related to COVID-19 research',
+            'shared' => 'Software needs reference data from the shared folder',
             'instructions'=>'User instructions'
         ];
     }
@@ -111,39 +124,16 @@ class SoftwareEdit extends \yii\db\ActiveRecord
     public function softwareEdit()
     {
 
-        /*
-         * If the user modified the name of the software,
-         * update the DB table
-         */
-        // if (empty($this->workingdir))
-        // {
-        //     $this->workingdir='/data';
-        // }
-        $this->covid19=($this->covid19=="1") ? true : false;
-
-        // Yii::$app->db->createCommand()->update('software',['description'=>$this->description,'visibility'=>$this->visibility,'imountpoint'=>$this->mountpoint,'workingdir'=>$this->workingdir,'biotools'=>$this->biotools,'dois'=>$this->dois], "name='$this->name' AND version='$this->version'")->execute();
-        // $this->save();
         
-        $query=new Query;
-        $result=$query->select(['uploaded_by'])
-                      ->from('software')
-                      ->where(['name'=>$this->name, 'version'=>$this->version])
-                      ->one();
-        // print_r($this->uploaded_by);
-        // exit(0);
-
-        $username=$result['uploaded_by'];
-
+        $this->shared=($this->shared=="1") ? true : false;
 
         $error='';
         $success='Software details successfully updated!';
         $warning='';
         if (!empty($this->cwlFile))
         {
-            // $username=User::getCurrentUser()['username'];
-            $dataFolder=Yii::$app->params['tmpImagePath'] . $username . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
-            // print_r($dataFolder);
-            // exit(0);
+            $dataFolder=Yii::$app->params['tmpImagePath'] . $this->uploaded_by . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
+            
             $fileName=$dataFolder . $this->cwlFile->baseName . '.' . $this->cwlFile->extension;
             $this->cwlFile->saveAs($fileName);
 
@@ -155,11 +145,8 @@ class SoftwareEdit extends \yii\db\ActiveRecord
 
             Software::exec_log($command,$outcwl,$ret);
 
-            // Yii::$app->db->createCommand()->update('software',['has_example'=>false], "name='$this->name' AND version='$this->version'")->execute();
             $this->has_example=false;
 
-            // print_r($outcwl);
-            // exit(1);
 
             switch($ret)
             {
@@ -185,7 +172,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
                     break;
                 case 33:
                     $warning.="One of the input clauses in the CWL file has no \"position\" in \"inputBinding\" and it was ignored.";
-                    $warninig.="<br />Please correct the file syntax and try again or contact an administrator.";
+                    $warning.="<br />Please correct the file syntax and try again or contact an administrator.";
                     break;
                 case 34:
                     $error.="Error: code $ret. ";
@@ -211,7 +198,6 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             if (empty($error))
             {
                 $this->cwl_path=$fileName;
-                // Yii::$app->db->createCommand()->update('software',['cwl_path'=>$fileName], "name='$this->name' AND version='$this->version'")->execute();
             }
         }
         $this->save(false);

@@ -15,6 +15,7 @@ return [
     'tmpWorkflowPath' => '/data/docker/workflows/',
     'scriptsFolder' => '/app/web/schema/scheduler_files/',
     'workflowsFolder' => '/data/docker/workflows',
+    'sharedDataFolder' => '/data/docker/user-data/shared',
     'archivedWorkflowsFolder' => '/data/docker/archived_workflows',
     'systemUser' => 'root',
     'nfsIp' => '{{ .Values.nfsIp }}',
