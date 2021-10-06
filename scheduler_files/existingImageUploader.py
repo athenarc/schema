@@ -45,6 +45,7 @@ original=sys.argv[14]
 docker_or_local=sys.argv[15]
 covid19=sys.argv[16]
 instructions=sys.argv[17]
+gpu=sys.argv[18]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -76,7 +77,7 @@ if workingDir=='':
     workingDir='/'
 
 uf.imageStore(softName,softVersion, image,script,user,visibility,
-    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions)
+    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions,gpu)
 
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];

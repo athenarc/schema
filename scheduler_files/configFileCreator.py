@@ -43,7 +43,7 @@ def createFile(name,machineType,image,
         imountPoint,isystemMount,
         omountPoint,osystemMount,
         iomountPoint,iosystemMount,
-        maxMem,maxCores,nfsIp,sharedFolder):
+        maxMem,maxCores,nfsIp,sharedFolder,gpu):
     
     if os.path.exists('/data/containerized'):
         inContainer=True
@@ -127,6 +127,9 @@ def createFile(name,machineType,image,
     containers=[]
     container={'name':jobName, 'resources':{}, 'image':image}
     container['resources']={'limits': {'memory': maxMem + 'Gi', 'cpu':maxCores + 'm'}}
+    if (gpu=='1'):
+        container['resources']['limits']['nvidia.com/gpu']='1'
+    
     container['workingDir']=workingDir
     container['command']=command
     containers.append(container)

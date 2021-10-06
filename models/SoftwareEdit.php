@@ -82,9 +82,9 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             [['workingdir'], 'string',],
             [['biotools'],'string'],
             [['iomount'],'boolean'],
+            [['gpu'],'boolean'],
+            [['gpu'],'required'],
             [['cwlFile'], 'file', 'extensions' => ['yaml', 'cwl']],
-            [['shared'],'boolean'],
-            [['shared'],'required'],
 
         ];
 
@@ -117,7 +117,8 @@ class SoftwareEdit extends \yii\db\ActiveRecord
             'iomount' => 'Image requires disk I/O',
             'cwlFile' => 'Upload a new CWL definition file * ',
             'shared' => 'Software needs reference data from the shared folder',
-            'instructions'=>'User instructions'
+            'instructions'=>'User instructions',
+            'gpu' => 'Software requires GPUs'
         ];
     }
 
@@ -126,6 +127,7 @@ class SoftwareEdit extends \yii\db\ActiveRecord
 
         
         $this->shared=($this->shared=="1") ? true : false;
+        $this->gpu=($this->gpu=="1") ? true : false;
 
         $error='';
         $success='Software details successfully updated!';

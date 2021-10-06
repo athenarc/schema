@@ -436,10 +436,13 @@ class SoftwareController extends Controller
          * mount the shared folder to the pod
          */
         $sharedFolder=($software->shared)? Yii::$app->params['sharedDataFolder']:'';
+        /*
+         * If the software uses gpus, pass the appropriate argument for execution
+         * in the limits section
+         */
+        $gpu=($software->gpu)? '1':'0';
 
 
-        // var_dump($field_values);
-        // exit(0);
         if (!empty($fields))
         {
             $field_count=count($fields);
@@ -450,9 +453,7 @@ class SoftwareController extends Controller
         }
 
         $emptyFields=true;
-        // print_r($_POST);
-        // print_r("<br />");
-        // exit(0);
+        
         for ($index=0; $index<$field_count; $index++)
         {
             if ($example)
@@ -554,8 +555,7 @@ class SoftwareController extends Controller
          * that are over 60 seconds long.
          */
         $quotas=Software::getOndemandProjectQuotas($user,$project);
-        // print_r($quotas);
-        // exit(0);
+        
 
         if(empty($quotas) && (Yii::$app->params['standalone']==false))
         {
@@ -620,7 +620,7 @@ class SoftwareController extends Controller
                                                 $isystemMount, $isystemMountField,
                                                 $osystemMount, $osystemMountField,
                                                 $iosystemMount, $iosystemMountField,
-                                                $project,$maxMem,$maxCores,$sharedFolder);
+                                                $project,$maxMem,$maxCores,$sharedFolder,$gpu);
 
             $runPodId=$result[0];
             $runError=$result[1];
@@ -741,10 +741,6 @@ class SoftwareController extends Controller
              */
             $model=new Software;
 
-            $software=$model::getSoftwareNames($softUser);
-            $descriptions=Software::getSoftwareDescriptions($softUser);
-            $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);;
 
             if(!empty($messages[1]))
             {
@@ -752,7 +748,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[2]");   
+                Yii::$app->session->setFlash('warning', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {
@@ -840,12 +836,6 @@ class SoftwareController extends Controller
            /**
              * Get the list of software
              */
-            $model=new Software;
-
-            $software=$model::getSoftwareNames($softUser);
-            $descriptions=Software::getSoftwareDescriptions($softUser);
-            $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);
 
             if(!empty($messages[1]))
             {
@@ -853,7 +843,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[0]");   
+                Yii::$app->session->setFlash('warning', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {

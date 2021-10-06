@@ -84,14 +84,15 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             [['name','version',],'required'],
             [['name',],'allowed_name_chars'],
             [['version',],'allowed_version_chars'],
-            // [['default_command'],'string'],
             [['imageFile'], 'file', 'extensions' => ['gz', 'tar']],
             [['cwlFile'], 'file', 'extensions' => ['yaml', 'cwl']],
             [['visibility','description'],'required'],
             [['biotools'],'string','max'=>255],
             [['iomount'],'boolean'],
-            [['mpi'],'boolean'],
+            [['gpu'],'boolean'],
+            [['gpu'],'required'],
             [['version'], 'uniqueSoftware'],
+
         ];
     }
 
@@ -118,7 +119,8 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             'iomount' => 'Image requires disk I/O',
             'mpi' => 'Software uses OpenMPI',
             'covid19' => 'Software is related to COVID-19 research',
-            'instructions'=>'User instructions'
+            'instructions'=>'User instructions',
+            'gpu' => 'Software requires GPUs'
         ];
     }
 
@@ -137,6 +139,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $cwlFileName=$this->quotes('');
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
         $this->biotools=$this->quotes($this->biotools);
+        $this->gpu=$this->quotes($this->gpu);
 
         $dataFolder=Yii::$app->params['tmpImagePath'] . $username . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
         if (!is_dir($dataFolder))
@@ -182,7 +185,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
 
         $arguments=[$this->name, $this->version, $imageFileName, $imageFileExt, $cwlFileName, 
                     $username, $this->visibility, $this->imountpoint, $this->omountpoint,
-                    $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions];
+                    $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions,$this->gpu];
 
 
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
