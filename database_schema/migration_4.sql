@@ -1,0 +1,1 @@
+ALTER TABLE software ADD COLUMN shared boolean default 'f';
