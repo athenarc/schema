@@ -53,6 +53,7 @@ use app\models\RunHistory;
  */
 class Software extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -804,7 +805,7 @@ class Software extends \yii\db\ActiveRecord
                                     $isystemMount, $isystemMountField,
                                     $osystemMount, $osystemMountField,
                                     $iosystemMount, $iosystemMountField, 
-                                    $project,$maxMem,$maxCores)
+                                    $project,$maxMem,$maxCores,$sharedFolder)
     {
         
         /*
@@ -842,6 +843,7 @@ class Software extends \yii\db\ActiveRecord
         $isystemMount=self::enclose($isystemMount);
         $osystemMount=self::enclose($osystemMount);
         $workingdir=self::enclose($workingdir);
+        $sharedFolder=self::enclose($sharedFolder);
 
         /*
          * Create the tmp folder to store the YAML file
@@ -897,7 +899,8 @@ class Software extends \yii\db\ActiveRecord
             $imountpoint, $isystemMount,
             $omountpoint, $osystemMount,
             $iomountpoint, $iosystemMount,
-            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],$machineType];
+            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],
+            $machineType,$sharedFolder];
 
         $schedulerCommand=$scheduler . ' ' . implode(' ',$arguments) . " 2>&1";
 

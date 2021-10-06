@@ -1,5 +1,5 @@
 mkdir /data/docker/RO-crates -p
-mkdir /data/docker/user-data -p
+mkdir /data/docker/user-data/shared -p
 mkdir /data/docker/tmp-images -p
 mkdir /data/docker/tmp -p
 mkdir /data/docker/workflows/tmp-workflows -p

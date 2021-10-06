@@ -43,7 +43,7 @@ def createFile(name,machineType,image,
         imountPoint,isystemMount,
         omountPoint,osystemMount,
         iomountPoint,iosystemMount,
-        maxMem,maxCores,nfsIp):
+        maxMem,maxCores,nfsIp,sharedFolder):
     
     if os.path.exists('/data/containerized'):
         inContainer=True
@@ -70,6 +70,13 @@ def createFile(name,machineType,image,
     volumes=[]
     mounts=[]
     if not inContainer:
+        if len(sharedFolder)>0:
+            volume={'name': jobName + '-nfs-shared-storage'}
+            volume['nfs']={'server': nfsIp, 'path': sharedFolder}
+            mount={'name': volume['name'], 'mountPath': '/shared'}
+
+            volumes.append(volume)
+            mounts.append(mount)
         if iomountPoint!='':
             volume={'name': jobName + '-nfs-storage'}
             volume['nfs']={'server': nfsIp, 'path': iosystemMount}
@@ -97,6 +104,11 @@ def createFile(name,machineType,image,
     else:
         volume={'name': jobName + '-volume', 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
         volumes.append(volume)
+
+        if len(sharedFolder)>0:
+            mount={'name': volume['name'], 'mountPath': '/shared', 'subPath': sharedFolder.replace('/data/','')}
+            mounts.append(mount)
+
 
         if iomountPoint!='':
             mount={'name': volume['name'], 'mountPath': iomountPoint, 'subPath': iosystemMount.replace('/data/','')}

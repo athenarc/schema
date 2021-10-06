@@ -24,37 +24,6 @@
 $(document).ready(function()
 {	
 
-	// if((empty($projectsDropdown))){
-	// 		$(".run-button").prop('disabled', true);
-	// }
-
-	// $(".run-button").click(function (){
-
-	// 	var grandparent=$(this).parent().parent();
-	// 	var name=grandparent.children('.software-name-column').children('.software-name').html();
-	// 	var version=grandparent.children('.software-versions').children('select').children('option:selected').html();
-	// 	var origin=$('.hidden_url').val()
-	// 	var project = $('.project-dropdown').children('option:selected').val();
-	// 	// window.alert(project);
-
-	// 	url=origin + "/index.php?r=software%2Frun&name=" + name + "&version=" + version + '&project=' + project;
-	// 	// window.alert(project);
-	// 	// $(this).attr("href",url)
-	// 	// $(this).submit();
-	// 	window.location.replace(url);
-	// });
-	// $(".edit-button").click(function (){
-
-	// 	var grandparent=$(this).parent().parent();
-	// 	var name=grandparent.children('.software-name-column').children('.software-name').html();
-	// 	var version=grandparent.children('.software-versions').children('select').children('option:selected').html();
-	// 	// var origin=$('.hidden_url').val()
-		
-	// 	url=origin + "/index.php?r=software%2Fedit-software&name=" + name + "&version=" + version;
-	// 	// $(this).attr("href",url)
-	// 	// $(this).submit();
-	// 	window.location.replace(url);
-	// });
 	$(".delete-button").click(function (event){
 
 		event.preventDefault();
@@ -96,13 +65,13 @@ $(document).ready(function()
 			var selector ='hidden-edit-link-'+ name + '-' + version;
 			selector=$.escapeSelector(selector);
 			var editLink=$('#' + selector).val();
-
+			buttonContainer.children('.edit-button').attr('href', editLink);
 
 			var selector ='hidden-analyze-link-'+ name + '-' + version;
 			selector=$.escapeSelector(selector);
-			var editLink=$('#' + selector).val();
+			var analyzeLink=$('#' + selector).val();
 			// alert(buttonContainer.children('.run-button').html());
-			buttonContainer.children('.analyze-button').attr('href', editLink);
+			buttonContainer.children('.analyze-button').attr('href', analyzeLink);
 			
 
 			$.ajax({
