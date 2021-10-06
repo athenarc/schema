@@ -42,6 +42,7 @@ maxCores=sys.argv[14]
 nfsIp=sys.argv[15]
 machineType=sys.argv[16]
 sharedFolder=sys.argv[17]
+gpu=sys.argv[18]
 
 
 
@@ -51,7 +52,7 @@ yamlFile=cfile.createFile(name,machineType,image,
 						imountPoint,isystemMount,
 						omountPoint,osystemMount,
 						iomountPoint,iosystemMount,
-						maxMem,maxCores,nfsIp,sharedFolder)
+						maxMem,maxCores,nfsIp,sharedFolder,gpu)
 
 # deploy
 k8sRetCode=subprocess.call(['kubectl','create','-f',yamlFile])

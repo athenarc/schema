@@ -75,6 +75,7 @@ Headers::begin() ?>
         </div>
 
     <?= ($superadmin)? $form->field($model, 'shared') -> checkbox(['id'=>'shared', "uncheck"=>'0',]):'' ?>
+    <?= $form->field($model, 'gpu') -> checkbox(['id'=>'gpu', "uncheck"=>'0']) ?>
 
     <?=$form->field($model, 'biotools')->textInput() ?>
     <div class="doi-container">

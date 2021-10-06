@@ -805,7 +805,7 @@ class Software extends \yii\db\ActiveRecord
                                     $isystemMount, $isystemMountField,
                                     $osystemMount, $osystemMountField,
                                     $iosystemMount, $iosystemMountField, 
-                                    $project,$maxMem,$maxCores,$sharedFolder)
+                                    $project,$maxMem,$maxCores,$sharedFolder,$gpu)
     {
         
         /*
@@ -844,6 +844,7 @@ class Software extends \yii\db\ActiveRecord
         $osystemMount=self::enclose($osystemMount);
         $workingdir=self::enclose($workingdir);
         $sharedFolder=self::enclose($sharedFolder);
+        $gpu=self::enclose($gpu);
 
         /*
          * Create the tmp folder to store the YAML file
@@ -869,7 +870,7 @@ class Software extends \yii\db\ActiveRecord
                 $fieldValues[$field->name]=$field->value;
             
         }
-        // $fieldValues=implode("\n",$fieldValues);
+
         $fieldValues=json_encode($fieldValues,JSON_UNESCAPED_SLASHES);
 
         $machineType=SoftwareProfiler::getMachineType($fields,$software,$folder,$isystemMount,$iosystemMount,$maxMem);
@@ -900,7 +901,7 @@ class Software extends \yii\db\ActiveRecord
             $omountpoint, $osystemMount,
             $iomountpoint, $iosystemMount,
             $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],
-            $machineType,$sharedFolder];
+            $machineType,$sharedFolder,$gpu];
 
         $schedulerCommand=$scheduler . ' ' . implode(' ',$arguments) . " 2>&1";
 
