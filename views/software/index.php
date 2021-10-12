@@ -38,8 +38,6 @@ use app\components\SoftDescrModal;
 use app\components\SoftwareIndicatorList;
 use app\components\Headers;
 
-// print_r($_SESSION['selected_project']);
-// exit();
 
 /*
  * Add stylesheet
@@ -78,7 +76,7 @@ else
  * Add button for new software upload
  */ 
 $this->title = 'Available Software';
-// $this->params['breadcrumbs'][] = $this->title;
+
 
 $softwareAdd='<i class="fas fa-plus"></i>&nbsp;New image';
 $softwareAddExisting='<i class="fas fa-plus"></i>&nbsp;Existing image';
