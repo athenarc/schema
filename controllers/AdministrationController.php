@@ -270,6 +270,12 @@ class AdministrationController extends Controller
         return $this->render('view-page',['page'=>$page]);
     }
 
+    public function actionJupyter()
+    {
+
+        return $this->render('jupyter');
+    }
+
 
 
 }

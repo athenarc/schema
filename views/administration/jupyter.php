@@ -27,7 +27,7 @@ use webvimark\modules\UserManagement\models\User;
 use app\components\Headers;
 
 echo Html::CssFile('@web/css/personal-account-settings.css');
-$this->title = "Admin panel";
+$this->title = "Jupyter panel";
 
 
 Headers::begin() ?>
@@ -40,28 +40,7 @@ Headers::begin() ?>
 
 
 
-<?= ToolButton::createButton("User administration", "",['/personal/superadmin-actions']) ?>
+<?= ToolButton::createButton("View active servers", "",['/jupyter/active-servers']) ?>
 <br />
-<?= ToolButton::createButton("Ticket support administration", "",['/ticket-admin/index']) ?>
+<?= ToolButton::createButton("Manage images", "",['/jupyter/image-list']) ?>
 <br />
-<?= ToolButton::createButton("Dockerhub image requests", "",['/administration/dockerhub-image-list']) ?>
-<br />
-<?= ToolButton::createButton("Jupyter admin panel", "",['/administration/jupyter']) ?>
-<br />
-<?= ToolButton::createButton("External data repositories", "",['/administration/external-repositories']) ?>
-<br />
-<?= ToolButton::createButton("System configuration", "",['/administration/system-configuration']) ?>
-<br />
-<?php
-if (isset(Yii::$app->params['metrics_url']) && (!empty(Yii::$app->params['metrics_url'])))
-{
-?>
-
-	<?= ToolButton::createButton("Cluster Metrics", "", Yii::$app->params['metrics_url'], ['target'=>'_blank']) ?>
-	<br />
-
-<?php
-}
-?>
-<!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
-<br /> -->

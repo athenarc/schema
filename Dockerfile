@@ -32,7 +32,8 @@ RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packa
     docker-php-ext-enable yaml.so && \
 # Install RO-crates using pip3
 # Install docker-tar-pusher using pip3
-    pip3 install rocrate dockertarpusher && \
+# Install notebook for password hashing
+    pip3 install rocrate dockertarpusher notebook && \
 # Create the web server folder and navigate to it
     mkdir /app/web
 

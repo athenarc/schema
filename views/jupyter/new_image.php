@@ -20,48 +20,39 @@
  *  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  *
  ************************************************************************************/
-
 use yii\helpers\Html;
-use app\components\ToolButton;
-use webvimark\modules\UserManagement\models\User;
+use yii\helpers\Url;
 use app\components\Headers;
+use yii\widgets\ActiveForm;
 
-echo Html::CssFile('@web/css/personal-account-settings.css');
-$this->title = "Admin panel";
 
+/*
+ * Add stylesheet
+ */
+
+
+$this->title="Add Jupyter image";
+
+$cancel_icon='<i class="fas fa-times"></i>';
+$add_icon='<i class="fas fa-plus"></i>';
 
 Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
-    
+    'buttons'=>
+    [
+
+    ],
 ])
 ?>
-<?Headers::end()?>
+<?php Headers::end();?>
 
+<?php $form=ActiveForm::begin($form_params); ?>
 
+    <?=$form->field($model,'description')?>
+    <?=$form->field($model,'image')?>
 
-<?= ToolButton::createButton("User administration", "",['/personal/superadmin-actions']) ?>
-<br />
-<?= ToolButton::createButton("Ticket support administration", "",['/ticket-admin/index']) ?>
-<br />
-<?= ToolButton::createButton("Dockerhub image requests", "",['/administration/dockerhub-image-list']) ?>
-<br />
-<?= ToolButton::createButton("Jupyter admin panel", "",['/administration/jupyter']) ?>
-<br />
-<?= ToolButton::createButton("External data repositories", "",['/administration/external-repositories']) ?>
-<br />
-<?= ToolButton::createButton("System configuration", "",['/administration/system-configuration']) ?>
-<br />
-<?php
-if (isset(Yii::$app->params['metrics_url']) && (!empty(Yii::$app->params['metrics_url'])))
-{
-?>
+    <?=Html::submitButton($add_icon . '&nbsp;Add',['class'=> 'btn btn-primary submit-btn'])?>
+    <?=Html::submitButton($cancel_icon . '&nbsp;Cancel',['class'=> 'btn btn-secondary cancel-btn'])?>
+<?php ActiveForm::end(); ?>
 
-	<?= ToolButton::createButton("Cluster Metrics", "", Yii::$app->params['metrics_url'], ['target'=>'_blank']) ?>
-	<br />
-
-<?php
-}
-?>
-<!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
-<br /> -->

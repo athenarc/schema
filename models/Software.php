@@ -1616,29 +1616,16 @@ class Software extends \yii\db\ActiveRecord
         {
             $project=str_replace(' ','%20',$project);
             $url=Yii::$app->params['egciSingleProjecteQuotas'] . "&username=$username&project=$project";
-            // print_r($url);
-            // exit(0);
+            
             $client = new Client();
             $response = $client->createRequest()
                     ->setMethod('GET')
                     ->setUrl($url)
                     ->send();
 
-            // print_r($url);
-            // exit(0);
+            
             $data=$response->data;
         
-            // $results=[];
-            // foreach($data as $row) 
-            // {
-            //     $results[$row['name']]=
-            //     [
-            //         'num_of_jobs'=>$row['num_of_jobs'],
-            //         'ram'=>$row['ram'],
-            //         'cores'=>$row['cores'],
-            //         'time_per_job'=>$row['time_per_job'],
-            //     ];
-            // }
         }
         /*
          * SCHeMa runs as standalone without 
