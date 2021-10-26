@@ -72,6 +72,10 @@ class SoftwareEdit extends \yii\db\ActiveRecord
                 [['shared'],'required']
             ];
         }
+        else
+        {
+            $sharedRules=[];
+        }
         
         $rules=[
             [['description', 'instructions'], 'string',],
