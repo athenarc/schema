@@ -833,6 +833,7 @@ class Software extends \yii\db\ActiveRecord
             }
         }
         $nameNoQuotes=$name;
+        $nameNoQuotes=str_replace('_','-',$name);
         $versionNoQuotes=$version;
         $name=self::enclose($name);
         $version=self::enclose($version);
@@ -894,8 +895,9 @@ class Software extends \yii\db\ActiveRecord
          * Classify software, create YAML job configuration file,
          * send the file to Kubernetes to run and get the machine type.
          */
+        $nameWithoutUnderscore=str_replace('_','-',$name);
         $arguments=[
-            $name,$version,$image,
+            $nameWithoutUnderscore,$version,$image,
             $jobid,$folder, $workingdir, 
             $imountpoint, $isystemMount,
             $omountpoint, $osystemMount,
