@@ -154,7 +154,7 @@ def createFile(name,machineType,image,
     manifest_data['spec']['template']['spec']['restartPolicy']='Never'
 
     #if memory is large, add tolerations:
-    if int(maxMem) > 512:
+    if (int(maxMem) > 512) or (int(maxCores)>=56):
         tolerations=[]
         tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
         manifest_data['spec']['template']['spec']['tolerations']=tolerations
