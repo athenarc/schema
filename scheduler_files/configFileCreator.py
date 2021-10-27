@@ -50,7 +50,7 @@ def createFile(name,machineType,image,
     else:
         inContainer=False
 
-    jobName=name.lower().replace(' ','-').replace('\t','-') + '-' + jobid
+    jobName=name.lower().replace(' ','-').replace('\t','-').replace('_','-') + '-' + jobid
 
     yamlName=tmpFolder + '/' + jobName + '.yaml'
     commandFile=tmpFolder + '/' + 'commands.txt'

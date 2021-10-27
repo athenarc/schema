@@ -36,7 +36,6 @@ configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json
 configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
-print('ok')
 db=config['database']
 host=db['host']
 dbuser=db['username']
@@ -159,7 +158,6 @@ cur.execute(sql)
 result=cur.fetchone()
 if result[0]=='Canceled':
     status='Canceled'
-print(result)
 
 if status=='Canceled':
     #everything is done with PHP on the interface
@@ -214,7 +212,7 @@ if (status!='Canceled'):
     g.write(logs)
     g.close()
 
-    #Clean job
-    yamlFile=folder + '/' + jobName + '.yaml'
-    returnCode=subprocess.call(['kubectl','delete','-f',yamlFile])
+#Clean job
+yamlFile=folder + '/' + jobName + '.yaml'
+returnCode=subprocess.call(['kubectl','delete','-f',yamlFile])
 
