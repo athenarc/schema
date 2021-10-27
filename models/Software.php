@@ -895,9 +895,8 @@ class Software extends \yii\db\ActiveRecord
          * Classify software, create YAML job configuration file,
          * send the file to Kubernetes to run and get the machine type.
          */
-        $nameWithoutUnderscore=str_replace('_','-',$name);
         $arguments=[
-            $nameWithoutUnderscore,$version,$image,
+            $name,$version,$image,
             $jobid,$folder, $workingdir, 
             $imountpoint, $isystemMount,
             $omountpoint, $osystemMount,
@@ -914,6 +913,14 @@ class Software extends \yii\db\ActiveRecord
         // print_r($output);
         // exit(0);
         $jobName=strtolower($nameNoQuotes) . '-' . $jobid;
+        /*
+         * This replacements are performed in configFileCreator.py too.
+         * Anything changed here should be changed there.
+         * Job cancelling is also affected.
+         */
+        $jobName=str_replace('_','-',$jobName);
+        $jobName=str_replace(' ','-',$jobName);
+        $jobName=str_replace("\t",'-',$jobName);
         $arguments=[$jobName, $jobid, $folder];
         $statsCommand=$stats . ' ' . implode(' ', $arguments);
         $monitorLog=$folder . 'monitorLog.txt';
@@ -1047,11 +1054,11 @@ class Software extends \yii\db\ActiveRecord
     {
         $folder=$userFolder=Yii::$app->params['tmpFolderPath'] . "/$jobid/";
 
-        // $filename=$folder . 'endTime.txt';
-        // $dateTime= date("F j, Y, H:i:s");
-        // file_put_contents($filename, $dateTime);
         #Clear job
         $jobName=strtolower($name). '-' . $jobid;
+        $jobName=str_replace('_','-',$jobName);
+        $jobName=str_replace(' ','-',$jobName);
+        $jobName=str_replace("\t",'-',$jobName);
         $yaml=$folder . $jobName . '.yaml';
 
         if ($status=='Completed')
