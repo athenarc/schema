@@ -833,7 +833,7 @@ class Software extends \yii\db\ActiveRecord
             }
         }
         // $nameNoQuotes=$name;
-        $softname=$name;
+        $softName=$name;
         $nameNoQuotes=str_replace('_','-',$name);
         $versionNoQuotes=$version;
         $name=self::enclose($name);
