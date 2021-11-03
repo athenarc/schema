@@ -832,7 +832,8 @@ class Software extends \yii\db\ActiveRecord
                 $iomountpoint=$imountpoint;
             }
         }
-        $nameNoQuotes=$name;
+        // $nameNoQuotes=$name;
+        $softname=$name;
         $nameNoQuotes=str_replace('_','-',$name);
         $versionNoQuotes=$version;
         $name=self::enclose($name);
@@ -961,7 +962,7 @@ class Software extends \yii\db\ActiveRecord
                     "omountpoint" => $osystemMountField,
                     "iomountpoint" => $iosystemMountField,
                     "start" => 'NOW()',
-                    "softname" => $nameNoQuotes,
+                    "softname" => $softName,
                     "softversion"=> $versionNoQuotes,
                     "machinetype"=> $machineType,
                     "project"=>$project,
