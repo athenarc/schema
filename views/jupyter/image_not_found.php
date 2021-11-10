@@ -22,7 +22,7 @@
  ************************************************************************************/
 use yii\helpers\Html;
 
-$this->title='Non-existent software';
+$this->title='Non-existent image';
 $back_icon='<i class="fas fa-arrow-left"></i>'; 
 
 

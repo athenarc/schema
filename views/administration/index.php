@@ -63,5 +63,7 @@ if (isset(Yii::$app->params['metrics_url']) && (!empty(Yii::$app->params['metric
 <?php
 }
 ?>
+<?= ToolButton::createButton("Manage TRS endpoints", "",['/administration/manage-trs']) ?>
+<br />
 <!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
 <br /> -->
