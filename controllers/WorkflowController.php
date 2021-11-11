@@ -161,14 +161,13 @@ class WorkflowController extends Controller
             $id_to_vis[$workflow->id]=$workflow->visualize;
         }
 
-       // print_r($nameversion_to_id);
-       // exit(0);
 
        $descriptions=Workflow::getWorkflowDescriptions($softUser);
        $visualizations=Workflow::getWorkflowVisualizations($softUser);
        $indicators=Workflow::getIndicators($softUser);
 
-       $trsWorkflows=TrsEndpoints::getWorkflows();
+       $trsWorkflows=[];
+       // $trsWorkflows=TrsEndpoints::getWorkflows();
         
                 
 
