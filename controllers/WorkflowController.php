@@ -51,6 +51,7 @@ use app\models\SoftwareInput;
 use app\models\Workflow;
 use app\models\WorkflowInput;
 use app\models\WorkflowUpload;
+use app\models\TrsEndpoints;
 use yii\helpers\BaseFileHelper;
 
 class WorkflowController extends Controller
@@ -166,12 +167,14 @@ class WorkflowController extends Controller
        $descriptions=Workflow::getWorkflowDescriptions($softUser);
        $visualizations=Workflow::getWorkflowVisualizations($softUser);
        $indicators=Workflow::getIndicators($softUser);
+
+       $trsWorkflows=TrsEndpoints::getWorkflows();
         
                 
 
         return $this->render('index',['workflows' => $workflows, 'user'=> $user,
                                       'superadmin' => $superadmin,'descriptions'=>$descriptions, 'nameversion_to_id'=>$nameversion_to_id,
-                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis, 'visualizations'=>$visualizations,
+                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis, 'visualizations'=>$visualizations,'trsWorkflows'=>$trsWorkflows
         ]);
     }
 
