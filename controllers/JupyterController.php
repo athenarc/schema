@@ -165,7 +165,7 @@ class JupyterController extends Controller
             /*
              * Project not active in standalone mode, so there's no use searching.
              */
-            $quotas=['cores'=>Yii::$app->params['standaloneResources']['maxCores'],'ram'=>Yii::$app->params['standaloneResources']['maxRam'] ];
+            $quotas=['cores'=>Yii::$app->params['standaloneResources']['maxCores'],'ram'=>Yii::$app->params['standaloneResources']['maxRam'],'end_date'=>'2250-12-31' ];
         }
 
         /*
