@@ -192,7 +192,7 @@ class User extends UserIdentity
 
         $userId=Yii::$app->db->getLastInsertID();
 
-        // Userw::assignRole($userId, 'PlatformUser');
+        Userw::assignRole($userId, 'PlatformUser');
         
 
     }

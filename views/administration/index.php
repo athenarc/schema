@@ -27,35 +27,12 @@ use webvimark\modules\UserManagement\models\User;
 use app\components\Headers;
 
 echo Html::CssFile('@web/css/personal-account-settings.css');
-$this->title = "New Request";
+$this->title = "Admin panel";
 
-if (empty($errors))
-{
-	if (!empty($success))
-	{
-		echo '<div class="alert alert-success row" role="alert">';
-		echo $success;
-		echo '</div>';
-	}
-	if (!empty($warning))
-	{
-		echo '<div class="alert alert-warning row" role="alert">';
-		echo $warning;
-		echo '</div>';
-	}
-
-}
-else
-{
-	echo '<div class="alert alert-danger row" role="alert">';
-	echo $errors;
-	echo '</div>';
-
-}
 
 Headers::begin() ?>
 <?php echo Headers::widget(
-['title'=>'', 
+['title'=>$this->title, 
     
 ])
 ?>
@@ -68,6 +45,8 @@ Headers::begin() ?>
 <?= ToolButton::createButton("Ticket support administration", "",['/ticket-admin/index']) ?>
 <br />
 <?= ToolButton::createButton("Dockerhub image requests", "",['/administration/dockerhub-image-list']) ?>
+<br />
+<?= ToolButton::createButton("Jupyter admin panel", "",['/administration/jupyter']) ?>
 <br />
 <?= ToolButton::createButton("External data repositories", "",['/administration/external-repositories']) ?>
 <br />
@@ -84,5 +63,7 @@ if (isset(Yii::$app->params['metrics_url']) && (!empty(Yii::$app->params['metric
 <?php
 }
 ?>
+<?= ToolButton::createButton("Manage TRS endpoints", "",['/administration/manage-trs']) ?>
+<br />
 <!-- <?= ToolButton::createButton("Experiments", "",['/administration/experiments']) ?>
 <br /> -->

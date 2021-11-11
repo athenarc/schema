@@ -4,4 +4,5 @@ data:
 kind: Secret
 metadata:
   name: registry-creds
+  namespace: {{ .Values.namespace }}
 type: kubernetes.io/dockerconfigjson

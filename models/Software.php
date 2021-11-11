@@ -53,6 +53,7 @@ use app\models\RunHistory;
  */
 class Software extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -804,7 +805,7 @@ class Software extends \yii\db\ActiveRecord
                                     $isystemMount, $isystemMountField,
                                     $osystemMount, $osystemMountField,
                                     $iosystemMount, $iosystemMountField, 
-                                    $project,$maxMem,$maxCores)
+                                    $project,$maxMem,$maxCores,$sharedFolder,$gpu)
     {
         
         /*
@@ -831,7 +832,9 @@ class Software extends \yii\db\ActiveRecord
                 $iomountpoint=$imountpoint;
             }
         }
-        $nameNoQuotes=$name;
+        // $nameNoQuotes=$name;
+        $softName=$name;
+        $nameNoQuotes=str_replace('_','-',$name);
         $versionNoQuotes=$version;
         $name=self::enclose($name);
         $version=self::enclose($version);
@@ -842,6 +845,8 @@ class Software extends \yii\db\ActiveRecord
         $isystemMount=self::enclose($isystemMount);
         $osystemMount=self::enclose($osystemMount);
         $workingdir=self::enclose($workingdir);
+        $sharedFolder=self::enclose($sharedFolder);
+        $gpu=self::enclose($gpu);
 
         /*
          * Create the tmp folder to store the YAML file
@@ -867,7 +872,7 @@ class Software extends \yii\db\ActiveRecord
                 $fieldValues[$field->name]=$field->value;
             
         }
-        // $fieldValues=implode("\n",$fieldValues);
+
         $fieldValues=json_encode($fieldValues,JSON_UNESCAPED_SLASHES);
 
         $machineType=SoftwareProfiler::getMachineType($fields,$software,$folder,$isystemMount,$iosystemMount,$maxMem);
@@ -897,7 +902,8 @@ class Software extends \yii\db\ActiveRecord
             $imountpoint, $isystemMount,
             $omountpoint, $osystemMount,
             $iomountpoint, $iosystemMount,
-            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],$machineType];
+            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],
+            $machineType,$sharedFolder,$gpu];
 
         $schedulerCommand=$scheduler . ' ' . implode(' ',$arguments) . " 2>&1";
 
@@ -908,6 +914,14 @@ class Software extends \yii\db\ActiveRecord
         // print_r($output);
         // exit(0);
         $jobName=strtolower($nameNoQuotes) . '-' . $jobid;
+        /*
+         * This replacements are performed in configFileCreator.py too.
+         * Anything changed here should be changed there.
+         * Job cancelling is also affected.
+         */
+        $jobName=str_replace('_','-',$jobName);
+        $jobName=str_replace(' ','-',$jobName);
+        $jobName=str_replace("\t",'-',$jobName);
         $arguments=[$jobName, $jobid, $folder];
         $statsCommand=$stats . ' ' . implode(' ', $arguments);
         $monitorLog=$folder . 'monitorLog.txt';
@@ -948,7 +962,7 @@ class Software extends \yii\db\ActiveRecord
                     "omountpoint" => $osystemMountField,
                     "iomountpoint" => $iosystemMountField,
                     "start" => 'NOW()',
-                    "softname" => $nameNoQuotes,
+                    "softname" => $softName,
                     "softversion"=> $versionNoQuotes,
                     "machinetype"=> $machineType,
                     "project"=>$project,
@@ -1041,11 +1055,11 @@ class Software extends \yii\db\ActiveRecord
     {
         $folder=$userFolder=Yii::$app->params['tmpFolderPath'] . "/$jobid/";
 
-        // $filename=$folder . 'endTime.txt';
-        // $dateTime= date("F j, Y, H:i:s");
-        // file_put_contents($filename, $dateTime);
         #Clear job
         $jobName=strtolower($name). '-' . $jobid;
+        $jobName=str_replace('_','-',$jobName);
+        $jobName=str_replace(' ','-',$jobName);
+        $jobName=str_replace("\t",'-',$jobName);
         $yaml=$folder . $jobName . '.yaml';
 
         if ($status=='Completed')
@@ -1612,29 +1626,16 @@ class Software extends \yii\db\ActiveRecord
         {
             $project=str_replace(' ','%20',$project);
             $url=Yii::$app->params['egciSingleProjecteQuotas'] . "&username=$username&project=$project";
-            // print_r($url);
-            // exit(0);
+            
             $client = new Client();
             $response = $client->createRequest()
                     ->setMethod('GET')
                     ->setUrl($url)
                     ->send();
 
-            // print_r($url);
-            // exit(0);
+            
             $data=$response->data;
         
-            // $results=[];
-            // foreach($data as $row) 
-            // {
-            //     $results[$row['name']]=
-            //     [
-            //         'num_of_jobs'=>$row['num_of_jobs'],
-            //         'ram'=>$row['ram'],
-            //         'cores'=>$row['cores'],
-            //         'time_per_job'=>$row['time_per_job'],
-            //     ];
-            // }
         }
         /*
          * SCHeMa runs as standalone without 

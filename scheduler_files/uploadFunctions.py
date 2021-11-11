@@ -165,7 +165,8 @@ def inputStore(softName,softVersion, inputs):
     prefixInner=False
 
 
-    for inpt in inputs:
+    for inpt_name in inputs:
+        inpt=inputs[inpt_name]
         is_array='f'
         array_separator=''
         nested_array_binding='f'
@@ -251,7 +252,7 @@ def inputStore(softName,softVersion, inputs):
             if 'default' in inpt.keys():
                 defaultValue=str(inpt['default'])
 
-        name=quoteEnclose(inpt['id'])
+        name=quoteEnclose(inpt_name)
         fieldType=quoteEnclose(fieldType)
         prefix=quoteEnclose(prefix)
         defaultValue=quoteEnclose(defaultValue)
@@ -278,7 +279,7 @@ def inputStore(softName,softVersion, inputs):
     return 0
 
 def imageStore(name,version,image,script,user,visibility,
-                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions):
+                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions,gpu):
     
     softFull=name+ '-' + version
     name=quoteEnclose(name)
@@ -298,6 +299,10 @@ def imageStore(name,version,image,script,user,visibility,
     docker_or_local=quoteEnclose(docker_or_local)
     covid19=quoteEnclose(covid19)
     instructions=quoteEnclose(instructions)
+    if gpu=='1':
+        gpu="'t'"
+    else:
+        gpu="'f'"
     
 
     if doiFile!='':
@@ -311,32 +316,19 @@ def imageStore(name,version,image,script,user,visibility,
     date="NOW()"
 
     values=[name,version,image,script,user, date, visibility, workingDir, imountPoint, 
-                omountPoint, description, cwlPath,biotools,dois,mpi,original,docker_or_local,covid19, instructions]
+                omountPoint, description, cwlPath,biotools,dois,mpi,original,docker_or_local,covid19, instructions,gpu]
     
     sql1='INSERT INTO software_upload (name,version, image,script,uploaded_by, date, visibility, workingdir, imountpoint, omountpoint,\
-    description, cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions) '
+    description, cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions,gpu) '
     sql1+='VALUES (' + ','.join(values) + ')'
 
-    # print(sql1);
-
     
-    ## classify software
-
-    # ontologyFolder="/data/www/schema/scheduler_files/ontology/";
-    # command=[ontologyFolder + 'initialClassify.py', softFull, '100', '100','64', '0', '0']
-    # # print(' '.join(command))
-    # # exit(0)
-    # try:
-    #     out=subprocess.check_output(command,stderr=subprocess.STDOUT)
-    # except subprocess.CalledProcessError as exc:
-    #     print(exc.output)
-    #     exit(24)
 
     values=[name,version,image,script,user, visibility, workingDir, imountPoint, omountPoint,description,cwlPath,biotools,
-                    dois,mpi,original,docker_or_local,covid19, instructions]
+                    dois,mpi,original,docker_or_local,covid19, instructions,gpu]
     sql2='INSERT INTO software (name,version,image,script,uploaded_by,\
             visibility, workingdir, imountpoint, omountpoint, description,\
-            cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions) '
+            cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions,gpu) '
     sql2+='VALUES (' + ','.join(values) + ')'
     
     # print()
