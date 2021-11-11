@@ -44,8 +44,8 @@ $select_icon='<i class="fas fa-folder-open"></i>';
 $clear_icon='<i class="fas fa-times"></i>';
 $isystemMount='';
 $required='<span style="color:red">*</span>';
-$help_api_key_helix='<i class="fa fa-question-circle" title="Create an account to Helix to obtain an API Key."></i>';
-$help_api_key_zenodo='<i class="fa fa-question-circle" title="Create an account to Helix to obtain an API Key."></i>';
+$help_api_key_helix='<i class="fa fa-question-circle" title="Create an account on Helix to obtain an API Key."></i>';
+$help_api_key_zenodo='<i class="fa fa-question-circle" title="Create an account on Zenodo to obtain a personal access token."></i>';
 $help_private='<i class="fa fa-question-circle" title="Tick the box if you do not want the dataset to appear as public."></i>';
 $help_dataset_folder='<i class="fa fa-question-circle" title="The dataset should be saved in a folder inside the system ."></i>';
 $help_creator_names_helix='<i class="fa fa-question-circle" title="You can separate multiple creator names with a comma."></i>';
@@ -263,7 +263,7 @@ if(!empty($datasets))
       <div class="col-md-8"> <?=$form->field($model_zenodo,'doi')->textInput(['class'=>'form-control'])->label("")?></div>
   </div>
   <div class="row body-row zenodo_field zenodo">
-      <div class="col-md-4"> API key<?=$required?> <?=$help_api_key_zenodo?></div> 
+      <div class="col-md-4"> <a href="https://zenodo.org/account/settings/applications/tokens/new/" target="_blank">API access token</a><?=$required?> <?=$help_api_key_zenodo?></div> 
       <div class="col-md-8"><?=$form->field($model_zenodo,'api_key')->textInput(['class'=>'form-control'])->label("")?>
       </div>
   </div>

@@ -35,9 +35,7 @@ use app\components\InstructionsModal;
 use app\components\Headers;
 
 echo Html::CssFile('@web/css/software/run.css');
-//Yii::$app->getView()->
 $this->registerJsFile('@web/js/software/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
-//$this->registerJsFile('@web/js/workflow/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
 $this->title = "New job ($name v.$version) ";
 
@@ -79,8 +77,6 @@ Headers::begin() ?>
 ])
 ?>
 <?php Headers::end()?>
-
-
 
 
 <?php 

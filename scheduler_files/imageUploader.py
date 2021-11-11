@@ -47,6 +47,7 @@ doiFile=sys.argv[12]
 mpi=sys.argv[13]
 covid19=sys.argv[14]
 instructions=sys.argv[15]
+gpu=sys.argv[16]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -160,7 +161,7 @@ if (dockerHub=='f'):
     conn.commit()
 
 uf.imageStore(softName,softVersion, imageFull,script,user,visibility,
-    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,dockerHub,covid19,instructions)
+    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,dockerHub,covid19,instructions,gpu)
 
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];

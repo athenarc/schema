@@ -91,7 +91,8 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             [['mpi'],'boolean'],
             [['image'],'required'],
             [['version'], 'uniqueSoftware'],
-            //[['covid19'],'required'],
+            [['gpu'],'boolean'],
+            [['gpu'],'required'],
             
         ];
     }
@@ -119,7 +120,8 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             'iomount' => 'Image requires disk I/O',
             'mpi' => 'Software uses OpenMPI',
             'covid19' => 'Software is related to COVID-19 research',
-            'instructions'=>'User instructions'
+            'instructions'=>'User instructions',
+            'gpu' => 'Software requires GPUs',
         ];
     }
 
@@ -143,6 +145,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
         $this->biotools=$this->quotes($this->biotools);
         $this->instructions=$this->quotes($this->instructions);
+        $this->gpu=$this->quotes($this->gpu);
 
         //add dois string in a file and pass it on to python
         $dataFolder=Yii::$app->params['tmpImagePath'] . $username . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
@@ -182,7 +185,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             $this->name, $this->version, $this->image, $cwlFileName, 
             $username, $this->visibility, $this->imountpoint, $this->omountpoint,
             $this->description, $this->biotools, $doiFile, $mpi, $workingdir,
-            $original,$dockerhub,$this->covid19, $this->instructions];
+            $original,$dockerhub,$this->covid19, $this->instructions,$this->gpu];
 
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ");
         $command.= implode(" ", $arguments) . " ";

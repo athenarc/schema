@@ -41,33 +41,23 @@ maxMem=sys.argv[13]
 maxCores=sys.argv[14]
 nfsIp=sys.argv[15]
 machineType=sys.argv[16]
-# secJobid=sys.argv[10]
+sharedFolder=sys.argv[17]
+gpu=sys.argv[18]
 
 
-####DONE get tagList from ontology
-# tagList=cf.classify(name, version)
 
-####DONE decide machine type based on the taglist
-# machineType=cf.decideServerPool(tagList)
-# if int(maxMem) > 64:
-#     machineType='fat-node'
-
-###DONE create yaml file
+# create yaml file
 yamlFile=cfile.createFile(name,machineType,image,
 						jobid,tmpFolder,workingDir,
 						imountPoint,isystemMount,
 						omountPoint,osystemMount,
 						iomountPoint,iosystemMount,
-						maxMem,maxCores,nfsIp)
-# exit(0)
-####DOING deploy
+						maxMem,maxCores,nfsIp,sharedFolder,gpu)
+
+# deploy
 k8sRetCode=subprocess.call(['kubectl','create','-f',yamlFile])
 exit(k8sRetCode)
 
 
-# ####todo collect stats
-# command=[os.path.dirname(os.path.realpath(__file__)) + '/probe_stats.py', name,jobid]
-# # print command
-# subprocess.Popen(command)
 
 

@@ -43,14 +43,14 @@ def createFile(name,machineType,image,
         imountPoint,isystemMount,
         omountPoint,osystemMount,
         iomountPoint,iosystemMount,
-        maxMem,maxCores,nfsIp):
+        maxMem,maxCores,nfsIp,sharedFolder,gpu):
     
     if os.path.exists('/data/containerized'):
         inContainer=True
     else:
         inContainer=False
 
-    jobName=name.lower().replace(' ','-').replace('\t','-') + '-' + jobid
+    jobName=name.lower().replace(' ','-').replace('\t','-').replace('_','-') + '-' + jobid
 
     yamlName=tmpFolder + '/' + jobName + '.yaml'
     commandFile=tmpFolder + '/' + 'commands.txt'
@@ -70,6 +70,13 @@ def createFile(name,machineType,image,
     volumes=[]
     mounts=[]
     if not inContainer:
+        if len(sharedFolder)>0:
+            volume={'name': jobName + '-nfs-shared-storage'}
+            volume['nfs']={'server': nfsIp, 'path': sharedFolder}
+            mount={'name': volume['name'], 'mountPath': '/shared'}
+
+            volumes.append(volume)
+            mounts.append(mount)
         if iomountPoint!='':
             volume={'name': jobName + '-nfs-storage'}
             volume['nfs']={'server': nfsIp, 'path': iosystemMount}
@@ -98,6 +105,11 @@ def createFile(name,machineType,image,
         volume={'name': jobName + '-volume', 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
         volumes.append(volume)
 
+        if len(sharedFolder)>0:
+            mount={'name': volume['name'], 'mountPath': '/shared', 'subPath': sharedFolder.replace('/data/','')}
+            mounts.append(mount)
+
+
         if iomountPoint!='':
             mount={'name': volume['name'], 'mountPath': iomountPoint, 'subPath': iosystemMount.replace('/data/','')}
             mounts.append(mount)
@@ -115,6 +127,9 @@ def createFile(name,machineType,image,
     containers=[]
     container={'name':jobName, 'resources':{}, 'image':image}
     container['resources']={'limits': {'memory': maxMem + 'Gi', 'cpu':maxCores + 'm'}}
+    if (gpu=='1'):
+        container['resources']['limits']['nvidia.com/gpu']='1'
+    
     container['workingDir']=workingDir
     container['command']=command
     containers.append(container)
@@ -139,7 +154,7 @@ def createFile(name,machineType,image,
     manifest_data['spec']['template']['spec']['restartPolicy']='Never'
 
     #if memory is large, add tolerations:
-    if int(maxMem) > 512:
+    if (int(maxMem) > 512) or (int(maxCores)>=56):
         tolerations=[]
         tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
         manifest_data['spec']['template']['spec']['tolerations']=tolerations

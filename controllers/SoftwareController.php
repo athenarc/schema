@@ -164,12 +164,13 @@ class SoftwareController extends Controller
                                       'images'=>$images, 'profiled'=>$profiled]);
     }
 
-    public function actionIsProfiled($name,$version)
-    {
-        $profiled_value=Software::find()->select('profiled')->where(['name'=>$name])->andWhere(['version'=>$version])->scalar();
-        return $profiled_value;
+    /* What the actual fuck is this???? */
+    // public function actionIsProfiled($name,$version)
+    // {
+    //     $profiled_value=Software::find()->select('profiled')->where(['name'=>$name])->andWhere(['version'=>$version])->scalar();
+    //     return $profiled_value;
         
-    }
+    // }
 
     /**
      * Action to run a docker image uploaded in the system
@@ -430,9 +431,18 @@ class SoftwareController extends Controller
 
         $hasExample=$software->has_example;
         $uploadedBy=$software->uploaded_by;
+        /*
+         * If the software uses the reference data stored in the shared folder
+         * mount the shared folder to the pod
+         */
+        $sharedFolder=($software->shared)? Yii::$app->params['sharedDataFolder']:'';
+        /*
+         * If the software uses gpus, pass the appropriate argument for execution
+         * in the limits section
+         */
+        $gpu=($software->gpu)? '1':'0';
 
-        // var_dump($field_values);
-        // exit(0);
+
         if (!empty($fields))
         {
             $field_count=count($fields);
@@ -443,9 +453,7 @@ class SoftwareController extends Controller
         }
 
         $emptyFields=true;
-        // print_r($_POST);
-        // print_r("<br />");
-        // exit(0);
+        
         for ($index=0; $index<$field_count; $index++)
         {
             if ($example)
@@ -547,8 +555,7 @@ class SoftwareController extends Controller
          * that are over 60 seconds long.
          */
         $quotas=Software::getOndemandProjectQuotas($user,$project);
-        // print_r($quotas);
-        // exit(0);
+        
 
         if(empty($quotas) && (Yii::$app->params['standalone']==false))
         {
@@ -613,7 +620,7 @@ class SoftwareController extends Controller
                                                 $isystemMount, $isystemMountField,
                                                 $osystemMount, $osystemMountField,
                                                 $iosystemMount, $iosystemMountField,
-                                                $project,$maxMem,$maxCores);
+                                                $project,$maxMem,$maxCores,$sharedFolder,$gpu);
 
             $runPodId=$result[0];
             $runError=$result[1];
@@ -734,10 +741,6 @@ class SoftwareController extends Controller
              */
             $model=new Software;
 
-            $software=$model::getSoftwareNames($softUser);
-            $descriptions=Software::getSoftwareDescriptions($softUser);
-            $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);;
 
             if(!empty($messages[1]))
             {
@@ -745,7 +748,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[2]");   
+                Yii::$app->session->setFlash('warning', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {
@@ -833,12 +836,6 @@ class SoftwareController extends Controller
            /**
              * Get the list of software
              */
-            $model=new Software;
-
-            $software=$model::getSoftwareNames($softUser);
-            $descriptions=Software::getSoftwareDescriptions($softUser);
-            $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);
 
             if(!empty($messages[1]))
             {
@@ -846,7 +843,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[0]");   
+                Yii::$app->session->setFlash('warning', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {
@@ -872,7 +869,7 @@ class SoftwareController extends Controller
     public function actionEditSoftware($name, $version)
     {
         $username=User::getCurrentUser()['username'];
-        $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
+        $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? true : false;
 
         if ($superadmin)
         {
@@ -921,32 +918,7 @@ class SoftwareController extends Controller
             
             
             $messages=$model->softwareEdit();
-            $success="Software $name v.$version successfully updated!";
-
-            $user=User::getCurrentUser()['username'];
-
-            /**
-            * Is the user SuperAdmin?
-            */
-            $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
-        
-            if ($superadmin==1)
-            {
-                $softUser='admin';
-            }
-            else
-            {
-                $softUser=$user;
-            }
-            /**
-             * Get the list of software
-             */
             
-
-            $software=Software::getSoftwareNames($softUser);
-            $descriptions=Software::getSoftwareDescriptions($softUser);
-            $images=Software::getOriginalImages($softUser);
-            $indicators=Software::getIndicators($softUser);;
 
             if(!empty($messages[1]))
             {
@@ -954,7 +926,7 @@ class SoftwareController extends Controller
             }
             if(!empty($messages[2]))
             {
-                Yii::$app->session->setFlash('danger', "$messages[0]");   
+                Yii::$app->session->setFlash('warning', "$messages[2]");   
             }    
             if(!empty($messages[0]))
             {
@@ -963,7 +935,7 @@ class SoftwareController extends Controller
             return $this->redirect(['software/index']);
         }
 
-        return $this->render('software_edit',['model'=>$model,'vdropdown'=>$vdropdown]);
+        return $this->render('software_edit',['model'=>$model,'vdropdown'=>$vdropdown, 'superadmin'=>$superadmin]);
 
         
 

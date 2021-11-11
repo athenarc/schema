@@ -38,8 +38,6 @@ use app\components\SoftDescrModal;
 use app\components\SoftwareIndicatorList;
 use app\components\Headers;
 
-// print_r($_SESSION['selected_project']);
-// exit();
 
 /*
  * Add stylesheet
@@ -78,7 +76,7 @@ else
  * Add button for new software upload
  */ 
 $this->title = 'Available Software';
-// $this->params['breadcrumbs'][] = $this->title;
+
 
 $softwareAdd='<i class="fas fa-plus"></i>&nbsp;New image';
 $softwareAddExisting='<i class="fas fa-plus"></i>&nbsp;Existing image';
@@ -189,7 +187,7 @@ foreach ($software as $name=>$uploader)
 
 ?>
 		
-		<tr class="software-row-$name">
+		<tr class="software-row-<?=$name?>">
 			<td class="col-md-3 software-name-column"><div class="software-lock"><?=$lockIcon?></div><div class="software-name"><?=$name?></div><div class="software-description"><i class="fa fa-question-circle"></i></div><div class="indicators-div"><?=SoftwareIndicatorList::getIndicators($indicatorList)?></div></td>
 			<td class="col-md-1 software-versions"><?=Html::dropDownList('versions_drop_down',$versions[$first_key],$versions,['class'=>'versionsDropDown align-middle'])?></td>
 			<td class="col-md-3 software-image"><span class="align-middle image-field"><b><?=$image_location?></b><?=$original_image?></span></td>
@@ -198,7 +196,7 @@ foreach ($software as $name=>$uploader)
 
 <?php
 	
-		if((empty($projectsDropdown)) and !(User::hasRole("Admin",$superAdminAllowed=true)) )
+		if((empty($profiled)) and !(User::hasRole("Admin",$superAdminAllowed=true)) )
 		{
 			$disabledClass='disabled';
 		}

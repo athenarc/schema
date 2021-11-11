@@ -52,7 +52,7 @@ class JobResourcesWidget
             $username,$icontMount,$ocontMount,
             $iocontMount,$mountExistError,
             $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $type, $uploadedBy)
+            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes, $pernode, $outFolder, $type, $uploadedBy)
   {?>
             
             <div class="row">

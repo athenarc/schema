@@ -36,7 +36,6 @@ configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json
 configFile=open(configFileName,'r')
 config=json.load(configFile)
 configFile.close()
-print('ok')
 db=config['database']
 host=db['host']
 dbuser=db['username']
@@ -63,7 +62,9 @@ status=out[2]
 status_code=0
 cpu=0
 memory=0
-while (status!='Completed') and (status!='Error') and (status!='ErrImagePullBackOff') and (status!="ContainerCannotRun") and (status!="RunContainerError") and (status!="OOMKilled"):
+
+stopStatuses=set(['Completed','Error','StartError','ErrImagePullBackOff', "ContainerCannotRun","RunContainerError","OOMKilled", 'OutOfcpu'])
+while status not in stopStatuses:
     
     code=0
     if jobNamespace is not None:
@@ -159,7 +160,6 @@ cur.execute(sql)
 result=cur.fetchone()
 if result[0]=='Canceled':
     status='Canceled'
-print(result)
 
 if status=='Canceled':
     #everything is done with PHP on the interface
@@ -173,6 +173,11 @@ elif status=='Complete':
 elif status=='OOMKilled':
     query="UPDATE run_history SET stop='NOW()', status='Out_of_RAM', remote_status_code=-10 WHERE jobid='" + jobid + "'"
     status_code=-10
+    cur.execute(query)
+    conn.commit()
+elif status=='OutOfcpu':
+    query="UPDATE run_history SET stop='NOW()', status='Out_οf_CPU', remote_status_code=-10 WHERE jobid='" + jobid + "'"
+    status_code=-11
     cur.execute(query)
     conn.commit()
 else:
@@ -207,14 +212,18 @@ if (status!='Canceled'):
     try:
         logs=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
+        logs=''
         print(exc.output)
+    except UnicodeDecodeError as exc:
+        logs=''
+        print(exc)
 
     logFile=folder + '/logs.txt'
     g=open(logFile,'w')
     g.write(logs)
     g.close()
 
-    #Clean job
-    yamlFile=folder + '/' + jobName + '.yaml'
-    returnCode=subprocess.call(['kubectl','delete','-f',yamlFile])
+#Clean job
+yamlFile=folder + '/' + jobName + '.yaml'
+returnCode=subprocess.call(['kubectl','delete','-f',yamlFile])
 

@@ -38,6 +38,8 @@ use app\models\Page;
 use app\models\Notification;
 use app\models\UploadDatasetDefaults;
 use app\models\SystemConfiguration;
+use app\models\TrsEndpoints;
+use webvimark\modules\UserManagement\models\User as Userw;
 
 
 class AdministrationController extends Controller
@@ -268,6 +270,120 @@ class AdministrationController extends Controller
         }
 
         return $this->render('view-page',['page'=>$page]);
+    }
+
+    public function actionJupyter()
+    {
+
+        return $this->render('jupyter');
+    }
+
+    public function actionManageTrs()
+    {
+        if (!Userw::hasRole("Admin", $superAdminAllowed = true))
+        {
+            return $this->render('unauthorized');
+        }
+
+        $trss=TrsEndpoints::find()->orderBy('name')->all();
+
+        return $this->render('trs_list', ['trss'=>$trss]);
+    }
+    public function actionDeleteTrsEndpoint($id)
+    {
+        if (!Userw::hasRole("Admin", $superAdminAllowed = true))
+        {
+            return $this->render('unauthorized');
+        }
+
+        $trs=JupyterImages::find()->where(['id'=>$id])->one();
+
+        if (empty($trs))
+        {
+            return $this->render('endpoint_not_found');
+        }
+        $name=$trs->name;
+        $trs->delete();
+
+        Yii::$app->session->setFlash('success',"Endpoint $name deleted successufully");
+
+        $this->redirect(['administration/manage-trs']);
+    }
+
+    public function actionNewTrsEndpoint()
+    {
+        if (!Userw::hasRole("Admin", $superAdminAllowed = true))
+        {
+            return $this->render('unauthorized');
+        }
+
+        $form_params =
+        [
+            'action' => URL::to(['administration/new-trs-endpoint']),
+            'options' => 
+            [
+                'class' => 'new_endpoint_form',
+                'id'=> "new_endpoint_form"
+            ],
+            'method' => 'POST'
+        ];
+
+        $model=new TrsEndpoints;
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) 
+        {
+            $model->get_workflows=($model->get_workflows=="1")?true:false;
+            $model->push_tools=($model->push_tools=="1")?true:false;
+
+            $model->save();
+
+            Yii::$app->session->setFlash('success',"Image added successufully");
+
+            $this->redirect(['administration/manage-trs']);
+        }
+
+        return $this->render('new_endpoint',['model'=>$model,'form_params' => $form_params]);
+
+    }
+
+    public function actionEditTrsEndpoint($id)
+    {
+        if (!Userw::hasRole("Admin", $superAdminAllowed = true))
+        {
+            return $this->render('unauthorized');
+        }
+
+        $model=TrsEndpoints::find()->where(['id'=>$id])->one();
+
+        if (empty($model))
+        {
+            return $this->render('endpoint_not_found');
+        }
+
+        $form_params =
+        [
+            'action' => URL::to(['administration/edit-trs-endpoint','id'=>$id]),
+            'options' => 
+            [
+                'class' => 'edit_endpoint_form',
+                'id'=> "edit_endpoint_form"
+            ],
+            'method' => 'POST'
+        ];
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) 
+        {
+            $model->get_workflows=($model->get_workflows=="1")?true:false;
+            $model->push_tools=($model->push_tools=="1")?true:false;
+            $model->save();
+
+            Yii::$app->session->setFlash('success',"Endpoint $model->name saved!");
+
+            $this->redirect(['administration/manage-trs']);
+        }
+
+        return $this->render('edit_endpoint',['model'=>$model,'form_params' => $form_params]);
+
     }
 
 

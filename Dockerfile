@@ -32,7 +32,8 @@ RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packa
     docker-php-ext-enable yaml.so && \
 # Install RO-crates using pip3
 # Install docker-tar-pusher using pip3
-    pip3 install rocrate dockertarpusher && \
+# Install notebook for password hashing
+    pip3 install rocrate dockertarpusher notebook && \
 # Create the web server folder and navigate to it
     mkdir /app/web
 
@@ -63,6 +64,7 @@ RUN sed -i "s|\"minimum-stability\": \"stable\"|\"minimum-stability\": \"dev\" |
 RUN composer require webvimark/module-user-management && \
     composer require kartik-v/yii2-widget-datepicker "dev-master" && \
     composer require --prefer-dist yiisoft/yii2-bootstrap4 && \
+    composer require --prefer-dist yiisoft/yii2-bootstrap && \
     composer require --prefer-dist yiisoft/yii2-httpclient && \
     composer require alexantr/yii2-elfinder && \
     composer require 2amigos/yii2-ckeditor-widget

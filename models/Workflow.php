@@ -91,7 +91,7 @@ class Workflow extends \yii\db\ActiveRecord
             'cwl_path' => 'Cwl Path',
             'has_example' => 'Has Example',
             'biotools' => 'Biotools',
-            'dois' => 'Dois',
+            'dois' => 'DOIs',
             'covid19' => 'Covid19',
             'original_image' => 'Original Image',
             'github_link' => 'Github Link',
