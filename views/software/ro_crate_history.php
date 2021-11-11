@@ -24,6 +24,7 @@
 
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\LinkPager;
 use app\components\Headers;
 use webvimark\modules\UserManagement\models\User;
@@ -33,16 +34,24 @@ use webvimark\modules\UserManagement\models\User;
 
 $this->title="RO-crate objects";
 
+$this->registerJsFile('@web/js/software/ro-crate-history.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+
 $current_user=User::getCurrentUser()['username'];
 $current_user_name=explode($current_user, '@')[0];
 $download_icon='<i class="fas fa-download" title="Download"></i>';
 
+
 Headers::begin() ?>
 <?php echo Headers::widget(
-['title'=>$this->title, 
+['title'=>$this->title,
+'search'=>true,
+'search_content'=> Html::a("<i class='fas fa-search' title='Search' id='search-button'></i>",null)
+	//['software/search-ro-crate', 'search_parameter'=>$search_parameter])
+.'&nbsp;&nbsp;'
+.Html::textInput('search',$search_parameter, ['id'=>'text-search']).'&nbsp;',
 'buttons'=>
 	[
-		['fontawesome_class'=>'<i class="fas fa-arrow-left"></i>','name'=> 'Back', 
+	     ['fontawesome_class'=>'<i class="fas fa-arrow-left"></i>','name'=> 'Back', 
 		'action'=>['site/index'],
 	     'options'=>['class'=>'btn btn-default',], 'type'=>'a'],
 	],

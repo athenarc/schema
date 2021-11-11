@@ -40,11 +40,13 @@ class Headers extends Widget
     
     public $title;
     public $subtitle;
+    public $search_content;
     public $fontawesome_class;
     public $options;
     public $name;
     public $action;
     public $buttons=array();
+    public $search;
     public $special_content;
     public $type;
     
@@ -66,9 +68,11 @@ class Headers extends Widget
         $title=$this->title;
         $subtitle=$this->subtitle;
         $buttons=$this->buttons;
+        $search=$this->search;
+        $search_content=$this->search_content;
         $special_content=$this->special_content;
         return $this->render('headers', ['special_content'=>$special_content,'buttons'=>$buttons, 
-            'title'=>$title, 'subtitle'=>$subtitle]);
+            'title'=>$title, 'subtitle'=>$subtitle, 'search'=>$search, 'search_content'=>$search_content]);
 
     }
 
