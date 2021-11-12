@@ -44,7 +44,7 @@ use app\components\Headers;
 echo Html::CssFile('@web/css/software/add-example.css');
 $this->registerJsFile('@web/js/software/add-example.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
 
-$this->title = "Add example for $name v.$version";
+$this->title = " Add example for $name v.$version";
 
 
 

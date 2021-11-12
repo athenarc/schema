@@ -64,6 +64,7 @@ RUN sed -i "s|\"minimum-stability\": \"stable\"|\"minimum-stability\": \"dev\" |
 RUN composer require webvimark/module-user-management && \
     composer require kartik-v/yii2-widget-datepicker "dev-master" && \
     composer require --prefer-dist yiisoft/yii2-bootstrap4 && \
+    composer require --prefer-dist yiisoft/yii2-bootstrap && \
     composer require --prefer-dist yiisoft/yii2-httpclient && \
     composer require alexantr/yii2-elfinder && \
     composer require 2amigos/yii2-ckeditor-widget

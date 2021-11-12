@@ -24,6 +24,8 @@
 namespace app\models;
 
 use Yii;
+use yii\db\Query;
+use yii\data\Pagination;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
@@ -264,5 +266,27 @@ class RoCrate extends \yii\db\ActiveRecord
         
         return [$workflow, $success];
 
+    }
+
+
+    public function searchROCrate($search_parameter)
+    {
+        $query=new Query;
+
+        $query->select('*')
+              ->from('ro_crate');
+        if(!empty($search_parameter))
+        {
+            $query->where(['ilike','experiment_description',$search_parameter]);
+        }
+        
+        $query->orderBy(['date'=>SORT_DESC]);
+        $count = $query->count();
+        $pagination = new Pagination(['totalCount' => $count]);
+        $ro_crates = $query->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+
+        return ['rocrates'=>$ro_crates, 'pagination'=>$pagination];
     }
 }
