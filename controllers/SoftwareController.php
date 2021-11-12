@@ -1724,17 +1724,10 @@ class SoftwareController extends Controller
         return Yii::$app->response->sendFile($filepath,$filename);
     }
 
-    public function actionRoCrateHistory($search_parameter)
+    public function actionRoCrateHistory($search_parameter='')
     {
         $username=User::getCurrentUser()['username'];
-        $search_parameter=$_GET['search_parameter'];
-
-        // $query=RoCrate::find()->orderBy(['date'=>SORT_DESC]);
-        // $count = $query->count();
-        // $pagination = new Pagination(['totalCount' => $count]);
-        // $ro_crates = $query->offset($pagination->offset)
-        //         ->limit($pagination->limit)
-        //         ->all();
+        
         $results=ROCrate::searchROCrate($search_parameter);
         $ro_crates=$results['rocrates'];
         $pagination=$results['pagination'];
