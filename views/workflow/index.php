@@ -82,6 +82,7 @@ $this->title = 'Available Workflows';
 
 $workflowAdd='<i class="fas fa-plus"></i>&nbsp;New workflow';
 $projectAdd='<i class="fas fa-plus"></i>&nbsp;New project';
+$external='<i class="fas fa-external-link-alt"></i>';
 
 
 // $softwareAdd.='</div>';
@@ -90,10 +91,12 @@ Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
 	'buttons'=>
-	[
-		
+	[ 		
 		['fontawesome_class'=>'<i class="fas fa-plus"></i>','name'=> 'New workflow', 'action'=>['/workflow/upload'],
+		 'options'=>['class'=>'btn btn-primary'], 'type'=>'a'], 
+		['fontawesome_class'=>$external,'name'=> 'TRS workflows', 'action'=>['/workflow/trs-workflows'],
 		 'options'=>['class'=>'btn btn-secondary'], 'type'=>'a'] 
+
 	],
 ])
 ?>
@@ -114,7 +117,7 @@ Headers::begin() ?>
 	<div class=" table-responsive">
 		<table class="table table-striped">
 		<thead class="software-header">
-			<th class="col-md-3">Software Name</th>
+			<th class="col-md-3">Workflow Name</th>
 			<th class="col-md-2">Version</th>
 			<th class="col-md-3">Uploader</th>
 			<th class="col-md-4"></th>
@@ -149,8 +152,7 @@ Headers::begin() ?>
 $publicIcon='<i class="fas fa-lock-open" title="This software is publicly available"></i>';
 $privateIcon='<i class="fas fa-lock" title="This software is private"></i>';
 
-// print_r($software);
-// exit(0);
+
 foreach ($workflows as $name=>$uploader)
 {
 	foreach($uploader as $upl=>$versions)
@@ -285,5 +287,3 @@ foreach ($visualizations as $soft)
 	}
 ?>
 </div>
-
-
