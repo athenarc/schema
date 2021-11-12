@@ -165,15 +165,12 @@ class WorkflowController extends Controller
        $descriptions=Workflow::getWorkflowDescriptions($softUser);
        $visualizations=Workflow::getWorkflowVisualizations($softUser);
        $indicators=Workflow::getIndicators($softUser);
-
-       $trsWorkflows=[];
-       // $trsWorkflows=TrsEndpoints::getWorkflows();
         
                 
 
         return $this->render('index',['workflows' => $workflows, 'user'=> $user,
                                       'superadmin' => $superadmin,'descriptions'=>$descriptions, 'nameversion_to_id'=>$nameversion_to_id,
-                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis, 'visualizations'=>$visualizations,'trsWorkflows'=>$trsWorkflows
+                                      'success'=>'','warning'=>'','error' =>'','selected_project'=>$selected_project,'indicators'=>$indicators, 'id_to_vis'=>$id_to_vis, 'visualizations'=>$visualizations,
         ]);
     }
 
@@ -181,7 +178,14 @@ class WorkflowController extends Controller
      * Action to run a docker image uploaded in the system
      */
 
-   
+    public function actionTrsWorkflows()
+    {
+        session_write_close();
+        $trs=TrsEndpoints::getWorkflows();
+        session_start();
+
+        return $this->render('trs_workflows',['trs'=>$trs]);
+    }
 
 
     public function actionRun($name, $version, $project)
@@ -198,9 +202,6 @@ class WorkflowController extends Controller
         /*
          * Get name and version from the browser link
          */
-        // $name=$_GET['name'];
-        // $version=$_GET['version'];
-        // $project=$_GET['project'];
         $projects=(Yii::$app->params['standalone']==false) ? Software::getActiveProjects() : [];
 
         if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
