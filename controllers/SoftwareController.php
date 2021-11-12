@@ -1724,46 +1724,57 @@ class SoftwareController extends Controller
         return Yii::$app->response->sendFile($filepath,$filename);
     }
 
-    public function actionRoCrateHistory()
+    public function actionRoCrateHistory($search_parameter)
     {
         $username=User::getCurrentUser()['username'];
-        $query=RoCrate::find()->orderBy(['date'=>SORT_DESC]);
-        $count = $query->count();
-        $pagination = new Pagination(['totalCount' => $count]);
-        $ro_crates = $query->offset($pagination->offset)
-                ->limit($pagination->limit)
-                ->all();
+        $search_parameter=$_GET['search_parameter'];
+
+        // $query=RoCrate::find()->orderBy(['date'=>SORT_DESC]);
+        // $count = $query->count();
+        // $pagination = new Pagination(['totalCount' => $count]);
+        // $ro_crates = $query->offset($pagination->offset)
+        //         ->limit($pagination->limit)
+        //         ->all();
+        $results=ROCrate::searchROCrate($search_parameter);
+        $ro_crates=$results['rocrates'];
+        $pagination=$results['pagination'];
         $results_user=[];
         $results_public=[];
         
         foreach ($ro_crates as $ro_crate) 
         {   
             
-            if($ro_crate->username==$username)
+            if($ro_crate['username']==$username)
             {
-                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate['jobid']])->one();
                 if (empty($software_run))
                 {
                     continue;
                 }
 
-                $results_user[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
-                'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
+                $results_user[$ro_crate['jobid']]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$username,
+                'date'=>$ro_crate['date'], 'experiment_description'=>$ro_crate['experiment_description'], 'public'=>$ro_crate['public'], 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate['jobid']]];
             }
-            elseif ($ro_crate->public==true) 
+            elseif ($ro_crate['public']==true) 
             {
-                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate->jobid])->one();
+                $software_run=RunHistory::find()->where(['jobid'=>$ro_crate['jobid']])->one();
                 if (empty($software_run))
                 {
                     continue;
                 }
 
-                $results_public[$ro_crate->jobid]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate->username,
-                'date'=>$ro_crate->date, 'experiment_description'=>$ro_crate->experiment_description, 'public'=>$ro_crate->public, 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate->jobid]];
+                $results_public[$ro_crate['jobid']]=['softname'=>$software_run->softname, 'start'=>$software_run->start, 'stop'=>$software_run->stop, 'username'=>$ro_crate['username'],
+                'date'=>$ro_crate['date'], 'experiment_description'=>$ro_crate['experiment_description'], 'public'=>$ro_crate['public'], 'link'=>['software/download-rocrate', 'jobid'=>$ro_crate['jobid']]];
             }  
         }
         
-        return $this->render('ro_crate_history', ['results_user'=>$results_user, 'results_public'=>$results_public, 'pagination'=>$pagination]);
+        return $this->render('ro_crate_history', ['results_user'=>$results_user, 'results_public'=>$results_public, 'pagination'=>$pagination, 'search_parameter'=>$search_parameter]);
+    }
+
+    public function actionSearchROCrate($search_parameter)
+    {
+        $results=ROCrate::searchROCrate($search_parameter);
+        return $this->redirect(['ro-crate-history', 'search_parameter'=>$search_parameter]);
     }
 
 

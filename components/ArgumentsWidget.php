@@ -317,16 +317,10 @@ class ArgumentsWidget
 					{
 					?>
 					<br>
-					    <div class="row">
-					    <div class="col-md-12"><h3>Arguments <i class="fa fa-question-circle" style="font-size:20px; cursor: pointer" title="Select arguments for execution.")></i> </h3></div>
-					    </div> 
-
-					    <?php
-					    	echo '<div class="row">';
-					        echo '<div class="alert alert-success col-md-offset-3 col-md-6" role="alert" style="width:50%;">';
-					        echo "<div class='row' style='padding-left:15px;'>Based on the provided CWL description, this docker image does not require arguments. </div>";
-					        echo '</div></div>';
-					        ?>
+					<div class="alert alert-success col-md-offset-3 col-7" role="alert">
+						        Based on the provided CWL description, this docker image does not require arguments.
+					</div>
+					
 
 					    <?php
 					}?>
