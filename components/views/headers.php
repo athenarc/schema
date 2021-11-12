@@ -36,6 +36,11 @@ echo Html::cssFile('@web/css/components/headers.css');
 	</div>
 	<div class="col-md-6 header-buttons">
 		<?php
+		if ($search==true)
+		{?>
+			 	<?php echo $search_content?>
+		<?php
+		}
 		foreach ($buttons as $button) 
 		{
 			if($button['type']=='a')

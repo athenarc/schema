@@ -65,7 +65,7 @@ helm install schema-app deployment -f deployment/values.yaml
 
 4. Create the database structure and add required data:
 ```bash
-kubectl -n schema exec -it <schema-pod-id> psql -h postgres -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
+kubectl -n schema exec -it <schema-pod-id> -- psql -h postgres -U <your-db-username> -d <your-db-name> -f /app/web/schema/database_schema/schema_db.sql
 ```
 5. Run the same command for all migration files ```/app/web/schema/database-schema/migration-xx.sql``` in order. If you are upgrading to the latest version of SCHeMa, please run the migration files that have been published since the last version.
 
