@@ -75,7 +75,7 @@ class TrsEndpoints extends \yii\db\ActiveRecord
     {
         $endpoints=TrsEndpoints::find()->where(['get_workflows'=>true])->all();
         
-        $workflows=[];
+        $result=[];
         foreach ($endpoints as $endpoint)
         {
             $client = new Client();
@@ -88,11 +88,109 @@ class TrsEndpoints extends \yii\db\ActiveRecord
             $workflows=$response->data;
             foreach ($workflows as $workflow)
             {
-                var_dump($workflow);
-                exit(0);
+                $id=$workflow['id'];
+                $wname=$workflow['name'];
+                $description=$workflow['description'];
+                $versions=$workflow['versions'];
+                $version=-1;
+                $downloadable=true;
+                foreach ($versions as $ver)
+                {
+                    $newVersion=intval($ver['id']);
+                    if ($newVersion>$version)
+                    {
+                        $version=$newVersion;
+                    }
+                }
+
+                $client = new Client();
+                $response = $client->createRequest()
+                    ->setMethod('GET')
+                    ->setUrl($endpoint->url . "/tools/$id/versions/$version/cwl/descriptor")
+                    ->setData(['descriptorType'=>'cwl', 'toolclass'=>'Workflow'])
+                    ->send();
+
+                $descriptor=$response->data['content'];
+                $descriptor=yaml_parse($descriptor);
+                $class=$descriptor['class'];
+                $downloadable=true;
+                if ($class!='Workflow')
+                {
+                    $downloadable=false;
+                }
+                else
+                {
+                    $steps=$descriptor['steps'];
+                    /*
+                     * numOfRequired starts at one
+                     * in order to include the main
+                     * workflow file.
+                     */
+                    $numOfRequired=1;
+                    foreach ($steps as $step)
+                    {
+                        try
+                        {
+                            $file=explode('/',$step['run']);
+                            $file=end($file);
+                            $ext=explode('.',$file)[1];
+                            if ($ext=='cwl')
+                            {
+                                $numOfRequired++;
+                            }
+                        }
+                        catch (yii\base\ErrorException $e)
+                        {
+                            /*
+                             * if the file has a funny form
+                             * then get out and do not allow 
+                             * the workflow to be downloaded.
+                             */
+                            $downloadable=false;
+                            break;
+                        }
+                        
+                    }
+
+                    $client = new Client();
+                    $response = $client->createRequest()
+                        ->setMethod('GET')
+                        ->setUrl($endpoint->url . "/tools/$id/versions/$version/cwl/files")
+                        ->setData(['descriptorType'=>'cwl', 'toolclass'=>'Workflow'])
+                        ->send();
+                    $files=$response->data;
+                    $numOfProvided=0;
+                    foreach ($files as $file)
+                    {
+                        $name=$file['path'];
+                        $ext=explode('.',$name)[1];
+                        if ($ext=='cwl')
+                        {
+                            $numOfProvided++;
+                        }
+                    }
+                    
+                    if (($numOfProvided >= $numOfRequired) && $downloadable)
+                    {
+                        $downloadable=true;
+                    }
+                    else
+                    {
+                        $downloadable=false;
+                    }
+
+                }
+
+                if (!isset($result[$endpoint->name]))
+                {
+                    $result[$endpoint->name]=[];
+                }
+                $tmp=['name'=>$wname, 'description'=>$description, 'downloadable'=>$downloadable, 'version'=>$version];
+                $result[$endpoint->name][]=$tmp;
+                
             }
-            exit(0);
         }
+        return $result;
             
     }
 }
