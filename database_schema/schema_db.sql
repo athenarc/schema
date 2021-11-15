@@ -21,7 +21,7 @@ SET row_security = off;
 --
 
 CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 
 --
@@ -1712,7 +1712,9 @@ ALTER TABLE ro_crate add column public boolean, add column experiment_descriptio
 ALTER TABLE system_configuration add column home_page integer, add column help_page integer;
 INSERT INTO system_configuration (admin_email,home_page,help_page) values (null,null,null);
 
-CREATE TABLE pages (id serial primary key, title text, content text) WITH OWNER schema;
+CREATE TABLE pages (id serial primary key, title text, content text);
+
+ALTER TABLE public.pages OWNER TO schema;
 
 ALTER TABLE system_configuration ADD COLUMN profiler boolean default false;
 
@@ -1734,7 +1736,9 @@ project_end_date timestamp,
 url text,
 active boolean default 'f',
 expires_on timestamp
-) WITH OWNER schema;
+);
+
+ALTER TABLE public.jupyter_server OWNER TO schema;
 
 CREATE INDEX jupyter_server_server_id_idx ON jupyter_server(server_id);
 CREATE INDEX jupyter_server_project_idx ON jupyter_server(project);
@@ -1746,7 +1750,9 @@ CREATE TABLE jupyter_images(
 id bigserial primary key,
 description text,
 image text
-) WITH OWNER schema;
+);
+
+ALTER TABLE public.jupyter_images OWNER TO schema;
 
 CREATE INDEX jupyter_images_description_idx ON jupyter_images(description);
 
@@ -1756,6 +1762,8 @@ name text,
 url text,
 push_tools boolean,
 get_workflows boolean
-) WITH OWNER schema;
+);
+
+ALTER TABLE public.trs_endpoints OWNER TO schema;
 
 CREATE INDEX ro_crate_descr_idx ON ro_crate USING gin (experiment_description gin_trgm_ops); 
