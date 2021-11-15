@@ -38,5 +38,9 @@
         "jobs": "{{ .Values.namespaces.jobs }}",
         "tesk": "{{ .Values.namespaces.tesk }}",
         "jupyter" : "{{ .Values.namespaces.jupyter }}"
-    }
+    },
+    "jupyter":
+    {
+        "domain": "{{ .Values.jupyter.app_name }}.{{ .Values.domain }}"
+    } 
 }

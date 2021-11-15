@@ -2,7 +2,7 @@ import yaml
 from notebook.auth import passwd
 
 
-def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace):
+def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain):
     manifest=folder + '/' + sid + '-jupyter.yaml'
     appName=sid + '-jupyter'
 
@@ -66,12 +66,12 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace):
     ingress={}
     ingress['apiVersion']='networking.k8s.io/v1'
     ingress['kind']='Ingress'
-    ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':'jupyter'}
+    ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':namespace}
     ingress['metadata']['annotations']['cert-manager.io/cluster-issuer']= 'letsencrypt-prod'
     ingress['metadata']['annotations']['kubernetes.io/ingress.class']= 'nginx'
     ingress['metadata']['annotations']['kubernetes.io/tls-acme']= "true"
 
-    url=sid + '.jupyter.hypatia-comp.athenarc.gr'
+    url=sid + '.' + domain
 
     ispec={'rules':[],'tls':[]}
 
