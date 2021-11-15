@@ -21,7 +21,7 @@ passwd=db['password']
 dbname=db['database']
 
 namespace=config['namespaces']['jupyter']
-domain=namespace=config['jupyter']['domain']
+domain=config['jupyter']['domain']
 
 serverConfigFileName=sys.argv[1]
 sConfigFile=open(serverConfigFileName,'r')

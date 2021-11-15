@@ -20,7 +20,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
 
     if nfs=='container':
         vname=sid + '-pvc'
-        volume={'name': vname, 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
+        volume={'name': vname, 'persistentVolumeClaim':{'claimName':'schema-volume'}}
     else:
         vname=sid + '-nfs-storage'
         volume={'name': vname, 'nfs': {'server': nfs, 'path': mount}}
@@ -36,7 +36,10 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
 
     container['resources']={'limits':{'cpu':str(cpu)+'m', 'memory':str(mem) + 'G'}}
     volumeMounts=[]
-    vmount={'name': vname, 'mountPath': '/home/jovyan/work'}
+    if nfs=='container':
+        vmount={'name': vname, 'mountPath': '/home/jovyan/work', 'subPath': mount.replace('/data/','')}
+    else:
+        vmount={'name': vname, 'mountPath': '/home/jovyan/work'}
     volumeMounts.append(vmount)
     container['volumeMounts']=volumeMounts
 
@@ -58,7 +61,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     service['apiVersion']= 'v1'
     service['kind']='Service'
     sname='service-' + appName
-    service['metadata']={'name':sname, 'namespace':'jupyter'}
+    service['metadata']={'name':sname, 'namespace':namespace}
 
     sspec={'type': 'ClusterIP', 'selector':{'app': appName}, 'ports':[{"protocol": 'TCP','port': 80, 'targetPort': 8888}]}
     service['spec']=sspec

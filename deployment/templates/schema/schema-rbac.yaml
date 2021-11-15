@@ -18,6 +18,34 @@ rules:
       - pods
       - jobs
       - pods/log
+      - services     
+    verbs:
+      - create
+      - get
+      - list
+      - delete
+      - view
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+    verbs:
+      - create
+      - get
+      - list
+      - delete
+      - view
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+    verbs:
+      - create
+      - get
+      - list
+      - delete
+      - view
+  - apiGroups: ["/v1"]
+    resources:
+      - services
     verbs:
       - create
       - get

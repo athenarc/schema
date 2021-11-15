@@ -5,6 +5,7 @@ namespaces:
   jobs: schema
   tesk: tesk
   registry: schema
+  jupyter: schema
 domain: your.domain-name.com 
 
 # This is the app for the main schema interface
