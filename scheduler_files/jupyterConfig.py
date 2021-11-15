@@ -2,7 +2,7 @@ import yaml
 from notebook.auth import passwd
 
 
-def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
+def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain):
     manifest=folder + '/' + sid + '-jupyter.yaml'
     appName=sid + '-jupyter'
 
@@ -20,7 +20,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
 
     if nfs=='container':
         vname=sid + '-pvc'
-        volume={'name': vname, 'persistentVolumeClaim':{'claimName':'schema-data-volume'}}
+        volume={'name': vname, 'persistentVolumeClaim':{'claimName':'schema-volume'}}
     else:
         vname=sid + '-nfs-storage'
         volume={'name': vname, 'nfs': {'server': nfs, 'path': mount}}
@@ -36,7 +36,10 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
 
     container['resources']={'limits':{'cpu':str(cpu)+'m', 'memory':str(mem) + 'G'}}
     volumeMounts=[]
-    vmount={'name': vname, 'mountPath': '/home/jovyan/work'}
+    if nfs=='container':
+        vmount={'name': vname, 'mountPath': '/home/jovyan/work', 'subPath': mount.replace('/data/','')}
+    else:
+        vmount={'name': vname, 'mountPath': '/home/jovyan/work'}
     volumeMounts.append(vmount)
     container['volumeMounts']=volumeMounts
 
@@ -51,14 +54,14 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
 
     deployment['apiVersion']= 'apps/v1'
     deployment['kind']='Deployment'
-    deployment['metadata']={'name': 'deployment-' + appName, 'labels':{'app':appName}, 'namespace':"jupyter"}
+    deployment['metadata']={'name': 'deployment-' + appName, 'labels':{'app':appName}, 'namespace':namespace}
     deployment['spec']=pod
 
     service={}
     service['apiVersion']= 'v1'
     service['kind']='Service'
     sname='service-' + appName
-    service['metadata']={'name':sname, 'namespace':'jupyter'}
+    service['metadata']={'name':sname, 'namespace':namespace}
 
     sspec={'type': 'ClusterIP', 'selector':{'app': appName}, 'ports':[{"protocol": 'TCP','port': 80, 'targetPort': 8888}]}
     service['spec']=sspec
@@ -66,12 +69,12 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
     ingress={}
     ingress['apiVersion']='networking.k8s.io/v1'
     ingress['kind']='Ingress'
-    ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':'jupyter'}
+    ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':namespace}
     ingress['metadata']['annotations']['cert-manager.io/cluster-issuer']= 'letsencrypt-prod'
     ingress['metadata']['annotations']['kubernetes.io/ingress.class']= 'nginx'
     ingress['metadata']['annotations']['kubernetes.io/tls-acme']= "true"
 
-    url=sid + '.jupyter.hypatia-comp.athenarc.gr'
+    url=sid + '.' + domain
 
     ispec={'rules':[],'tls':[]}
 

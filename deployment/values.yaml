@@ -5,6 +5,7 @@ namespaces:
   jobs: schema
   tesk: tesk
   registry: schema
+  jupyter: schema
 domain: your.domain-name.com 
 
 # This is the app for the main schema interface
@@ -102,6 +103,9 @@ ftp:
       domain: ftp
       username: tesk-1
       password: Z6fsH6MG
+
+jupyter:
+  app_name: jupyter
 
 tesk:
   url: <TESK installation URL>

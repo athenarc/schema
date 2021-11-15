@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
     {{- if .Values.registry.ingress.https.enabled }}
     cert-manager.io/cluster-issuer: {{ .Values.registry.ingress.https.issuer }}
-    kubernetes.io/tls-acme: {{ quote .Values.registry.ingress.https.enabled}}
+    kubernetes.io/tls-acme: {{ quote .Values.registry.ingress.https.enabled }}
     {{- end }}
   name: {{ .Values.registry.app_name }}-ingress
   namespace: {{ .Values.namespace }}
@@ -26,7 +26,7 @@ spec:
   {{- if .Values.registry.ingress.https.enabled }}
   tls:
   - hosts:
-    - {{ .Values.registry.app_name }}.{{ .Values.domain }}
+    - {{ .Values.registry.app_name }}.{{ .Values.schema.app_name }}.{{ .Values.domain }}
     secretName: {{ .Values.registry.app_name }}-ingress-secret
   {{- end }}
 {{- else if .Capabilities.APIVersions.Has "route.openshift.io/v1/Route" -}}
