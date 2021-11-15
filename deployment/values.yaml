@@ -103,6 +103,9 @@ ftp:
       username: tesk-1
       password: Z6fsH6MG
 
+jupyter:
+  app_name: jupyter
+
 tesk:
   url: <TESK installation URL>
 
