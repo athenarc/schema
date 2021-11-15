@@ -1707,22 +1707,22 @@ COPY public."user" (id, username, auth_key, password_hash, confirmation_token, s
 1	superadmin	qp1mUYE-Cj8RDerpSLwlkQxGj1IpMSLa	$2y$13$d2WwMshDtaj26VqO.S/J0u2rncMTmTynG2yChbPAw0Hq5xqyDngIO	\N	1	1	1617897478	1617897478	10.1.2.0		\N	0
 \.
 
-ALTER TABLE ro_crate add column public boolean, add column experiment_description text;
+ALTER TABLE public.ro_crate add column public boolean, add column experiment_description text;
 
-ALTER TABLE system_configuration add column home_page integer, add column help_page integer;
-INSERT INTO system_configuration (admin_email,home_page,help_page) values (null,null,null);
+ALTER TABLE public.system_configuration add column home_page integer, add column help_page integer;
+INSERT INTO public.system_configuration (admin_email,home_page,help_page) values (null,null,null);
 
-CREATE TABLE pages (id serial primary key, title text, content text);
+CREATE TABLE public.pages (id serial primary key, title text, content text);
 
 ALTER TABLE public.pages OWNER TO schema;
 
-ALTER TABLE system_configuration ADD COLUMN profiler boolean default false;
+ALTER TABLE public.system_configuration ADD COLUMN profiler boolean default false;
 
-ALTER TABLE software ADD COLUMN shared boolean default 'f';
-ALTER TABLE software ADD COLUMN gpu boolean default 'f';
-ALTER TABLE software_upload ADD COLUMN gpu boolean default 'f';
+ALTER TABLE public.software ADD COLUMN shared boolean default 'f';
+ALTER TABLE public.software ADD COLUMN gpu boolean default 'f';
+ALTER TABLE public.software_upload ADD COLUMN gpu boolean default 'f';
 
-CREATE TABLE jupyter_server(
+CREATE TABLE public.jupyter_server(
 id bigserial primary key,
 manifest varchar(100),
 image text,
@@ -1740,13 +1740,13 @@ expires_on timestamp
 
 ALTER TABLE public.jupyter_server OWNER TO schema;
 
-CREATE INDEX jupyter_server_server_id_idx ON jupyter_server(server_id);
-CREATE INDEX jupyter_server_project_idx ON jupyter_server(project);
-CREATE INDEX jupyter_server_project_end_date_idx ON jupyter_server(project_end_date);
-CREATE INDEX jupyter_server_active_idx ON jupyter_server(active);
-CREATE INDEX jupyter_server_created_by_idx ON jupyter_server(created_by);
+CREATE INDEX jupyter_server_server_id_idx ON public.jupyter_server(server_id);
+CREATE INDEX jupyter_server_project_idx ON public.jupyter_server(project);
+CREATE INDEX jupyter_server_project_end_date_idx ON public.jupyter_server(project_end_date);
+CREATE INDEX jupyter_server_active_idx ON public.jupyter_server(active);
+CREATE INDEX jupyter_server_created_by_idx ON public.jupyter_server(created_by);
 
-CREATE TABLE jupyter_images(
+CREATE TABLE public.jupyter_images(
 id bigserial primary key,
 description text,
 image text
@@ -1754,9 +1754,9 @@ image text
 
 ALTER TABLE public.jupyter_images OWNER TO schema;
 
-CREATE INDEX jupyter_images_description_idx ON jupyter_images(description);
+CREATE INDEX jupyter_images_description_idx ON public.jupyter_images(description);
 
-CREATE TABLE trs_endpoints(
+CREATE TABLE public.trs_endpoints(
 id serial not null primary key,
 name text,
 url text,
@@ -1766,4 +1766,4 @@ get_workflows boolean
 
 ALTER TABLE public.trs_endpoints OWNER TO schema;
 
-CREATE INDEX ro_crate_descr_idx ON ro_crate USING gin (experiment_description gin_trgm_ops); 
+CREATE INDEX ro_crate_descr_idx ON public.ro_crate USING gin (experiment_description gin_trgm_ops); 
