@@ -21,7 +21,7 @@ SET row_security = off;
 --
 
 CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 
 --
@@ -1707,3 +1707,74 @@ COPY public."user" (id, username, auth_key, password_hash, confirmation_token, s
 1	superadmin	qp1mUYE-Cj8RDerpSLwlkQxGj1IpMSLa	$2y$13$d2WwMshDtaj26VqO.S/J0u2rncMTmTynG2yChbPAw0Hq5xqyDngIO	\N	1	1	1617897478	1617897478	10.1.2.0		\N	0
 \.
 
+ALTER TABLE public.ro_crate add column public boolean, add column experiment_description text;
+
+ALTER TABLE public.system_configuration add column home_page integer, add column help_page integer;
+INSERT INTO public.system_configuration (admin_email,home_page,help_page) values (null,null,null);
+
+CREATE TABLE public.pages (id serial primary key, title text, content text);
+
+ALTER TABLE public.pages OWNER TO schema;
+
+ALTER TABLE public.system_configuration ADD COLUMN profiler boolean default false;
+
+ALTER TABLE public.software ADD COLUMN shared boolean default 'f';
+ALTER TABLE public.software ADD COLUMN gpu boolean default 'f';
+ALTER TABLE public.software_upload ADD COLUMN gpu boolean default 'f';
+
+CREATE TABLE public.jupyter_server(
+id bigserial primary key,
+manifest varchar(100),
+image text,
+project varchar(100),
+server_id varchar(20),
+created_at timestamp,
+deleted_at timestamp,
+created_by text,
+deleted_by text,
+project_end_date timestamp,
+url text,
+active boolean default 'f',
+expires_on timestamp
+);
+
+ALTER TABLE public.jupyter_server OWNER TO schema;
+
+CREATE INDEX jupyter_server_server_id_idx ON public.jupyter_server(server_id);
+CREATE INDEX jupyter_server_project_idx ON public.jupyter_server(project);
+CREATE INDEX jupyter_server_project_end_date_idx ON public.jupyter_server(project_end_date);
+CREATE INDEX jupyter_server_active_idx ON public.jupyter_server(active);
+CREATE INDEX jupyter_server_created_by_idx ON public.jupyter_server(created_by);
+
+CREATE TABLE public.jupyter_images(
+id bigserial primary key,
+description text,
+image text
+);
+
+ALTER TABLE public.jupyter_images OWNER TO schema;
+
+CREATE INDEX jupyter_images_description_idx ON public.jupyter_images(description);
+
+CREATE TABLE public.trs_endpoints(
+id serial not null primary key,
+name text,
+url text,
+push_tools boolean,
+get_workflows boolean
+);
+
+ALTER TABLE public.trs_endpoints OWNER TO schema;
+
+CREATE INDEX ro_crate_descr_idx ON public.ro_crate USING gin (experiment_description gin_trgm_ops); 
+
+COPY public.jupyter_images (id, description, image) FROM stdin;
+8	AllSpark notebook	jupyter/allspark-notebook:latest
+1	Base notebook	jupyter/base-notebook:latest
+6	Data Science notebook	jupyter/datascience-notebook:latest
+2	Minimal notebook	jupyter/minimal-notebook:latest
+7	PySpark notebook	jupyter/pyspark-notebook:latest
+3	R notebook	jupyter/r-notebook:latest
+4	SciPy notebook	jupyter/scipy-notebook:latest
+5	Tensorflow notebook	jupyter/tensorflow-notebook:latest
+\.

@@ -269,7 +269,7 @@ class RoCrate extends \yii\db\ActiveRecord
     }
 
 
-    public function searchROCrate($search_parameter)
+    public static function searchROCrate($search_parameter)
     {
         $query=new Query;
 
