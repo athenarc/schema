@@ -5,7 +5,7 @@ namespaces:
   jobs: schema
   tesk: tesk
   registry: schema
-domain: your.domain-name.com 
+domain: hypatia-comp.athenarc.gr
 
 # This is the app for the main schema interface
 schema:
@@ -20,7 +20,7 @@ schema:
   deployment:
     replicaCount: 1
     image: diwis/schema:latest
-    cluster_endpoint: https://your_k8s_api_endpoint:443
+    cluster_endpoint: https://172.16.0.25:443
     cluster: true
 
   service:
@@ -40,7 +40,7 @@ nfsIp: <NFS server IP>
 # This is the docker registry deployed along with schema
 registry:
   app_name: registry
-  url: <registry host name>
+  url: registry.schema.hypatia-comp.athenarc.gr
 
   data_volume:
     deploy_volume: true
@@ -55,8 +55,8 @@ registry:
     name: registry-auth
 
   deployment:
-    username: <your_username>
-    password: <your_password>
+    username: test
+    password: test
     image: registry:2
     initImage: marcnuri/htpasswd
 
@@ -85,7 +85,7 @@ postgres:
     replicaCount: 1
     image: postgres
     dbUsername: schema
-    dbPassword: <your_password>
+    dbPassword: test
     dbName: schema
 
   service:
@@ -104,10 +104,10 @@ ftp:
       password: Z6fsH6MG
 
 tesk:
-  url: <TESK installation URL>
+  url: https://tesk.hypatia-comp.athenarc.gr
 
 wes:
-  url: <WES installation URL>
+  url: https://wes.hypatia-comp.athenarc.gr
 
 standalone:
   isStandalone: true
