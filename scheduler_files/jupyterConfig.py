@@ -2,7 +2,7 @@ import yaml
 from notebook.auth import passwd
 
 
-def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
+def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace):
     manifest=folder + '/' + sid + '-jupyter.yaml'
     appName=sid + '-jupyter'
 
@@ -51,7 +51,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs):
 
     deployment['apiVersion']= 'apps/v1'
     deployment['kind']='Deployment'
-    deployment['metadata']={'name': 'deployment-' + appName, 'labels':{'app':appName}, 'namespace':"jupyter"}
+    deployment['metadata']={'name': 'deployment-' + appName, 'labels':{'app':appName}, 'namespace':namespace}
     deployment['spec']=pod
 
     service={}

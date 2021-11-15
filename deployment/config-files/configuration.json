@@ -1,41 +1,42 @@
 {
-	
-	"registry": "{{ .Values.registry.url }}",
-	"registryAuth":
-	{
-		"username": "{{ .Values.registry.deployment.username }}",
-		"password": "{{ .Values.registry.deployment.password }}"
-	},
-	"database":
-	{
-		"host":"{{ .Values.postgres.app_name }}",
-		"username": "{{ .Values.postgres.deployment.dbUsername }}",
-		"password": "{{ .Values.postgres.deployment.dbPassword }}",
-		"database": "{{ .Values.postgres.deployment.dbName }}"
-	},
-	"localftp":
-	{
-                "active": {{ .Values.ftp.active }},
-		"domain": "{{ .Values.ftp.deployment.domain }}",
-		"username": "{{ .Values.ftp.deployment.username }}",
-		"password": "{{ .Values.ftp.deployment.password }}"
-	},
-	"imagePullSecrets":
-	[
-		{"name": "registry-creds"}
-	],
-	"ftp-creds":
-	{
-		"{{ .Values.ftp.deployment.domain }}":
-		{
-			"username": "{{ .Values.ftp.deployment.username }}",
-			"password": "{{ .Values.ftp.deployment.password }}"
-		}
-	},
-	"namespaces":
-	{
-		"registry": "{{ .Values.namespaces.registry }}",
-		"jobs": "{{ .Values.namespaces.jobs }}",
-		"tesk": "{{ .Values.namespaces.tesk }}"
-	}
+    
+    "registry": "{{ .Values.registry.url }}",
+    "registryAuth":
+    {
+        "username": "{{ .Values.registry.deployment.username }}",
+        "password": "{{ .Values.registry.deployment.password }}"
+    },
+    "database":
+    {
+        "host":"{{ .Values.postgres.app_name }}",
+        "username": "{{ .Values.postgres.deployment.dbUsername }}",
+        "password": "{{ .Values.postgres.deployment.dbPassword }}",
+        "database": "{{ .Values.postgres.deployment.dbName }}"
+    },
+    "localftp":
+    {
+        "active": {{ .Values.ftp.active }},
+        "domain": "{{ .Values.ftp.deployment.domain }}",
+        "username": "{{ .Values.ftp.deployment.username }}",
+        "password": "{{ .Values.ftp.deployment.password }}"
+    },
+    "imagePullSecrets":
+    [
+        {"name": "registry-creds"}
+    ],
+    "ftp-creds":
+    {
+        "{{ .Values.ftp.deployment.domain }}":
+        {
+            "username": "{{ .Values.ftp.deployment.username }}",
+            "password": "{{ .Values.ftp.deployment.password }}"
+        }
+    },
+    "namespaces":
+    {
+        "registry": "{{ .Values.namespaces.registry }}",
+        "jobs": "{{ .Values.namespaces.jobs }}",
+        "tesk": "{{ .Values.namespaces.tesk }}",
+        "jupyter" : "{{ .Values.namespaces.jupyter }}"
+    }
 }
