@@ -179,12 +179,15 @@ class JupyterServer extends \yii\db\ActiveRecord
         
         $success='';
         $error='';
+        $status='';
+        session_write_close();
         if ($ret==0)
         {
             $server=JupyterServer::find()->where(['active'=>true,'project'=>$data['project']])->one();
 
             $isDown=true;
-
+            $toleration=36;
+            $appName=$sid . '-jupyter';
             while ($isDown)
             {
                 sleep(5);
@@ -200,20 +203,52 @@ class JupyterServer extends \yii\db\ActiveRecord
                     {
                         $isDown=false;
                     }
+
                 }
                 catch (yii\httpclient\Exception $e)
                 {
-                    continue;
+                    /*
+                     * This block is left empty on purpose.
+                     * If the response fails for some reason (ingress not ready)
+                     * just reduce the toleration variable (look at line before the if)
+                     * and continue.
+                     */
                 }
+                if ($toleration<=0)
+                {
+                    $namespace=Yii::$app->params['namespaces']['jupyter'];
+                    $podComm="kubectl get pod -n $namespace -l app=$appName --no-headers | tr -s ' '";
+                    $podComm=Software::sudoWrap($podComm);
+                    exec($podComm,$podOut,$podRet);
+                    $podOut=explode(' ', $podOut[0]);
+                    $status=$podOut[2];
+
+                    if (($podOut[0]=='No') || ($podOut[2]!='Running'))
+                    {
+                        $command=Yii::$app->params['scriptsFolder'] . "jupyterServerStop.py " . self::enclose($sid) . ' '. self::enclose($username) . ' 2>&1' ;
+                        $command=Software::sudoWrap($command);
+                        exec($command,$out,$ret);
+                        break;
+                    }
+                }
+                $toleration--;
+                
             }
-            $success='Server was started successfully! It can be accessed <a href="' . $server->url . '" target="blank">here</a>.';
+            if (!$isDown)
+            {
+                $success='Server was started successfully! It can be accessed <a href="' . $server->url . '" target="blank">here</a>.';
+            }
+            else
+            {
+                $error="There was an error creating the Jupyter server. Please contact an administrator and report the following status: $status";
+            }
 
         }
         else
         {
             $error='There was an error creating the Jupyter server. Please contact an administrator and report the following: <br />' . implode('<br />',$out);
         }
-
+        session_start();
         return [$success,$error];
        
     }
