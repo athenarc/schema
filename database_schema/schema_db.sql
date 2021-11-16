@@ -1769,7 +1769,7 @@ ALTER TABLE public.trs_endpoints OWNER TO schema;
 CREATE INDEX ro_crate_descr_idx ON public.ro_crate USING gin (experiment_description gin_trgm_ops); 
 
 COPY public.jupyter_images (id, description, image) FROM stdin;
-8	AllSpark notebook	jupyter/allspark-notebook:latest
+8	AllSpark notebook	jupyter/all-spark-notebook:latest
 1	Base notebook	jupyter/base-notebook:latest
 6	Data Science notebook	jupyter/datascience-notebook:latest
 2	Minimal notebook	jupyter/minimal-notebook:latest

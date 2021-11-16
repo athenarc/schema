@@ -22,6 +22,7 @@ dbname=db['database']
 
 namespace=config['namespaces']['jupyter']
 domain=config['jupyter']['domain']
+platform=config['platform']
 
 serverConfigFileName=sys.argv[1]
 sConfigFile=open(serverConfigFileName,'r')
@@ -40,7 +41,8 @@ nfs=sconfig['nfs']
 user=sconfig['user']
 expires=sconfig['expires']
 
-manifest,url=cf.createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs,namespace,domain)
+
+manifest,url=cf.createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs,namespace,domain,platform)
 print(manifest)
 print(url)
 

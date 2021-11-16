@@ -2,7 +2,7 @@ import yaml
 from notebook.auth import passwd
 
 
-def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain):
+def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain, platform):
     manifest=folder + '/' + sid + '-jupyter.yaml'
     appName=sid + '-jupyter'
 
@@ -32,6 +32,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     container['image']=image
     container['name']='jupyter-container'
     container['ports']=[{'containerPort':8888}]
+    cores=cpu
     cpu*=1000
 
     container['resources']={'limits':{'cpu':str(cpu)+'m', 'memory':str(mem) + 'G'}}
@@ -51,6 +52,10 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     containers.append(container)
 
     pod['template']['spec']['containers']=containers
+    if (int(mem) > 512) or (int(cores)>=56):
+        tolerations=[]
+        tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
+        pod['template']['spec']['tolerations']=tolerations
 
     deployment['apiVersion']= 'apps/v1'
     deployment['kind']='Deployment'
@@ -67,28 +72,43 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     service['spec']=sspec
 
     ingress={}
-    ingress['apiVersion']='networking.k8s.io/v1'
-    ingress['kind']='Ingress'
-    ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':namespace}
-    ingress['metadata']['annotations']['cert-manager.io/cluster-issuer']= 'letsencrypt-prod'
-    ingress['metadata']['annotations']['kubernetes.io/ingress.class']= 'nginx'
-    ingress['metadata']['annotations']['kubernetes.io/tls-acme']= "true"
+    if (platform=='kubernetes'):
+        
+        ingress['apiVersion']='networking.k8s.io/v1'
+        ingress['kind']='Ingress'
+        ingress['metadata']={'name': 'ingress-' + appName, 'annotations':{}, 'namespace':namespace}
+        ingress['metadata']['annotations']['cert-manager.io/cluster-issuer']= 'letsencrypt-prod'
+        ingress['metadata']['annotations']['kubernetes.io/ingress.class']= 'nginx'
+        ingress['metadata']['annotations']['kubernetes.io/tls-acme']= "true"
 
-    url=sid + '.' + domain
+        url=sid + '.' + domain
 
-    ispec={'rules':[],'tls':[]}
+        ispec={'rules':[],'tls':[]}
 
-    rule={'host':url, 'http':{'paths':[{'backend':{'service':{'name':sname, 'port':{'number':80} } }, 'path':'/', 'pathType':'Prefix' } ] } }
-                                            
+        rule={'host':url, 'http':{'paths':[{'backend':{'service':{'name':sname, 'port':{'number':80} } }, 'path':'/', 'pathType':'Prefix' } ] } }
+                                                
 
-                             
+                                 
 
-    tls={'hosts':[url], 'secretName': appName + '-ingress-secret'}
+        tls={'hosts':[url], 'secretName': appName + '-ingress-secret'}
 
-    ispec['rules'].append(rule)
-    ispec['tls'].append(tls)
+        ispec['rules'].append(rule)
+        ispec['tls'].append(tls)
 
-    ingress['spec']=ispec
+        ingress['spec']=ispec
+    elif (platform=='openshift'):
+        ingress['apiVersion']='route.openshift.io/v1'
+        ingress['kind']='Route'
+        ingress['metadata']={'name': 'ingress-' + appName, 'namespace':namespace}
+        
+        url=sid + '.' + domain
+
+        tls={'insecureEdgeTerminationPolicy':'Redirect','termination':'edge'}
+        to={'kind':'Service','name': sname,'weight':'100'}
+        ingress['spec']={'host':url, 'tls':tls, 'to': to, 'wildcardPolicy':None}
+        ingress['status']={'ingress':[]}
+    else:
+        pass
 
     g=open(manifest,'w')
     yaml.dump(deployment, g, default_flow_style=False)
