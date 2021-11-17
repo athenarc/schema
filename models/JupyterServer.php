@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use app\models\Softare;
 use webvimark\modules\UserManagement\models\User;
+use yii\helpers\Html;
 use yii\httpclient\Client;
 
 /**
@@ -186,7 +187,7 @@ class JupyterServer extends \yii\db\ActiveRecord
             $server=JupyterServer::find()->where(['active'=>true,'project'=>$data['project']])->one();
 
             $isDown=true;
-            $toleration=36;
+            $toleration=180;
             $appName=$sid . '-jupyter';
             while ($isDown)
             {
@@ -220,15 +221,34 @@ class JupyterServer extends \yii\db\ActiveRecord
                     $podComm="kubectl get pod -n $namespace -l app=$appName --no-headers | tr -s ' '";
                     $podComm=Software::sudoWrap($podComm);
                     exec($podComm,$podOut,$podRet);
-                    $podOut=explode(' ', $podOut[0]);
-                    $status=$podOut[2];
-
-                    if (($podOut[0]=='No') || ($podOut[2]!='Running'))
+                    $status='';
+                    /*
+                     * For some reason kubectl returns only the pod name without the 
+                     * status. In that case pass in order to go to the next loop.
+                     */
+                    try
                     {
-                        $command=Yii::$app->params['scriptsFolder'] . "jupyterServerStop.py " . self::enclose($sid) . ' '. self::enclose($username) . ' 2>&1' ;
-                        $command=Software::sudoWrap($command);
-                        exec($command,$out,$ret);
-                        break;
+                        $podOut=explode(' ', $podOut[0]);
+                        $status=$podOut[2];
+                    }
+                    catch (\Exception $e)
+                    {
+                        
+                    }
+                    
+                    if (!empty($status))
+                    {
+                        if (($podOut[0]=='No') || (($podOut[2]!='Running') && ($podOut[2]!='ContainerCreating')))
+                        {
+                            break;
+                        }
+                        else if (($podOut[2]=='Running') || ($podOut[2]=='ContainerCreating'))
+                        {
+                            /*
+                             * In this case you should wait until the server
+                             * is ready, even if the toleration has been exhausted.
+                             */
+                        }
                     }
                 }
                 $toleration--;
@@ -240,7 +260,8 @@ class JupyterServer extends \yii\db\ActiveRecord
             }
             else
             {
-                $error="There was an error creating the Jupyter server. Please contact an administrator and report the following status: $status";
+                $stopText=Html::a('stop the server',['jupyter/stop-server','project'=>$this->project]);
+                $error="There was an error creating the Jupyter server. Please $stopText and contact an administrator; report the following status: $status";
             }
 
         }
