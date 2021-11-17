@@ -54,6 +54,7 @@ RUN sed -i "s|\"minimum-stability\": \"stable\"|\"minimum-stability\": \"dev\" |
     sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 50G |g" /usr/local/etc/php/php.ini-production && \
     sed -i "s|post_max_size = 8M|post_max_size = 50G |g" /usr/local/etc/php/php.ini-production && \
     sed -i "s|display_errors = Off|display_errors = On |g" /usr/local/etc/php/php.ini-production && \
+    sed -i "s|max_execution_time = 30|max_execution_time = 1000 |g" /usr/local/etc/php/php.ini-production && \
     echo "error_log = /dev/stderr" >> /usr/local/etc/php/php.ini-production && \
     cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
 # Since OpenShift annot listen to <1024, we'll use port 8080 (thanks Alvaro Gonzalez!)
