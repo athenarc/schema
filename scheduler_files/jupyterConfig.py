@@ -104,7 +104,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
         url=sid + '.' + domain
 
         tls={'insecureEdgeTerminationPolicy':'Redirect','termination':'edge'}
-        to={'kind':'Service','name': sname,'weight':'100'}
+        to={'kind':'Service','name': sname,'weight':100}
         ingress['spec']={'host':url, 'tls':tls, 'to': to, 'wildcardPolicy':None}
         ingress['status']={'ingress':[]}
     else:
