@@ -174,24 +174,73 @@ class SiteController extends Controller
             $username=$result['username'];
             $persistent_id=$result['persistent_id'];
 
-            $identity=User::findByPersistentId($persistent_id);
+            /*
+             * Auth server changed, so persistent id changed.
+             * In order not to break database of users already existing
+             * the search is performed by username instead of persistent id.
+             * Someone didn't think that far ahead it seems. :)
+             */
+            $identityP=User::findByPersistentId($persistent_id);
+            $identityU=User::findByUsername($username);
+            $identity='';
             
-            if (empty($identity))
+            if (empty($identityU) && empty($identityP))
             {
+                /*
+                 * If user doesn't exist
+                 */
                 User::createNewUser($username, $persistent_id);
                 $identity=User::findByUsername($username);
+                $message="A new user with username $username has been created";
+                EmailEventsAdmin::NotifyByEmail('user_creation', -1,$message);
+            }
+            else if ((!empty($identityU)) && empty($identityP))
+            {
+                /*
+                 * If auth server and persistent ID changed
+                 */
+                $identityU->password_hash=$persistent_id;
+                $identityU->save();
+                $identity=$identityU;
+            }
+            else if ((!empty($identityP)) && empty($identityU))
+            {
+                /*
+                 * If user was renamed
+                 */
+                $identityP->username=$username;
+                $identityP->save();
+                $identity=$identityP;
             }
             else
             {
-                if ($identity->username!=$username)
+                /*
+                 * If user was not altered in any way.
+                 *
+                 * Any other case in here means that there was an error
+                 * because both the username and the persistent id 
+                 * exist and point to different users (not really expected
+                 * but just to be safe). 
+                 */
+                if ($identityP==$identityU)
                 {
-                    $identity->username=$username;
+                    $identity=$identityU;
                 }
+
             }
+            
+            if (empty($identity))
+            {
+                Yii::$app->session->setFlash('danger', 'There was an error with your login. Please contact an administrator');
+                return $this->redirect(['site/index']);
+            }
+            else
+            {
+                Yii::$app->user->login($identity,0);
 
-            Yii::$app->user->login($identity,0);
-
-            return $this->goHome();
+                return $this->goHome();
+            }
+            
         }
         
 
