@@ -96,11 +96,13 @@ def deleteSavedWorkflow(name,version):
     result=cur.fetchall()
     workuploadId=str(result[0][0])
 
-    sql="DELETE FROM workfow_upload where id=" + str(workuploadId)
+    query="DELETE FROM workflow_upload where id=" + str(workuploadId)
     cur.execute(query)
 
     query="DELETE FROM workflow WHERE name='" + name + "' AND version='" + version + "'"
     cur.execute(query)
+    conn.commit()
+    conn.close()
 
 
 def inputStoreDict(workName, workVersion, inputs):
@@ -115,7 +117,6 @@ def inputStoreDict(workName, workVersion, inputs):
     softId=str(result[0][0])
 
     #save script in database and get its id
-    # print(inputs)
     if len(inputs)==0:
         exit(30)
 
@@ -124,6 +125,7 @@ def inputStoreDict(workName, workVersion, inputs):
 
     pos=0
     for inpt in inputs:
+        print(inpt)
         position=pos
         pos+=1
         # print(inpt)
@@ -147,26 +149,28 @@ def inputStoreDict(workName, workVersion, inputs):
 
         fieldType=inputs[inpt]['type']
 
-        if fieldType[-1]=='?':
-            optional='t'
-            fieldType=fieldType[:-1]  
-        # If input is type enum
+        # If input is type enum or array
         if isinstance(fieldType,dict):
             if 'type' not in fieldType:
                 deleteSavedWorkflow(workName,workVersion)
                 return(36)
 
-            if fieldType['type']!='enum':
+            if fieldType['type']=='enum':
+                if 'symbols' not in fieldType:
+                    deleteSavedWorkflow(workName,workVersion)
+                    return(38)
+                symbols=fieldType['symbols']
+                enum_fields='|'.join(symbols)
+                fieldType='enum'
+            elif fieldType['type']=='array':
+                is_array='t'
+                if 'items' not in fieldType:
+                    deleteSavedWorkflow(workName,workVersion)
+                    return(37)
+                fieldType=fieldType['items']
+            else:
                 deleteSavedWorkflow(workName,workVersion)
-                return(37)
-            if 'symbols' not in fieldType:
-                deleteSavedWorkflow(workName,workVersion)
-                return(38)
-
-
-            symbols=fieldType['symbols']
-            enum_fields='|'.join(symbols)
-            fieldType='enum'
+                return(39)
 
         else:
             if 'separate' in inputs[inpt]:
@@ -270,17 +274,25 @@ def inputStoreList(workName, workVersion, inputs):
                 deleteSavedWorkflow(workName,workVersion)
                 return(36)
 
-            if fieldType['type']!='enum':
+            # if fieldType['type']!='enum':
+            #     deleteSavedWorkflow(workName,workVersion)
+            #     return(37)
+            if fieldType['type']=='enum':
+                if 'symbols' not in fieldType:
+                    deleteSavedWorkflow(workName,workVersion)
+                    return(38)
+                symbols=fieldType['symbols']
+                enum_fields='|'.join(symbols)
+                fieldType='enum'
+            elif fieldType['type']=='array':
+                is_array='t'
+                if 'items' not in fieldType:
+                    deleteSavedWorkflow(workName,workVersion)
+                    return(37)
+                fieldType=fieldType['items']
+            else:
                 deleteSavedWorkflow(workName,workVersion)
-                return(37)
-            if 'symbols' not in fieldType:
-                deleteSavedWorkflow(workName,workVersion)
-                return(38)
-
-
-            symbols=fieldType['symbols']
-            enum_fields='|'.join(symbols)
-            fieldType='enum'
+                return(39)
         else:
             print(name)
 

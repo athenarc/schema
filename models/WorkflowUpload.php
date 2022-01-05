@@ -256,7 +256,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
                 break;
             case 37:
                 $errors.="Error: code $ret. ";
-                $errors.="One of your enum workflow inputs has an unrecognized specification.";
+                $errors.="One of your array inputs does not contain an items key.";
                 $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
             case 38:
@@ -264,6 +264,10 @@ class WorkflowUpload extends \yii\db\ActiveRecord
                 $errors.="One of your enum workflow inputs does not contain any symbols";
                 $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
+            case 39:
+                $errors.="Error: code $ret. ";
+                $errors.="One of your inputs does not contain a recognized type";
+                $errors.="<br />Please correct the error and try again or contact an administrator.";
                 break;
             case 50:
                 $errors.="Error: code $ret. ";
