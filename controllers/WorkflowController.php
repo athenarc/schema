@@ -802,8 +802,6 @@ class WorkflowController extends Controller
         }
 
         $workflow=$query->one();
-        // print_r(empty($image)?0:1);
-        // exit(0);
 
         if (empty($workflow))
         {
