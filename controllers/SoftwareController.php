@@ -214,9 +214,6 @@ class SoftwareController extends Controller
         /*
          * Get name and version from the browser link
          */
-        // $name=$_GET['name'];
-        // $version=$_GET['version'];
-        // $project=$_GET['project'];
         $projects=(Yii::$app->params['standalone']==false) ? Software::getActiveProjects() : [];
 
         if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
@@ -235,10 +232,10 @@ class SoftwareController extends Controller
          * or assign default values
          */
         $jobid=isset($_POST['jobid']) ? $_POST['jobid'] : '';
-        $podid=isset($_POST['podid']) ? $_POST['podid'] : '';
+        // $podid=isset($_POST['podid']) ? $_POST['podid'] : '';
         $machineType=isset($_POST['machineType']) ? $_POST['machineType'] : '';
-        // $field_values=isset($_POST['field_values']) ? $_POST['field_values'] : [];
         $example=(isset($_POST['example']) && ($_POST['example']=="1")) ? true : false;
+        $outFolder=(isset($_POST['outFolder'])) ? $_POST['outFolder'] : '';
 
         /*
          * contMount variables contain the mountpoints inside the container as specified during the addition process
@@ -648,7 +645,7 @@ class SoftwareController extends Controller
             'username'=>$user,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
             'iocontMount'=>$iocontMount,'mountExistError'=>false,
             'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'type'=>$type]);
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'type'=>$type, 'outFolder'=>$outFolder]);
     }
 
     /*

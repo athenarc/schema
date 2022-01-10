@@ -791,8 +791,6 @@ class Software extends \yii\db\ActiveRecord
                 }
             }
         }
-        // print_r($command);
-        // exit(0);
         return [$errors, $command];
     }
 

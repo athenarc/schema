@@ -144,7 +144,7 @@
 
 .hidden-element
 {
-	display:none;
+	display:none !important;
 }
 
 .back-btn
@@ -320,4 +320,14 @@ input:checked + .slider:before {
 
 .hid {
 	display: none;
+}
+
+.question-symbol
+{
+  font-size: 20px;
+}
+
+.control-buttons
+{
+  margin-left: 15px;
 }
