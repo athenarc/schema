@@ -289,13 +289,9 @@ $(document).ready(function() {
 		//window.alert(project);
 		});
 
-	$(".instructions").click(function() { 
+	$("#instructions-btn").click(function() { 
 
-		var name=$('.name').html();
-		var version=$('.version').html();
-		var modal=$('#instructions-modal-' + name + '-' + version.replace(/\./g, '\\.'));
-		//window.alert(modal);
-		modal.modal();
+		$("#instructions-modal").modal();
 
 	});
 	

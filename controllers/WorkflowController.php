@@ -220,7 +220,6 @@ class WorkflowController extends Controller
          * or assign default values
          */
         $jobid=isset($_POST['jobid']) ? $_POST['jobid'] : '';
-        // $field_values=isset($_POST['field_values']) ? $_POST['field_values'] : [];
         $example=(isset($_POST['example']) && ($_POST['example']=="1")) ? true : false;
         $outFolder=(isset($_POST['outFolder'])) ? $_POST['outFolder'] : '';
         // print_r($outFolder);

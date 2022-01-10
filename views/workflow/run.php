@@ -21,9 +21,6 @@
  *
  ************************************************************************************/ 
 
-use app\components\ArgumentsWidget;
-use app\components\JobResourcesWidget;
-
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -35,6 +32,8 @@ use yii\bootstrap4\Modal;
 use app\components\WorkflowVisualizeModal;
 use app\components\InstructionsModal;
 use app\components\Headers;
+use app\components\RunFormWidget;
+use app\components\JobResourcesWidget;
 
 
 echo Html::CssFile('@web/css/workflow/run.css');
@@ -95,28 +94,32 @@ Headers::begin() ?>
 
 <?php 
 ActiveForm::begin($form_params);
+?>
+
+<div class="site-software">
+    <div class="row">&nbsp;</div>
+    <div class="row">&nbsp;</div>
+    <div class="row" style="text-align: center;">
+    <div class="col-md-12">
+
+<?php
+    RunFormWidget::showOutputField($commandsDisabled,$outFolder,$username,$type);
+    RunFormWidget::showHiddenFields($jobid,$name,$version,$example, $hasExample);
+    RunFormWidget::showArguments($fields,$type,$commandBoxClass,$commandsDisabled);
+    RunFormWidget::showResources($quotas,$maxCores,$maxMem,$commandsDisabled,$commandBoxClass);
+    RunFormWidget::showRunButtons($superadmin,$username,$uploadedBy,$hasExample,$commandsDisabled,$type,$name,$version,$workflow_instructions,$visualize);
 
 
-ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, 
-			$software_instructions=$workflow_instructions,
-            $errors, $runErrors, $podid='', $machineType='',
-            $fields,$isystemMount='', $osystemMount='',
-            $iosystemMount='', $example, $hasExample,
-            $username,$icontMount='',$ocontMount=1,
-            $iocontMount='',$mountExistError='',
-            $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder, $type);
-
-JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, 
-		$software_instructions=$workflow_instructions,
-            $errors, $runErrors, $podid='', $machineType='',
-            $fields,$isystemMount='', $osystemMount='',
-            $iosystemMount='', $example, $hasExample,
-            $username,$icontMount='',$ocontMount=1,
-            $iocontMount='',$mountExistError=1,
-            $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, 
-            $type, $uploadedBy);   
+// JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, 
+// 		$software_instructions=$workflow_instructions,
+//             $errors, $runErrors, $podid='', $machineType='',
+//             $fields,$isystemMount='', $osystemMount='',
+//             $iosystemMount='', $example, $hasExample,
+//             $username,$icontMount='',$ocontMount=1,
+//             $iocontMount='',$mountExistError=1,
+//             $superadmin,$jobUsage,$quotas,
+//             $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, 
+//             $type, $uploadedBy);   
 
 
 ActiveForm::end();  
@@ -191,11 +194,11 @@ if (!empty($runErrors))
 </div>
 </div>
 
-<div class="name hidden"><?=$name?></div>
-<div class="version hidden"><?=$version?></div>
+<!-- <div class="name hidden"><?=$name?></div>
+<div class="version hidden"><?=$version?></div> -->
 <?php
-WorkflowVisualizeModal::addModal($name, $version, $visualize);
-InstructionsModal::addModal($name, $version, $software_instructions);
+// WorkflowVisualizeModal::addModal($name, $version, $visualize);
+// InstructionsModal::addModal($name, $version, $workflow_instructions);
 ?>
 
 

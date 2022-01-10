@@ -75,7 +75,7 @@
 {
 	display:none;
 }
-.add-example-link-hidden
+.add-example-hidden
 {
 	display:none;
 }
@@ -141,7 +141,7 @@
 
 .hidden-element
 {
-	display:none;
+	display:none !important;
 }
 
 .back-btn
@@ -323,3 +323,17 @@ input:checked + .slider:before {
 	display: none;
 }
 
+.question-symbol
+{
+  font-size: 20px;
+}
+
+.control-buttons
+{
+  margin-left: 15px;
+}
+
+.vis-modal-content
+{
+  width:800px !important;
+}
