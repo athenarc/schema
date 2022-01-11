@@ -218,7 +218,7 @@
 
 .select-file-btn:hover, .select-file-multiple-btn:hover,  .fill-array-field-btn:hover
 {
-	font-size:15px;
+	font-size:14px;
 	background-color: #efefef;
 	color:black;
 }

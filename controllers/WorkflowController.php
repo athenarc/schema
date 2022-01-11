@@ -428,14 +428,18 @@ class WorkflowController extends Controller
              */
             if (Yii::$app->request->getIsPost())
             {
-                $workflowParams=Workflow::getParameters([]);
+                $errorsParams=Workflow::getParameters([]);
+                $workflowParams=$errorsParams[0];
+                $errors=array_merge($errors,$errorsParams[1]);
             }
         }
         else
         {
             if (!$emptyFields)
             {
-                $workflowParams=Workflow::getParameters($fields);
+                $errorsParams=Workflow::getParameters($fields);
+                $workflowParams=$errorsParams[0];
+                $errors=array_merge($errors,$errorsParams[1]);
             }
             else
             {

@@ -110,55 +110,11 @@ ActiveForm::begin($form_params);
     RunFormWidget::showRunButtons($superadmin,$username,$uploadedBy,$hasExample,$commandsDisabled,$type,$name,$version,$workflow_instructions,$visualize);
 
 
-// JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, 
-// 		$software_instructions=$workflow_instructions,
-//             $errors, $runErrors, $podid='', $machineType='',
-//             $fields,$isystemMount='', $osystemMount='',
-//             $iosystemMount='', $example, $hasExample,
-//             $username,$icontMount='',$ocontMount=1,
-//             $iocontMount='',$mountExistError=1,
-//             $superadmin,$jobUsage,$quotas,
-//             $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder, 
-//             $type, $uploadedBy);   
-
-
 ActiveForm::end();  
 ?>
 
 
-
-
-
-<div id="error-report">
-<?php 
-/*
- * Scheduler errors
- */
-
-if (!empty($errors))
-{
-	echo "<br />";
-	echo Html::label("Schedule errors:");
-	echo "<br />";
-
-	foreach ($errors as $error)
-	{
-		echo $error . "<br />";
-	}
-}
-/*
- * Kubernetes errors
- */
-if (!empty($runErrors))
-{
-	echo "<br />";
-	echo Html::label("Kubernetes errors:");
-	echo "<br />";
-	echo $runErrors;
-
-}
-?>
-</div>
+    <?=RunFormWidget::showErrors($errors, $runErrors)?>
 <div id="pod-logs"></div>
 
 <?php
@@ -168,7 +124,7 @@ if (!empty($runErrors))
 	 * keep the status at "Initializing".
 	 */
 	
-	if (!empty($jobid))
+	if ($commandsDisabled)
 	{
 	?>
 		<div id="initial-status">
@@ -194,12 +150,6 @@ if (!empty($runErrors))
 </div>
 </div>
 
-<!-- <div class="name hidden"><?=$name?></div>
-<div class="version hidden"><?=$version?></div> -->
-<?php
-// WorkflowVisualizeModal::addModal($name, $version, $visualize);
-// InstructionsModal::addModal($name, $version, $workflow_instructions);
-?>
 
 
 

@@ -22,10 +22,10 @@
  ************************************************************************************/
 
 /**
- * View file for the execution of a docker software image.
+ * Helper for the run page.
  * 
  * @author: Kostis Zagganas
- * First version: Dec 2018
+ * First version: Jan 2022
  */
 namespace app\components;
 
@@ -404,6 +404,36 @@ class RunFormWidget
             </div>
         </div>
     </div>
+    <?php
+    }
+
+    public static function showErrors($errors,$runErrors)
+    {
+    ?>
+        <div id="error-report">
+    <?php 
+        if (!empty($errors))
+        {
+            echo "<br />";
+            echo Html::label("Schedule errors:");
+            echo "<br />";
+
+            foreach ($errors as $error)
+            {
+                echo $error . "<br />";
+            }
+        }
+        if (!empty($runErrors))
+        {
+            echo "<br />";
+            echo Html::label("Kubernetes errors:");
+            echo "<br />";
+            echo $runErrors;
+
+        }
+        
+    ?>
+        </div>
     <?php
     }
     

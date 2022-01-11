@@ -118,10 +118,15 @@ class Workflow extends \yii\db\ActiveRecord
             /*
              * field is optional and empty
              */
-
+            $errors=[];
             if (($field->optional) && ($field->value==''))
             {
                 continue;
+            }
+            if ((!$field->optional) && ($field->value==''))
+            {
+                $errors=["A required field has an empty value."];
+                return [[],$errors];
             }
             if (!$field->is_array)
             {
@@ -181,7 +186,7 @@ class Workflow extends \yii\db\ActiveRecord
             
         }
         
-        return json_encode($params,JSON_UNESCAPED_SLASHES);
+        return [json_encode($params,JSON_UNESCAPED_SLASHES),$errors];
     }
 
     /*
