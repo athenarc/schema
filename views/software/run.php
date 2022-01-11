@@ -101,53 +101,24 @@ ActiveForm::begin($form_params);
     </div>
 <?php
 ActiveForm::end();
-    
-
 ?>
     
+    <?=RunFormWidget::showErrors($errors, $runErrors)?>
+	   
+    <div id="pod-logs"></div>
+        <?php
+        if ($commandsDisabled)
+        {
+            echo "<div id='initial-status'>";
+        	echo "<h3>Runtime Info:</h3>";
+        	echo "<b>Status:</b> <div class='status-init'>QUEUED</div><br />";
+            echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
+            
+        }?>
+    <br />
+    </div>
+</div> <!-- site-software-->
 
-		<div id="error-report">
-		    <?php 
-		    if (!empty($errors))
-		    {
-		        echo "<br />";
-		        echo Html::label("Schedule errors:");
-		        echo "<br />";
-
-		        foreach ($errors as $error)
-		        {
-		            echo $error . "<br />";
-		        }
-		    }
-		    if (!empty($runErrors))
-		    {
-		        echo "<br />";
-		        echo Html::label("Kubernetes errors:");
-		        echo "<br />";
-		        echo $runErrors;
-
-		    }
-		    ?>
-		</div>
-		<div id="pod-logs"></div>
-		<?php
-		if ($podid!='')
-	    {
-	        echo "<div id='initial-status'>";
-			echo "<h3>Runtime Info:</h3>";
-			echo "<b>Status:</b> <div class='status-init'>Initializing</div><br />";
-	        echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
-	        
-	    }?>
-		<br />
-	</div>
-</div>    
-
-<!-- <div class="name hidden"><?=$name?></div>
-<div class="version hidden"><?=$version?></div> -->
-<?php
-// InstructionsModal::addModal($name, $version, $software_instructions);
-?>
 
 
 
