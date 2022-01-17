@@ -61,13 +61,14 @@ class RunFormWidget
             $runType='workflow';
         }
         echo Html::hiddenInput('mountcaller',null ,['id'=>'mountcaller']);
+        $disabledBox=$commandsDisabled ? 'disabled-box' : '';
         ?>
         <div class="row">
                 <div class="col-md-12"> <h3>Output directory <i class="fa fa-question-circle question-symbol"  title="Select the folder where the output of the <?=$runType?> will be placed")> </i></h3> </div>
             </div>
             <div class="row">
                 <div class="col-md-12">     
-                    <?=Html::textInput('outFolder',$outFolder,['id' => 'outFolder','class'=>'mount-field','readonly'=>true,])?>
+                    <?=Html::textInput('outFolder',$outFolder,['id' => 'outFolder','class'=>"mount-field $disabledBox",'readonly'=>true,])?>
                     <?=Html::a("$select_icon Select",'javascript:void(0);',['class'=>'select-output-button btn btn-success btn-md','disabled'=>($commandsDisabled)])?>
                     <?=Html::a("$clear_icon Clear",'javascript:void(0);',['class'=>'clear-output-button btn btn-danger btn-md','disabled'=>($commandsDisabled)])?>
                 </div>

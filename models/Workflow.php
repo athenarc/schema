@@ -190,18 +190,6 @@ class Workflow extends \yii\db\ActiveRecord
     }
 
     /*
-     * If the job did not submit, then return false
-     */
-    public static function isAlreadyRunning($jobid)
-    {
-        if ($jobid=='')
-        {
-            return false;
-        }
-        
-    }
-
-    /*
      * Returns a list of folders to be used in the 
      * select folder popup
      */
@@ -598,7 +586,6 @@ class Workflow extends \yii\db\ActiveRecord
                     ->setMethod('POST')
                     ->setUrl($url)
                     ->send();
-                // ->toString();
         }
         catch (Exception $e)
         {
@@ -645,8 +632,6 @@ class Workflow extends \yii\db\ActiveRecord
         $data=$response->data;
         
         $jobid=$data['run_id'];
-        // print_r($data);
-        // exit(0);
 
         $query=Yii::$app->db->createCommand()->insert('run_history',
                 [
@@ -717,6 +702,37 @@ class Workflow extends \yii\db\ActiveRecord
 
     }
 
+    public static function isAlreadyRunning($jobid)
+    {
+        $stopStates=['COMPLETE'=>false,'EXECUTOR_ERROR'=>false,'SYSTEM_ERROR'=>false,'CANCELED'=>false,'CANCELING'=>false,];
+        if (empty($jobid))
+        {
+            return false;
+        }
+        $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs/' . $jobid;
+        $client = new Client();
+        $response = $client->createRequest()
+                ->addHeaders(['Content-Type'=>'application/json','Accept'=>'application/json'])
+                ->setMethod('GET')
+                ->setUrl($url)
+                ->send();
+        if ($response->getIsOk())
+        {
+            $state=$response->data['state'];
+            if (isset($stopStates[$state]))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
     public static function getLogs($jobid)
     {
         $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs/' . $jobid;
@@ -727,6 +743,7 @@ class Workflow extends \yii\db\ActiveRecord
                 ->setUrl($url)
                 ->send();
         $statusCode=$response->getStatusCode();
+        
         if ($statusCode==400)
         {
             $error='Malformed request. Please contact an administrator';
@@ -740,6 +757,11 @@ class Workflow extends \yii\db\ActiveRecord
         else if ($statusCode==403)
         {
             $error='Requester not authorized to perform this action. Please contact an administrator';
+            return ['jobid'=>'','error'=>$error];
+        }
+        else if ($statusCode==404)
+        {
+            $error='Job not found in the workflows system. Please contact an administrator';
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==500)
@@ -807,12 +829,9 @@ class Workflow extends \yii\db\ActiveRecord
         
         $logs=[];
         $i=1;
-        // print_r($taskLogs);
-        // exit(0);
+        
         foreach ($taskLogs as $index=>$log)
         {
-            // print_r($status);
-            // exit(0);
             if (!empty($log))
             {
                 $value=[

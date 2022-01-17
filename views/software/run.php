@@ -37,9 +37,9 @@ use app\components\JobResourcesWidget;
 echo Html::CssFile('@web/css/software/run.css');
 $this->registerJsFile('@web/js/software/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
-$this->title = "New job ($name v.$version) ";
+$this->title = "New job ($software->name v.$software->version) ";
 
-$commandsDisabled= ($jobid!='') ? true : false;
+$commandsDisabled= ($software->jobid!='') ? true : false;
 if($commandsDisabled)
 {
 $commandBoxClass= 'disabled-box';
@@ -49,7 +49,7 @@ else
 $commandBoxClass='';
 }
 
-if ($hasExample)
+if ($software->has_example)
 {
 $exampleBtnLink='javascript:void(0);';
 }
@@ -91,31 +91,28 @@ ActiveForm::begin($form_params);
 
             <?php           
             RunFormWidget::showOutputField($commandsDisabled,$outFolder,$username,$type);
-            RunFormWidget::showHiddenFields($jobid,$name,$version,$example, $hasExample);
+            RunFormWidget::showHiddenFields($software->jobid,$software->name,$software->version,$example, $software->has_example);
             RunFormWidget::showArguments($fields,$type,$commandBoxClass,$commandsDisabled);
             RunFormWidget::showResources($quotas,$maxCores,$maxMem,$commandsDisabled,$commandBoxClass);
-            RunFormWidget::showRunButtons($superadmin,$username,$uploadedBy,$hasExample,$commandsDisabled,$type,$name,$version,$software_instructions);
+            RunFormWidget::showRunButtons($superadmin,$username,$software->uploaded_by,$software->has_example,$commandsDisabled,$type,$software->name,$software->version,$software->instructions);
 
             ?>
-        </div>
-    </div>
 <?php
 ActiveForm::end();
 ?>
-    
-    <?=RunFormWidget::showErrors($errors, $runErrors)?>
-	   
-    <div id="pod-logs"></div>
-        <?php
-        if ($commandsDisabled)
-        {
-            echo "<div id='initial-status'>";
-        	echo "<h3>Runtime Info:</h3>";
-        	echo "<b>Status:</b> <div class='status-init'>QUEUED</div><br />";
-            echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
-            
-        }?>
-    <br />
+            <?=RunFormWidget::showErrors($errors, $runErrors)?>
+            <div id="pod-logs"></div>
+                <?php
+                if ($commandsDisabled)
+                {
+                    echo "<div id='initial-status'>";
+                	echo "<h3>Runtime Info:</h3>";
+                	echo "<b>Status:</b> <div class='status-init'>INITIALIZING</div><br />";
+                    echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
+                    
+                }?>
+            </div>
+        </div>
     </div>
 </div> <!-- site-software-->
 

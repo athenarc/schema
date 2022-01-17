@@ -79,8 +79,8 @@ class ROCrateModal
 			$fields=WorkflowInput::find()->where(['workflow_id'=>$software_id])->orderBy(['position'=> SORT_ASC])->all();
 			if (!empty($fields))
 			{
-				$fields=Workflow::getRerunFieldValues($jobid,$fields);
-				if ($fields==false)
+				$fields_tmp=Workflow::getRerunFieldValues($jobid,$fields);
+				if ($fields_tmp==false)
 				{
 					$fields=[];
 				}
@@ -90,7 +90,6 @@ class ROCrateModal
 		
 		$model=RoCrate::find()->where(['jobid'=>$jobid])->one();
 
-		//print_r($history->jobid);
 		$disabled_fields=false;
 		if(!empty($model))
 		{
@@ -188,8 +187,7 @@ class ROCrateModal
 		echo	'</div>';
 		echo "<div class='input-file-fields'>";
 		$i=0;
-		// print_r($history->jobid);
-		// exit(0);
+		
 		foreach ($fields as $field) 
 		{
 			
