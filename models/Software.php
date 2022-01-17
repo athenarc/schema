@@ -54,7 +54,17 @@ use app\models\RunHistory;
 class Software extends \yii\db\ActiveRecord
 {
 
-    /**
+    public $container_command=[];
+    public $fields=[];
+    public $inputs=[];
+    public $outputs=[];
+    public $limits=[];
+    public $project='';
+    public $user='';
+    public $errors=[];
+    public $jobid='';
+    public $outFolder='';
+    /*
      * {@inheritdoc}
      */
     public static function tableName()
@@ -116,8 +126,6 @@ class Software extends \yii\db\ActiveRecord
             $query->where(['visibility'=>'public'])
                   ->orWhere(['and',['visibility'=>'private','uploaded_by'=>$softUser]]);
         }
-        // echo $query->createCommand()->getRawSql();
-        // exit(0);
 
         $rows=$query->all();
         $results=[];
@@ -148,16 +156,11 @@ class Software extends \yii\db\ActiveRecord
                 }
                     
             }
-            // $results[$name][$uploader][$version[0]]=$visibility;
         }
-        
-        // print_r($results);
-        // exit(0);
 
         
         return $results;
 
-        // return $rows;
     }
 
     
@@ -281,8 +284,8 @@ class Software extends \yii\db\ActiveRecord
             $query->where(['visibility'=>'public'])
                   ->orWhere(['and',['visibility'=>'private','uploaded_by'=>$softUser]]);
         }
-        // echo $query->createCommand()->getRawSql();
-        // exit(0);
+        
+
 
         $rows=$query->all();
         $results=[];
@@ -292,16 +295,11 @@ class Software extends \yii\db\ActiveRecord
             $version=$row['version'];
             $description=$row['description'];
             $results[]=['name'=>$name, 'version'=>$version, 'description'=>$description];
-            // $results[$name][$uploader][$version[0]]=$visibility;
         }
         
-        // print_r($results);
-        // exit(0);
-
         
         return $results;
 
-        // return $rows;
     }
 
     public static function getAvailableSoftware()
@@ -311,8 +309,6 @@ class Software extends \yii\db\ActiveRecord
         $query->select('id,name,version,mpi')
               ->where(['mpi'=>false])
               ->from('software');
-        // echo $query->createCommand()->getRawSql();
-        // exit(0);
 
         $rows=$query->all();
         $results=[];
@@ -330,7 +326,6 @@ class Software extends \yii\db\ActiveRecord
         }
         
         return $results;
-        // return $rows;
     }
 
     public static function getIndicators($softUser)
@@ -420,55 +415,48 @@ class Software extends \yii\db\ActiveRecord
    
 
 
-    public static function getContainerMountpoint($name, $version)
-    {
-        $query=new Query;
+    // public static function getContainerMountpoint($name, $version)
+    // {
+    //     $query=new Query;
 
-        $query->select(['imountpoint','omountpoint'])
-              ->from('software ')
-              ->where(['name'=>$name, 'version'=>$version]);
-        $rows=$query->one();
+    //     $query->select(['imountpoint','omountpoint'])
+    //           ->from('software ')
+    //           ->where(['name'=>$name, 'version'=>$version]);
+    //     $rows=$query->one();
         
-        $imount=$rows['imountpoint'];
-        $omount=$rows['omountpoint'];
+    //     $imount=$rows['imountpoint'];
+    //     $omount=$rows['omountpoint'];
 
-        $iomount='';
+    //     $iomount='';
         
-        if ((!empty($imount)) && (!empty($omount)))
-        {
-            if ($imount==$omount)
-            {
-                $iomount=$imount;
-            }
-        }
+    //     if ((!empty($imount)) && (!empty($omount)))
+    //     {
+    //         if ($imount==$omount)
+    //         {
+    //             $iomount=$imount;
+    //         }
+    //     }
 
-        // print_r($iomount);
-        // print_r("<br />");
-        // print_r($imount);
-        // print_r("<br />");
-        // print_r($omount);
-        // print_r("<br />");
-        // exit(0);
         
-        return [$imount, $omount, $iomount];
-    }
+    //     return [$imount, $omount, $iomount];
+    // }
 
 
-    public static function getUserHistory($softUser)
-    {
-        $query=new Query;
+    // public static function getUserHistory($softUser)
+    // {
+    //     $query=new Query;
 
-        $query->select(['start','stop','command','status','softname', 'softversion','jobid', 'ram', 'cpu', 'machinetype', 'project','software_id'])
-              ->from('run_history')
-              ->where(['username'=>$softUser]);
+    //     $query->select(['start','stop','command','status','softname', 'softversion','jobid', 'ram', 'cpu', 'machinetype', 'project','software_id'])
+    //           ->from('run_history')
+    //           ->where(['username'=>$softUser]);
 
-        $pages = new Pagination(['totalCount' => $query->count()]);
-        $pages->setPageSize(10);
+    //     $pages = new Pagination(['totalCount' => $query->count()]);
+    //     $pages->setPageSize(10);
         
-        $results = $query->orderBy('start DESC')->offset($pages->offset)->limit($pages->limit)->all();
+    //     $results = $query->orderBy('start DESC')->offset($pages->offset)->limit($pages->limit)->all();
 
-        return [$pages,$results];
-    }
+    //     return [$pages,$results];
+    // }
 
     
 
@@ -476,62 +464,113 @@ class Software extends \yii\db\ActiveRecord
      * If the user has uploaded a CWL file, 
      * then get the custom form fields.
      */
-    public static function getSoftwareFields($name,$version)
-    {
-        $query=new Query;
+    // public static function getSoftwareFields($name,$version)
+    // {
+    //     $query=new Query;
 
-        $query->select('si.name, si.position, si.field_type, si.prefix, si.default_value, si.optional, si.separate si.example') 
-              ->from('software sf')
-              ->join('INNER JOIN', 'software_inputs si', 'si.softwareid=sf.id')
-              ->where(['sf.name'=>$name, 'sf.version'=>$version])
-              ->orderBY(['si.position'=>SORT_ASC]);
-        $rows=$query->all();
+    //     $query->select('si.name, si.position, si.field_type, si.prefix, si.default_value, si.optional, si.separate si.example') 
+    //           ->from('software sf')
+    //           ->join('INNER JOIN', 'software_inputs si', 'si.softwareid=sf.id')
+    //           ->where(['sf.name'=>$name, 'sf.version'=>$version])
+    //           ->orderBY(['si.position'=>SORT_ASC]);
+    //     $rows=$query->all();
 
-        return $rows;
-    }
+    //     return $rows;
+    // }
     /*
      * If the user has uploaded a CWL file, 
      * then get the docker image script name.
      */
-    public static function getScript($name,$version)
+    // public static function getScript($name,$version)
+    // {
+    //     $query=new Query;
+
+    //     $query->select('script, imountpoint,omountpoint')
+    //           ->from('software')
+    //           ->where(['name'=>$name, 'version'=>$version]);
+    //     $path=$query->one();
+
+    //     $imount=$path['imountpoint'];
+    //     $omount=$path['omountpoint'];
+    //     $iomount='';
+    //     if ((!empty($imount)) || (empty($omount)))
+    //     {
+    //         if ($imount==$omount)
+    //         {
+    //             $iomount=$imount;
+    //         }
+    //     }
+
+    //     return [$path['script'],$imount,$omount,$iomount];
+    // }
+    public static function getIOs($software,$fields,$iSystemFolder,$oSystemFolder)
     {
-        $query=new Query;
-
-        $query->select('script, imountpoint,omountpoint')
-              ->from('software')
-              ->where(['name'=>$name, 'version'=>$version]);
-        $path=$query->one();
-
-        $imount=$path['imountpoint'];
-        $omount=$path['omountpoint'];
-        $iomount='';
-        if ((!empty($imount)) || (empty($omount)))
+        $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        $ofolder=$userFolder . '/' . $oSystemFolder;
+        if (!is_dir($ofolder))
         {
-            if ($imount==$omount)
-            {
-                $iomount=$imount;
-            }
+            self::exec_log("mkdir -p $ofolder");
+            self::exec_log("chmod 777 $ofolder");
+        }
+        /*
+         * We installed schema on a server instead of deploying with helm
+         * and our FTP is jailed, with the root being the user-data folder.
+         * Change does not affect helm deployments, because the parameter does not exist.
+         */
+        if (isset(Yii::$app->params['ftpJailPath']) and (!empty(Yii::$app->params['ftpJailPath'])))
+        {
+            $userFolder=str_replace(Yii::$app->params['ftpJailPath'],'',$userFolder);
         }
 
-        return [$path['script'],$imount,$omount,$iomount];
-    }
+        /*
+         * Prepare output directory location.
+         */
 
+        $url= "ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $oSystemFolder;
+        $outputs=[['type'=>'DIRECTORY','path'=>$software->omountpoint,'url'=>$url]];
+        $inputs=[];
+        foreach ($fields as $field)
+        {
+            if (($field->field_type!='Directory') && ($field->field_type!='File'))
+            {
+                continue;
+            }
+            $input=[];
+            if ($field->field_type=='Directory')
+            {
+                $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $iSystemFolder . $field->value;
+                $path=$software->imountpoint;
+                $type='DIRECTORY';
+            }
+            else
+            {
+                $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/'  . $iSystemFolder . $field->value;
+                $filename=explode('/',$field->value);
+                $filename=end($filename);
+                $path=$software->imountpoint . '/' . $filename;
+                $type='FILE';
+            }
+            $inputs[]=['type'=>$type,'path'=>$path,'url'=>$url];
+        }
+
+        return [$inputs,$outputs];
+    }
 
     /*
      * Check if the commands posted are empty.
      */
-    public static function createCommand($script,$emptyFields,$fields,$mountpoint)
+    public static function createCommand($software,$emptyFields,$fields)
     {   
 
         $errors=[];
         /**
          * Return one command with the mountpoint attached and one without it
          */
-        $command=$script;
+        $command=$software->script;
 
         if ( (!$emptyFields))
         {
-            // print_r(3);
+            
             foreach ($fields as $field)
             {
                 if ($field->field_type=='boolean')
@@ -575,7 +614,7 @@ class Software extends \yii\db\ActiveRecord
                             {
                                 if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                 {
-                                    $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                    $command.= ' ' . $field->prefix . $field_gap . $software->imountpoint . '/' . $field->value;
                                 }
                                 else
                                 {
@@ -590,7 +629,7 @@ class Software extends \yii\db\ActiveRecord
                             {
                                 if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                 {
-                                    $command.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                    $command.= ' ' . $field->prefix . $field_gap . $software->imountpoint . '/' . $field->value;
                                 }
                                 else
                                 {
@@ -643,7 +682,7 @@ class Software extends \yii\db\ActiveRecord
                                     {
                                         if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                         {
-                                            $finalValue.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $val;
+                                            $finalValue.= ' ' . $field->prefix . $field_gap . $software->imountpoint . '/' . $val;
                                         }
                                         else
                                         {
@@ -686,7 +725,7 @@ class Software extends \yii\db\ActiveRecord
                                     {
                                         if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                         {
-                                            $finalValue.= $mountpoint . '/' . $val . $separator;
+                                            $finalValue.= $software->imountpoint . '/' . $val . $separator;
                                         }
                                         else
                                         {
@@ -731,7 +770,7 @@ class Software extends \yii\db\ActiveRecord
                                 {
                                     if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                     {
-                                        $finalValue.= ' ' . $field->prefix . $field_gap . $mountpoint . '/' . $field->value;
+                                        $finalValue.= ' ' . $field->prefix . $field_gap . $software->imountpoint . '/' . $field->value;
                                     }
                                     else
                                     {
@@ -774,7 +813,7 @@ class Software extends \yii\db\ActiveRecord
                                 {
                                     if (($field->field_type=='File') || ($field->field_type=='Directory'))
                                     {
-                                        $finalValue.= $mountpoint . '/' . $field->value . $separator;
+                                        $finalValue.= $software->imountpoint . '/' . $field->value . $separator;
                                     }
                                     else
                                     {
@@ -797,59 +836,83 @@ class Software extends \yii\db\ActiveRecord
     /*
      * This function creates the job YAML file and sends it to Kubernetes
      */
-    public static function createAndRunJob($commands, $fields,
-                                    $name, $version, $jobid, $user, 
-                                    $podid, $machineType, 
-                                    $isystemMount, $isystemMountField,
-                                    $osystemMount, $osystemMountField,
-                                    $iosystemMount, $iosystemMountField, 
-                                    $project,$maxMem,$maxCores,$sharedFolder,$gpu)
+    public function runJob()
     {
-        
+        $data=[];
         /*
-         * Scheduler (python) script physical location
+         * Create job name. Leftover from the old method, but it works.
          */
-        $scheduler=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "scheduler.py");
-        $stats=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "jobMonitor.py");
-        
-        /* 
-         * Get image repository location from the DB
-         */
-        $software=Software::find()->where(['name'=>$name, 'version'=>$version])->one();
-        $image=$software->image;
-        $workingdir=$software->workingdir;
-        $imountpoint=$software->imountpoint;
-        $omountpoint=$software->omountpoint;
-        $softwareId=$software->id;
-        
-        $iomountpoint='';
-        if ((!empty($imountpoint)) || (empty($omountpoint)))
-        {
-            if ($imountpoint==$omountpoint)
-            {
-                $iomountpoint=$imountpoint;
-            }
-        }
-        // $nameNoQuotes=$name;
-        $softName=$name;
-        $nameNoQuotes=str_replace('_','-',$name);
-        $versionNoQuotes=$version;
-        $name=self::enclose($name);
-        $version=self::enclose($version);
-        $iomountpoint=self::enclose($iomountpoint);
-        $imountpoint=self::enclose($imountpoint);
-        $omountpoint=self::enclose($omountpoint);
-        $iosystemMount=self::enclose($iosystemMount);
-        $isystemMount=self::enclose($isystemMount);
-        $osystemMount=self::enclose($osystemMount);
-        $workingdir=self::enclose($workingdir);
-        $sharedFolder=self::enclose($sharedFolder);
-        $gpu=self::enclose($gpu);
+        $taskName=str_replace('_','-',$this->name);
+        $taskName=str_replace(' ','-',$taskName);
+        $taskName=str_replace("\t",'-',$taskName);
+        $taskName.= '-' . $this->version;
 
         /*
-         * Create the tmp folder to store the YAML file
+         * Get container command and eliminate empty strings
          */
-        $folder=Yii::$app->params['tmpFolderPath'] . "$jobid/";
+        $command_str=$this->container_command;
+        $tmp=explode(' ',$this->container_command);
+        $this->container_command=[];
+        foreach ($tmp as $token)
+        {
+            if ($token=='')
+            {
+                continue;
+            }
+            $this->container_command[]=$token;
+        }
+
+        /*
+         * Get data to be sent to TES
+         */
+        $data['name']=$taskName;
+        $data['inputs']=$this->inputs;
+        $data['outputs']=$this->outputs;
+
+        /* 
+         * Get resources or limits depending on the type of TES
+         */
+        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
+        {
+            $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'gpu'=>$this->limits['gpu']];
+            $data['limits']=$resources;
+            $data['resources']=$resources;
+        }
+        else
+        {
+            $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'disk_gb'=>'30'];
+            $data['resources']=$resources;
+        }
+
+        /*
+         * Create TES executor
+         */
+        $executor=[];
+        $executor['image']=$this->image;
+        $executor['command']=$this->container_command;
+        $executor['workdir']=$this->omountpoint;
+        $data['executors']=[$executor];
+        $url=self::getTesUrl();
+        $client=new Client();
+        $response = $client->createRequest()
+                    ->setFormat(Client::FORMAT_JSON)
+                    ->setData($data)
+                    ->setMethod('POST')
+                    ->setUrl($url)
+                    ->send();
+
+        if (!$response->getIsOk())
+        {
+            $this->errors=['There was an error sending the job to TESK. <br />Please contact an administrator'];
+            return;
+        }
+
+        $this->jobid=$response->data['id'];
+
+        /*
+         * Create the tmp folder to store the aux files
+         */
+        $folder=Yii::$app->params['tmpFolderPath'] . "$this->jobid/";
 
         if (file_exists($folder))
         {
@@ -865,361 +928,210 @@ class Software extends \yii\db\ActiveRecord
          * Store inputs in a file in the tmp directory
          */
         $fieldValues=[];
-        foreach($fields as $field)
+        foreach($this->fields as $field)
         {
                 $fieldValues[$field->name]=$field->value;
             
         }
 
-        $fieldValues=json_encode($fieldValues,JSON_UNESCAPED_SLASHES);
+        $fieldValues=json_encode($fieldValues,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
 
-        $machineType=SoftwareProfiler::getMachineType($fields,$software,$folder,$isystemMount,$iosystemMount,$maxMem);
-
-        $filename=$folder . 'fields.txt';
+        $filename=$folder . 'fields.json';
         file_put_contents($filename, $fieldValues);
 
         /*
-         * Store the commands in a file in the tmp directory
+         * Store the json call in a file in the tmp directory
          */
-        $filename=$folder . 'commands.txt';
-
-        file_put_contents($filename, $commands);
+        $filename=$folder . 'tesCall.json';
+        $tesCall=json_encode($data,JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
+        file_put_contents($filename, $tesCall);
 
 
 
         Software::exec_log("chmod 777 $folder -R",$out,$ret);
 
+        /*
+         * Insert to DB
+         */
+        $history=new RunHistory();
+        $history->username=User::getCurrentUser()['username'];
+        $history->jobid=$this->jobid;
+        $history->command=$command_str;
+        $history->omountpoint=$this->outFolder;
+        $history->start='NOW()';
+        $history->softname=$this->name;
+        $history->softversion=$this->version;
+        $history->project=$this->project;
+        $history->max_ram=$this->limits['cpu'];
+        $history->max_cpu=$this->limits['ram'];
+        $history->software_id=$this->id;
+        $history->type='job';
+        $history->save(false);
 
         /*
-         * Classify software, create YAML job configuration file,
-         * send the file to Kubernetes to run and get the machine type.
+         * Run the monitor script in the background
          */
-        $arguments=[
-            $name,$version,$image,
-            $jobid,$folder, $workingdir, 
-            $imountpoint, $isystemMount,
-            $omountpoint, $osystemMount,
-            $iomountpoint, $iosystemMount,
-            $maxMem,$maxCores*1000, Yii::$app->params['nfsIp'],
-            $machineType,$sharedFolder,$gpu];
-
-        $schedulerCommand=$scheduler . ' ' . implode(' ',$arguments) . " 2>&1";
-
-        // print_r($schedulerCommand);
-        // exit(0);
-        Software::exec_log($schedulerCommand,$output,$ret);
-
-        // print_r($output);
-        // exit(0);
-        $jobName=strtolower($nameNoQuotes) . '-' . $jobid;
-        /*
-         * This replacements are performed in configFileCreator.py too.
-         * Anything changed here should be changed there.
-         * Job cancelling is also affected.
-         */
-        $jobName=str_replace('_','-',$jobName);
-        $jobName=str_replace(' ','-',$jobName);
-        $jobName=str_replace("\t",'-',$jobName);
-        $arguments=[$jobName, $jobid, $folder];
-        $statsCommand=$stats . ' ' . implode(' ', $arguments);
+        $monitor=self::sudoWrap(Yii::$app->params['scriptsFolder'] . "jobMonitor.py");
+        $jobid=self::enclose($this->jobid);
+        $enfolder=self::enclose($folder);
+        $tesEndpoint=self::enclose(Yii::$app->params['teskEndpoint']);
+        $schemaTes=(isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))?"'1'":"'0'";
+        $arguments=[$jobid, $folder,$tesEndpoint,$schemaTes];
+        $monitorCommand=$monitor . ' ' . implode(' ', $arguments);
         $monitorLog=$folder . 'monitorLog.txt';
         /*
          * Uncomment the following line and comment the other one to debug the monitor
          */
-        // shell_exec(sprintf("%s > $monitorLog 2>&1 &", $statsCommand));
-        shell_exec(sprintf("%s > /dev/null 2>&1 &", $statsCommand));
+        shell_exec(sprintf("%s > $monitorLog 2>&1 &", $monitorCommand));
+        // shell_exec(sprintf("%s > /dev/null 2>&1 &", $monitorCommand));
 
         
-        /*
-         * Read the output and check if the pod was created.
-         * If not, add error message.
-         */
-        if (!preg_match("/job\.batch\/[a-z0-9:space:]+/",$output[0]))
-        {   
-            $error="";
-            foreach ($output as $out)
-            {
-                $error.=$out . "<br />";
-            }
-            $error.="Please contact the system administrator.";
-            return [$podid, $error, $machineType];  
-        }
-
-        /*
-         * Get the pod ID by using the job name.
-         */
-        
-
-        $query=Yii::$app->db->createCommand()->insert('run_history',
-                [
-
-                    "username"=>User::getCurrentUser()['username'],
-                    "jobid" => $jobid,
-                    "command" => $commands,
-                    "imountpoint" => $isystemMountField,
-                    "omountpoint" => $osystemMountField,
-                    "iomountpoint" => $iosystemMountField,
-                    "start" => 'NOW()',
-                    "softname" => $softName,
-                    "softversion"=> $versionNoQuotes,
-                    "machinetype"=> $machineType,
-                    "project"=>$project,
-                    "max_ram"=> $maxMem,
-                    "max_cpu" => $maxCores,
-                    'software_id' => $softwareId,
-                    'type'=>'job',
-
-                ]
-            )->execute();
-
-        // print_r($statsCommand);
-        // exit(0);
-
-        unset($output);
-
-        
-        if (isset(Yii::$app->params['namespaces']['jobs']))
-        {
-            $namespace=Yii::$app->params['namespaces']['jobs'];
-            $command=self::sudoWrap("kubectl get pods --no-headers -n $namespace 2>&1") . " | grep $jobName | tr -s ' ' ";
-
-            Software::exec_log($command,$output,$ret);
-        }
-        else
-        {
-            $command=self::sudoWrap("kubectl get pods --no-headers 2>&1") . " | grep $jobName | tr -s ' ' ";
-            Software::exec_log($command,$output,$ret);
-        }
-        
-
-        $podString='';
-        foreach ($output as $out)
-        {   
-            // print_r($out);
-            // print_r("<br />");
-            if (strpos($out,$jobName)!== false)
-            {
-                $podString=explode(' ', $out)[0];
-                break;
-            }
-
-        }
-
-        if (empty($podString))
-        {
-            $error="There was an error submitting the job to Kubernetes.<br />Please reload the page and try again or contact an administrator.";
-            return [$podid, $error, $machineType];
-        }
-        return [$podString,'', $machineType];
+        return;
 
     }
 
     /*
      * Get pod logs by using the pod ID
      */
-    public static function getLogs($podid)
+    public static function getLogs($jobid)
     {
-        if (isset(Yii::$app->params['namespaces']['jobs']))
+        $url=self::getTesUrl();
+        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
         {
-            $namespace=Yii::$app->params['namespaces']['jobs'];
-            $logsCommand=self::sudoWrap("kubectl logs $podid -n $namespace 2>&1");
-            $command=self::sudoWrap("kubectl get pods --no-headers $podid -n $namespace 2>&1");   
+            $urlArray=[$url, 'jobid'=>$jobid, 'view'=>'FULL'];
         }
         else
         {
-            $logsCommand=self::sudoWrap("kubectl logs $podid 2>&1");
-            $command=self::sudoWrap("kubectl get pods --no-headers $podid 2>&1");
+            $urlArray=[$url . "/$jobid", 'view'=>'FULL'];
         }
-        Software::exec_log($logsCommand,$logs,$ret);
+        $client=new Client();
+        $response = $client->createRequest()
+                    ->setFormat(Client::FORMAT_JSON)
+                    ->setMethod('GET')
+                    ->setUrl($urlArray)
+                    ->send();
 
-        Software::exec_log($command,$output,$ret);
-        $splt=preg_split('/[\s]+/', $output[0]);
-        $status=$splt[2];
-        $time=$splt[4];
-        if ($status=='server')
+        if (!$response->getIsOk())
         {
-            $status='Completed';
-            $time='N/A';
+            return['COMPLETE',['Job logs unavailable. Please visit the "Job History" page to download the logs.'],"N/A"];
+        }
+
+        $status=$response->data['state'];
+        try
+        {
+            $logs=$response->data['logs'][0]['logs'][0]['stdout'];
+        }
+        catch (\Exception $e)
+        {
+            $logs="";
         }
         
-
-        return [$status,$logs,$time];
-    }
-
-    /*
-     * Erase job after it is completed or terminated.
-     */
-    public static function cleanUp($name,$jobid,$status)
-    {
-        $folder=$userFolder=Yii::$app->params['tmpFolderPath'] . "/$jobid/";
-
-        #Clear job
-        $jobName=strtolower($name). '-' . $jobid;
-        $jobName=str_replace('_','-',$jobName);
-        $jobName=str_replace(' ','-',$jobName);
-        $jobName=str_replace("\t",'-',$jobName);
-        $yaml=$folder . $jobName . '.yaml';
-
-        if ($status=='Completed')
-        {       
-        
-            $command=self::sudoWrap("kubectl describe job $jobName 2>&1");
-            Software::exec_log($command, $output, $ret);
-            // print_r($output);
-            // exit(0);
-            $start='';
-            $stop='';
-            foreach ($output as $line)
+        $logs=explode("\n",$logs);
+        try
+        {
+            $start=$response->data['logs'][0]['logs'][0]['start_time'];
+            $start=str_replace('T',' ',$start);
+            $start=str_replace('Z',' ',$start);
+            $startdate=new \DateTime($start);
+            $enddate=new \DateTime('NOW');
+            $diff=$enddate->diff($startdate);
+            
+            $timestr=$diff->s . "s";
+            if ($diff->i>0)
             {
-                $startStr="Start Time:";
-                $startlen=strlen($startStr);
-                $stopStr="Completed At:";
-                $stoplen=strlen($stopStr);
-                // $cancelStr="Canceled At:";
-                // $cancellen=strlen($cancelStr);
-        
-                if (substr($line,0,$startlen)==$startStr)
-                {
-                    $tokens=explode(',', $line)[1];
-                    $tokens=explode('+', $tokens)[0];
-                    $datetime=strtotime($tokens);
-                    $start=date("Y-m-d H:i:s", $datetime);
-                }
-        
-                if (substr($line,0,$stoplen)==$stopStr)
-                {
-                    $tokens=explode(',', $line)[1];
-                    $tokens=explode('+', $tokens)[0];
-                    $datetime=strtotime($tokens);
-                    $stop=date("Y-m-d H:i:s", $datetime);
-                }
-        
-                    // if (substr($line,0,$cancellen)==$cancelStr)
-                    // {
-                    //     $tokens=explode(',', $line)[1];
-                    //     $tokens=explode('+', $tokens)[0];
-                    //     $datetime=strtotime($tokens);
-                    //     $stop=date("Y-m-d H:i:s", $datetime);
-                    // }
-        
+                $timestr=$diff->i . 'm ' . $timestr;
             }
-            Yii::$app->db->createCommand()->update('run_history',
-                [
-                    'start' => $start,
-                    'stop' => $stop,
-                    'status' => $status,
-                ],
-                "jobid='$jobid'"
-            )->execute();
-                // print_r($start);
-                // print_r("<br />");
-                // print_r($stop);
-                // exit(0);
+            if ($diff->h>0)
+            {
+                $timestr=$diff->h . 'h ' . $timestr;
+            }
+            if ($diff->d>0)
+            {
+                $timestr=$diff->d . 'd, ' . $timestr;
+            }
+            if ($diff->m>0)
+            {
+                $timestr=$diff->m . 'm ' . $timestr;
+            }
+            if ($diff->y>0)
+            {
+                $timestr=$diff->y . 'y ' . $timestr;
+            }
         }
-        else
+        catch (\Exception $e)
         {
-            Yii::$app->db->createCommand()->update('run_history',
-                [
-                    'stop' => 'NOW()',
-                    'status' => $status,
-                ],
-                "jobid='$jobid'"
-            )->execute();
-        }
+            $timestr="N/A";
 
+        }        
+
+            
         
-                // print_r( Yii::$app->db->createCommand()->update('run_history',
-                //     [
-                //         'start' => $start,
-                //         'stop' => $stop,
-                //         'status' => $status,
-                //     ],
-                //     "softname='$name' AND username='$user' AND jobid='$jobid'"
-                // )->getRawSql());
-
-        $podid=self::runningPodIdByJob($name,$jobid);
-        $command=self::sudoWrap("kubectl logs $podid 2>&1");
-        Software::exec_log($command,$logs,$ret);
-        file_put_contents($folder . 'logs.txt', implode("\n",$logs));
-
-        $command=self::sudoWrap("kubectl delete -f $yaml");
-        Software::exec_log($command,$out,$ret);
-
+        return [$status,$logs,$timestr];
     }
 
-    /*
-     * Check is podid is running
-     */
-    public static function isAlreadyRunning($podid)
+    public static function isAlreadyRunning($jobid)
     {
-        if ($podid=='')
+        /*
+         * If jobid is empty, the page is loaded for the first time.
+         * If not, ask TES whether the job exists in the system.
+         * If the job results in 404 error, then it has run and deleted
+         * or not has not run at all.
+         */
+        if (empty($jobid))
         {
             return false;
         }
-
-        /*
-         * The following could have been implemented by using the "--no-headers"
-         * flag and checking whether the output is empty instead of count($output)==1.
-         */
-        $command=self::sudoWrap("kubectl get pods $podid 2>&1");
-        Software::exec_log($command,$output,$ret);
-        if (count($output)==1)
+        $url=self::getTesUrl();
+        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
         {
-            return false;
+            $urlArray=[$url, 'jobid'=>$jobid];
         }
         else
+        {
+            $urlArray=[$url . "/$jobid"];
+        }
+        $client=new Client();
+        $response = $client->createRequest()
+                    ->setFormat(Client::FORMAT_JSON)
+                    ->setMethod('GET')
+                    ->setUrl($urlArray)
+                    ->send();
+
+        if ($response->getIsOk())
         {
             return true;
         }
+        return false;
     }
 
-    /*
-     * Use name and job ID to get the pod ID.
-     */
-    public static function runningPodIdByJob($name,$jobid)
+    public static function cancelJob($jobid)
     {
-        $podid='';
-        if (isset(Yii::$app->params['namespaces']['jobs']))
+        /*
+         * Cancel job by making the appropriate call 
+         * to the TES api.
+         */
+        $url=self::getTesUrl();
+        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
         {
-            $namespace=Yii::$app->params['namespaces']['jobs'];
-            $command=self::sudoWrap("kubectl get pods -n $namespace --no-headers 2>&1");
+            $urlArray=[$url . '/cancel', 'jobid'=>$jobid];
         }
         else
         {
-            $command=self::sudoWrap("kubectl get pods --no-headers 2>&1");
+            $urlArray=[$url . "/$jobid:cancel"];
         }
-       
-
-        Software::exec_log($command,$out,$ret);
-
-        foreach ($out as $row)
-        {
-            $podTokens=preg_split('/[\s]+/', $row);
-
-            $podString=$podTokens[0];
-            $podStatus=$podTokens[2];
-            $tokens=explode('-',$podString);
-            if ((strtolower($name)==$tokens[0]) && ($jobid==$tokens[1]))
-            {
-                $podid=$podString;
-                break;
-            }
-        }
-        if ($podStatus=='Terminating')
-        {
-            $podid='';
-        }
-        return $podid;
-
+        $client=new Client();
+        $response = $client->createRequest()
+                    ->setFormat(Client::FORMAT_JSON)
+                    ->setMethod('POST')
+                    ->setUrl($urlArray)
+                    ->send();
     }
+
 
     public static function listDirectories($directory)
     {
-        // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
         $results=[];
-        // print_r($files);
-        // exit(0);
         
         foreach($files as $key => $value)
         {
@@ -1247,15 +1159,10 @@ class Software extends \yii\db\ActiveRecord
         $success='';
         $error='';
         
-        // print_r($command);
-        // print_r("<br /><br />");
-        // exit(0);
         session_write_close();
         Software::exec_log($command,$out,$ret);
         session_start();
-        // print_r($out);
-        // print_r($ret);
-        // exit(0);
+       
         if ($ret==0)
         {
             $success="Successfully deleted image $name v.$version!";
@@ -1288,7 +1195,7 @@ class Software extends \yii\db\ActiveRecord
     {
         $folder=Yii::$app->params['tmpFolderPath'] . '/' . $jobid . '/';
 
-        $file=$folder . 'fields.txt';
+        $file=$folder . 'fields.json';
 
         if (file_exists($file))
         {  
@@ -1296,9 +1203,23 @@ class Software extends \yii\db\ActiveRecord
         }
         else
         {
-            return $fields;
+            /*
+             * try fields.txt for backward compatibility
+             */
+            $file=$folder . 'fields.txt';
+            $content=file_get_contents($file);
+            if (file_exists($file))
+            {  
+                $content=file_get_contents($file);
+            }
+            else
+            {
+                return $fields;
+            }
+
+            
         }
-        // print_r($file);
+        
         $json=json_decode($content,true);
 
         if (empty($json))
@@ -1328,19 +1249,26 @@ class Software extends \yii\db\ActiveRecord
                     $fields[$i]->value=trim($field_values[$i]);
                 }
             }
-            // print_r($fields[--$i]->value?'true':'false');
-            // exit(0);
         
         }
         else
         {
-            foreach ($fields as $field)
+            if (!empty($fields))
             {
-                if (!array_key_exists($field->name,$json))
+                $fieldCount=count($fields);
+            }
+            else
+            {
+                $fieldCount=0;
+            }
+
+            for ($i=0; $i<$fieldCount; $i++)
+            {
+                if (!array_key_exists($fields[$i]->name,$json))
                 {
-                    return false;
+                    continue;
                 }
-                $field->value=$json[$field->name];
+                $fields[$i]->value=$json[$fields[$i]->name];
             }
         }
         return $fields;
@@ -1382,92 +1310,11 @@ class Software extends \yii\db\ActiveRecord
         
     }
 
-    public static function hasExample($name,$version)
-    {
-        $query=new Query;
-        $result=$query->select(['has_example'])
-              ->from('software')
-              ->where(['name'=>$name, 'version'=>$version])
-              ->one();
-
-        return $result['has_example'];
-
-    }
-    public static function uploadedBy($name,$version)
-    {
-        $query=new Query;
-        $result=$query->select(['uploaded_by'])
-              ->from('software')
-              ->where(['name'=>$name, 'version'=>$version])
-              ->one();
-
-        return $result['uploaded_by'];
-
-    }
-
-    public static function getInactiveJobs()
-    {
-
-        $command=self::sudoWrap('kubectl get jobs --no-headers 2>&1');
-        
-        Software::exec_log($command,$output,$ret);
-
-        // print_r($output);
-        // exit(0);
-        if (trim($output[0])=="No resources found in default namespace.")
-        {
-            return [];
-        }
-        if (trim($output[0])=="No resources found.")
-        {
-            return [];
-        }
-
-        $inactive=[];
-        $active=[];
-        
-        foreach ($output as $line)
-        {
-            $tokens_tmp=explode(' ',$line);
-            $tokens=[];
-            foreach ($tokens_tmp as $token)
-            {
-                if (!empty($token))
-                    $tokens[]=$token;
-            }
-            // print_r($tokens);
-            // exit(0);
-            $completed_tokens=explode('/',$tokens[1]);
-            $completed=intval($completed_tokens[0]);
-            $total=intval($completed_tokens[1]);
-            // var_dump($total);
-            // var_dump($completed);
-            // exit(0);
-            if ($completed!=$total)
-                continue;
-            // $status='Completed';
-            $job=$tokens[0];
-            // if ($status=='Completed')
-            // {
-            $job=explode('-',$job);
-            $inactive[]=$job;
-            // }
-        
-
-        }
-        // print_r($inactive);
-        // exit(0);
-        return $inactive;
-
-
-    }
 
 
     public static function getActiveProjects()
     {
         $username=User::getCurrentUser()['username']; 
-        // print_r("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-ondemand-quotas&username=$username");
-        // exit(0);  
         $client = new Client();
         $response = $client->createRequest()
                 ->setMethod('GET')
@@ -1475,8 +1322,6 @@ class Software extends \yii\db\ActiveRecord
                 ->send();
 
         $projects=$response->data;
-        // print_r($projects);
-        // exit(0);
         
         $projectNames=[];
         $projectJobs=[];
@@ -1503,8 +1348,6 @@ class Software extends \yii\db\ActiveRecord
                             ])
                             ->groupBy('project') //->createCommand()->getRawSql();
                             ->all();
-        // print_r($projectUsage);
-        // exit(0);
         $projectsDB=[];
         foreach($projectUsage as $project) 
         {
@@ -1530,7 +1373,7 @@ class Software extends \yii\db\ActiveRecord
     
 
 
-     public static function getUserStatistics($softUser)
+    public static function getUserStatistics($softUser)
     {
         $query=new Query;
 
@@ -1717,4 +1560,18 @@ class Software extends \yii\db\ActiveRecord
             error_log(implode(" ", $out));
         }
     }
+
+    public static function getTesUrl()
+    {
+        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
+        {
+            return Yii::$app->params['teskEndpoint'] . "/v1/tasks";
+        }
+        else
+        {
+            return Yii::$app->params['teskEndpoint'] . "/v1/tasks";
+        }
+    }
+
+
 }

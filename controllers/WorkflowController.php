@@ -222,8 +222,6 @@ class WorkflowController extends Controller
         $jobid=isset($_POST['jobid']) ? $_POST['jobid'] : '';
         $example=(isset($_POST['example']) && ($_POST['example']=="1")) ? true : false;
         $outFolder=(isset($_POST['outFolder'])) ? $_POST['outFolder'] : '';
-        // print_r($outFolder);
-        // exit(0);
 
 
         if ($example)
@@ -378,8 +376,6 @@ class WorkflowController extends Controller
                             $fields[$index]->dropdownValues[$item]=$item;
                         }
                         $fields[$index]->dropdownSelected=$fields[$index]->default_value;
-                        // print_r($fields[$index]->dropdownValues);
-                        // exit(0);
                     }
                     else
                     {
@@ -392,13 +388,9 @@ class WorkflowController extends Controller
                  */
                 else
                 {
-                    // print_r($field_values);
-                    // exit(0);
                     $emptyFields=false;
                     if ($fields[$index]->field_type=='boolean')
                     {
-                        // print_r($field_values[$index]);
-                        // print_r("<br />");
                         $fields[$index]->value=($field_values[$index]=="0") ? false : true;
                     }
                     else if ($fields[$index]->field_type=='enum')
@@ -500,17 +492,13 @@ class WorkflowController extends Controller
         $maxMem=(!isset($_POST['memory'])) || (empty($_POST['memory'])) || floatval($_POST['memory'])<=0 || (floatval($_POST['memory']) > floatval($quotas['ram'])) ? floatval($quotas['ram']) : floatval($_POST['memory']);
         $maxCores=(!isset($_POST['cores'])) || (empty($_POST['cores'])) || floatval($_POST['cores'])<=0 || (floatval($_POST['cores']) > floatval($quotas['cores'])) ? floatval($quotas['cores']) : floatval($_POST['cores']);
 
-        /*
-         * Check if the workflow for the current ID is already running
-         */
-        $workflowRunning=Software::isAlreadyRunning($jobid);
-
-
+        $workflowAlreadyRunning=Workflow::isAlreadyRunning($jobid);
+        
         /*
          * If the form has posted, it is not empty and the pod is not already running,
          * run the command for the specific docker image.
          */
-        if ((empty($errors)) && ($workflowRunning==false) &&  (!empty($workflowParams)))
+        if ((empty($errors)) && (!$workflowAlreadyRunning) && (!empty($workflowParams)))
         {
             /*
              * reset jobid because it might be filled from a previous submission
@@ -553,13 +541,8 @@ class WorkflowController extends Controller
         $time=$results[0];
         $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
         $project=$history->project;
-        // print_r($history->project);
-        // exit(0);
-
-        //Workflow::checkStatus($status, $history)
 
         return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time, 'project'=>$project]);
-        // return $this->render('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time]);
     }
 
     /*
@@ -606,10 +589,6 @@ class WorkflowController extends Controller
             error_log("While trying: ".$url." this happened ".$error);
             return;
         }
-
-        $model=new Software;
-
-        $results=$model::cleanUp($name,$jobid,$status);
 
     }
 
@@ -1114,8 +1093,14 @@ class WorkflowController extends Controller
          * or assign default values
          */
 
+        $errors=[];
         $results=Workflow::getLogs($jobid);
-        Workflow::checkStatus($results[1], $history);
+        if (isset($results['error']))
+        {
+            $jobid=$results['jobid'];
+            $errors[]=$results['error'];
+        }
+        // Workflow::checkStatus($results[1], $history);
 
         $name=$history->softname;
         $version=$history->softversion;
@@ -1134,8 +1119,6 @@ class WorkflowController extends Controller
          */
         $fields=Workflow::getRerunFieldValues($jobid,$fields);            
 
-
-        // $mountExistError=false;
         if (!empty($outFolder))
         {
             $folder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' .$outFolder;
@@ -1149,9 +1132,6 @@ class WorkflowController extends Controller
                 Software::exec_log($command,$out,$ret);
             }
         }
-        
-        // print_r($outFolder);
-        // exit(0);
 
         /* 
          * Add parameters for the active form
@@ -1198,7 +1178,7 @@ class WorkflowController extends Controller
 
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
-            'errors'=>'', 'runErrors'=>'','fields'=>$fields,
+            'errors'=>$errors, 'runErrors'=>'','fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
             'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'workflow_instructions'=>$workflow_instructions, 'type'=>$type, 'visualize'=>$visualize]);
@@ -1213,10 +1193,6 @@ class WorkflowController extends Controller
         $filepath=$workflow->original_file;
         $fileexploded=explode('/',$filepath);
         $filename=end($fileexploded);
-        // print_r($filename);
-        // print_r("<br />");
-        // print_r($filepath);
-        // exit(0);
 
         return Yii::$app->response->sendFile($filepath,$filename);
     }
@@ -1264,38 +1240,18 @@ class WorkflowController extends Controller
         $valueErrors=[];
         if (Yii::$app->request->getIsPost())
         {
-            // print_r($_FILES);
-            // exit(0);
             $folder=Yii::$app->params['userDataPath'] . '/workflow_examples/' . $name . '/' . $version . '/input/';
             $fieldPath='workflow_examples/' . $name . '/' . $version . '/input/';
-            // print_r($folder);
-            // exit(0);
+
             $command="mkdir -p $folder";
             Software::exec_log($command,$output,$ret);
 
             $command="chmod 777 $folder";
             Software::exec_log($command,$output,$ret);
 
-            // $i=0;
-            // $j=0;
-            // $k=0;
+
             $values=[];
 
-            // print_r($_FILES);
-            // print_r("<br />");
-            // print_r($_POST);
-            // exit(0);
-            // $fieldValues=isset($_POST['field_values']) ? $_POST['field_values'] : [];
-            // print_r($_FILES['field_values']);
-            // exit(0);
-            // $fileNames=$_FILES['field_values']['name'];
-            // $tmpFiles=$_FILES['field_values']['tmp_name'];
-            // print_r($_POST);
-            // exit(0);
-            // print_r($fileNames);
-            // print_r("<br />");
-            // print_r($tmpFiles);
-            // exit(0);
 
             if (!empty($fields))
             {
@@ -1430,144 +1386,6 @@ class WorkflowController extends Controller
         return $this->render('add_example',[ 'fields' => $fields, 'name'=>$name, 'version'=>$version, 'valueErrors'=>$valueErrors]);
     }
 
-
-
-
-    public function actionJobDetails($jobid)
-    {
-
-        // $softwareModel=new Software;
-        $result=Software::getJobDetails($jobid);
-        if (empty($result))
-        {
-            return $this->render('job_not_found',['jobid'=>$jobid]);
-        }
-
-        $machineType=$result['machinetype'];
-        $status=empty($result['status']) ? 'Running' : $result['status'];
-        $start=date("F j, Y, H:i:s",strtotime($result['start']));
-        $stop=empty($result['stop']) ? 'Not available yet' : date("F j, Y, H:i:s",strtotime($result['stop']));     
-        $isystemMountField=$result['imountpoint'];
-        $osystemMountField=$result['omountpoint'];
-        $iosystemMountField=$result['iomountpoint'];
-        if(empty($result['stop']))
-        {
-            $totalExecutionTime='Not available yet';  
-        }
-        else
-        {
-            $totalExecutionTime=date("H:i:s",(strtotime($stop)-strtotime($start)));
-        }
-
-        $maxRam=empty($result['ram']) ? 'Not available' : $result['ram'];
-        $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu']/1000;
-
-       
-       // rint_r(strtotime($stop));
-       // print_r("");
-       // print_r(strtotime($start));
     
-             
-
-        // $rows=[
-        //     'Software name' => $result['softname'],
-        //     'Software version' => $result['softversion'],
-        //     'Status'=> $status,
-        //     'Started on'=>$start,
-        //     'Stopped on' => $stop,
-        //     'Total execution time' => $totalExecutionTime,
-        //     'Maximum memory footprint (GB)' => $maxRam,
-        //     'Maximum CPU load (cores)' => $maxCpu,
-        //     'Machine Type' => $machineType,
-        // ];
-
-        // if (!empty($iosystemMountField))
-        // {
-        //     $rows['I/O Mountpoint']=$iosystemMountField;
-        // }
-        // else
-        // {
-        //     if (!empty($isystemMountField))
-        //     {
-        //         $rows['Input Mountpoint']=$isystemMountField;
-        //     }
-
-        //     if (!empty($osystemMountField))
-        //     {
-        //         $rows['Output Mountpoint']=$osystemMountField;
-        //     }
-        // }
-
-        return $this->render('job_details',['name'=>$result['softname'],'version'=>$result['softversion'],
-                                            'status'=>$status, 'start'=>$start, 'stop'=>$stop, 'execTime'=>$totalExecutionTime,
-                                            'ram'=>$maxRam,'cpu'=>$maxCpu,'machineType' =>$machineType,
-                                            'iomount'=>$iosystemMountField, 'imount'=>$isystemMountField, 'omount'=>$osystemMountField,
-                                            'jobid'=>$jobid,
-                                            ]);
-
-
-    }
-
-
-    public function actionUserStatistics()
-    {
-
-        $softwareModel=new Software;
-        $user=User::getCurrentUser()['username'];
-        $projectTotals=$softwareModel::getUserStatistics($user);
-        $projectAggr=$softwareModel::getUserStatisticsPerProject($user);
-        $quotas=Software::getActiveProjectQuotas($user);
-      //  $tim=str_replace(":", "," , $result[2]);
-      //  $time=str_replace("," , "." , $result[2]);
-       
-        
-        
-
-         // print_r($result);
-         // exit(0);
-
-        // $rows=[
-        //     'Number of jobs'=>$result[0],
-        //     'Number of completed jobs'=>$result[1],
-        //     // 'Started on'=>$start,
-        //     // 'Stopped on' => $stop,
-        //     'Total execution time (in hours)' => $result[2],
-        //     'Average memory footprint (GB)' => $result[3],
-        //     'Average CPU load (cores)' => round($result[4])/1000,
-            
-        // ];
-
-      
-        
-        return $this->render('user_statistics',['projectTotals'=>$projectTotals,'projectAggr'=>$projectAggr, 'quotas'=>$quotas]);       
-              
-
-    }
-
-    public function actionImageDescription($name,$version)
-    {
-        $model=Software::find()->where(['name'=>$name, 'version'=>$version])->one();
-
-        return $this->renderAjax('image_description',['model'=>$model]);
-    }
-
-    public function actionDownloadLogs($jobid)
-    {
-        $filepath=Yii::$app->params['tmpFolderPath'] . $jobid . '/logs.txt';
-        $filename='logs.txt';
-        // print_r($filename);
-        // print_r("<br />");
-        // print_r($filepath);
-        // exit(0);
-        if (file_exists($filepath))
-        {
-            return Yii::$app->response->sendFile($filepath,$filename);
-        }
-        else
-        {
-            return false;
-        }
-        
-    }
     
 }
