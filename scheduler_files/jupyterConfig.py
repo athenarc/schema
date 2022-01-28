@@ -32,6 +32,8 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     container['image']=image
     container['name']='jupyter-container'
     container['ports']=[{'containerPort':8888}]
+    container['env']=[]
+    container['env'].append({'name':'JUPYTER_ENABLE_LAB', 'value': 'yes'})
     cores=cpu
     cpu*=1000
 
