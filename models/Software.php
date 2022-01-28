@@ -413,96 +413,6 @@ class Software extends \yii\db\ActiveRecord
      * Get the container mountpoint for the actions run software and re-run software 
      */
    
-
-
-    // public static function getContainerMountpoint($name, $version)
-    // {
-    //     $query=new Query;
-
-    //     $query->select(['imountpoint','omountpoint'])
-    //           ->from('software ')
-    //           ->where(['name'=>$name, 'version'=>$version]);
-    //     $rows=$query->one();
-        
-    //     $imount=$rows['imountpoint'];
-    //     $omount=$rows['omountpoint'];
-
-    //     $iomount='';
-        
-    //     if ((!empty($imount)) && (!empty($omount)))
-    //     {
-    //         if ($imount==$omount)
-    //         {
-    //             $iomount=$imount;
-    //         }
-    //     }
-
-        
-    //     return [$imount, $omount, $iomount];
-    // }
-
-
-    // public static function getUserHistory($softUser)
-    // {
-    //     $query=new Query;
-
-    //     $query->select(['start','stop','command','status','softname', 'softversion','jobid', 'ram', 'cpu', 'machinetype', 'project','software_id'])
-    //           ->from('run_history')
-    //           ->where(['username'=>$softUser]);
-
-    //     $pages = new Pagination(['totalCount' => $query->count()]);
-    //     $pages->setPageSize(10);
-        
-    //     $results = $query->orderBy('start DESC')->offset($pages->offset)->limit($pages->limit)->all();
-
-    //     return [$pages,$results];
-    // }
-
-    
-
-    /*
-     * If the user has uploaded a CWL file, 
-     * then get the custom form fields.
-     */
-    // public static function getSoftwareFields($name,$version)
-    // {
-    //     $query=new Query;
-
-    //     $query->select('si.name, si.position, si.field_type, si.prefix, si.default_value, si.optional, si.separate si.example') 
-    //           ->from('software sf')
-    //           ->join('INNER JOIN', 'software_inputs si', 'si.softwareid=sf.id')
-    //           ->where(['sf.name'=>$name, 'sf.version'=>$version])
-    //           ->orderBY(['si.position'=>SORT_ASC]);
-    //     $rows=$query->all();
-
-    //     return $rows;
-    // }
-    /*
-     * If the user has uploaded a CWL file, 
-     * then get the docker image script name.
-     */
-    // public static function getScript($name,$version)
-    // {
-    //     $query=new Query;
-
-    //     $query->select('script, imountpoint,omountpoint')
-    //           ->from('software')
-    //           ->where(['name'=>$name, 'version'=>$version]);
-    //     $path=$query->one();
-
-    //     $imount=$path['imountpoint'];
-    //     $omount=$path['omountpoint'];
-    //     $iomount='';
-    //     if ((!empty($imount)) || (empty($omount)))
-    //     {
-    //         if ($imount==$omount)
-    //         {
-    //             $iomount=$imount;
-    //         }
-    //     }
-
-    //     return [$path['script'],$imount,$omount,$iomount];
-    // }
     public static function getIOs($software,$fields,$iSystemFolder,$oSystemFolder)
     {
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
@@ -1346,7 +1256,7 @@ class Software extends \yii\db\ActiveRecord
                                     "stop-start>='00:00:60'"
                                 ]
                             ])
-                            ->groupBy('project') //->createCommand()->getRawSql();
+                            ->groupBy('project')
                             ->all();
         $projectsDB=[];
         foreach($projectUsage as $project) 
@@ -1501,25 +1411,19 @@ class Software extends \yii\db\ActiveRecord
 
     public static function listFiles($directory)
     {
-        // $files = array_filter(scandir($directory),'is_dir');
         $files = scandir($directory);
         $results=[];
-        // print_r($files);
-        // print_r("<br /><br />");
-        // exit(0);
         $i=0;
         foreach($files as $key => $value)
         {
             $path = realpath($directory . DIRECTORY_SEPARATOR . $value);
-            // print_r($directory . DIRECTORY_SEPARATOR . $value);
-            // print_r("<br />");
+            
             if ($value != "." && $value != ".." && $value[0]!='.')
             {
                 if (is_dir($path))
                 {
                     $result=self::listFiles($path);
                     $results[$path]= $result;
-                    // print_r($results);
                 }
                 else
                 {
