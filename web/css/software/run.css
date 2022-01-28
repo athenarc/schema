@@ -144,7 +144,7 @@
 
 .hidden-element
 {
-	display:none;
+	display:none !important;
 }
 
 .back-btn
@@ -218,7 +218,7 @@
 
 .select-file-btn:hover, .select-file-multiple-btn:hover,  .fill-array-field-btn:hover
 {
-	font-size:15px;
+	font-size:14px;
 	background-color: #efefef;
 	color:black;
 }
@@ -320,4 +320,14 @@ input:checked + .slider:before {
 
 .hid {
 	display: none;
+}
+
+.question-symbol
+{
+  font-size: 20px;
+}
+
+.control-buttons
+{
+  margin-left: 15px;
 }
