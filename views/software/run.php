@@ -20,8 +20,6 @@
  *  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  *
  ************************************************************************************/
-use app\components\ArgumentsWidget;
-use app\components\JobResourcesWidget;
 
 use Yii;
 use yii\helpers\Html;
@@ -33,13 +31,15 @@ use yii\widgets\ActiveForm;
 use yii\bootstrap4\Modal;
 use app\components\InstructionsModal;
 use app\components\Headers;
+use app\components\RunFormWidget;
+use app\components\JobResourcesWidget;
 
 echo Html::CssFile('@web/css/software/run.css');
 $this->registerJsFile('@web/js/software/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
-$this->title = "New job ($name v.$version) ";
+$this->title = "New job ($software->name v.$software->version) ";
 
-$commandsDisabled= ($podid!='') ? true : false;
+$commandsDisabled= ($software->jobid!='') ? true : false;
 if($commandsDisabled)
 {
 $commandBoxClass= 'disabled-box';
@@ -49,7 +49,7 @@ else
 $commandBoxClass='';
 }
 
-if ($hasExample)
+if ($software->has_example)
 {
 $exampleBtnLink='javascript:void(0);';
 }
@@ -81,74 +81,41 @@ Headers::begin() ?>
 
 <?php 
 ActiveForm::begin($form_params);
-
-ArgumentsWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
-            $errors, $runErrors, $podid, $machineType,
-            $fields,$isystemMount, $osystemMount,
-            $iosystemMount, $example, $hasExample,
-            $username,$icontMount,$ocontMount,
-            $iocontMount,$mountExistError,
-            $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $cluster='', $outFolder='', $type);
-
-JobResourcesWidget::show(Yii::$app->request->absoluteUrl, $form_params, $name, $version, $jobid, $software_instructions,
-            $errors, $runErrors, $podid, $machineType,
-            $fields,$isystemMount, $osystemMount,
-            $iosystemMount, $example, $hasExample,
-            $username,$icontMount,$ocontMount,
-            $iocontMount,$mountExistError,
-            $superadmin,$jobUsage,$quotas,
-            $maxMem,$maxCores,$project, $commandsDisabled, $commandBoxClass, $processes='', $pernode='', $outFolder='', $type, $uploadedBy);   
-
-
-ActiveForm::end();
-
-
 ?>
 
+<div class="site-software">
+    <div class="row">&nbsp;</div>
+    <div class="row">&nbsp;</div>
+    <div class="row" style="text-align: center;">
+        <div class="col-md-12">
 
-		<div id="error-report">
-		    <?php 
-		    if (!empty($errors))
-		    {
-		        echo "<br />";
-		        echo Html::label("Schedule errors:");
-		        echo "<br />";
+            <?php           
+            RunFormWidget::showOutputField($commandsDisabled,$outFolder,$username,$type);
+            RunFormWidget::showHiddenFields($software->jobid,$software->name,$software->version,$example, $software->has_example);
+            RunFormWidget::showArguments($fields,$type,$commandBoxClass,$commandsDisabled);
+            RunFormWidget::showResources($quotas,$maxCores,$maxMem,$commandsDisabled,$commandBoxClass);
+            RunFormWidget::showRunButtons($superadmin,$username,$software->uploaded_by,$software->has_example,$commandsDisabled,$type,$software->name,$software->version,$software->instructions);
 
-		        foreach ($errors as $error)
-		        {
-		            echo $error . "<br />";
-		        }
-		    }
-		    if (!empty($runErrors))
-		    {
-		        echo "<br />";
-		        echo Html::label("Kubernetes errors:");
-		        echo "<br />";
-		        echo $runErrors;
-
-		    }
-		    ?>
-		</div>
-		<div id="pod-logs"></div>
-		<?php
-		if ($podid!='')
-	    {
-	        echo "<div id='initial-status'>";
-			echo "<h3>Runtime Info:</h3>";
-			echo "<b>Status:</b> <div class='status-init'>Initializing</div><br />";
-	        echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
-	        
-	    }?>
-		<br />
-	</div>
-</div>    
-
-<div class="name hidden"><?=$name?></div>
-<div class="version hidden"><?=$version?></div>
+            ?>
 <?php
-InstructionsModal::addModal($name, $version, $software_instructions);
+ActiveForm::end();
 ?>
+            <?=RunFormWidget::showErrors($errors, $runErrors)?>
+            <div id="pod-logs"></div>
+                <?php
+                if ($commandsDisabled)
+                {
+                    echo "<div id='initial-status'>";
+                	echo "<h3>Runtime Info:</h3>";
+                	echo "<b>Status:</b> <div class='status-init'>INITIALIZING</div><br />";
+                    echo $this->registerJsFile('@web/js/software/logs.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
+                    
+                }?>
+            </div>
+        </div>
+    </div>
+</div> <!-- site-software-->
+
 
 
 
