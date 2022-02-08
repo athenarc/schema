@@ -45,14 +45,13 @@ else
 <?php	
 }
 ?>
-<div><b>Type of machine:</b> <?=$machineType?></div>
 <div class="status-div col-md-3>">
 	<div class="status-label"><b>Status:</b></div>
-	<div id="status-value" class="<?= ($status=="Completed") ? "status-completed" : "status-running" ?> "><?=$status?></div>
+	<div id="status-value" class="<?= ($status=="COMPLETE") ? "status-completed" : "status-running" ?> "><?=$status?></div>
 </div>
 <div class="status-div col-md-3>">
 	<div class="status-label"><b>Running time:</b></div>
-	<div id="exec-time-value" class="<?= ($status=="Completed") ? "status-completed" : "status-running" ?> "><?=$time?></div>
+	<div id="exec-time-value" class="<?= ($status=="COMPLETE") ? "status-completed" : "status-running" ?> "><?=$time?></div>
 </div>
 
 

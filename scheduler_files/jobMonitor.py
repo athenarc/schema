@@ -24,13 +24,15 @@ import os
 import sys
 import subprocess
 import time
+import requests
 import psycopg2 as psg
 import json
 from datetime import datetime
 
-jobName=sys.argv[1]
-jobid=sys.argv[2]
-folder=sys.argv[3]
+jobid=sys.argv[1]
+folder=sys.argv[2]
+endpoint=sys.argv[3]
+tesType=sys.argv[4]
 
 configFileName=os.path.dirname(os.path.abspath(__file__)) + '/configuration.json'
 configFile=open(configFileName,'r')
@@ -41,189 +43,119 @@ host=db['host']
 dbuser=db['username']
 passwd=db['password']
 dbname=db['database']
-namespaces=config.get('namespaces',None)
-jobNamespace=None
-if namespaces is not None:
-    jobNamespace=namespaces.get('jobs',None)
 
-if jobNamespace is not None:
-    command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
-else:
-    command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
-try:
-    out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-except subprocess.CalledProcessError as exc:
-    print(exc.output)
-
-podid=''
-out=out.split(' ')
-podid=out[0]
-status=out[2]
-status_code=0
 cpu=0
 memory=0
 
-stopStatuses=set(['Completed','Error','StartError','ErrImagePullBackOff', "ContainerCannotRun","RunContainerError","OOMKilled", 'OutOfcpu'])
-while status not in stopStatuses:
-    
-    code=0
-    if jobNamespace is not None:
-        command="kubectl top pod --use-protocol-buffers --no-headers " + podid + ' -n ' + jobNamespace
-    else:
-        command="kubectl top pod --use-protocol-buffers --no-headers " + podid 
-    try:
-        out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as exc:
-        code=exc.returncode            
+if tesType=='1':
+    taskUrl=endpoint + '/v1/tasks?id=' + jobid + '&view=FULL'
+else:
+    taskUrl=endpoint + '/v1/tasks/' + jobid + '?view=FULL'
 
-    if code==0:
-        command='echo  "'+ out + "\" | tr -s ' ' " 
+headers={'Accept':'application/json', 'Content-Type': 'application/json'}
+response = requests.get(taskUrl,headers=headers)
+if not response.ok:
+    print(2,'Job not found.')
+    exit(2)
+try:
+    content=json.loads(response.content)
+except Exception as e:
+    print(3,e)
+    exit(3)
+
+state=content['state']
+states=['UNKNOWN','QUEUED','INITIALIZING','RUNNING','PAUSED','COMPLETE','EXECUTOR_ERROR','SYSTEM_ERROR','CANCELED']
+stopStates=['COMPLETE','CANCELED'];
+errorStatues=['EXECUTOR_ERROR','SYSTEM_ERROR']
+sqlStates={'COMPLETE':'Complete','EXECUTOR_ERROR':'Error','SYSTEM_ERROR':'Error','CANCELED':'Canceled'}
+
+toleration=0;
+while state not in stopStates:
+    if tesType=='1':
         try:
-            out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-        except subprocess.CalledProcessError as exc:
-            code=exc.returncode
-        tokens=out.split(' ')
-        topmem=float(tokens[2][:-2])
+            resources=content['current_resources']
+            tmp_cpu=resources['cpu_cores']
+            tmp_memory=resources['ram_gb']
+            if memory<tmp_memory:
+                memory=tmp_memory
+            if cpu<tmp_cpu:
+                cpu=tmp_cpu
+        except:
+            pass
+    else:
+        resources=content['resources']
+        cpu=resources['cpu_cores']
+        memory=resources['ram_gb']
 
-        memmeasure=tokens[2][-2:]
+    time.sleep(1)
+    #
+    # Get latest state
+    #
+    headers={'Accept':'application/json', 'Content-Type': 'application/json'}
+    response = requests.get(taskUrl,headers=headers)
+    if not response.ok:
+        print(4,'Job not found by loop.')
+        exit(4)
+    try:
+        content=json.loads(response.content)
+    except Exception as e:
+        print(5,e)
+        exit(5)
+    state=content['state']
+    if state in errorStatues:
+        if toleration>2:
+            break
+        toleration+=1
 
-        if memmeasure=='Mi':
-            topmem/=1024.0
-        elif memmeasure=='Ki':
-            topmem/=(1024.0*1024)
-        
-        if memory<topmem:
-            memory=topmem
-        topcpu=int(tokens[1][:-1])
-        if cpu<topcpu:
-            cpu=topcpu
-    
+k8sformat="%Y-%m-%dT%H:%M:%S.%fZ"
+sqlformat="%Y-%m-%d %H:%M:%S"
+while 'end_time' not in content['logs'][0]:
+    headers={'Accept':'application/json', 'Content-Type': 'application/json'}
+    response = requests.get(taskUrl,headers=headers)
+    if not response.ok:
+        print(6,'Job not found by loop.')
+        exit(6)
+    try:
+        content=json.loads(response.content)
+    except Exception as e:
+        print(7,e)
+        exit(7)
     time.sleep(1)
 
-    if jobNamespace is not None:
-        command="kubectl get pod --no-headers " + podid + " -n " + jobNamespace +  " | tr -s ' '"
-    else:
-        command="kubectl get pod --no-headers " + podid + " | tr -s ' '"
-    try:
-        out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as exc:
-        print(exc.output)
-    #Job was canceled
-    if "No" in out:
-        status='Canceled'
-        break
-    #If it is running, get the status
-    out=out.strip().split('\n')
-    if len(out)>1:
-        for line in out:
-            line=line.split(' ')
-            status=line[2]
-            print(out)
-            if status=='OOMKilled':
-                break
-    else:
-        out=out[0]
-        out=out.split(' ')
-        status=out[2]
-
-if status!='Canceled':
-    #Get start and end times
-    if jobNamespace is not None:
-        command="kubectl get job " + jobName + " -o=jsonpath='{.status.completionTime}' -n " + jobNamespace
-    else:
-        command="kubectl get job " + jobName + " -o=jsonpath='{.status.completionTime}'"
-
-    try:
-        endOut=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as exc:
-        print(exc.output)
-    end=endOut.replace('T',' ').replace('Z',' ').strip()
-    
-    if jobNamespace is not None:
-        command="kubectl get job " + jobName + " -o=jsonpath='{.status.startTime}' -n " + jobNamespace
-    else:
-        command="kubectl get job " + jobName + " -o=jsonpath='{.status.startTime}'"
-    try:
-        out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as exc:
-        print(exc.output)
-    start=out.replace('T',' ').replace('Z',' ').strip()
-
-    if status=='Completed':
-        status='Complete'
-    
+endTime=content['logs'][0]['end_time']
+startTime=content['logs'][0]['start_time']
+endobj=datetime.strptime(endTime,k8sformat)
+startobj=datetime.strptime(startTime,k8sformat)
+status=sqlStates[state]
 
 conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
 cur=conn.cursor()
-sql="SELECT status FROM run_history WHERE jobid='" + jobid + "'"
-cur.execute(sql)
-result=cur.fetchone()
-if result[0]=='Canceled':
-    status='Canceled'
-
-if status=='Canceled':
-    #everything is done with PHP on the interface
-    pass
-elif status=='Complete':
-    query="UPDATE run_history SET ram=" + str(memory) + ", cpu=" + str(cpu) + ", start='" + start +"', stop='" + str(end) + "', status='" + status +"' WHERE jobid='" + jobid + "'"
-    status_code=0
-    cur.execute(query)
-    conn.commit()
-
-elif status=='OOMKilled':
-    query="UPDATE run_history SET stop='NOW()', status='Out_of_RAM', remote_status_code=-10 WHERE jobid='" + jobid + "'"
-    status_code=-10
-    cur.execute(query)
-    conn.commit()
-elif status=='OutOfcpu':
-    query="UPDATE run_history SET stop='NOW()', status='Out_οf_CPU', remote_status_code=-10 WHERE jobid='" + jobid + "'"
-    status_code=-11
-    cur.execute(query)
-    conn.commit()
-else:
-    query="UPDATE run_history SET stop='NOW()', status='Error', remote_status_code=-9 WHERE jobid='" + jobid + "'"
-    status_code=-2
-    cur.execute(query)
-    conn.commit()
-
-
+query="UPDATE run_history SET ram=" + str(memory) + ", cpu=" + str(cpu) + ", start='" + startobj.strftime(sqlformat) +"', stop='" + endobj.strftime(sqlformat) + "', status='" + status +"' WHERE jobid='" + jobid + "'"
+cur.execute(query)
+conn.commit()
 conn.close()
+try:
+    logs=content['logs'][0]['logs'][0]['stdout']
+except:
+    logs=""
 
-if (status!='Canceled'):
-    #Get logs
+logFile=folder + '/logs.txt'
+g=open(logFile,'w')
+g.write(logs)
+g.close()
+
+if config['cleanTeskJobs']:
+    namespaces=config.get('namespaces',None)
+    jobNamespace=None
+    if namespaces is not None:
+        jobNamespace=namespaces.get('tesk',None)
+
     if jobNamespace is not None:
-        command="kubectl get pods -n " + jobNamespace + " --no-headers -l job-name=" + jobName + " | tr -s ' '"
+        command="for j in $(kubectl get jobs -n " + jobNamespace + " --no-headers | grep '" + jobid +  "' | tr -s ' ' | cut -d ' ' -f 1); do kubectl delete jobs -n " + jobNamespace + " $j; done"
     else:
-        command="kubectl get pods --no-headers -l job-name=" + jobName + " | tr -s ' '"
+        command="kubectl get jobs --no-headers -l | grep '" + jobid +  "' | tr -s ' '| cut -d ' ' -f 1); do kubectl delete jobs $j; done "
     try:
         out=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
     except subprocess.CalledProcessError as exc:
         print(exc.output)
-
-    podid=''
-    out=out.split(' ')
-    podid=out[0]
-
-    if jobNamespace is not None:
-        command="kubectl logs " + podid + " -n " + jobNamespace + " 2>&1"
-    else:
-        command="kubectl logs " + podid + " 2>&1"
-
-    try:
-        logs=subprocess.check_output(command,stderr=subprocess.STDOUT,shell=True, encoding='utf-8')
-    except subprocess.CalledProcessError as exc:
-        logs=''
-        print(exc.output)
-    except UnicodeDecodeError as exc:
-        logs=''
-        print(exc)
-
-    logFile=folder + '/logs.txt'
-    g=open(logFile,'w')
-    g.write(logs)
-    g.close()
-
-#Clean job
-yamlFile=folder + '/' + jobName + '.yaml'
-returnCode=subprocess.call(['kubectl','delete','-f',yamlFile])
 
