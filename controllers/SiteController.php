@@ -113,47 +113,6 @@ class SiteController extends Controller
         return $this->render('under_construction');
     }
     
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    // public function actionLogin($eppn,$persistent_id)
-    // {
-    //     if (!Yii::$app->user->isGuest) {
-    //         return $this->goHome();
-    //     }
-
-    //     if (!empty($eppn))
-    //     {   
-    //         $identity=User::findByUsername($eppn);
-    //         $identityHash=User::findByPersistentId($persistent_id);
-
-    //         if (empty($identity) && empty($identityHash))
-    //         {
-    //             User::createNewUser($eppn, $persistent_id);
-    //             $identity=$identity=User::findByUsername($eppn);
-    //         }
-
-    //         if (!empty($identity) && empty($identityHash))
-    //         {
-    //             $user=$identity;
-    //         }
-    //         else if ((empty($identity)) && (!empty($identityHash))) 
-    //         {
-    //             $user=$identityHash;
-    //         }
-    //         else if ($identity==$identityHash)
-    //         {
-    //             $user=$identity;
-    //         }
-
-    //         Yii::$app->user->login($user,3600*24);
-
-    //         return $this->goHome();
-    //     }
-        
-    // }
 
     public function actionAuthConfirmed($token)
     {
@@ -244,10 +203,6 @@ class SiteController extends Controller
         }
         
 
-        // $model->password = '';
-        // return $this->render('login', [
-        //     'model' => $model,
-        // ]);
     }
 
     /**
@@ -291,11 +246,6 @@ class SiteController extends Controller
 
     }
 
-    // public function actionPrivacy()
-    // {
-    //     return $this->render('privacy');
-    // }
-
    
     public function actionNotificationRedirect($id)
     {
@@ -336,5 +286,13 @@ class SiteController extends Controller
         $_SESSION['remaining_jobs']=$jobs;
     }
 
+    public function actionHelp()
+    {
+        $config=SystemConfiguration::find()->one();
+        $id=$config->help_page;
+        $page=Page::find()->where(['id'=>$id])->one();
+        
+        return $this->render('help',['page'=>$page]);
+    }
 
 }
