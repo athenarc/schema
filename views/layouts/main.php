@@ -122,12 +122,8 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         ],
     ]);
 
-    // print_r(User::getCurrentUser());
-    // exit(0);
     $menuItems=[];
-            //['label' => 'Home', 'url' => ['/site/index']],];
-            // ['label' => 'About', 'url' => ['/site/about']],];
-            // ['label' => 'Contact', 'url' => ['/site/contact']]];
+
     if(Yii::$app->user->getIsGuest() == true)
     {
         $menuItems[]=['label' => 'Login', 'url'=> ['/user-management/auth/login']];
@@ -137,18 +133,19 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
     
         $menuItems[]=['label' => 'Software', 'url' => ['/software/index']];
         $menuItems[]=['label' => 'Workflows', 'url' => ['/workflow/index']];
+        $menuItems[]=['label' => 'Jupyter', 'url' => ['/jupyter/index']];
         $menuItems[]=['label' => 'Data','url' => ['/filebrowser/index']];
         $menuItems[]=['label' => 'Job history','url' => ['/software/history']];
         $menuItems[]=['label' => 'RO-Crate objects','url' => ['/software/ro-crate-history','page'=>1,'search_parameter'=>'']];
-        $menuItems[]=['label' => 'Help', 'url' => ['/site/under-construction']];
-                      // 'url' => 'https://docs.google.com/document/d/1NokaxEG5e2O5Wmv6OPnOlJlmw5lKt6JGBjMMiCgvnkI/edit?usp=sharing',
-                      // 'linkOptions' => ['target'=>'_blank']];
     }
+
 
     if(User::hasRole("Admin", $superAdminAllowed = true)){
        $menuItems[]=['label' => 'Admin Options', 'url' => ['/administration/index']];
     }
 
+    $menuItems[]=['label' => 'Help', 'url' => ['/site/help']];
+    
     if(Yii::$app->user->getIsGuest() == false)
     {
         $username=explode('@',User::getCurrentUser()['username'])[0];
@@ -172,23 +169,6 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => $menuItems,
         'encodeLabels' => false,
-        // [
-        //     ['label' => 'Home', 'url' => ['/site/index']],
-        //     ['label' => 'About', 'url' => ['/site/about']],
-        //     ['label' => 'Contact', 'url' => ['/site/contact']],
-        //     Yii::$app->user->isGuest ? (
-        //         ['label' => 'Login', 'url' => ['/site/login']]
-        //     ) : (
-        //         '<li>'
-        //         . Html::beginForm(['/site/logout'], 'post')
-        //         . Html::submitButton(
-        //             'Logout (' . Yii::$app->user->identity->username . ')',
-        //             ['class' => 'btn btn-link logout']
-        //         )
-        //         . Html::endForm()
-        //         . '</li>'
-        //     )
-        // ],
     ]);
     NavBar::end();
     ?>
