@@ -42,5 +42,6 @@
     "jupyter":
     {
         "domain": "{{ .Values.jupyter.app_name }}.{{ .Values.domain }}"
-    } 
+    },
+    "cleanTeskJobs": {{ .Values.schema.cleanTeskJobs }}
 }

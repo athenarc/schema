@@ -111,11 +111,6 @@ class SoftwareController extends Controller
     public function actionIndex($selected_project='')
     {
     	
-    	 // $session = Yii::$app->session;
-   		 // $session->set('user_id', '1234');
-   		 // print_r($session['new_session']);
-   		 // exit(0);
-    	
         /**
          * If the user-data folder for the current user does not exist, 
          * create one
@@ -164,14 +159,6 @@ class SoftwareController extends Controller
                                       'images'=>$images, 'profiled'=>$profiled]);
     }
 
-    /* What the actual fuck is this???? */
-    // public function actionIsProfiled($name,$version)
-    // {
-    //     $profiled_value=Software::find()->select('profiled')->where(['name'=>$name])->andWhere(['version'=>$version])->scalar();
-    //     return $profiled_value;
-        
-    // }
-
     /**
      * Action to run a docker image uploaded in the system
      */
@@ -204,8 +191,7 @@ class SoftwareController extends Controller
 		}
 
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
-        $software_id=$software->id;
-        $software_instructions=$software->instructions;
+
         if (empty($software))
         {
             return $this->render('no_software',['name'=>$name,'version'=>$version]);
@@ -214,9 +200,6 @@ class SoftwareController extends Controller
         /*
          * Get name and version from the browser link
          */
-        // $name=$_GET['name'];
-        // $version=$_GET['version'];
-        // $project=$_GET['project'];
         $projects=(Yii::$app->params['standalone']==false) ? Software::getActiveProjects() : [];
 
         if(!isset($projects[$project]) && (Yii::$app->params['standalone']==false) )
@@ -235,160 +218,39 @@ class SoftwareController extends Controller
          * or assign default values
          */
         $jobid=isset($_POST['jobid']) ? $_POST['jobid'] : '';
-        $podid=isset($_POST['podid']) ? $_POST['podid'] : '';
-        $machineType=isset($_POST['machineType']) ? $_POST['machineType'] : '';
-        // $field_values=isset($_POST['field_values']) ? $_POST['field_values'] : [];
         $example=(isset($_POST['example']) && ($_POST['example']=="1")) ? true : false;
-
-        /*
-         * contMount variables contain the mountpoints inside the container as specified during the addition process
-         * SystemMount variableσ contain the local path that will be mounted to the container.
-         */
-        // $containerMounts=$softwareModel::getContainerMountpoint($name,$version);
-        $icontMount=$software->imountpoint;
-        $ocontMount=$software->omountpoint;
-        $iocontMount='';
-        if ((!empty($icontMount)) && (!empty($ocontMount)))
-        {
-            if ($icontMount==$ocontMount)
-            {
-                $iocontMount=$icontMount;
-            }
-        }
-        // print_r($iocontMount);
-        // exit(0);
-
-        $isystemMountField=isset($_POST['isystemmount']) ? $_POST['isystemmount'] : '' ;
-        $osystemMountField=isset($_POST['osystemmount']) ? $_POST['osystemmount'] : '' ;
-        $iosystemMountField=isset($_POST['iosystemmount']) ? $_POST['iosystemmount'] : '' ;
-
-        if ($example)
-        {
-            $iosystemMountField='';
-            $isystemMountField='';
-            $osystemMountField='';
-            /*
-             * If iomount is empty, then see if imount and omount are filled
-             */
-            if (!empty($iocontMount))
-            {
-                $iosystemMountField='examples/' . $name . '/' . $version . '/io/';
-            }
-            else 
-            {
-                if (!empty($icontMount)) 
-                {
-                    $isystemMountField='examples/' . $name . '/' . $version . '/input/';
-                }
-                if (!empty($ocontMount)) 
-                {
-                    $osystemMountField='examples/' . $name . '/' . $version . '/output/';
-                }
-            }
-            
-        }
+        $outFolder=(isset($_POST['outFolder'])) ? $_POST['outFolder'] : '';
 
 
-        $iosystemMount='';
-        $isystemMount='';
-        $osystemMount='';
-        /*
-         * If iomount is empty, then see if imount and omount are fi
-         */
-        if (!empty($iocontMount))
-        {
-            $iosystemMount=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/' . $iosystemMountField;
-        }
-        else 
-        {
-            if (!empty($icontMount)) 
-            {   
-                $isystemMount=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/' . $isystemMountField;
-            }
-            if (!empty($ocontMount)) 
-            {
-                $osystemMount=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/' . $osystemMountField;
-               
-            }
-        }
-
+        $username=User::getCurrentUser()['username'];
+        $homeFolder=Yii::$app->params['userDataPath'] . explode('@',$user)[0] . '/';
         
-        $mountpointExistError=false;
-        
-        
-        /*
-         * Check if i/o folders exist. If not, create them. Depends on whether there is one mountpoint for the 
-         */
-        
-        if (!empty($iocontMount))
+        if (!is_dir($homeFolder))
         {
-            if (!is_dir($iosystemMount))
-            {
-                Software::exec_log("mkdir -p $iosystemMount");
-                Software::exec_log("chmod 777 $iosystemMount");
-            }
-            else
-            {
-                Software::exec_log("chmod 777 $iosystemMount -R");
-            }
+            Software::exec_log("mkdir $homeFolder");
+            Software::exec_log("chmod 777 $homeFolder");
+        }
+        $oSystemFolder=$outFolder;
+        $iSystemFolder='';
 
-        }
-        else
-        {
-            if (!empty($icontMount))
-            {
-                if (!is_dir($isystemMount))
-                {
-                    Software::exec_log("mkdir -p $isystemMount");
-                    Software::exec_log("chmod 777 $isystemMount");
-                }
-                else
-                {
-                    Software::exec_log("chmod 777 $isystemMount -R");
-                }
-            }
-            if (!empty($ocontMount))
-            {
-                // print_r($osystemMount);
-                // exit(0);
-                if (!is_dir($osystemMount))
-                {
-                    Software::exec_log("mkdir -p $osystemMount");
-                    Software::exec_log("chmod 777 $osystemMount");
-                }
-                else
-                {
-                    Software::exec_log("chmod 777 $osystemMount -R");
-                }
-            }
-        }
 
         if ($example)
         {
 
             $exampleFolder=Yii::$app->params['userDataPath']. 'examples/' . $name . '/' . $version . '/input';
-            if (!empty($iosystemMount))
-            {
-                $folder=$iosystemMount;
-            }
-            else
-            {
-                $folder=$isystemMount;
-            }
-            Software::exec_log("cp -r $exampleFolder/* $folder");
-            Software::exec_log("chmod 777 $folder");
+            $ifolder=$homeFolder . 'examples/' . $name . '/' . $version . '/input/';
+            $ofolder=$homeFolder . 'examples/' . $name . '/' . $version . '/output';
+            $iSystemFolder='examples/' . $name . '/' . $version . '/input/';
+            $oSystemFolder='examples/' . $name . '/' . $version . '/output/';
+            $outFolder=$oSystemFolder;
             
-        }
+            Software::exec_log("mkdir -p $ifolder $ofolder");
+            Software::exec_log("chmod 777 $ifolder");
+            Software::exec_log("chmod 777 $ofolder");
+            Software::exec_log("cp -r $exampleFolder/* $ifolder");
 
-        /*
-         * If pod is already running, get its ID
-         * by using the jobid and the name of the software
-         */
-
-        $podid=Software::runningPodIdByJob($name,$jobid);
-        // print_r($podid);
-        // exit(0);
-        
+            
+        }        
 
         /* 
          * Add parameters for the active form
@@ -411,8 +273,6 @@ class SoftwareController extends Controller
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
 
-         // print_r($fields);
-         // exit(0);
         /*
          * If the form has posted load the field values.
          * This was changed because it didn't work with checkboxes.
@@ -429,13 +289,11 @@ class SoftwareController extends Controller
 
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
 
-        $hasExample=$software->has_example;
-        $uploadedBy=$software->uploaded_by;
         /*
          * If the software uses the reference data stored in the shared folder
          * mount the shared folder to the pod
          */
-        $sharedFolder=($software->shared)? Yii::$app->params['sharedDataFolder']:'';
+        // $sharedFolder=($software->shared)? Yii::$app->params['sharedDataFolder']:'';
         /*
          * If the software uses gpus, pass the appropriate argument for execution
          * in the limits section
@@ -452,10 +310,17 @@ class SoftwareController extends Controller
             $field_count=0;
         }
 
+        /*
+         * $emptyFields is a variable that denotes whether all fields are empty.
+         */
         $emptyFields=true;
         
         for ($index=0; $index<$field_count; $index++)
         {
+            /*
+             * If the example is used, the fields values are not empty
+             * and values from the example are used
+             */
             if ($example)
             {
                 $emptyFields=false;
@@ -471,6 +336,13 @@ class SoftwareController extends Controller
             }
             else
             {
+                /*
+                 * If the field values are empty, assign 
+                 * empty values to each field. Boolean fields
+                 * get a false
+                 *
+                 * $emptyFields remains true
+                 */
                 if (empty($field_values))
                 {
                     if ($fields[$index]->field_type=='boolean')
@@ -483,13 +355,15 @@ class SoftwareController extends Controller
                     }
                     
                 }
+                /*
+                 * Add the value to each respective field.
+                 * For boolean values, strings are substituted
+                 */
                 else
                 {
                     $emptyFields=false;
                     if ($fields[$index]->field_type=='boolean')
                     {
-                        // print_r($field_values[$index]);
-                        // print_r("<br />");
                         $fields[$index]->value=($field_values[$index]=="0") ? false : true;
                     }
                     else
@@ -502,6 +376,10 @@ class SoftwareController extends Controller
 
         $container_command='';
         $errors=[];
+        /*
+         * If no inputs have been specified, 
+         * the script is run without additional arguments
+         */
         if (empty($fields))
         {
             /*
@@ -509,31 +387,29 @@ class SoftwareController extends Controller
              */
             if (Yii::$app->request->getIsPost())
             {
-                $script=$software->script;
-                $imountpoint=$icontMount;
-                $omountpoint=$ocontMount;
-                $iomountpoint=$iocontMount;
-                $container_command=$script;
+                $container_command=$software->script;
             }
         }
         else
         {
+            /*
+             * If values were provided for each field,
+             * create the command.
+             */
             if (!$emptyFields)
             {
                 $script=$software->script;
-                $imountpoint=$icontMount;
-                $omountpoint=$ocontMount;
-                $iomountpoint=$iocontMount;
-                $command_errors=Software::createCommand($script,$emptyFields,$fields,$imountpoint);
+                $ios=Software::getIOs($software,$fields,$iSystemFolder,$oSystemFolder);
+                $inputs=$ios[0];
+                $output=$ios[1];
+                $command_errors=Software::createCommand($software,$emptyFields,$fields);
                 $errors=$command_errors[0];
                 $container_command=$command_errors[1];
-                // print_r($container_command);
-                // exit(0);
             }
             else
             {
                 /*
-                 * Check if form has posted
+                 * Check if form has posted and post an error
                  */
                 if (Yii::$app->request->getIsPost())
                 {
@@ -547,8 +423,7 @@ class SoftwareController extends Controller
          * Get the user-data folder of the current user.
          * If it does not exist, then create it.
          */
-        $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
-        $user=User::getCurrentUser()['username'];
+       
 
         /**
          * Get the available jobs by getting the quota from eg-ci and counting the jobs
@@ -558,8 +433,7 @@ class SoftwareController extends Controller
         
 
         if(empty($quotas) && (Yii::$app->params['standalone']==false))
-        {
-            
+        {          
             return $this->render('project_error',['project'=>$project]);
         }
         $quotas=$quotas[0];
@@ -579,13 +453,7 @@ class SoftwareController extends Controller
             ->count();
 
 
-        if (!is_dir($userFolder))
-        {
-            Software::exec_log("mkdir $userFolder");
-            Software::exec_log("chmod 777 $userFolder");
-        }
-        $runError='';
-        $runPodId='';
+        $runErrors='';
 
         /**
          * Get the maximum value for memory an cpu from the project if:
@@ -601,63 +469,51 @@ class SoftwareController extends Controller
         /*
          * Check if the pod for the current job ID is already running
          */
-        $podRunning=Software::isAlreadyRunning($podid);
+        $jobAlreadyRunning=Software::isAlreadyRunning($jobid);
 
-
+        $limits=['gpu'=>$gpu, 'cpu'=>$maxCores,'ram'=>$maxMem,'gpu'=>$gpu];
         /*
          * If the form has posted, it is not empty and the pod is not already running,
          * run the command for the specific docker image.
          */
-        if ((empty($errors)) && (!empty($container_command)) && ($podRunning==false) )
+        if ( (empty($errors)) && (!empty($container_command)) && (!$jobAlreadyRunning) )
         {
-            // print_r($οsystemMount);
-            // exit(0);
             
-            $jobid=uniqid();
-            $result=Software::createAndRunJob($container_command, $fields, 
-                                                $name, $version, $jobid, $user, 
-                                                $podid, $machineType, 
-                                                $isystemMount, $isystemMountField,
-                                                $osystemMount, $osystemMountField,
-                                                $iosystemMount, $iosystemMountField,
-                                                $project,$maxMem,$maxCores,$sharedFolder,$gpu);
+            $software->container_command=$container_command;
+            $software->limits=$limits;
+            $software->inputs=$inputs;
+            $software->outputs=$output;
+            $software->user=$user;
+            $software->project=$project;
+            $software->fields=$fields;
+            $software->outFolder=$outFolder;
 
-            $runPodId=$result[0];
-            $runError=$result[1];
-            $machineType=$result[2];
+            /*
+             * Send the job to TES
+             */
+            $software->runJob();
+
+            $jobid=$software->jobid;
+            $runErrors=$software->errors;
         }
 
         /*
          * If pod started without errors, then send its ID to the form.
          */
 
-        if ($runPodId!='')
 
-        {
-            $podid=$runPodId;
-        }
-
-        
-        $type=1;
-
-        return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
-            'version'=>$version,  'jobid'=>$jobid, 'software_id'=>$software_id, 'software_instructions'=>$software_instructions,
-            'errors'=>$errors, 'runErrors'=>$runError, 'podid'=>$podid, 'machineType'=>$machineType,
-            'fields'=>$fields,'isystemMount' => $isystemMountField, 'osystemMount' => $osystemMountField,
-            'iosystemMount' => $iosystemMountField, 'example' => '0', 'hasExample'=>$hasExample,
-            'username'=>$user,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
-            'iocontMount'=>$iocontMount,'mountExistError'=>false,
-            'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'type'=>$type]);
+        return $this->render('run', ['form_params'=>$form_params, 'software'=>$software, 'example' => '0',
+            'errors'=>$errors, 'runErrors'=>$runErrors, 
+            'fields'=>$fields,  'username'=>$username, 'superadmin'=>$superadmin,'quotas'=>$quotas,
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'type'=>1, 'outFolder'=>$outFolder]);
     }
 
     /*
      * Get logs from the running pod to show on the webpage
      */
-    public function actionGetLogs($podid,$machineType,$jobid)
+    public function actionGetLogs($jobid)
     {
-
-        $results=Software::getLogs($podid);
+        $results=Software::getLogs($jobid);
         $logs=$results[1];
         $status=$results[0];
         $time=$results[2];
@@ -665,18 +521,14 @@ class SoftwareController extends Controller
 
         
 
-        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status, 'machineType'=>$machineType,'time'=>$time,'project'=>$history->project]);
+        return $this->renderPartial('logs',['logs'=>$logs, 'status'=>$status, 'time'=>$time,'project'=>$history->project]);
     }
-
     /*
-     * Clean up job and delete pod from the system
+     * Cancel job
      */
-    public function actionCleanUp($name,$jobid,$status)
+    public function actionCancelJob($jobid)
     {
-        $model=new Software;
-
-        $results=$model::cleanUp($name,$jobid,$status);
-
+        Software::cancelJob($jobid);
     }
 
     /*
@@ -810,7 +662,6 @@ class SoftwareController extends Controller
             /*
              * Get the files and fields
              */
-            // $model->imageFile=UploadedFile::getInstance($model, 'imageFile');
             $model->cwlFile=UploadedFile::getInstance($model, 'cwlFile');
             $model->dois=implode('|',$dois);
             /*
@@ -1022,20 +873,9 @@ class SoftwareController extends Controller
          */
         $user=User::getCurrentUser()['username'];
 
-
-        // $inactiveJobs=Software::getInactiveJobs();
-        // print_r($inactiveJobs);
-        // exit(0);
-        
-        // foreach ($inactiveJobs as $job)
-        // {
-        //     Software::cleanUp($job[0],$job[1],'Complete');
-
-        // }
         $available=Software::getAvailableSoftware();
 
         $available_workflows=Workflow::getAvailableWorkflows();
-        // $results=Software::getUserHistory($user);
         $query=RunHistory::find()->where(['username'=>$user])
         ->andWhere(['mpi_proc'=>null])
         ->orderBy(['start'=>SORT_DESC]);
@@ -1071,20 +911,14 @@ class SoftwareController extends Controller
          * or assign default values
          */
 
-        $podid='';
-        $machineType='';
         $name=$history->softname;
         $version=$history->softversion;
         $project=$history->project;
-        $isystemMountField=$history->imountpoint;
-        $osystemMountField=$history->omountpoint;
-        $iosystemMountField=$history->iomountpoint;
+        $outFolder=$history->omountpoint;
         $maxMem=$history->max_ram;
         $maxCores=$history->max_cpu;
-        $commands='';
 
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
-        $software_instructions=$software->instructions;
         $uploadedBy=$software->uploaded_by;
 
         $fields=SoftwareInput::find()->where(['softwareid'=>$software->id])->orderBy(['position'=> SORT_ASC])->all();
@@ -1096,38 +930,6 @@ class SoftwareController extends Controller
         if (is_null($fields))
         {
             return $this->render('cwl_changed');
-        }
-
-
-        $icontMount=$software->imountpoint;
-        $ocontMount=$software->omountpoint;
-        $iocontMount='';
-        if ((!empty($icontMount)) && (!empty($ocontMount)))
-        {
-            if ($icontMount==$ocontMount)
-            {
-                $iocontMount=$icontMount;
-            }
-        }
-
-        $mountExistError=false;
-        if (!empty($iosystemMountField))
-        {
-            $folder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' .$iosystemMountField;
-            if (!is_dir($folder))
-            {
-                $mountExistError=true;
-            }
-        }
-        else
-        {
-            $ifolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' .$isystemMountField;
-            $ofolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/' .$osystemMountField;
-
-            if ( (!is_dir($ifolder)) || (!is_dir($ofolder)) )
-            {
-                $mountExistError=true;
-            }
         }
         
 
@@ -1146,7 +948,6 @@ class SoftwareController extends Controller
         ];
         
 
-        $hasExample=$software->has_example;
         $username=User::getCurrentUser()['username'];
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
         $quotas=Software::getOndemandProjectQuotas($username,$project);
@@ -1172,22 +973,15 @@ class SoftwareController extends Controller
             ->count();
         $type=1;
 
-        return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
-            'version'=>$version,  'jobid'=>'',
-            'errors'=>'', 'runErrors'=>'', 'podid'=>'', 'machineType'=>'',
-            'fields'=>$fields,'isystemMount' => $isystemMountField, 'osystemMount' => $osystemMountField,
-            'iosystemMount' => $iosystemMountField, 'example' => '0', 
-            'hasExample'=>$hasExample, 'superadmin'=>$superadmin,
-            'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,
-            'iocontMount'=>$iocontMount,'mountExistError'=>$mountExistError,
-            'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions, 'type'=>$type, 'uploadedBy'=>$uploadedBy]);
+        return $this->render('run', ['form_params'=>$form_params, 'software'=>$software, 'example' => '0',
+            'errors'=>'', 'runErrors'=>'', 
+            'fields'=>$fields,  'username'=>$username, 'superadmin'=>$superadmin,'quotas'=>$quotas,
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'type'=>1, 'outFolder'=>$outFolder]);
     }
 
     public function actionReattach($jobid)
     {
 
-    	// $result=$softwareModel::getRerunData($jobid);
         
         $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
         if (empty($history))
@@ -1202,27 +996,10 @@ class SoftwareController extends Controller
         $version=$history->softversion;
         $maxMem=$history->max_ram;
         $maxCores=$history->max_cpu;
-        $isystemMountField=$history->imountpoint;
-        $osystemMountField=$history->omountpoint;
-        $iosystemMountField=$history->iomountpoint;
-        $software=Software::find()->where(['name'=>$name])->andWhere(['version'=>$version])->one();
-        $software_instructions=$software->instructions;
-        $uploadedBy=$software->uploaded_by;
-        
-
-        $podid=Software::runningPodIdByJob($name,$jobid);
+        $outFolder=$history->omountpoint;
         $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
-        $icontMount=$software->imountpoint;
-        $ocontMount=$software->omountpoint;
-        $iocontMount='';
-        if ((!empty($icontMount)) && (!empty($ocontMount)))
-        {
-            if ($icontMount==$ocontMount)
-            {
-                $iocontMount=$icontMount;
-            }
-        }
-        
+        $software->jobid=$jobid;
+        $uploadedBy=$software->uploaded_by;
 
         /* 
          * Add parameters for the active form
@@ -1244,7 +1021,6 @@ class SoftwareController extends Controller
          */
         $fields=Software::getRerunFieldValues($jobid,$fields);
 
-        $hasExample=$software->has_example;
         $username=User::getCurrentUser()['username'];
         $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
         
@@ -1271,17 +1047,10 @@ class SoftwareController extends Controller
             ->count();
 
         $type=1;
-        
-        return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
-            'version'=>$version,  'jobid'=>$jobid,
-            'errors'=>'', 'runErrors'=>'', 'podid'=>$podid, 'machineType'=>$machineType,
-            'fields'=>$fields,'isystemMount' => $isystemMountField, 'osystemMount' => $osystemMountField,
-            'iosystemMount' => $iosystemMountField, 'example' => '0', 
-            'hasExample'=>$hasExample, 'superadmin'=>$superadmin,
-            'username'=>$username,'icontMount'=>$icontMount,'ocontMount'=>$ocontMount,'iocontMount'=>$iocontMount,
-            'mountExistError'=>false,
-            'jobUsage'=>$jobUsage,'quotas'=>$quotas,
-            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project, 'software_instructions'=>$software_instructions,'type'=>$type, 'uploadedBy'=>$uploadedBy]);
+        return $this->render('run', ['form_params'=>$form_params, 'software'=>$software, 'example' => '0',
+            'errors'=>'', 'runErrors'=>'', 
+            'fields'=>$fields,  'username'=>$username, 'superadmin'=>$superadmin,'quotas'=>$quotas,
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'type'=>1, 'outFolder'=>$outFolder]);
 
 
     }
@@ -1495,7 +1264,6 @@ class SoftwareController extends Controller
     public function actionJobDetails($jobid)
     {
 
-        // $softwareModel=new Software;
         $result=Software::getJobDetails($jobid);
         if (empty($result))
         {
@@ -1519,7 +1287,7 @@ class SoftwareController extends Controller
         }
 
         $maxRam=empty($result['ram']) ? 'Not available' : $result['ram'];
-        $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu']/1000;
+        $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu'];
 
        
 

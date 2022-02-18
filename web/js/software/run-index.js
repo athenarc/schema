@@ -35,14 +35,12 @@ $(document).ready(function() {
 	            field.addClass('disabled-box');
 	            field.prop('readonly',true);
 	        }
-	        $("#systemmount").addClass('disabled-box');
+	        $("#outFolder").addClass('disabled-box');
 	        $("#memory").addClass('disabled-box');
 	        $("#cores").addClass('disabled-box');
-	        $("#systemmount").prop('readonly',true);
+	        $("#outFolder").prop('readonly',true);
 	        $("#memory").prop('readonly',true);
 	        $("#cores").prop('readonly',true);
-			$("#command-text-box").prop('readonly',true)
-			$("#command-text-box").addClass('disabled-box');
 			$(".add-example-link").hide();
 			$("#software_commands_form").submit();
 		}
@@ -50,143 +48,6 @@ $(document).ready(function() {
 	
 	});
 
-	//if the example button is pressed make the command box active
-	// $(".software-example-button").click(function(){
-	// 	$("#active-run-form").show();
-	// 	$("#select-active-form-btn").addClass('active-tab');
-	// 	$("#non-active-run-form").hide();
-	// 	$("#select-non-active-form-btn").removeClass('active-tab');
-		
-	// 	var commands=$("#hidden_example_input").val();
-	// 	$("#command-text-box").val(commands);
-	// 	$("#command-text-box").prop('readonly',true)
-	// 	$("#command-text-box").addClass('disabled-box');
-	// 	$("#software_commands_form").submit();
-	
-	// });
-
-	//on submit show command box
-	// if ($("#command-text-box").prop('readonly')==true)
-	// {
-	// 	$("#command-text-box").addClass('disabled-box');
-	// 	$("#active-run-form").show();
-	// 	$("#non-active-run-form").hide();
-	// 	// $("#select-active-form-btn").addClass('disabled-btn');
-	// 	// $("#select-non-active-form-btn").addClass('disabled-btn');
-	// }
-
-	// $("#select-active-form-btn").click(function(){
-	// 	if ($("#select-active-form-btn").hasClass('disabled-btn')==false)
-	// 	{
-	// 		$("#active-run-form").show();
-	// 		$("#select-active-form-btn").addClass('active-tab');
-	// 		$("#non-active-run-form").hide();
-	// 		$("#select-non-active-form-btn").removeClass('active-tab');
-			
-	// 	}
-
-	// });
-
-	// $("#select-non-active-form-btn").click(function(){
-	// 	if ($("#select-non-active-form-btn").hasClass('disabled-btn')==false)
-	// 	{
-	// 		// var command=$("#command-text-box").val();
-	// 		// var tokens=command.split(" ");
-	// 		// var total=tokens.length;
-	// 		// var i;
-
-	// 		// for (i=0; i<=total; i++)
-	// 		// {
-	// 		// 	$("#field-" + i).val(tokens[i]);
-	// 		// }
-	// 		$("#active-run-form").hide();
-	// 		$("#select-active-form-btn").removeClass('active-tab');
-	// 		$("#non-active-run-form").show();
-	// 		$("#select-non-active-form-btn").addClass('active-tab');
-	// 	}
-
-	// });
-
-	$(".select-mount-button").click(function(){
-		var disabled = $(this).attr('disabled');
-		if (!disabled)
-		{
-			var caller=$(this).parent().children('.mount-field').attr('id');
-			$("#mountcaller").val("#" + caller);
-			// window.alert(caller);
-			var link = $("#selectmounturl").val();
-			window.open(link, "Ratting",
-				"height=500,width=800,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no, status=no");
-		}
-	});
-
-	$(".clear-mount-button").click(function(){
-		var mountf=$(this).parent().children('.mount-field');
-		mountf.val('');
-		mountf.trigger("change");
-	});
-
-	$("#isystemmount").change(function(){
-		if ($(".mount-exist-error").length)
-		{
-			$(".mount-exist-error").hide();
-			$("#software-start-run-button").removeClass('hidden-element');
-		}
-
-		totalFields=Number($("#hidden_fieldsNum").val());
-		for (i=0; i<totalFields; i++)
-        {
-        	var fieldID="#field-" + i;
-            var field=$(fieldID);
-            hiddenInput=field.parent().children('.hidden_select_file_url');
-            if (hiddenInput.length)
-            {
-            	field.val('');
-            }
-            hiddenInput=field.parent().children('.hidden_select_folder_url');
-            if (hiddenInput.length)
-            {
-            	field.val('');
-            }
-        }
-
-	});
-
-	$("#osystemmount").change(function(){
-		if ($(".mount-exist-error").length)
-		{
-			$(".mount-exist-error").hide();
-			$("#software-start-run-button").removeClass('hidden-element');
-		}
-
-	});
-
-	$("#iosystemmount").change(function(){
-		if ($(".mount-exist-error").length)
-		{
-			$(".mount-exist-error").hide();
-			$("#software-start-run-button").removeClass('hidden-element');
-		}
-
-		totalFields=Number($("#hidden_fieldsNum").val());
-		// window.alert(totalFields);
-		totalFields=Number($("#hidden_fieldsNum").val());
-		for (i=0; i<totalFields; i++)
-        {
-        	var fieldID="#field-" + i;
-            var field=$(fieldID);
-            hiddenInput=field.parent().children('.hidden_select_file_url');
-            if (hiddenInput.length)
-            {
-            	field.val('');
-            }
-            hiddenInput=field.parent().children('.hidden_select_folder_url');
-            if (hiddenInput.length)
-            {
-            	field.val('');
-            }
-        }
-	});
 
 	$(".btn-default-values").click(function(){
 		var disabled = $("#software-start-run-button").attr('disabled');
@@ -289,13 +150,9 @@ $(document).ready(function() {
 		//window.alert(project);
 		});
 
-	$(".instructions").click(function() { 
+	$("#instructions-btn").click(function() { 
 
-		var name=$('.name').html();
-		var version=$('.version').html();
-		var modal=$('#instructions-modal-' + name + '-' + version.replace(/\./g, '\\.'));
-		//window.alert(modal);
-		modal.modal();
+		$("#instructions-modal").modal();
 
 	});
 	
@@ -313,6 +170,23 @@ $(document).ready(function() {
 			$(".required").addClass('hidden');
 			$(".non-required").removeClass('hidden');
 		}
-		});
+	});
 
+	$(".select-output-button").click(function(){
+		var disabled = $(this).attr('disabled');
+		if (!disabled)
+		{
+			var caller=$(this).parent().children('.mount-field').attr('id');
+			$("#mountcaller").val("#" + caller);
+			// window.alert(caller);
+			var link = $("#selectoutputurl").val();
+			window.open(link, "Ratting",
+				"height=500,width=800,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no, status=no");
+		}
+	});
+	$(".clear-output-button").click(function(){
+		var mountf=$(this).parent().children('.mount-field');
+		mountf.val('');
+		mountf.trigger("change");
+	});
 });
