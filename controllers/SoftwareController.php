@@ -1264,7 +1264,6 @@ class SoftwareController extends Controller
     public function actionJobDetails($jobid)
     {
 
-        // $softwareModel=new Software;
         $result=Software::getJobDetails($jobid);
         if (empty($result))
         {
@@ -1288,7 +1287,7 @@ class SoftwareController extends Controller
         }
 
         $maxRam=empty($result['ram']) ? 'Not available' : $result['ram'];
-        $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu']/1000;
+        $maxCpu=empty($result['cpu']) ? 'Not available' : $result['cpu'];
 
        
 

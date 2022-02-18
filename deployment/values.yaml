@@ -18,6 +18,8 @@ schema:
     name: schema-volume
     storageClass: nfs-client
 
+  cleanTeskJobs: true #Set true or false if you want the system to clean TESK jobs after execution (only for clusters that run SCHeMa and TESK at the same time).
+
   deployment:
     replicaCount: 1
     image: diwis/schema:latest
