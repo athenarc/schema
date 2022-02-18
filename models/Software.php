@@ -780,19 +780,10 @@ class Software extends \yii\db\ActiveRecord
         $data['outputs']=$this->outputs;
 
         /* 
-         * Get resources or limits depending on the type of TES
+         * Get resources
          */
-        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
-        {
-            $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'gpu'=>$this->limits['gpu']];
-            $data['limits']=$resources;
-            $data['resources']=$resources;
-        }
-        else
-        {
-            $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'disk_gb'=>'30'];
-            $data['resources']=$resources;
-        }
+        $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'disk_gb'=>'30'];
+        $data['resources']=$resources;
 
         /*
          * Create TES executor
@@ -1467,14 +1458,7 @@ class Software extends \yii\db\ActiveRecord
 
     public static function getTesUrl()
     {
-        if (isset(Yii::$app->params['schemaTes']) && (!empty(Yii::$app->params['schemaTes'])))
-        {
-            return Yii::$app->params['teskEndpoint'] . "/v1/tasks";
-        }
-        else
-        {
-            return Yii::$app->params['teskEndpoint'] . "/v1/tasks";
-        }
+        return Yii::$app->params['teskEndpoint'] . "/v1/tasks";
     }
 
 
