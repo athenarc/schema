@@ -1294,11 +1294,7 @@ class Software extends \yii\db\ActiveRecord
                 ]
             ])->count();
 
-        $results=[$totaljobs,$totalcompletedjobs,$result[0]['total_time'], $result[0]['ram'], $result[0]['cpu']];
-
-        // print_r($results);
-        // exit(0);
-     
+        $results=[$totaljobs,$totalcompletedjobs,$result[0]['total_time'], $result[0]['ram'], $result[0]['cpu']];     
 
         return $results;
 
@@ -1324,8 +1320,6 @@ class Software extends \yii\db\ActiveRecord
                     ]
                 ])
               ->groupBy('project')
-              // print_r($query->createCommand()->getRawSql());
-              // exit(0);
               ->all(); 
         
         return $result;
@@ -1334,9 +1328,6 @@ class Software extends \yii\db\ActiveRecord
 
     public static function getActiveProjectQuotas($username)
     {
-         
-        // print_r("https://egci-beta.imsi.athenarc.gr/index.php?r=api/active-ondemand-quotas&username=$username");
-        // exit(0);
         $client = new Client();
         $response = $client->createRequest()
                 ->setMethod('GET')
@@ -1352,7 +1343,32 @@ class Software extends \yii\db\ActiveRecord
                 'num_of_jobs'=>$row['num_of_jobs'],
                 'ram'=>$row['ram'],
                 'cores'=>$row['cores'],
-                'time_per_job'=>$row['time_per_job'],
+            ];
+        }
+
+        return $results;
+
+                
+
+    }
+
+    public static function getAllProjectQuotas($username)
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+                ->setMethod('GET')
+                ->setUrl(Yii::$app->params['egciAllQuotas'] ."&username=$username")
+                ->send();
+
+        $data=$response->data;
+        
+        $results=[];
+        foreach($data as $row) 
+        {
+            $results[$row['name']]=[
+                'num_of_jobs'=>$row['num_of_jobs'],
+                'ram'=>$row['ram'],
+                'cores'=>$row['cores'],
             ];
         }
 

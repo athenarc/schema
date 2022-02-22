@@ -127,12 +127,23 @@ if (!empty($projectAggr))
 
 foreach ($projectAggr as $res)
 {
-	         
+	$remaining='-';
+	if (isset($quotas[$res['project']]))
+	{
+		if (empty($res['count']))
+		{
+			$remaining=$quotas[$res['project']]['num_of_jobs'];
+		}
+		else
+		{
+			$remaining=$quotas[$res['project']]['num_of_jobs'] - $res['count'];
+		}
+	}
 ?>
 			 <tr class="text-center">
 				<td class="col-md-2"><?=(empty($res['project'])) ? " " : $res['project']?></td>
 				<td class="col-md-1"><?=(empty($res['count'])) ? " " : $res['count']?></td>
-				<td class="col-md-1"><?=(empty($res['count'])) ? $quotas[$res['project']]['num_of_jobs'] : $quotas[$res['project']]['num_of_jobs'] - $res['count']?></td>
+				<td class="col-md-1"><?=$remaining ?></td>
 				<td class="col-md-2"><?=empty($res['ram'])? '' : $res['ram']?></td>
 				<td class="col-md-2"><?=empty($res['cpu'])? '' : round($res['cpu'])/1000?></td>
 				<td class="col-md-2"><?=(empty($res['total_time'])) ? " " : $res['total_time']?></td>
