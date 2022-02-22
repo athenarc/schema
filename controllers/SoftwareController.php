@@ -1309,7 +1309,7 @@ class SoftwareController extends Controller
         $user=User::getCurrentUser()['username'];
         $projectTotals=$softwareModel::getUserStatistics($user);
         $projectAggr=$softwareModel::getUserStatisticsPerProject($user);
-        $quotas=(isset(Yii::$app->params['standalone']) && Yii::$app->params['standalone'])? Software::getAllProjectQuotas($user) : [];
+        $quotas=(!Yii::$app->params['standalone'])? Software::getAllProjectQuotas($user) : [];
         return $this->render('user_statistics',['projectTotals'=>$projectTotals,'projectAggr'=>$projectAggr, 'quotas'=>$quotas]);       
               
 
