@@ -168,10 +168,12 @@ class JupyterController extends Controller
             $quotas=['cores'=>Yii::$app->params['standaloneResources']['maxCores'],'ram'=>Yii::$app->params['standaloneResources']['maxRam'],'end_date'=>'2250-12-31' ];
         }
 
+        $username=User::getCurrentUser()['username'];
+
         /*
          * Server has already been activated. User is trying something illegal.
          */
-        $server=JupyterServer::find()->where(['active'=>true,'project'=>$project])->one();
+        $server=JupyterServer::find()->where(['active'=>true,'project'=>$project, 'created_by'=>$username])->one();
         if (!empty($server))
         {
             return $this->render('server_already_active');
@@ -214,8 +216,16 @@ class JupyterController extends Controller
     }
     public function actionStopServer($project,$return='s')
     {
-
-        $server=JupyterServer::find()->where(['active'=>true,'project'=>$project])->one();
+        if ($return=='a')
+        {
+            $server=JupyterServer::find()->where(['active'=>true,'project'=>$project])->one();
+        }
+        else
+        {
+            $username=User::getCurrentUser()['username'];
+            $server=JupyterServer::find()->where(['active'=>true,'project'=>$project,'created_by'=>$username])->one();
+        }
+        
 
         if (empty($server))
         {

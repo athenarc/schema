@@ -84,6 +84,7 @@ Headers::begin() ?>
                     $stop_url=Url::to(['/jupyter/stop-server','project'=>$name]);
                     if (isset($resources['server']))
                     {
+                        $started=true;
                         $start_class="btn start-btn disabled";
                         $stop_class="btn stop-btn";
                         $access_class="btn access-btn";
@@ -91,14 +92,15 @@ Headers::begin() ?>
                     }
                     else
                     {
+                        $started=false;
                         $start_class="btn start-btn";
                         $stop_class="btn stop-btn disabled";
                         $access_class="btn access-btn disabled";
                         $access_url='';
                     }
                 ?>
-                <?=Html::a($start_icon,$start_url,['class'=>$start_class, 'title'=> "Start server"])?>
-                <?=Html::a($stop_icon,$stop_url,['class'=>$stop_class, 'title'=> "Stop server"])?>
+                <?=$started ? '' : Html::a($start_icon,$start_url,['class'=>$start_class, 'title'=> "Start server"])?>
+                <?=$started ? Html::a($stop_icon,$stop_url,['class'=>$stop_class, 'title'=> "Stop server" ]) : ''?>
                 <?=Html::a($access_icon,$access_url,['class'=>$access_class, 'title'=> "Access server", "target"=>"_blank"])?>
             </td>
 

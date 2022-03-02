@@ -96,17 +96,16 @@ class JupyterServer extends \yii\db\ActiveRecord
 
     public static function matchServersWithProjects($projects)
     {
-        $names=[];
+        $username=User::getCurrentUser()['username'];
 
-        $servers=JupyterServer::find()->where(['active'=>true])->all();
+        $servers=JupyterServer::find()->where(['active'=>true, 'created_by'=>$username])->all();
 
         foreach ($servers as $server)
         {
             /*
-             * Servers belong to the project and not the user.
-             * Only one server can be active for a project at a single point in time.
-             * This is done because the CLIMA API also returns projects in which 
-             * the user participates but is not the owner.
+             * Servers are identified by user and by project.
+             * Users are allowed to create one server per project, so 
+             * each project can have multiple servers.
              */
             if (isset($projects[$server->project]))
             {
