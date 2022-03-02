@@ -34,10 +34,8 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     container['ports']=[{'containerPort':8888}]
     container['env']=[]
     container['env'].append({'name':'JUPYTER_ENABLE_LAB', 'value': 'yes'})
-    cores=cpu
-    cpu*=1000
 
-    container['resources']={'limits':{'cpu':str(cpu)+'m', 'memory':str(mem) + 'G'}}
+    container['resources']={'limits':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}, 'requests':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}}
     volumeMounts=[]
     if nfs=='container':
         vmount={'name': vname, 'mountPath': '/home/jovyan/work', 'subPath': mount.replace('/data/','')}
@@ -54,7 +52,7 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     containers.append(container)
 
     pod['template']['spec']['containers']=containers
-    if (int(mem) > 512) or (int(cores)>=56):
+    if (int(mem) > 512) or (int(cpu)>=56):
         tolerations=[]
         tolerations.append({'key':'fat-node','operator':'Exists','effect':'NoExecute'})
         pod['template']['spec']['tolerations']=tolerations
