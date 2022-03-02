@@ -32,7 +32,7 @@ sConfigFile.close()
 sid=sconfig['id']
 folder=sconfig['folder']
 cpu=sconfig['resources']['cpu']
-mem=sconfig['resources']['cpu']
+mem=sconfig['resources']['mem']
 image=sconfig['image']
 password=sconfig['password']
 project=sconfig['project']
