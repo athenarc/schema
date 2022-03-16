@@ -73,4 +73,5 @@ docker-compose.yml
 /web/img/egci-head_old.png
 /web/img/workflows/*.svg
 /web/.htaccess
+/web/img/faq
 .htaccess

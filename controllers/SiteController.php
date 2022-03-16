@@ -186,6 +186,14 @@ class SiteController extends Controller
                     $identity=$identityU;
                 }
 
+                $userFolder=Yii::$app->params['userDataPath'] . $username=explode('@',$identity->username)[0];;
+
+                if (!is_dir($userFolder))
+                {
+                    Software::exec_log("mkdir $userFolder");
+                    Software::exec_log("chmod 777 $userFolder");
+                }
+
             }
             
             if (empty($identity))
