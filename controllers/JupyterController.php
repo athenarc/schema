@@ -98,7 +98,14 @@ class JupyterController extends Controller
      */
     public function actionIndex()
     {
-        $username=User::getCurrentUser()['username'];
+        $username=explode('@',User::getCurrentUser()['username'])[0];
+        $userFolder=Yii::$app->params['userDataPath'] . $username;
+
+        if (!is_dir($userFolder))
+        {
+            Software::exec_log("mkdir $userFolder");
+            Software::exec_log("chmod 777 $userFolder");
+        }
         /*
          * This piece of code gets the quotas from CLIMA
          * when the platforms are available.
