@@ -39,7 +39,7 @@ dbuser=db['username']
 passwd=db['password']
 dbname=db['database']
 
-def getMainWorkflowFile(folder,allowed):
+def getMainWorkflowFileCwl(folder,allowed):
     found=False
     mainFile=''
     mainContent=''
@@ -105,7 +105,7 @@ def deleteSavedWorkflow(name,version):
     conn.close()
 
 
-def inputStoreDict(workName, workVersion, inputs):
+def inputStoreDictCwl(workName, workVersion, inputs):
     types=set(['string', 'int', 'long', 'float', 'double', 'null', 'File', 'Directory', 'Any','boolean'])
     #open db connection and get image id
     conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
@@ -225,7 +225,7 @@ def inputStoreDict(workName, workVersion, inputs):
 
     return 0
 
-def inputStoreList(workName, workVersion, inputs):
+def inputStoreListCwl(workName, workVersion, inputs):
     types=set(['string', 'int', 'long', 'float', 'double', 'null', 'File', 'Directory', 'Any','boolean'])
 
     #open db connection and get image id

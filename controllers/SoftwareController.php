@@ -328,6 +328,14 @@ class SoftwareController extends Controller
                 {
                     $fields[$index]->value=($fields[$index]->example=='true') ? true : false;
                 }
+                else if ($fields[$index]->field_type=='File')
+                {
+                    $fields[$index]->value=$iSystemFolder . $field_values[$index];
+                }
+                else if ($fields[$index]->field_type=='Directory')
+                {
+                    $fields[$index]->value=$iSystemFolder . $field_values[$index];
+                }
                 else
                 {
                     $fields[$index]->value=$fields[$index]->example;
