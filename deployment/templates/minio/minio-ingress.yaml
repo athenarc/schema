@@ -1,0 +1,84 @@
+{{- if  .Values.minio.ingress.enabled }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    {{- if .Values.minio.ingress.https.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.minio.ingress.https.issuer }}
+    kubernetes.io/tls-acme: {{ quote .Values.minio.ingress.https.enabled }}
+    {{- end }}
+  name: {{ .Values.minio.app_name }}-s3-ingress
+  namespace: {{ .Values.namespace }}
+spec:
+  rules:
+  - host: {{ .Values.minio.app_name }}.{{ .Values.schema.app_name }}.{{ .Values.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.minio.app_name }}-s3
+            port:
+              number: 9000
+        path: /
+        pathType: Prefix
+  - host: console.{{ .Values.minio.app_name }}.{{ .Values.schema.app_name }}.{{ .Values.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.minio.app_name }}-console
+            port:
+              number: 9001
+        path: /
+        pathType: Prefix
+  {{- if .Values.minio.ingress.https.enabled }}
+  tls:
+  - hosts:
+      - {{ .Values.minio.app_name }}.{{ .Values.schema.app_name }}.{{ .Values.domain }}
+      - console.{{ .Values.minio.app_name }}.{{ .Values.schema.app_name }}.{{ .Values.domain }}
+    secretName: {{ .Values.minio.app_name }}-ingress-secret
+  {{- end }}
+{{- else if .Capabilities.APIVersions.Has "route.openshift.io/v1/Route" -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.minio.app_name }}-s3-ingress
+spec:
+  host: {{ .Values.minio.app_name }}-{{ .Values.schema.app_name }}.{{ .Values.domain }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Values.minio.app_name }}-s3
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress: []
+{{- end }}
+{{- end }}
+
+---
+
+{{- if  .Values.minio.ingress.enabled }}
+{{- if .Capabilities.APIVersions.Has "route.openshift.io/v1/Route" -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.minio.app_name }}-console-ingress
+spec:
+  host: console.{{ .Values.minio.app_name }}-{{ .Values.schema.app_name }}.{{ .Values.domain }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Values.minio.app_name }}-console
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress: []
+{{- end }}
+{{- end }}

@@ -1,0 +1,50 @@
+---
+{{- if .Values.minio.active }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.minio.app_name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Values.minio.app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.minio.app_name }}
+    spec:
+      containers:
+      - image: quay.io/minio/minio:latest
+        name: minio
+        command:
+          - "/usr/bin/docker-entrypoint.sh"
+          - "server"
+          - "/data"
+          - "--console-address"
+          - ":9001"
+        env:
+        - name: MINIO_ROOT_USER
+          value: "{{ .Values.minio.deployment.root_user }}"
+        - name: MINIO_ROOT_PASSWORD
+          value: "{{ .Values.minio.deployment.root_password }}"
+        - name: MINIO_SITE_REGION
+          value: "{{ .Values.minio.deployment.site_region }}"
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001
+        volumeMounts:
+          - mountPath: /data
+            name: schema-volume
+            subPath: docker/user-data
+      securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+      volumes:
+        - name: schema-volume
+          persistentVolumeClaim:
+            claimName: {{ .Values.schema.volume.name }}
+      restartPolicy: Always
+{{- end }}
