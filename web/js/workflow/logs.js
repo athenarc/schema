@@ -73,6 +73,8 @@ $(document).ready(function()
                 $(".running-logo").hide();
                 $("#command-text-box").removeClass('disabled-box');
                 $("#command-text-box").prop('readonly',false);
+                $("#outFolder").removeClass('disabled-box');
+                $("#outFolder").prop('readonly',false);
                 $(".cancel-button-container").css('display','none');
                 $(".select-mount-button").removeAttr('disabled');
                 $(".clear-mount-button").removeAttr('disabled');
@@ -159,6 +161,8 @@ $(document).ready(function()
                         $(".select-output-button").removeAttr('disabled');
                         $(".clear-output-button").removeAttr('disabled');
                         $("#software-start-run-button").removeAttr('disabled');
+                        $("#outFolder").removeClass('disabled-box');
+                        $("#outFolder").prop('readonly',false);
                         $(".select-file-btn").each(function(){
                             $(this).removeAttr('disabled');
                         });
@@ -223,6 +227,8 @@ $(document).ready(function()
         $("#systemmount").prop('readonly',false);
         $("#memory").prop('readonly',false);
         $("#cores").prop('readonly',false);
+        $("#outFolder").removeClass('disabled-box');
+        $("#outFolder").prop('readonly',false);
         // $("#command-text-box").removeClass('disabled-box');
         // $("#command-text-box").prop('readonly',false);
         $("#select-active-form-btn").removeClass('disabled-btn');
