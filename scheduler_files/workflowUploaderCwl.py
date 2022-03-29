@@ -80,7 +80,7 @@ if workflowExtension not in workAllowedExt:
         subprocess.call(['tar','xvf',workflowPath, '-C', folder])
 
     # print(folder)
-    workFile,retCode,content=wuf.getMainWorkflowFile(folder,workAllowedExt)
+    workFile,retCode,content=wuf.getMainWorkflowFileCwl(folder,workAllowedExt)
     if retCode!=0:
         print("getMainWorkflowFile method failed with code %d" % retCode)
         exit(retCode)
@@ -110,15 +110,15 @@ if 'inputs' not in content:
     print("Inputs key not in content dictionary")
     exit(2)
 
-wuf.workflowStore(workName,workVersion,workFile,user,visibility,
+wuf.workflowStoreCwl(workName,workVersion,workFile,user,visibility,
                 description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 inputs=content['inputs']
 # print(content)
 if isinstance(inputs,dict):
-    exit_value=wuf.inputStoreDict(workName,workVersion,content['inputs'])
+    exit_value=wuf.inputStoreDictCwl(workName,workVersion,content['inputs'])
 elif isinstance(inputs,list):
-    exit_value=wuf.inputStoreList(workName,workVersion,content['inputs'])
+    exit_value=wuf.inputStoreListCwl(workName,workVersion,content['inputs'])
 else:
     exit_value=50
     

@@ -1778,3 +1778,8 @@ COPY public.jupyter_images (id, description, image) FROM stdin;
 4	SciPy notebook	jupyter/scipy-notebook:latest
 5	Tensorflow notebook	jupyter/tensorflow-notebook:latest
 \.
+
+alter table workflow add column workflow_type varchar(100);
+alter table workflow_upload add column workflow_type varchar(100);
+create index workflow_type_idx on workflow_upload(workflow_type);
+create index workflow_upload_type_idx on workflow_upload(workflow_type);

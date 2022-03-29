@@ -30,6 +30,7 @@ use webvimark\modules\UserManagement\models\User;
 use yii\httpclient\Client;
 use yii\db\Query;
 use app\models\Software;
+use app\models\MinioClient;
 
 /**
  * This is the model class for table "workflow".
@@ -99,10 +100,19 @@ class Workflow extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function getParameters($fields)
+    public static function getParameters($fields,$fileStore='')
     {
         $params=[];
-        $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        $username=explode('@',User::getCurrentUser()['username'])[0];
+        $userFolder=Yii::$app->params['userDataPath'] . $username;
+        $userFolderAbs=$userFolder;
+
+        if (empty($fileStore))
+        {
+            $errors=["FileStore type problem. Please contact an administrator."];
+            return [[],$errors];
+        }
+
         /*
          * We installed schema on a server instead of deploying with helm
          * and our FTP is jailed, with the root being the user-data folder.
@@ -110,7 +120,11 @@ class Workflow extends \yii\db\ActiveRecord
          */
         if (isset(Yii::$app->params['ftpJailPath']) and (!empty(Yii::$app->params['ftpJailPath'])))
         {
-            $userFolder=str_replace(Yii::$app->params['ftpJailPath'],'',$userFolder);
+            $userFolderFtp=str_replace(Yii::$app->params['ftpJailPath'],'',$userFolder);
+        }
+        else
+        {
+            $userFolderFtp=$userFolder;
         }
 
         foreach ($fields as $field)
@@ -132,12 +146,32 @@ class Workflow extends \yii\db\ActiveRecord
             {
                 if ($field->field_type=='File')
                 {
-                    $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $field->value];
+                    if ($fileStore=='ftp')
+                    {
+                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolderFtp . '/' . $field->value];
+                    }
+                    else if ($fileStore=='s3')
+                    {
+                        $path='s3://' . $username . '/' . $field->value;
+                        $value=['class'=>$field->field_type, 'path'=> $path];
+
+                    }
+                    
                     $params[$field->name]=$value;
                 }
                 else if ($field->field_type=='Directory')
                 {
-                    $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $field->value];
+                    if ($fileStore=='ftp')
+                    {
+                        $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolderFtp . '/' . $field->value];
+                    }
+                    else if ($fileStore=='s3')
+                    {
+                        $location='s3://' . $username . '/' . $field->value;
+                        $value=['class'=>$field->field_type, 'location'=> $location];
+
+                    }
+
                     $params[$field->name]=$value;
                 }
                 else if ($field->field_type=='boolean')
@@ -161,8 +195,17 @@ class Workflow extends \yii\db\ActiveRecord
                     $finalArray=[];
                     foreach ($tmpArray as $val)
                     {
-                        $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $val];
-                        $finalArray[]=$value;
+                        if ($fileStore=='ftp')
+                        {
+                            $value=['class'=>$field->field_type, 'path'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolderFtp . '/' . $val];
+                            $finalArray[]=$value;
+                        }
+                        else if ($fileStore=='s3')
+                        {
+                            $path='s3://' . $username . '/' . $val;
+                            $value=['class'=>$field->field_type, 'path'=> $path];
+                            $finalArray[]=$value;
+                        }
                     }
                     
                     $params[$field->name]=$finalArray;
@@ -171,9 +214,18 @@ class Workflow extends \yii\db\ActiveRecord
                 {
                     $finalArray=[];
                     foreach ($tmpArray as $val)
-                    {
-                        $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolder . '/' . $val];
-                        $finalArray[]=$value;
+                    {   
+                        if ($fileStore=='ftp')
+                        {
+                            $value=['class'=>$field->field_type, 'location'=> "ftp://" . Yii::$app->params['ftpIp'] . '/' . $userFolderFtp . '/' . $val];
+                            $finalArray[]=$value;
+                        }
+                        else if ($fileStore=='s3')
+                        {
+                            $location='s3://' . $username . '/' . $val;
+                            $value=['class'=>$field->field_type, 'location'=> $location];
+                            $finalArray[]=$value;
+                        }
                     }
                     
                     $params[$field->name]=$finalArray;
@@ -185,7 +237,7 @@ class Workflow extends \yii\db\ActiveRecord
             }
             
         }
-        
+
         return [json_encode($params,JSON_UNESCAPED_SLASHES),$errors];
     }
 
@@ -572,7 +624,23 @@ class Workflow extends \yii\db\ActiveRecord
         $newLocationFile=explode('/',$newLocation);
         $newLocationFile=end($newLocationFile);
 
-        $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs';
+        if ($workflow->workflow_type=='CWL')
+        {
+            $url=Yii::$app->params['workflows']['CWL']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($workflow->workflow_type=='Nextflow')
+        {
+            $url=Yii::$app->params['workflows']['Nextflow']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($workflow->workflow_type=='SnakeMake')
+        {
+            $url=Yii::$app->params['workflows']['SnakeMake']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($workflow->workflow_type=='WDL')
+        {
+            $url=Yii::$app->params['workflows']['WDL']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        
         $client = new Client();
         try
         {

@@ -236,18 +236,23 @@ class SoftwareController extends Controller
 
         if ($example)
         {
+            /*
+             * @exampleFolder: folder where the examples for each software are stored
+             * @ifolder: input folder without relative to user home
+             * @iSystemFolder: absolute input folder for user
+             */
 
             $exampleFolder=Yii::$app->params['userDataPath']. 'examples/' . $name . '/' . $version . '/input';
-            $ifolder=$homeFolder . 'examples/' . $name . '/' . $version . '/input/';
-            $ofolder=$homeFolder . 'examples/' . $name . '/' . $version . '/output';
-            $iSystemFolder='examples/' . $name . '/' . $version . '/input/';
-            $oSystemFolder='examples/' . $name . '/' . $version . '/output/';
+            $ifolder='examples/' . $name . '/' . $version . '/input/';
+            $ofolder= 'examples/' . $name . '/' . $version . '/output';
+            $iSystemFolder=$homeFolder .'examples/' . $name . '/' . $version . '/input/';
+            $oSystemFolder=$homeFolder .'examples/' . $name . '/' . $version . '/output/';
             $outFolder=$oSystemFolder;
             
-            Software::exec_log("mkdir -p $ifolder $ofolder");
-            Software::exec_log("chmod 777 $ifolder");
-            Software::exec_log("chmod 777 $ofolder");
-            Software::exec_log("cp -r $exampleFolder/* $ifolder");
+            Software::exec_log("mkdir -p $iSystemFolder $oSystemFolder");
+            Software::exec_log("chmod 777 $iSystemFolder");
+            Software::exec_log("chmod 777 $oSystemFolder");
+            Software::exec_log("cp -r $exampleFolder/* $iSystemFolder");
 
             
         }        
@@ -328,6 +333,14 @@ class SoftwareController extends Controller
                 {
                     $fields[$index]->value=($fields[$index]->example=='true') ? true : false;
                 }
+                else if ($fields[$index]->field_type=='File')
+                {
+                    $fields[$index]->value=$ifolder . $fields[$index]->example;
+                }
+                else if ($fields[$index]->field_type=='Directory')
+                {
+                    $fields[$index]->value=$ifolder . $fields[$index]->example;
+                }
                 else
                 {
                     $fields[$index]->value=$fields[$index]->example;
@@ -389,6 +402,8 @@ class SoftwareController extends Controller
             {
                 $container_command=$software->script;
             }
+            $inputs=[];
+            $output=[];
         }
         else
         {
@@ -500,7 +515,8 @@ class SoftwareController extends Controller
         /*
          * If pod started without errors, then send its ID to the form.
          */
-
+        // print_r($runErrors);
+        // exit(0);
 
         return $this->render('run', ['form_params'=>$form_params, 'software'=>$software, 'example' => '0',
             'errors'=>$errors, 'runErrors'=>$runErrors, 
