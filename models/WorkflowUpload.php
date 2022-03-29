@@ -56,6 +56,7 @@ use app\models\Software;
 class WorkflowUpload extends \yii\db\ActiveRecord
 {
     public $workflowFile;
+    public $typeDropDown=[];
     public $dois='';
     /**
      * {@inheritdoc}
@@ -83,6 +84,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
             [['biotools'],'string','max'=>255],
             [['version'], 'uniqueSoftware'],
             [['covid19'],'required'],
+            [['workflow_type'],'required']
             
         ];
     }
@@ -103,6 +105,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
             'description'=> 'Workflow description * ',
             'covid19' => 'Workflow is related to COVID-19 research',
             'instructions'=>'Instructions',
+            'workflow_type' => 'Workflow Type'
         ];
     }
 
@@ -159,11 +162,28 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $this->version=$this->quotes($this->version);
         $username=$this->quotes($username);
 
+        if ($this->workflow_type=='CWL')
+        {
+            $script=Yii::$app->params['scriptsFolder'] . "workflowUploaderCwl.py ";
+        }
+        else if ($this->workflow_type=='Nextflow')
+        {
+            $script=Yii::$app->params['scriptsFolder'] . "workflowUploader.py ";
+        }
+        else if ($this->workflow_type=='SnakeMake')
+        {
+            $script=Yii::$app->params['scriptsFolder'] . "workflowUploader.py ";
+        }
+        else if ($this->workflow_type=='WDL')
+        {
+            $script=Yii::$app->params['scriptsFolder'] . "workflowUploader.py ";
+        }
+
         $arguments=[$this->name, $this->version, $workflowFilePath, $workflowFileExt, 
                     $username, $this->visibility, $this->description, $this->biotools, $doiFile, $this->covid19,$this->github_link,$this->instructions];
 
-        // $command="sudo -u user /data/www/schema_test/scheduler_files/imageUploader.py ";
-        $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "workflowUploader.py ");
+        
+        $command=Software::sudoWrap($script);
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
 
@@ -288,6 +308,18 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         return [$errors,$success,$warning];
     }
 
+    public function getWorkflowTypes()
+    {
+        $workflows=Yii::$app->params['workflows'];
+        foreach ($workflows as $workflow => $data)
+        {
+            if (!empty($data['endpoint']))
+            {
+                $this->typeDropDown[$workflow]=$workflow;
+            }
+        }
+    }
+
 
     /*
      * This functions are used for validation
@@ -295,8 +327,6 @@ class WorkflowUpload extends \yii\db\ActiveRecord
      */
     public function uniqueSoftware($attribute, $params, $validator)
     {
-        // print_r($this->name);
-        // exit(0);
         $workflows=Workflow::find()->where(['name'=>$this->name, 'version'=>$this->version])->all();
         if (!empty($workflows))
         {

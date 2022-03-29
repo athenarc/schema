@@ -56,7 +56,7 @@ Headers::begin() ?>
  $cancel_icon='<i class="fas fa-times"></i>';
 
     ?>
-
+        <?= $form->field($model, 'workflow_type')->dropDownList($model->typeDropDown) ?>
         <?= $form->field($model, 'name') ?>
         <?= $form->field($model, 'version') ?>
         <?=$form->field($model, 'description')->widget(CKEditor::className(), [
