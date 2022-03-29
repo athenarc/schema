@@ -110,7 +110,7 @@ if 'inputs' not in content:
     print("Inputs key not in content dictionary")
     exit(2)
 
-wuf.workflowStore(workName,workVersion,workFile,user,visibility,
+wuf.workflowStoreCwl(workName,workVersion,workFile,user,visibility,
                 description,biotools,doiFile,github_link,covid19,workflowPath,instructions)
 
 inputs=content['inputs']

@@ -350,7 +350,7 @@ def inputStoreListCwl(workName, workVersion, inputs):
 
     return 0
 
-def workflowStore(name,version,location,user,visibility,
+def workflowStoreCwl(name,version,location,user,visibility,
                 description,biotools,doiFile,github_link,covid19,original_file,instructions):
     
     name=quoteEnclose(name)
@@ -375,10 +375,10 @@ def workflowStore(name,version,location,user,visibility,
 
     date="NOW()"
 
-    values=[name,version,location,user,date,visibility,description,biotools,dois,covid19,github_link,original_file,instructions]
+    values=[name,version,location,user,date,visibility,description,biotools,dois,covid19,github_link,original_file,instructions,"'CWL'"]
     
     sql1='INSERT INTO workflow_upload (name,version, location ,uploaded_by, date, visibility, \
-                    description,biotools,dois,covid19,github_link,original_file,instructions) '
+                    description,biotools,dois,covid19,github_link,original_file,instructions, workflow_type) '
     sql1+='VALUES (' + ','.join(values) + ')'
 
     # print(sql1);
@@ -397,9 +397,9 @@ def workflowStore(name,version,location,user,visibility,
     #     exit(24)
 
     values=[name,version,location,user, visibility,description,biotools,
-                    dois,github_link,covid19,original_file,instructions]
+                    dois,github_link,covid19,original_file,instructions,"'CWL'"]
     sql2='INSERT INTO workflow (name,version,location,uploaded_by,\
-            visibility, description,biotools,dois,github_link,covid19,original_file,instructions) '
+            visibility, description,biotools,dois,github_link,covid19,original_file,instructions,workflow_type) '
     sql2+='VALUES (' + ','.join(values) + ')'
     
     # print()

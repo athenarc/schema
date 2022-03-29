@@ -429,7 +429,10 @@ class RunFormWidget
             echo "<br />";
             echo Html::label("Kubernetes errors:");
             echo "<br />";
-            echo $runErrors;
+            foreach ($runErrors as $error)
+            {
+                echo $error . "<br />";
+            }
 
         }
         

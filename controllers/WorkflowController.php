@@ -608,8 +608,7 @@ class WorkflowController extends Controller
     public function actionUpload()
     {
         $model = new WorkflowUpload();
-        // print_r($model);
-        // exit(0);
+        $model->getWorkflowTypes();
 
         $dropdown=[
                 'public'=>'Everyone',

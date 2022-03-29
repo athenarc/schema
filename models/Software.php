@@ -448,7 +448,7 @@ class Software extends \yii\db\ActiveRecord
         $outputs=[['type'=>'DIRECTORY','path'=>$software->omountpoint,'url'=>$url]];
         $inputs=[];
         foreach ($fields as $field)
-        {
+        {   
             if (($field->field_type!='Directory') && ($field->field_type!='File'))
             {
                 continue;
