@@ -488,7 +488,7 @@ class WorkflowController extends Controller
             ])
             ->count();
 
-        $runError='';
+        $runError=[''];
         $runPodId='';
 
         /**
@@ -530,7 +530,7 @@ class WorkflowController extends Controller
 
 
         $type=3;
-
+        
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
             'errors'=>$errors, 'runErrors'=>$runError,'fields'=>$fields,

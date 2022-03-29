@@ -664,32 +664,32 @@ class Workflow extends \yii\db\ActiveRecord
         $statusCode=$response->getStatusCode();
         if ($statusCode==400)
         {
-            $error='Malformed request. Please contact an administrator';
+            $error=['Malformed request. Please contact an administrator'];
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==401)
         {
-            $error='Request unauthorized. Please contact an administrator';
+            $error=['Request unauthorized. Please contact an administrator'];
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==403)
         {
-            $error='Requester not authorized to perform this action. Please contact an administrator';
+            $error=['Requester not authorized to perform this action. Please contact an administrator'];
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==404)
         {
-            $error="Error 404. URL: $url, not found";
+            $error=["Error 404. URL: $url, not found"];
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==500)
         {
-            $error='An unexpected error occurred (500). Please contact an administrator';
+            $error=['An unexpected error occurred (500). Please contact an administrator'];
             return ['jobid'=>'','error'=>$error];
         }
         else if ($statusCode==502)
         {
-            $error='Error 502. Please contact an administrator';
+            $error=['Error 502. Please contact an administrator'];
             return ['jobid'=>'','error'=>$error];
         }
         /*

@@ -31,6 +31,8 @@ schema:
     type: ClusterIP # Choose between ClusterIP or Nodeport
     nodePort: 30666 # If nodeport is chosen provide a port between 30000 and 32767 for the service
 
+  jobFileStore: s3 #s3 or ftp
+
   ingress:
     enabled: true
     https:
