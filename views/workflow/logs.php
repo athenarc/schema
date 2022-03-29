@@ -33,11 +33,11 @@ use yii\helpers\Html;
 <h3>Runtime Info:</h3>
 </div>
 <div class="status-div align-middle row" style="padding-left: 15px;">
-		<span class="status-label"><b>Workflow status:</b></span>
+		<span class="status-label"><b>Workflow status:</b></span>&nbsp;
 		<span id="status-value" class="status-<?=$status?>"><?=$status?></span>
 </div><br>
 <div class="status-div align-middle row" style="padding-left: 15px;">
-		<span class="status-label"><b>Running time:</b></span>
+		<span class="status-label"><b>Running time:</b></span>&nbsp;
 		<span id="exec-time-value" class="status-<?=$status?>"><?=$time?></span>
 </div>
 	<?php

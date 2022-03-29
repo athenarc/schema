@@ -488,7 +488,7 @@ class WorkflowController extends Controller
             ])
             ->count();
 
-        $runError=[''];
+        $runErrors=[];
         $runPodId='';
 
         /**
@@ -521,7 +521,7 @@ class WorkflowController extends Controller
             $result=Workflow::runWorkflow($workflow, $newLocation, $tmpWorkflowFolder, $workflowParams, $fields, $user, 
                                                     $project,$maxMem,$maxCores,$outFolder);
             $jobid=$result['jobid'];
-            $runError=$result['error'];
+            $runErrors=$result['error'];
         }
 
         /*
@@ -530,10 +530,10 @@ class WorkflowController extends Controller
 
 
         $type=3;
-        
+
         return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
             'version'=>$version,  'jobid'=>$jobid, 
-            'errors'=>$errors, 'runErrors'=>$runError,'fields'=>$fields,
+            'errors'=>$errors, 'runErrors'=>$runErrors,'fields'=>$fields,
             'example' => '0', 'hasExample'=>$hasExample,
             'username'=>$user,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas, 'workflow_instructions'=>$workflow_instructions,
             'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'type'=>$type, 'visualize'=>$visualize]);
