@@ -415,7 +415,8 @@ class Software extends \yii\db\ActiveRecord
    
     public static function getIOs($software,$fields,$iSystemFolder,$oSystemFolder)
     {
-        $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        $username=explode('@',User::getCurrentUser()['username'])[0];
+        $userFolder=Yii::$app->params['userDataPath'] . $username;
         $ofolder=$userFolder . '/' . $oSystemFolder;
         if (!is_dir($ofolder))
         {
@@ -435,12 +436,19 @@ class Software extends \yii\db\ActiveRecord
         /*
          * Prepare output directory location.
          */
-
-        $url= "ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $oSystemFolder;
+        if (Yii::$app->params['jobFileStore']=='ftp')
+        {
+            $url= "ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $oSystemFolder;
+        }
+        else if (Yii::$app->params['jobFileStore']=='s3')
+        {
+            $url= "s3://" . $username . '/' . $oSystemFolder;
+        }
+        
         $outputs=[['type'=>'DIRECTORY','path'=>$software->omountpoint,'url'=>$url]];
         $inputs=[];
         foreach ($fields as $field)
-        {
+        {   
             if (($field->field_type!='Directory') && ($field->field_type!='File'))
             {
                 continue;
@@ -448,13 +456,28 @@ class Software extends \yii\db\ActiveRecord
             $input=[];
             if ($field->field_type=='Directory')
             {
-                $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $iSystemFolder . $field->value;
+                if (Yii::$app->params['jobFileStore']=='ftp')
+                {
+                    $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $field->value;
+                }
+                else if (Yii::$app->params['jobFileStore']=='s3')
+                {
+                    $url="s3://" . $username . '/' . $field->value;
+                }
                 $path=$software->imountpoint;
                 $type='DIRECTORY';
             }
             else
             {
-                $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/'  . $iSystemFolder . $field->value;
+                if (Yii::$app->params['jobFileStore']=='ftp')
+                {
+                    $url="ftp://" . Yii::$app->params['ftpIp'] . '//' . $userFolder . '/' . $field->value;
+                }
+                else if (Yii::$app->params['jobFileStore']=='s3')
+                {
+                    $url="s3://" . $username . '/' . $field->value;
+                }
+                
                 $filename=explode('/',$field->value);
                 $filename=end($filename);
                 $path=$software->imountpoint . '/' . $filename;
@@ -793,6 +816,8 @@ class Software extends \yii\db\ActiveRecord
         $executor['command']=$this->container_command;
         $executor['workdir']=$this->omountpoint;
         $data['executors']=[$executor];
+        // var_dump($data);
+        // exit(0);
         $url=self::getTesUrl();
         $client=new Client();
         $response = $client->createRequest()

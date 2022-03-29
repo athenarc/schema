@@ -53,6 +53,7 @@ use app\models\WorkflowInput;
 use app\models\WorkflowUpload;
 use app\models\TrsEndpoints;
 use yii\helpers\BaseFileHelper;
+use app\models\MinioClient;
 
 class WorkflowController extends Controller
 {
@@ -115,12 +116,7 @@ class WorkflowController extends Controller
          * If the user-data folder for the current user does not exist, 
          * create one
          */
-         
-         // $working_dir=getcwd();
-         // print_r($working_dir);
-         // exit(0);
         
-
         $userFolder=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
         $user=User::getCurrentUser()['username'];
         
@@ -347,8 +343,7 @@ class WorkflowController extends Controller
                     }
                     $fields[$index]->dropdownSelected=$fields[$index]->example;
                     $fields[$index]->value=$fields[$index]->example;
-                    // print_r($fields[$index]->dropdownValues);
-                    // exit(0);
+                    
                 }
                 else
                 {
@@ -413,6 +408,21 @@ class WorkflowController extends Controller
         }
 
         $errors=[];
+        $wfType=$workflow->workflow_type;
+        $wfAllTypes=Yii::$app->params['workflows'];
+        $endpoint=$wfAllTypes[$wfType]['endpoint'];
+        $fileStore='';
+        $fileStore=$wfAllTypes[$wfType]['fileStore'];
+        /*
+         * If workflow uses S3 storage, then create a tmp bucket name to upload files.
+         */
+        
+        if (empty($endpoint))
+        {
+            $errors=['There is no workflow engine available for execution. Please contact an administrator.'];
+        }
+
+        
         if (empty($fields))
         {
             /*
@@ -429,7 +439,7 @@ class WorkflowController extends Controller
         {
             if (!$emptyFields)
             {
-                $errorsParams=Workflow::getParameters($fields);
+                $errorsParams=Workflow::getParameters($fields,$fileStore);
                 $workflowParams=$errorsParams[0];
                 $errors=array_merge($errors,$errorsParams[1]);
             }
@@ -598,8 +608,7 @@ class WorkflowController extends Controller
     public function actionUpload()
     {
         $model = new WorkflowUpload();
-        // print_r($model);
-        // exit(0);
+        $model->getWorkflowTypes();
 
         $dropdown=[
                 'public'=>'Everyone',
