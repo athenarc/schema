@@ -28,6 +28,8 @@ class JupyterImages extends \yii\db\ActiveRecord
     {
         return [
             [['description', 'image'], 'string'],
+            [['gpu'],'boolean'],
+            [['gpu'],'required'],
         ];
     }
 
@@ -40,6 +42,7 @@ class JupyterImages extends \yii\db\ActiveRecord
             'id' => 'ID',
             'description' => 'Descriptive name',
             'image' => 'Image on dockerhub',
+            'gpu'   => 'Image uses GPU'
         ];
     }
 }

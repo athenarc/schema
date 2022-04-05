@@ -2,6 +2,9 @@ $(document).ready(function()
 {
 
     $(".submit-btn").click(function(){
-        $("#creatingModal").modal({backdrop: 'static', keyboard: false});
+        password=$("#jupyterserver-password").val();
+        if (password.length!=0){
+            $("#creatingModal").modal({backdrop: 'static', keyboard: false});
+        }
     });
 });

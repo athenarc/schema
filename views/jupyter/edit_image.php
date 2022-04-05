@@ -51,8 +51,10 @@ Headers::begin() ?>
 
     <?=$form->field($model,'description')?>
     <?=$form->field($model,'image')?>
+    <?= $form->field($model, 'gpu') -> checkbox(['id'=>'gpu', "uncheck"=>'0']) ?>
 
     <?=Html::submitButton($save_icon . '&nbsp;Save',['class'=> 'btn btn-primary submit-btn'])?>
     <?=Html::submitButton($cancel_icon . '&nbsp;Cancel',['class'=> 'btn btn-secondary cancel-btn'])?>
+
 <?php ActiveForm::end(); ?>
 

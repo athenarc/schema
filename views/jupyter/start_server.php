@@ -52,7 +52,7 @@ Headers::begin() ?>
 
 <?php $form=ActiveForm::begin($form_params); ?>
 
-    <?=$form->field($model,'image')->dropDownList($imageDrop)?>
+    <?=$form->field($model,'image_id')->dropDownList($imageDrop)?>
     <?=$form->field($model,'password')->passwordInput()?>
 
     <?=Html::submitButton($start_icon . '&nbsp;Start',['class'=> 'btn btn-success submit-btn'])?>

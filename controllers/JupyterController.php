@@ -134,7 +134,12 @@ class JupyterController extends Controller
         $images=[];
         foreach ($img as $i)
         {
-            $images[$i->image]=$i->description;
+            $description=$i->description;
+            if ($i->gpu)
+            {
+                $description.=' (GPU)';
+            }
+            $images[$i->image]=$description;
         }
 
         return $this->render('index',['projects'=>$projects,'images'=>$images]);
@@ -190,11 +195,15 @@ class JupyterController extends Controller
         $imageDrop=[];
         foreach ($images as $image)
         {
-            $imageDrop[$image->image]=$image->description;
+            $description=$image->description;
+            if ($image->gpu)
+            {
+                $description.=" (GPU enabled)";
+            }
+            $imageDrop[$image->id]=$description;
         }
 
         $model = new JupyterServer;
-
         if ($model->load(Yii::$app->request->post()) && $model->validate()) 
         {
             $model->cpu=$quotas['cores'];
@@ -356,6 +365,7 @@ class JupyterController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) 
         {
+            $model->gpu=($model->gpu==1) ? true : false;
             $model->save();
 
             Yii::$app->session->setFlash('success',"Image $model->image saved!");

@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Softare;
+use app\models\JupyterImages;
 use webvimark\modules\UserManagement\models\User;
 use yii\helpers\Html;
 use yii\httpclient\Client;
@@ -46,7 +47,7 @@ class JupyterServer extends \yii\db\ActiveRecord
             [['active'], 'boolean'],
             [['manifest', 'project'], 'string', 'max' => 100],
             [['server_id'], 'string', 'max' => 20],
-            [['password','image'],'required']
+            [['password', 'image_id'],'required']
         ];
     }
 
@@ -109,7 +110,28 @@ class JupyterServer extends \yii\db\ActiveRecord
              */
             if (isset($projects[$server->project]))
             {
-                $projects[$server->project]['server']=$server;   
+                $projects[$server->project]['server']=$server;
+                if ($server->state=='spawning')
+                {
+                    try
+                    {
+                        $client = new Client();
+                        $response = $client->createRequest()
+                                ->setMethod('GET')
+                                ->setUrl($server->url)
+                                ->send();
+                        if ($response->getIsOk())
+                        {
+                            $server->state='running';
+                            $server->save(false);
+                        }
+
+                    }
+                    catch (\Exception $e)
+                    {
+
+                    }
+                }
             }
         }
 
@@ -142,6 +164,13 @@ class JupyterServer extends \yii\db\ActiveRecord
         $username=User::getCurrentUser()['username'];
         $user=explode('@',$username)[0];
 
+        $image=JupyterImages::find()->where(['id'=>$this->image_id])->one();
+        if (empty($image))
+        {
+            $error='Image not found. Please try again or contact an administrator';
+            return ['',$error];
+        }
+
         $data=[];
         if (file_exists('/data/containerized'))
         {
@@ -153,7 +182,9 @@ class JupyterServer extends \yii\db\ActiveRecord
         }
 
         $data['nfs']=$nfs;
-        $data['image']=$this->image;
+        $data['image']=$image->image;
+        $data['image_id']=$this->image_id;
+        $data['gpu']=$image->gpu;
         $data['id']=$sid;
         $data['folder']=Yii::$app->params['tmpFolderPath'] . '/' . $sid . '/';
         $data['mountFolder']=Yii::$app->params['userDataPath'] . $user . '/';
@@ -205,7 +236,7 @@ class JupyterServer extends \yii\db\ActiveRecord
                     }
 
                 }
-                catch (yii\httpclient\Exception $e)
+                catch (\Exception $e)
                 {
                     /*
                      * This block is left empty on purpose.
@@ -256,6 +287,8 @@ class JupyterServer extends \yii\db\ActiveRecord
             if (!$isDown)
             {
                 $success='Server was started successfully! It can be accessed <a href="' . $server->url . '" target="blank">here</a>.';
+                $server->state='running';
+                $server->save(false);
             }
             else
             {
