@@ -2,7 +2,7 @@ import yaml
 from notebook.auth import passwd
 
 
-def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain, platform):
+def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, domain, platform, gpu):
     manifest=folder + '/' + sid + '-jupyter.yaml'
     appName=sid + '-jupyter'
 
@@ -10,7 +10,6 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     volumes=[]
     containers=[]
     pod={}
-
     pod['replicas']=1
     pod['selector']={'matchLabels':{'app':appName}}
     pod['template']={'metadata':{'labels':{'app':appName}}}
@@ -36,6 +35,9 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     container['env'].append({'name':'JUPYTER_ENABLE_LAB', 'value': 'yes'})
 
     container['resources']={'limits':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}, 'requests':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}}
+    if gpu:
+        container['resources']['limits']['nvidia.com/gpu']=1
+
     volumeMounts=[]
     if nfs=='container':
         vmount={'name': vname, 'mountPath': '/home/jovyan/work', 'subPath': mount.replace('/data/','')}

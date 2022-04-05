@@ -30,6 +30,8 @@ sconfig=json.load(sConfigFile)
 sConfigFile.close()
 
 sid=sconfig['id']
+image_id=sconfig['image_id']
+gpu=sconfig['gpu']
 folder=sconfig['folder']
 cpu=sconfig['resources']['cpu']
 mem=sconfig['resources']['mem']
@@ -42,14 +44,13 @@ user=sconfig['user']
 expires=sconfig['expires']
 
 
-manifest,url=cf.createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs,namespace,domain,platform)
-print(manifest)
-print(url)
+manifest,url=cf.createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs,namespace,domain,platform,gpu)
+
 
 subprocess.call(['kubectl', 'apply', '-f', manifest])
 
-values=[enclose(manifest), enclose(project), enclose(sid), enclose(image), 'NOW()', enclose(user), enclose('https://' + url),"'t'", enclose(expires)]
-sql='INSERT INTO jupyter_server(manifest,project,server_id,image,created_at,created_by,url,active, expires_on) VALUES (' + ','.join(values) + ')'
+values=[enclose(manifest), enclose(project), enclose(sid), enclose(image), 'NOW()', enclose(user), enclose('https://' + url),"'t'", enclose(expires), enclose(image_id), enclose('spawning')]
+sql='INSERT INTO jupyter_server(manifest,project,server_id,image,created_at,created_by,url,active, expires_on, image_id, state) VALUES (' + ','.join(values) + ')'
 
 conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
 cur=conn.cursor()

@@ -36,6 +36,8 @@ $this->title="List of Jupyter images";
 
 $back_icon='<i class="fas fa-arrow-left"></i>';
 $add_icon='<i class="fas fa-plus"></i>';
+$gpu_en_icon='<i class="fas fa-check"></i>';
+$gpu_dis_icon='<i class="fas fa-times"></i>';
 Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
@@ -53,8 +55,9 @@ Headers::begin() ?>
 <div class=" table-responsive">
     <table class="table table-striped">
         <thead>
-            <th class="col-md-3">Description</th>
+            <th class="col-md-2">Description</th>
             <th class="col-md-3">Dockerhub image</th>
+            <th class="col-md-1">GPU</th>
             <th class="col-md-1"></th>
         </thead>
         <tbody>
@@ -63,8 +66,9 @@ Headers::begin() ?>
         {
         ?>
         <tr>
-            <td class="col-md-3"><?=$image->description?></td>
+            <td class="col-md-2"><?=$image->description?></td>
             <td class="col-md-3"><?=$image->image?></td>
+            <td class="col-md-2"><?=($image->gpu) ? $gpu_en_icon : $gpu_dis_icon?></td>
             <td class="col-md-1">
                 <?php
                     $edit_icon='<i class="fas fa-edit"></i>';

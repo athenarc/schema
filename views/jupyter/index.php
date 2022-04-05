@@ -41,9 +41,11 @@ Headers::begin() ?>
     [
         
     ],
-])
+]);
 ?>
-<?php Headers::end()?>
+<?php 
+    Headers::end();
+?>
 
 <div class=" table-responsive">
     <table class="table table-striped">
@@ -53,7 +55,8 @@ Headers::begin() ?>
             <th class="col-md-1">RAM (GB)</th>
             <th class="col-md-3">Image</th>
             <th class="col-md-2">Expires on</th>
-            <th class="col-md-2"></th>
+
+            <th class="col-md-1"></th>
         </thead>
         <tbody>
         <?php
@@ -79,7 +82,7 @@ Headers::begin() ?>
                 <?php
                     $start_icon='<i class="fas fa-play"></i>';
                     $stop_icon='<i class="fas fa-stop"></i>';
-                    $access_icon='<i class="fas fa-external-link-alt"></i>';
+                    
                     $start_url=Url::to(['/jupyter/start-server','project'=>$name]);
                     $stop_url=Url::to(['/jupyter/stop-server','project'=>$name]);
                     if (isset($resources['server']))
@@ -88,7 +91,21 @@ Headers::begin() ?>
                         $start_class="btn start-btn disabled";
                         $stop_class="btn stop-btn";
                         $access_class="btn access-btn";
-                        $access_url=$resources['server']->url;
+                        if ($resources['server']->state=='running')
+                        {
+                            $access_url=$access_url=$resources['server']->url;
+                            $access_title='Access server.';
+                            $access_icon='<i class="fas fa-external-link-alt"></i>';
+                            $access_target='_blank';
+                        }
+                        else
+                        {
+                            $access_url='';
+                            $access_title='Please wait a few minutes and reload the page to get the access link.';
+                            $access_icon='<i class="fas fa-sync fa-spin"></i>';
+                            $access_target='';
+                        }
+                        
                     }
                     else
                     {
@@ -97,11 +114,14 @@ Headers::begin() ?>
                         $stop_class="btn stop-btn disabled";
                         $access_class="btn access-btn disabled";
                         $access_url='';
+                        $access_title='Please start the server';
+                        $access_icon='<i class="fas fa-external-link-alt"></i>';
+                        $access_target='';
                     }
                 ?>
                 <?=$started ? '' : Html::a($start_icon,$start_url,['class'=>$start_class, 'title'=> "Start server"])?>
                 <?=$started ? Html::a($stop_icon,$stop_url,['class'=>$stop_class, 'title'=> "Stop server" ]) : ''?>
-                <?=Html::a($access_icon,$access_url,['class'=>$access_class, 'title'=> "Access server", "target"=>"_blank"])?>
+                <?=Html::a($access_icon,$access_url,['class'=>$access_class, 'title'=> $access_title, "target"=>$access_target])?>
             </td>
 
         </tr>
