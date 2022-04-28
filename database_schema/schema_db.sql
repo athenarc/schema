@@ -1785,3 +1785,4 @@ create index workflow_type_idx on workflow_upload(workflow_type);
 create index workflow_upload_type_idx on workflow_upload(workflow_type);
 alter table jupyter_images add column gpu boolean default false;
 alter table jupyter_server add column state varchar(20);
+alter table jupyter_server add column image_id bigint;

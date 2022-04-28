@@ -1133,7 +1133,7 @@ class Software extends \yii\db\ActiveRecord
              * try fields.txt for backward compatibility
              */
             $file=$folder . 'fields.txt';
-            $content=file_get_contents($file);
+            
             if (file_exists($file))
             {  
                 $content=file_get_contents($file);
