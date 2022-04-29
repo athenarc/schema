@@ -35,6 +35,7 @@ use app\models\User;
 use app\models\Software;
 use yii\httpclient\Client;
 use app\models\ApiFunctions;
+use app\models\JupyterServer;
 
 class ApiController extends Controller
 {
@@ -376,6 +377,16 @@ class ApiController extends Controller
     {
 
         $usage=RunHistory::getProjectUsage($project);
+        if (!empty($usage))
+        {
+            $totalJupyter=JupyterServer::find()->where(['project'=>$project])->count();
+            $activeJupyter=JupyterServer::find()->where(['active'=>'t', 'project'=>$project])->count();
+
+            $usage['active_jupyter']=$activeJupyter;
+            $usage['total_jupyter']=$totalJupyter;
+        }
+        
+        
         $this->asJson($usage);
     }
     
