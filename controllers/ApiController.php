@@ -419,6 +419,17 @@ class ApiController extends Controller
         $this->asJson($usage);
     }
 
+    public function actionActiveJupyterProjects()
+    {
+        $servers=JupyterServer::find()->select(['project'])->where(['active'=>true])->distinct()->all();
+        $projects=[];
+        foreach ($servers as $server)
+        {
+            $projects[$server->project]=true;
+        }
+        return $this->asJson($projects);
+    }
+
 
 
 }
