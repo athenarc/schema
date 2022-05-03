@@ -166,6 +166,12 @@ uf.imageStore(softName,softVersion, imageFull,script,user,visibility,
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];
 
-exit_value=uf.inputStore(softName,softVersion, cwlContent['inputs'])
+if isinstance(cwlContent['inputs'],dict):
+    exit_value=uf.inputStoreDict(softName,softVersion, cwlContent['inputs'])
+elif isinstance(cwlContent['inputs'],list):
+    exit_value=uf.inputStoreList(softName,softVersion, cwlContent['inputs'])
+else:
+    exit_value=100
+    
 exit(exit_value)
 

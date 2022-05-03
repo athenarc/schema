@@ -191,7 +191,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
-
+        
         Software::exec_log($command,$out,$ret);
 
         $errors='';
@@ -324,6 +324,11 @@ class SoftwareUpload extends \yii\db\ActiveRecord
                 $errors.="Error: code $ret. ";
                 $errors.="One of the inputs does has an unknown type.";
                 $errors.="<br />Please correct the file syntax and try again or contact an administrator.";
+                break;
+            case 100:
+                $errors.="Error: code $ret. ";
+                $errors.="Your CWL definition has a format not recognized by the system";
+                $errors.="<br />Please contact an administrator to fix the issue.";
                 break;
             default:
                 $errors.="Error: code $ret. ";
