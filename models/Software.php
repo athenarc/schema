@@ -838,6 +838,9 @@ class Software extends \yii\db\ActiveRecord
         if (!$response->getIsOk())
         {
             $this->errors=['There was an error sending the job to TESK. <br />Please contact an administrator'];
+            error_log(sprintf("ERROR while calling %s.",$url));
+            error_log("DATA: ".json_encode($data));
+            error_log("RESPONSE: ".$response);
             return;
         }
 
