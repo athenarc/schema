@@ -245,11 +245,13 @@ class SoftwareController extends Controller
             $exampleFolder=Yii::$app->params['userDataPath']. 'examples/' . $name . '/' . $version . '/input';
             $ifolder='examples/' . $name . '/' . $version . '/input/';
             $ofolder= 'examples/' . $name . '/' . $version . '/output';
-            $iSystemFolder=$homeFolder .'examples/' . $name . '/' . $version . '/input/';
-            $oSystemFolder=$homeFolder .'examples/' . $name . '/' . $version . '/output/';
-            $outFolder=$oSystemFolder;
+            $iSystemFolder='examples/' . $name . '/' . $version . '/input/';
+            $oSystemFolder='examples/' . $name . '/' . $version . '/output/';
+            $iSystemFolderMkdir=$homeFolder .'examples/' . $name . '/' . $version . '/input/';
+            $oSystemFolderMkdir=$homeFolder .'examples/' . $name . '/' . $version . '/output/';
+            $outFolder=$ofolder;
             
-            Software::exec_log("mkdir -p $iSystemFolder $oSystemFolder");
+            Software::exec_log("mkdir -p $iSystemFolderMkdir $oSystemFolderMkdir");
             Software::exec_log("chmod 777 $iSystemFolder");
             Software::exec_log("chmod 777 $oSystemFolder");
             Software::exec_log("cp -r $exampleFolder/* $iSystemFolder");

@@ -445,7 +445,15 @@ class Software extends \yii\db\ActiveRecord
             $url= "s3://" . $username . '/' . $oSystemFolder;
         }
         
-        $outputs=[['type'=>'DIRECTORY','path'=>$software->omountpoint,'url'=>$url]];
+        if (empty($software->omountpoint))
+        {
+            $outputs=[];
+        }
+        else
+        {
+            $outputs=[['type'=>'DIRECTORY','path'=>$software->omountpoint,'url'=>$url]];
+        }
+        
         $inputs=[];
         foreach ($fields as $field)
         {   
@@ -814,7 +822,7 @@ class Software extends \yii\db\ActiveRecord
         $executor=[];
         $executor['image']=$this->image;
         $executor['command']=$this->container_command;
-        $executor['workdir']=$this->omountpoint;
+        $executor['workdir']=empty($this->omountpoint) ? $this->imountpoint : $this->omountpoint;
         $data['executors']=[$executor];
         // var_dump($data);
         // exit(0);
@@ -826,7 +834,7 @@ class Software extends \yii\db\ActiveRecord
                     ->setMethod('POST')
                     ->setUrl($url)
                     ->send();
-
+    
         if (!$response->getIsOk())
         {
             $this->errors=['There was an error sending the job to TESK. <br />Please contact an administrator'];
