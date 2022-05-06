@@ -135,11 +135,12 @@ class JupyterController extends Controller
         foreach ($img as $i)
         {
             $description=$i->description;
-            if ($i->gpu)
+            if ($i->gpu==true)
             {
                 $description.=' (GPU)';
             }
-            $images[$i->image]=$description;
+
+            $images[$i->id]=$description;
         }
 
         return $this->render('index',['projects'=>$projects,'images'=>$images]);

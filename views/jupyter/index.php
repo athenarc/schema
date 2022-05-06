@@ -76,7 +76,7 @@ Headers::begin() ?>
             <td class="col-md-3"><strong><?=$name?><strong></td>
             <td class="col-md-1"><?=$resources['cpu']?></td>
             <td class="col-md-1"><?=$resources['memory']?></td>
-            <td class="col-md-3"><?=isset($resources['server'])? $images[$resources['server']->image] : 'N/A'?></td>
+            <td class="col-md-3"><?=isset($resources['server'])? $images[$resources['server']->image_id] : 'N/A'?></td>
             <td class="col-md-2"><?=$date?></td>
             <td class="col-md-2">
                 <?php
