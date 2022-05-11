@@ -35,13 +35,17 @@ echo Html::cssFile('@web/css/jupyter/index.css');
 $this->title="Active Jupyter servers";
 
 $back_icon='<i class="fas fa-arrow-left"></i>';
+$expired_icon='<i class="fas fa-exclamation-triangle"></i>';
 Headers::begin() ?>
 <?php echo Headers::widget(
 ['title'=>$this->title, 
     'buttons'=>
     [
+        ['fontawesome_class'=>$expired_icon,'name'=> 'Clear expired project servers', 'action'=>['/jupyter/stop-expired-servers'],
+        'options'=>['class'=>'btn btn-default'], 'type'=>'a'],
         ['fontawesome_class'=>$back_icon,'name'=> 'Back', 'action'=>['/administration/jupyter'],
         'options'=>['class'=>'btn btn-default'], 'type'=>'a'],
+        
     ],
 ])
 ?>
@@ -50,28 +54,38 @@ Headers::begin() ?>
 <div class=" table-responsive">
     <table class="table table-striped">
         <thead>
-            <th class="col-md-2">Created by</th>
+            <th class="col-md-1">Created by</th>
             <th class="col-md-2">Project</th>
             <th class="col-md-3">Image</th>
             <th class="col-md-1">Created on</th>
-            <th class="col-md-1">Expires on</th>
+            <th class="col-md-2">Expires on</th>
             <th class="col-md-2"></th>
         </thead>
         <tbody>
         <?php
+        $now=new DateTime();
+
         foreach ($servers as $server)
         {
             $creation=new DateTime($server->created_at);
             $creation=$creation->format('d-m-Y');
             $expiration=new DateTime($server->expires_on);
-            $expiration=$expiration->format('d-m-Y');
+            if ($now>$expiration)
+            {
+                $expiration=$expiration->format('d-m-Y') . '&nbsp;' . $expired_icon;
+            }
+            else
+            {
+                $expiration=$expiration->format('d-m-Y');
+            }
+            
         ?>
         <tr>
-            <td class="col-md-2"><?=explode('@',$server->created_by)[0]?></td>
+            <td class="col-md-1"><?=explode('@',$server->created_by)[0]?></td>
             <td class="col-md-2"><?=$server->project?></td>
             <td class="col-md-3"><?=$server->image?></td>
             <td class="col-md-1"><?=$creation?></td>
-            <td class="col-md-1"><?=$expiration?></td>
+            <td class="col-md-2"><?=$expiration?></td>
             <td class="col-md-2">
                 <?php
                     $stop_icon='<i class="fas fa-stop"></i>';
