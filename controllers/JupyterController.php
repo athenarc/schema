@@ -391,4 +391,44 @@ class JupyterController extends Controller
         return $this->render('active_servers',['servers'=>$servers]);
 
     }
+
+    public function actionStopExpiredServers()
+    {
+
+        /*
+         * User is not admin
+         */
+        if (!User::hasRole("Admin", $superAdminAllowed = true))
+        {
+            return $this->render('unauthorized');
+        }
+        
+        /*
+         * Get expired servers
+         */
+        $servers=JupyterServer::find()->where(['active'=>true])->andWhere(['<','expires_on','NOW()'])->all();
+        
+        /*
+         * If no servers exist, return
+         */
+        if (empty($servers))
+        {
+            Yii::$app->session->setFlash('warning','No expired servers exist.');
+            return $this->redirect(['jupyter/active-servers']);
+        }
+
+        /*
+         * Stop servers and return
+         */
+        foreach($servers as $server)
+        {
+            $server->stopServer();
+        }
+
+
+        Yii::$app->session->setFlash('success','Successfully stopped all expired Jupyter servers');
+        
+        return $this->redirect(['jupyter/active-servers']);
+
+    }
 }
