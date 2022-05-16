@@ -114,7 +114,7 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
             'visibility' => 'Visible to',
             'imountpoint'=>'Input folder mount point (where users can provide input data inside the container). Leave empty if no mount is required',
             'omountpoint'=>'Output folder mount point (folder inside the container where users can find the output). Leave empty if no mount is required',
-            'workingdir'=>'Working directory (inside the container). If left empty, /data will be used.',
+            'workingdir'=>'Working directory (inside the container). If left empty, the output mountpoint a will be used.',
             'description'=> 'Software description * ',
             'imageInDockerHub'=>'Image exists in DockerHub and is specified in the CWL file',
             'iomount' => 'Image requires disk I/O',
@@ -140,12 +140,13 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
         $workingdir=$previous->workingdir;
         $original=$previous->original_image;
         $dockerhub=($previous->docker_or_local) ? "'t'" : "'f'";
-        $workingdir=$this->quotes($workingdir);
+        $this->workingdir=$this->quotes($this->workingdir);
         $original=$this->quotes($original);
         $this->covid19=($this->covid19=='1') ? "'t'" : "'f'";
         $this->biotools=$this->quotes($this->biotools);
         $this->instructions=$this->quotes($this->instructions);
         $this->gpu=$this->quotes($this->gpu);
+        $this->workingdir=$this->quotes($this->workingdir);
 
         //add dois string in a file and pass it on to python
         $dataFolder=Yii::$app->params['tmpImagePath'] . $username . '/' . str_replace(' ','-',$this->name) . '/' . str_replace(' ','-',$this->version) . '/';
@@ -178,13 +179,12 @@ class SoftwareUploadExisting extends \yii\db\ActiveRecord
 
         $this->name=$this->quotes($this->name);
         $this->version=$this->quotes($this->version);
-        $mpi=($this->mpi=='1') ? $this->quotes('t') : $this->quotes('f');
         $username=$this->quotes($username);
 
         $arguments=[
             $this->name, $this->version, $this->image, $cwlFileName, 
             $username, $this->visibility, $this->imountpoint, $this->omountpoint,
-            $this->description, $this->biotools, $doiFile, $mpi, $workingdir,
+            $this->description, $this->biotools, $doiFile, $this->workingdir,
             $original,$dockerhub,$this->covid19, $this->instructions,$this->gpu];
 
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "existingImageUploader.py ");

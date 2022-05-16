@@ -113,7 +113,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
             'visibility' => 'Visible to',
             'imountpoint'=>'Input folder mount point (where users can provide input data inside the container). Leave empty if no mount is required',
             'omountpoint'=>'Output folder mount point (folder inside the container where users can find the output). Leave empty if no mount is required',
-            'workingdir'=>'Working directory (inside the container). If left empty, /data will be used.',
+            'workingdir'=>'Working directory (inside the container). If left empty, the output mountpoint will be used.',
             'description'=> 'Software description * ',
             'imageInDockerHub'=>'Image exists in DockerHub and is specified in the CWL file',
             'iomount' => 'Image requires disk I/O',
@@ -180,18 +180,18 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $imageFileName=$this->quotes($imageFileName);
         $this->name=$this->quotes($this->name);
         $this->version=$this->quotes($this->version);
-        $mpi=($this->mpi=='1') ? $this->quotes('t') : $this->quotes('f');
+        $this->workingdir=$this->quotes($this->workingdir);
         $username=$this->quotes($username);
 
         $arguments=[$this->name, $this->version, $imageFileName, $imageFileExt, $cwlFileName, 
                     $username, $this->visibility, $this->imountpoint, $this->omountpoint,
-                    $this->description, $this->biotools, $doiFile, $mpi, $this->covid19, $this->instructions,$this->gpu];
+                    $this->description, $this->biotools, $doiFile, $this->workingdir, $this->covid19, $this->instructions,$this->gpu];
 
 
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
-        
+        print_r($command);exit(0);
         Software::exec_log($command,$out,$ret);
 
         $errors='';
