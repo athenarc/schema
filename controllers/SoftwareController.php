@@ -252,12 +252,12 @@ class SoftwareController extends Controller
             $outFolder=$ofolder;
             
             Software::exec_log("mkdir -p $iSystemFolderMkdir $oSystemFolderMkdir");
-            Software::exec_log("chmod 777 $iSystemFolder");
-            Software::exec_log("chmod 777 $oSystemFolder");
-            Software::exec_log("cp -r $exampleFolder/* $iSystemFolder");
+            Software::exec_log("chmod 777 $iSystemFolderMkdir");
+            Software::exec_log("chmod 777 $oSystemFolderMkdir");
+            Software::exec_log("cp -r $exampleFolder/* $iSystemFolderMkdir");
 
             
-        }        
+        }    
 
         /* 
          * Add parameters for the active form

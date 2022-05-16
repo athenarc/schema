@@ -488,7 +488,7 @@ class Software extends \yii\db\ActiveRecord
                 
                 $filename=explode('/',$field->value);
                 $filename=end($filename);
-                $path=$software->imountpoint . '/' . $filename;
+                $path=$software->imountpoint . '/' . $field->value;
                 $type='FILE';
             }
             $inputs[]=['type'=>$type,'path'=>$path,'url'=>$url];
