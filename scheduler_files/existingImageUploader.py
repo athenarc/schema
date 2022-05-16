@@ -39,13 +39,12 @@ omountPoint=sys.argv[8]
 description=sys.argv[9]
 biotools=sys.argv[10]
 doiFile=sys.argv[11]
-mpi=sys.argv[12]
-workingDir=sys.argv[13]
-original=sys.argv[14]
-docker_or_local=sys.argv[15]
-covid19=sys.argv[16]
-instructions=sys.argv[17]
-gpu=sys.argv[18]
+workingDir=sys.argv[12]
+original=sys.argv[13]
+docker_or_local=sys.argv[14]
+covid19=sys.argv[15]
+instructions=sys.argv[16]
+gpu=sys.argv[17]
 
 def quoteEnclose(string):
     return "'" + string + "'"
@@ -77,11 +76,16 @@ if workingDir=='':
     workingDir='/'
 
 uf.imageStore(softName,softVersion, image,script,user,visibility,
-    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions,gpu)
+    workingDir,imountPoint,omountPoint,description,cwlPath,biotools,doiFile,original,docker_or_local,covid19,instructions,gpu)
 
 if 'inputs' not in cwlContent:
     cwlContent['inputs']=[];
 
-exit_value=uf.inputStore(softName,softVersion, cwlContent['inputs'])
+if isinstance(cwlContent['inputs'],dict):
+    exit_value=uf.inputStoreDict(softName,softVersion, cwlContent['inputs'])
+elif isinstance(cwlContent['inputs'],list):
+    exit_value=uf.inputStoreList(softName,softVersion, cwlContent['inputs'])
+else:
+    exit_value=100
 exit(exit_value)
 

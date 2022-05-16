@@ -422,7 +422,7 @@ def inputStoreList(softName,softVersion, inputs):
     return 0
 
 def imageStore(name,version,image,script,user,visibility,
-                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,mpi,original,docker_or_local,covid19,instructions,gpu):
+                workingDir,imountPoint,omountPoint, description,cwlPath,biotools,doiFile,original,docker_or_local,covid19,instructions,gpu):
     
     softFull=name+ '-' + version
     name=quoteEnclose(name)
@@ -437,7 +437,6 @@ def imageStore(name,version,image,script,user,visibility,
     description=quoteEnclose(description)
     cwlPath=quoteEnclose(cwlPath)
     biotools=quoteEnclose(biotools)
-    mpi=quoteEnclose(mpi)
     original=quoteEnclose(original)
     docker_or_local=quoteEnclose(docker_or_local)
     covid19=quoteEnclose(covid19)
@@ -459,19 +458,19 @@ def imageStore(name,version,image,script,user,visibility,
     date="NOW()"
 
     values=[name,version,image,script,user, date, visibility, workingDir, imountPoint, 
-                omountPoint, description, cwlPath,biotools,dois,mpi,original,docker_or_local,covid19, instructions,gpu]
+                omountPoint, description, cwlPath,biotools,dois,original,docker_or_local,covid19, instructions,gpu]
     
     sql1='INSERT INTO software_upload (name,version, image,script,uploaded_by, date, visibility, workingdir, imountpoint, omountpoint,\
-    description, cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions,gpu) '
+    description, cwl_path,biotools,dois,original_image,docker_or_local,covid19, instructions,gpu) '
     sql1+='VALUES (' + ','.join(values) + ')'
 
     
 
     values=[name,version,image,script,user, visibility, workingDir, imountPoint, omountPoint,description,cwlPath,biotools,
-                    dois,mpi,original,docker_or_local,covid19, instructions,gpu]
+                    dois,original,docker_or_local,covid19, instructions,gpu]
     sql2='INSERT INTO software (name,version,image,script,uploaded_by,\
             visibility, workingdir, imountpoint, omountpoint, description,\
-            cwl_path,biotools,dois,mpi,original_image,docker_or_local,covid19, instructions,gpu) '
+            cwl_path,biotools,dois,original_image,docker_or_local,covid19, instructions,gpu) '
     sql2+='VALUES (' + ','.join(values) + ')'
     
     # print()

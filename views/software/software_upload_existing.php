@@ -74,6 +74,7 @@ Headers::begin() ?>
             <?= $form->field($model, 'imountpoint') ?>
             <?= $form->field($model, 'omountpoint') ?>
         </div>
+        <?=$form->field($model, 'workingdir')?>
         <?= $form->field($model, 'gpu') -> checkbox(['id'=>'gpu', "uncheck"=>'0']) ?>
         <?= $form->field($model, 'biotools') ?>
         <div class="doi-container">

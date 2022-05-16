@@ -822,7 +822,7 @@ class Software extends \yii\db\ActiveRecord
         $executor=[];
         $executor['image']=$this->image;
         $executor['command']=$this->container_command;
-        $executor['workdir']=empty($this->omountpoint) ? $this->imountpoint : $this->omountpoint;
+        $executor['workdir']=empty($this->workingdir) ? $this->omountpoint : $this->workingdir;
         $data['executors']=[$executor];
         // var_dump($data);
         // exit(0);
