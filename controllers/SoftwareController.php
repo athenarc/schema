@@ -921,7 +921,9 @@ class SoftwareController extends Controller
 
         if (empty($history))
         {
-            return $this->render('job_not_found',['jobid'=>$jobid]);
+            $message="Job $jobid could not be found in our system.";
+            Yii::$app->session->setFlash('danger', "$message");
+            return $this->redirect(['software/history']);
         }
 
         /*
@@ -1004,7 +1006,9 @@ class SoftwareController extends Controller
         $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
         if (empty($history))
         {
-            return $this->render('job_not_found',['jobid'=>$jobid]);
+            $message="Job $jobid could not be found in our system.";
+            Yii::$app->session->setFlash('danger', "$message");
+            return $this->redirect(['software/history']);
         }
 
     	$name=$history->softname;
@@ -1015,7 +1019,15 @@ class SoftwareController extends Controller
         $maxMem=$history->max_ram;
         $maxCores=$history->max_cpu;
         $outFolder=$history->omountpoint;
-        $software=Software::find()->where(['name'=>$name,'version'=>$version])->one();
+        $software=Software::find()->where(['id'=>$history->software_id])->one();
+
+        if (empty($software))
+        {
+            $message="The software for job $jobid could not be found in our system.";
+            Yii::$app->session->setFlash('danger', "$message");
+            return $this->redirect(['software/history']);
+        }
+
         $software->jobid=$jobid;
         $uploadedBy=$software->uploaded_by;
 
