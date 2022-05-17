@@ -472,7 +472,7 @@ class Software extends \yii\db\ActiveRecord
                 {
                     $url="s3://" . $username . '/' . $field->value;
                 }
-                $path=$software->imountpoint;
+                $path=$software->imountpoint . '/' . $field->value;
                 $type='DIRECTORY';
             }
             else
