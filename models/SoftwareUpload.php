@@ -191,7 +191,7 @@ class SoftwareUpload extends \yii\db\ActiveRecord
         $command=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "imageUploader.py ");
         $command.= implode(" ", $arguments) . " ";
         $command.= "2>&1";
-        print_r($command);exit(0);
+        
         Software::exec_log($command,$out,$ret);
 
         $errors='';
