@@ -139,8 +139,23 @@ class Workflow extends \yii\db\ActiveRecord
             }
             if ((!$field->optional) && ($field->value==''))
             {
-                $errors=["A required field has an empty value."];
-                return [[],$errors];
+
+                if ($field->field_type=='boolean')
+                {
+                    $params[$field->name]=$field->default_value ? true : false;
+                    continue;
+                }
+
+                if (isset($field->default_value))
+                {
+                    $params[$field->name]=$field->default_value;
+                }
+                else
+                {
+                    $errors=["Required field '$field->name' has an empty value and no default value is specified."];
+                    return [[],$errors];
+                }
+                
             }
             if (!$field->is_array)
             {
