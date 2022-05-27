@@ -360,7 +360,7 @@ class WorkflowController extends Controller
                 {
                     if ($fields[$index]->field_type=='boolean')
                     {
-                        $fields[$index]->value=false;
+                        $fields[$index]->value=($fields[$index]->default_value=='False') ? false : true;
                     }
                     else if ($fields[$index]->field_type=='enum')
                     {
