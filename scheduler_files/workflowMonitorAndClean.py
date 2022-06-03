@@ -106,19 +106,16 @@ outputs=body['outputs']
 
 start=runLog['task_started']
 
-if (status=='EXECUTOR_ERROR'):
-    updateStatus('Error', jobid, start, 'NOW()')
-    #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Error' WHERE jobid='" + jobid + "'"
-elif (status=='CANCELED' or status=='CANCELLING'):
+if (status=='CANCELED' or status=='CANCELLING'):
     updateStatus('Canceled', jobid, start, 'NOW()')
-    #sql="UPDATE run_history SET start='" + start +  "', stop=NOW(), status='Canceled' WHERE jobid='" + jobid + "'"
-elif (status=='COMPLETE'):
+elif (status=='COMPLETE') or (status=='EXECUTOR_ERROR'):
     stop=runLog['task_finished']
     ram=0.0
     cpu=0.0
     taskIds={}
     i=1
     taskSteps={}
+    taskStdout={}
 
     #retrieve workflow outputs
     for output in outputs:
@@ -150,7 +147,6 @@ elif (status=='COMPLETE'):
             url=outputs[output]['location']
             localpath=outFolder + '/' + name
             if outClass=='File':
-
                 with FTP(ftpdomain) as ftp:
                     ftp.login(ftpuser, ftppass)
                     # Remove the protocol "ftp://" and the domain
@@ -161,9 +157,10 @@ elif (status=='COMPLETE'):
                         ftp.retrbinary("RETR %s" % remotepath, open(localpath, 'wb').write)
                     else:
                         try:
+                            
                             ftp.rename(remotepath,localpath)
                         except error_perm as err_perm:
-                            print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stder)
+                            print("Cannot rename file %s to %s" % (remotepath,localpath), file=sys.stderr)
     #for each task collect its info
     #clean up tesk jobs after keeping their logs
     for log in taskLogs:
@@ -172,55 +169,17 @@ elif (status=='COMPLETE'):
         ram+=float(resources['ram_gb'])
         taskIds[log['id']]=log['name']
         taskSteps[i]=log['id']
+        taskStdout[log['id']]=log['logs'][0]['logs'][0]['stdout']
         i+=1
     
     ram/=len(taskLogs);
     cpu/=len(taskLogs);
+    if (status=='COMPLETE'):
+        updateStatus('Complete', jobid, start, stop, ram, int(cpu))
+    elif (status=='EXECUTOR_ERROR'):
+        updateStatus('Error', jobid, start, 'NOW()')
 
-    updateStatus('Complete', jobid, start, stop, ram, int(cpu))
-
-    # Logs
-    kube_command='kubectl get pods -n ' + teskNamespace + ' --no-headers | tr -s " "'
-    try:
-        out=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
-    except subprocess.CalledProcessError as exc:
-        print(exc.output)
-        exit(2)
-
-    out=out.decode().split('\n')
-    podLogs={}
-    for line in out:
-        pod=line.split(' ')
-        if len(pod)==0:
-            continue
-        pod=pod[0].strip()
-
-        if '-ex-' not in pod:
-            continue
-
-        podTokens=pod.split('-')
-        task=podTokens[0] + '-' + podTokens[1]
-        
-        if task not in taskIds:
-            continue
-
-        kube_command='kubectl -n' + teskNamespace + ' logs ' + pod
-
-        try:
-            logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
-        except subprocess.CalledProcessError as exc:
-            print(exc.output)
-            exit(3)
-        podLogs[task]=logs.decode()
-
-        subtasks=[task, task+'-ex-00', task + '-outputs-filer', task + '-inputs-filer']
-        for subtask in subtasks:
-            kube_command='kubectl -n' + teskNamespace + ' delete job ' + subtask
-            try:
-                logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
-            except subprocess.CalledProcessError as exc:
-                print(exc.output)
-                continue
+    
     #write logs
     logfile=logPath + '/' + 'logs.txt'
     g=open(logfile,'w')    
@@ -228,7 +187,18 @@ elif (status=='COMPLETE'):
         g.write('>>Step ' + str(i) + ': ' + taskIds[taskSteps[i]] + ' logs\n')
         g.write('------------------------\n')
         try:
-          g.write(podLogs[taskSteps[i]] + '\n')
+          g.write(taskStdout[taskIds[taskSteps[i]]] + '\n')
         except KeyError:
           g.write("NOLOG\n")
     g.close()
+
+    if config["cleanTeskWFJobs"]:
+        for task in taskIds:
+            subtasks=[task, task+'-ex-00', task + '-outputs-filer', task + '-inputs-filer']
+            for subtask in subtasks:
+                kube_command='kubectl -n' + teskNamespace + ' delete job ' + subtask
+                try:
+                    logs=subprocess.check_output(kube_command,stderr=subprocess.STDOUT, shell=True)
+                except subprocess.CalledProcessError as exc:
+                    print(exc.output)
+                    continue
