@@ -180,14 +180,13 @@ elif (status=='COMPLETE') or (status=='EXECUTOR_ERROR'):
         updateStatus('Error', jobid, start, 'NOW()')
 
     
-    #write logs
     logfile=logPath + '/' + 'logs.txt'
     g=open(logfile,'w')    
     for i in range(1,len(taskSteps)):
         g.write('>>Step ' + str(i) + ': ' + taskIds[taskSteps[i]] + ' logs\n')
         g.write('------------------------\n')
         try:
-          g.write(taskStdout[taskIds[taskSteps[i]]] + '\n')
+          g.write(taskStdout[taskSteps[i]] + '\n')
         except KeyError:
           g.write("NOLOG\n")
     g.close()
