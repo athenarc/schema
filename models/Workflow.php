@@ -133,14 +133,36 @@ class Workflow extends \yii\db\ActiveRecord
              * field is optional and empty
              */
             $errors=[];
-            if (($field->optional) && ($field->value==''))
+            if (($field->optional) && ($field->value=='') && ($field->field_type!='boolean'))
             {
                 continue;
             }
-            if ((!$field->optional) && ($field->value==''))
+
+            if ((!$field->optional) && ($field->value=='') && ($field->field_type!='boolean'))
             {
-                $errors=["A required field has an empty value."];
-                return [[],$errors];
+
+                if (isset($field->default_value))
+                {
+                    if ($field->field_type=='boolean')
+                    {
+                        $params[$field->name]=($field->default_value=='False') ? false : true;
+                    }
+                    else if ($field->field_type=='int')
+                    {
+                        $params[$field->name]=(int)$field->default_value;
+                    }
+                    else
+                    {
+                        $params[$field->name]=$field->default_value;
+                    }
+                    continue;
+                }
+                else
+                {
+                    $errors=["Required field '$field->name' has an empty value and no default value is specified."];
+                    return [[],$errors];
+                }
+                
             }
             if (!$field->is_array)
             {
@@ -176,7 +198,7 @@ class Workflow extends \yii\db\ActiveRecord
                 }
                 else if ($field->field_type=='boolean')
                 {
-                    $params[$field->name]=$field->value ? true : false;
+                    $params[$field->name]=$field->value;
                 }
                 else if ($field->field_type=='int')
                 {
@@ -237,7 +259,6 @@ class Workflow extends \yii\db\ActiveRecord
             }
             
         }
-
         return [json_encode($params,JSON_UNESCAPED_SLASHES),$errors];
     }
 
@@ -749,6 +770,9 @@ class Workflow extends \yii\db\ActiveRecord
 
         $filename=$tmpFolder . '/' . 'fields.txt';
         file_put_contents($filename, $fieldValues);
+
+        $filename=$tmpFolder . '/' . 'parameters.txt';
+        file_put_contents($filename, $workflowParams);
 
         $filename=$tmpFolder . '/tmpWorkDir.txt';
         file_put_contents($filename,$tmpWorkflowFolder);
