@@ -346,7 +346,16 @@ class RunFormWidget
         }
         $visualize_class=($type==3) ? '' : 'hidden-element';
         $cancel_class=($commandsDisabled) ? '' : 'hidden-element';
-    
+        
+        if (($name=='WholeExomeSeq') && ($version=='ahm-22'))
+        {
+            $example_url=Url::to(['workflow/whole-exome-workflow']);
+            $hasExample=true;
+        }
+        else
+        {
+            $example_url='javascript:void(0);';
+        }
     /*
      * The control-buttons class is added to all the buttons except
      * the first one, in order to add some css padding
@@ -355,7 +364,7 @@ class RunFormWidget
     <div class="row">
         <div class="col-md-12 text-center">
             <?=Html::a("$play_icon Run",'javascript:void(0);',['id'=>'software-start-run-button', 'class'=>"btn btn-success btn-md",'disabled'=>($commandsDisabled)])?>
-            <?=Html::a("$play_icon Run example",'javascript:void(0);',['id'=>'software-run-example-button', 'class'=>"btn btn-success btn-md control-buttons",'disabled'=>((!$hasExample) || $commandsDisabled)])?>
+            <?=Html::a("$play_icon Run example",$example_url,['id'=>'software-run-example-button', 'class'=>"btn btn-success btn-md control-buttons",'disabled'=>((!$hasExample) || $commandsDisabled)])?>
             <?=Html::a("$instructions_icon Instructions</span>",null,['id'=>'instructions-btn', 'data-toggle'=>'modal','data-target'=>"#per", 'class'=>'btn btn-secondary btn-md instructions control-buttons'])?>
             <?=Html::a("$visualize_icon Visualize",null,['id'=>'visualization-btn', 'class'=>"btn btn-primary btn-md $visualize_class control-buttons"])?>
             <?=Html::a("$cancel_icon Cancel ",'javascript:void(0);',['id'=>'software-cancel-button', 'class'=>"btn btn-danger $cancel_class control-buttons"])?></div>

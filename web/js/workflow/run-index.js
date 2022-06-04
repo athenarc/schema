@@ -159,8 +159,9 @@ $(document).ready(function() {
 	});
 
 	$("#software-run-example-button").click(function(){
+		
 		var disabled = $(this).attr('disabled');
-		if (!disabled)
+		if ((!disabled) && ($(this).attr('href')=='javascript:void(0);'))
 		{
 
 			$("#hidden_example_input").val("1");

@@ -20,7 +20,6 @@
  *  along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  *
  ************************************************************************************/ 
-
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -38,13 +37,6 @@ use app\components\JobResourcesWidget;
 
 echo Html::CssFile('@web/css/workflow/run.css');
 $this->registerJsFile('@web/js/workflow/run-index.js', ['depends' => [\yii\web\JqueryAsset::className()]] );
-
-
-
-
-  
-
-  
 
 
 $this->title = "Workflow ($name v.$version) ";

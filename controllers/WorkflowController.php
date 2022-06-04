@@ -1436,6 +1436,99 @@ class WorkflowController extends Controller
         return $this->render('add_example',[ 'fields' => $fields, 'name'=>$name, 'version'=>$version, 'valueErrors'=>$valueErrors]);
     }
 
-    
+    public function actionWholeExomeWorkflow()
+    {
+
+        $workflow_data=Yii::$app->params['userDataPath'] . '/whole_exome_data';
+        $username=explode('@',User::getCurrentUser()['username'])[0];
+        $remote_data='/'. $username;
+        // FTP
+        $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
+        $login_result = ftp_login($conn_id,
+                                Yii::$app->params['ftpUser'],
+                                Yii::$app->params['ftpPass']);
+
+        if (!$login_result) {
+            error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
+        }
+        ftp_pasv($conn_id,true);
+
+        Workflow::ftp_put_dir($conn_id, $remote_data, $workflow_data); 
+        /*
+         * Get name and version from the browser link
+         */
+        
+        
+        $workflow=Workflow::find()->where(['name'=>'WholeExomeSeq','version'=>'ahm-22'])->one();
+        
+
+
+        /*
+         * If the posted values are filled, use that
+         * or assign default values
+         */
+
+        $name=$workflow->name;
+        $version=$workflow->version;
+        $project='';
+        $outFolder='output';
+        $ftpOutFoler=$remote_data . '/' . $outFolder;
+        if (!@ftp_chdir($conn_id, $ftpOutFoler))
+        {
+
+            if (!@ftp_mkdir($conn_id, $ftpOutFoler))
+            {
+                error_log("ERROR while creating folder $folder");
+            }
+        }
+
+        $maxMem=Yii::$app->params['standaloneResources']['maxRam'];
+        $maxCores=Yii::$app->params['standaloneResources']['maxCores'];
+
+        $workflow=Workflow::find()->where(['name'=>$name,'version'=>$version])->one();
+        $workflow_instructions=$workflow->instructions;
+        $visualize=$workflow->visualize;
+
+        $fields=WorkflowInput::find()->where(['workflow_id'=>$workflow->id])->orderBy(['position'=> SORT_ASC])->all();
+        /*
+         * fill the values for the fields and get back that object
+         */
+        $fields=Workflow::getWholeExomeFieldValues($workflow_data,$fields);            
+
+
+        /* 
+         * Add parameters for the active form
+         */
+        $form_params =
+        [
+            'action' => URL::to(['workflow/run','name'=>$name, 'version'=>$version, 'project'=>$project]),
+            'options' => 
+            [
+                'class' => 'workflow_arguments_form',
+                'id'=> "workflow_arguments_form"
+            ],
+            'method' => 'POST'
+        ];
+        
+        
+        $hasExample=true; 
+        
+        $superadmin=(User::hasRole("Admin", $superAdminAllowed = true)) ? 1 : 0;
+        $quotas=Software::getOndemandProjectQuotas($username,$project)[0];
+        $uploadedBy=$workflow->uploaded_by;
+
+        $jobUsage=0;
+        $jobid='';
+        $errors='';
+        $runErrors='';
+        $type=3;
+
+        return $this->render('run', ['form_params'=>$form_params, 'name'=>$name, 
+            'version'=>$version,  'jobid'=>$jobid, 
+            'errors'=>$errors, 'runErrors'=>$runErrors,'fields'=>$fields,
+            'example' => '0', 'hasExample'=>$hasExample,
+            'username'=>$username,'superadmin'=>$superadmin,'uploadedBy'=>$uploadedBy,'jobUsage'=>$jobUsage,'quotas'=>$quotas, 'workflow_instructions'=>$workflow_instructions,
+            'maxMem'=>$maxMem, 'maxCores'=>$maxCores, 'project'=>$project,'outFolder' => $outFolder, 'type'=>$type, 'visualize'=>$visualize]);
+    }
     
 }

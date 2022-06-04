@@ -133,14 +133,36 @@ class Workflow extends \yii\db\ActiveRecord
              * field is optional and empty
              */
             $errors=[];
-            if (($field->optional) && ($field->value==''))
+            if (($field->optional) && ($field->value=='') && ($field->field_type!='boolean'))
             {
                 continue;
             }
-            if ((!$field->optional) && ($field->value==''))
+
+            if ((!$field->optional) && ($field->value=='') && ($field->field_type!='boolean'))
             {
-                $errors=["A required field has an empty value."];
-                return [[],$errors];
+
+                if (isset($field->default_value))
+                {
+                    if ($field->field_type=='boolean')
+                    {
+                        $params[$field->name]=($field->default_value=='False') ? false : true;
+                    }
+                    else if ($field->field_type=='int')
+                    {
+                        $params[$field->name]=(int)$field->default_value;
+                    }
+                    else
+                    {
+                        $params[$field->name]=$field->default_value;
+                    }
+                    continue;
+                }
+                else
+                {
+                    $errors=["Required field '$field->name' has an empty value and no default value is specified."];
+                    return [[],$errors];
+                }
+                
             }
             if (!$field->is_array)
             {
@@ -1190,5 +1212,89 @@ class Workflow extends \yii\db\ActiveRecord
     public static function enclose($string)
     {
         return "'" . $string . "'";
+    }
+
+    public static function ftp_put_dir($ftp, $remote_dirname, $local_dirname, $mode=FTP_BINARY) 
+    {
+        $success = true;
+
+        // try
+        // {
+
+            // If necessary, create the remote directory.
+            if (!@ftp_chdir($ftp, $remote_dirname)) {
+                if (ftp_mkdir($ftp, $remote_dirname) === false) {
+                    $success = false;
+                }
+            }
+        // }
+        // catch (\Exception $e)
+        // {
+        //     print_r($remote_dirname);exit(0);
+        // }
+
+        $dir = dir($local_dirname);
+        while ($f = $dir->read()) {
+            if ($f === '.' || $f === '..') {
+                continue;
+            }
+            $lf = $local_dirname . '/' . $f;
+            $rf = $remote_dirname . '/' . $f;
+
+            if (is_dir($lf)) {
+                if (!self::ftp_put_dir($ftp, $rf, $lf, $mode)) {
+                    $success = false;
+                }
+            } else {
+                if (!ftp_put($ftp, $rf, $lf, $mode)) {
+                    $success = false;
+                }
+            }
+        }
+        $dir->close();
+
+        return $success;
+    }
+    public static function getWholeExomeFieldValues($folder,$fields)
+    {
+        
+        $file=$folder . '/fields.txt';
+        if (file_exists($file))
+        {  
+            $content=file_get_contents($file);
+        }
+        else
+        {
+            return $fields;
+        }
+
+        
+        // print_r($file);
+        $json=json_decode($content,true);
+        foreach ($fields as $field)
+        {
+            if (!array_key_exists($field->name,$json))
+            {
+                return $fields;
+            }
+
+            if ($field->field_type=='enum')
+            {
+                $tmp_array=explode('|',$field->enum_fields);
+                $field->dropdownValues=[];
+                foreach ($tmp_array as $item)
+                {
+                    $field->dropdownValues[$item]=$item;
+                }
+                $field->dropdownSelected=$json[$field->name];
+                
+            }
+            else
+            {
+                $field->value=$json[$field->name];
+            }
+        }
+
+        return $fields;
     }
 }

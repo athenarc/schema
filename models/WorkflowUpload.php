@@ -199,6 +199,7 @@ class WorkflowUpload extends \yii\db\ActiveRecord
         $dir=$workflow->location;
         $working_dir=getcwd();
         $command2="cwltool --print-dot ". $dir. " | dot -Tsvg > ". $working_dir . "/img/workflows/$name.svg";
+        $command2=Software::sudoWrap($command2);
         Software::exec_log($command2, $out2, $ret2);
         if ($ret2 != 0) {
           error_log("ERROR while running: ".$command2);
