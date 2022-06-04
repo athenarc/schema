@@ -696,7 +696,15 @@ class Workflow extends \yii\db\ActiveRecord
          * Save the outFolder field without the user data path in the database
          */
         $outFieldValue=$outFolder;
-        $outFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0] . '/' . $outFolder;
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $outFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0] . '/' . $outFolder;
+        }
+        else
+        {
+            $outFolder=explode('@',User::getCurrentUser()['username'])[0] . '/' . $outFolder;
+        }
+        
         $data=$response->data;
         
         $jobid=$data['run_id'];

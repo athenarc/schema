@@ -188,10 +188,35 @@ class SiteController extends Controller
 
                 $userFolder=Yii::$app->params['userDataPath'] . $username=explode('@',$identity->username)[0];;
 
-                if (!is_dir($userFolder))
+                if(Yii::$app->params['ftpLocal'])
                 {
-                    Software::exec_log("mkdir $userFolder");
-                    Software::exec_log("chmod 777 $userFolder");
+                    if (!is_dir($userFolder))
+                    {
+                        Software::exec_log("mkdir $userFolder");
+                        Software::exec_log("chmod 777 $userFolder");
+                    }
+                }
+                else
+                {
+                    $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
+                    $login_result = ftp_login($conn_id,
+                                            Yii::$app->params['ftpUser'],
+                                            Yii::$app->params['ftpPass']);
+
+                    if (!$login_result) {
+                        error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
+                    }
+                    ftp_pasv($conn_id,true);
+
+                    $folder=explode('@',$identity->username)[0];
+                    if (!@ftp_chdir($conn_id, $folder))
+                    {
+
+                        if (!@ftp_mkdir($conn_id, $folder))
+                        {
+                            error_log("ERROR while creating folder $folder");
+                        }
+                    }
                 }
 
             }

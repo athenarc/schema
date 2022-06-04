@@ -84,7 +84,8 @@ class FilebrowserController extends Controller
             return [];
             
         }
-
+        if (Yii::$app->params['ftpLocal'])
+        {
             $roots = array([
                 'driver' => 'LocalFileSystem',
                 'alias' => 'Local '.explode('@',Userw::getCurrentUser()['username'])[0],
@@ -100,24 +101,24 @@ class FilebrowserController extends Controller
                         null;
                 },
             ]);
-
-        if(Yii::$app->params['ftpLocal'] == false)
+        }
+        else
         {
-            array_push($roots, [
+            $roots=array([
                 'driver' => 'FTP',
-                'alias' => 'FTP '.explode('@',Userw::getCurrentUser()['username'])[0],
+                'alias' => 'FTP '. explode('@',Userw::getCurrentUser()['username'])[0],
                 'host'   => Yii::$app->params['ftpIp'],
                 'user'   => Yii::$app->params['ftpUser'],
                 'pass'   => Yii::$app->params['ftpPass'],
-                'path'   => Yii::$app->params['userDataPath'] . '/' . explode('@',Userw::getCurrentUser()['username'])[0],
+                'mode'  => 'passive',
+                'path'   => explode('@',Userw::getCurrentUser()['username'])[0] . '/',
                 'accessControl' => function ($attr, $path) {
                     // hide files/folders which begins with dot
                     return (strpos(basename($path), '.') === 0) ?
                         !($attr == 'read' || $attr == 'write') :
                         null;
                 },
-            ]
-            );
+            ]);
         }
 
         return [

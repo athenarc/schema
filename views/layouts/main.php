@@ -131,9 +131,9 @@ echo Html::cssFile('https://use.fontawesome.com/releases/v5.5.0/css/all.css', ['
     if(Yii::$app->user->getIsGuest() == false)
     {
     
-        $menuItems[]=['label' => 'Software', 'url' => ['/software/index']];
+        // $menuItems[]=['label' => 'Software', 'url' => ['/software/index']];
         $menuItems[]=['label' => 'Workflows', 'url' => ['/workflow/index']];
-        $menuItems[]=['label' => 'Jupyter', 'url' => ['/jupyter/index']];
+        // $menuItems[]=['label' => 'Jupyter', 'url' => ['/jupyter/index']];
         $menuItems[]=['label' => 'Data','url' => ['/filebrowser/index']];
         $menuItems[]=['label' => 'Job history','url' => ['/software/history']];
         $menuItems[]=['label' => 'RO-Crate objects','url' => ['/software/ro-crate-history','page'=>1,'search_parameter'=>'']];

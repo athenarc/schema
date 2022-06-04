@@ -234,6 +234,8 @@ class WorkflowController extends Controller
             }
             else
             {
+                
+                $exampleFolder=Yii::$app->params['userDataPath'] . '/' .  'workflow_examples/' . $name . '/' . $version . '/input';
                 // FTP
                 $conn_id = ftp_connect(Yii::$app->params['ftpIp']);
                 $login_result = ftp_login($conn_id,
@@ -245,9 +247,37 @@ class WorkflowController extends Controller
                 }
                 ftp_pasv($conn_id,true);
 
-
+                $folder=explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/';
                 if (!@ftp_chdir($conn_id, $folder))
                 {
+
+                    if (!@ftp_mkdir($conn_id, $folder))
+                    {
+                        error_log("ERROR while creating folder $folder");
+                    }
+                }
+                $folder=explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name;
+                if (!@ftp_chdir($conn_id, $folder))
+                {
+
+                    if (!@ftp_mkdir($conn_id, $folder))
+                    {
+                        error_log("ERROR while creating folder $folder");
+                    }
+                }
+                $folder=explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name . '/' . $version;
+                if (!@ftp_chdir($conn_id, $folder))
+                {
+
+                    if (!@ftp_mkdir($conn_id, $folder))
+                    {
+                        error_log("ERROR while creating folder $folder");
+                    }
+                }
+                $folder=explode('@',User::getCurrentUser()['username'])[0]  . '/'. 'workflow_examples/' . $name . '/' . $version . '/input';
+                if (!@ftp_chdir($conn_id, $folder))
+                {
+
                     if (!@ftp_mkdir($conn_id, $folder))
                     {
                         error_log("ERROR while creating folder $folder");
@@ -261,8 +291,11 @@ class WorkflowController extends Controller
                 {
                     if ($value != '.' && $value != '..')
                     {
-                        $put_return = ftp_put($conn_id, $folder.'/'.$value, $exampleFolder.'/'.$value);
-                        if(!$put_return)
+                        try
+                        {
+                            $put_return = ftp_put($conn_id, $folder.'/'.$value, $exampleFolder.'/'.$value);
+                        }
+                        catch (\Exception $e)
                         {
                             error_log("ERROR while transferring the file '$exampleFolder/$value' to ftp://".Yii::$app->params['ftpIp'].$folder.'/'.$value);
                         }
@@ -852,14 +885,16 @@ class WorkflowController extends Controller
     public function actionSelectOutput()
     {
         // $model=new Software;
-        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+        
 
         if(Yii::$app->params['ftpLocal'])
         {
+            $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
             $folders=Workflow::listDirectories($directory);
         }
         else
         {
+            $directory=explode('@',User::getCurrentUser()['username'])[0];
             $folders=Workflow::listDirectoriesFTP($directory, null);
         }
 
@@ -872,10 +907,12 @@ class WorkflowController extends Controller
 
         if(Yii::$app->params['ftpLocal'])
         {
+            $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
             $files=Workflow::listFiles($directory);
         }
         else
         {
+            $directory=explode('@',User::getCurrentUser()['username'])[0];
             $files=Workflow::listFilesFTP($directory, null);
         }
 
@@ -884,14 +921,16 @@ class WorkflowController extends Controller
 
     public function actionSelectFolder($caller)
     {
-        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
+        
 
         if(Yii::$app->params['ftpLocal'])
         {
+            $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
             $folders=Workflow::listDirectories($directory);
         }
         else
-        {
+        {   
+            $directory=explode('@',User::getCurrentUser()['username'])[0] . '/';
             $folders=Workflow::listDirectoriesFTP($directory, null);
         }
 
@@ -900,30 +939,32 @@ class WorkflowController extends Controller
 
     public function actionSelectFileMultiple($caller)
     {
-        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
 
-        $files=Workflow::listFiles($directory);
-        // foreach ($files as $directory=>$items)
-        // {
-        //     print_r($directory . '<br />');
-        //     print_r($items);
-        //     print_r('<br />' . '<br />');
-        // }
-        // exit(0);
+        if(Yii::$app->params['ftpLocal'])
+        {
+            $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0];
+            $files=Workflow::listFiles($directory);
+        }
+        else
+        {
+            $directory=explode('@',User::getCurrentUser()['username'])[0];
+            $files=Workflow::listFilesFTP($directory, null);
+        }
+        
         
         return $this->renderAjax('file_list_multiple',['files'=>$files, 'caller'=>$caller]);
     }
 
     public function actionSelectFolderMultiple($caller)
     {
-        $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
-
         if(Yii::$app->params['ftpLocal'])
         {
+            $directory=Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/';
             $folders=Workflow::listDirectories($directory);
         }
         else
-        {
+        {   
+            $directory=explode('@',User::getCurrentUser()['username'])[0] . '/';
             $folders=Workflow::listDirectoriesFTP($directory, null);
         }
 
