@@ -9,7 +9,7 @@ SCHeMa (Scheduler for scientific Containers on clusters of Heterogeneous Machine
 **If you are using SCHeMa for your research please cite**: Thanasis Vergoulis, Konstantinos Zagganas, Loukas Kavouras, Martin Reczko, Stelios Sartzetakis, and Theodore Dalamagas. "SCHeMa: Scheduling Scientific Containers on a Cluster of Heterogeneous Machines." arXiv preprint arXiv:2103.13138 (2021).
 
 ## Deploying with Helm (recommended)
-This helm chart includes the main SCHeMa web interface, along with a private docker registry, a postgres database server and an FTP server (for use by TESK).
+This helm chart includes the main SCHeMa web interface, along with a private docker registry, a postgres database server and an FTP server (for use by TESK). 
 
 ### Prerequisites
 In order to be able to install SCHeMa you need:
