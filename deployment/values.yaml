@@ -1,0 +1,158 @@
+# Default values for schema.
+
+namespace: schema
+namespaces:
+  jobs: schema
+  tesk: tesk
+  registry: schema
+  jupyter: schema
+  minio: schema
+domain: your.domain-name.com 
+
+# This is the app for the main schema interface
+schema:
+  app_name: schema
+
+  volume:
+    deploy_volume: true
+    size: 50Gi
+    name: schema-volume
+    storageClass: nfs-client
+
+  cleanTeskJobs: true #Set true or false if you want the system to clean TESK jobs after execution (only for clusters that run SCHeMa and TESK at the same time).
+
+  deployment:
+    replicaCount: 1
+    image: diwis/schema:latest
+    cluster_endpoint: #https://your_k8s_api_endpoint:443
+    cluster: true
+
+  service:
+    type: ClusterIP # Choose between ClusterIP or Nodeport
+    nodePort: 30666 # If nodeport is chosen provide a port between 30000 and 32767 for the service
+
+  jobFileStore: s3 #s3 or ftp
+
+  ingress:
+    enabled: true
+    https:
+      enabled: true
+      issuer: letsencrypt-prod # Insert your certificate cluster issuer (see https://dev.to/chrisme/setting-up-nginx-ingress-w-automatically-generated-letsencrypt-certificates-on-kubernetes-4f1k )
+
+#IP of the local NFS exposing dir
+nfsIp: <NFS server IP>
+
+
+# This is the docker registry deployed along with schema
+registry:
+  app_name: registry
+  data_volume:
+    deploy_volume: true
+    storageClass: nfs-client
+    size: 50Gi
+    name: registry-volume
+
+  credentials_volume:
+    deploy_volume: true
+    storageClass: nfs-client
+    size: 10Mi
+    name: registry-auth
+
+  deployment:
+    username: test #<your_username>
+    password: test #<your_password>
+    image: registry:2
+    initImage: marcnuri/htpasswd
+
+  service:
+    type: ClusterIP # Choose between ClusterIP or Nodeport
+    nodePort: 30667 # If nodeport is chosen provide a port between 30000 and 32767 for the service
+
+  ingress:
+    enabled: true
+    https:
+      enabled: true
+      issuer: letsencrypt-prod
+
+
+# This is the postgres database required for data storage
+postgres:
+  app_name: postgres
+
+  volume:
+    deploy_volume: true
+    size: 50Gi
+    name: postgres-volume
+    storageClass: nfs-client
+
+  deployment:
+    replicaCount: 1
+    image: postgres
+    dbUsername: schema
+    dbPassword: <your_password>
+    dbName: schema
+
+  service:
+    type: ClusterIP # Choose between ClusterIP or Nodeport
+    nodePort: 30668 # If nodeport is chosen provide a port between 30000 and 32767 for the service
+
+
+# FTP service deployed alongside schema for TESK file access
+ftp:
+  app_name: ftp
+  active: true
+  deployment:
+      image: diwis/schema-ftp:1
+      domain: ftp
+      username: test
+      password: test
+
+minio:
+  app_name: minio
+  active: true
+  deployment:
+      root_user: <your_username> # at least 3 characters long
+      root_password: <your_password> # at least 8 characters long
+      site_region: us-west-2
+  ingress:
+    enabled: true
+    https:
+      enabled: true
+      issuer: letsencrypt-prod
+
+jupyter:
+  app_name: jupyter
+
+tesk:
+  url: <TESK installation URL>
+
+wes:
+  CWL:
+    enabled: true
+    url: <CWL WES endpoint>
+    fileStore: s3 #s3 or ftp
+  Nextflow:
+    enabled: false
+    url: <Nextflow WES endpoint>
+    fileStore: s3 #s3 or ftp
+  SnakeMake:
+    enabled: false
+    url: <Snakemake WES endpoint>
+    fileStore: s3 #s3 or ftp
+  WDL:
+    enabled: false
+    url: <WDL WES endpoint>
+    fileStore: s3 #s3 or ftp
+
+
+
+standalone:
+  isStandalone: true
+  resources:
+    maxCores: 8
+    maxRam: 16
+
+website_name: SCHeMa #Change according to your deployment
+
+metrics:
+  url: <metrics_url>
