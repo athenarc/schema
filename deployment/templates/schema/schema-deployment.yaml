@@ -26,14 +26,24 @@ spec:
           - name: schema-config
             mountPath: /app/web/schema/config/db.php
             subPath: db.php
+          {{ if .Values.auth_db.enabled }}
+          - name: schema-config
+            mountPath: /app/web/schema/config/db2.php
+            subPath: db2.php
+          {{ end }}
           - name: schema-config
             mountPath: /app/web/schema/config/params.php
             subPath: params.php
           - name: schema-config
             mountPath: /app/web/schema/scheduler_files/configuration.json
             subPath: configuration.json
+          {{ if .Values.auth_db.enabled }}
+          - name: schema-config
+            mountPath: /app/web/schema/views/user/login.php
+            subPath: user.php
+          {{ end }}
       volumes:
-        - name: {{ .Values.schema.volume.name }}
+        - name: {{.Values.schema.volume.name }}
           persistentVolumeClaim:
             claimName: {{ .Values.schema.volume.name }}
         - name: schema-config
@@ -44,8 +54,16 @@ spec:
                 path: configuration.json
               - key: db.php
                 path: db.php
+              {{ if .Values.auth_db.enabled }}
+              - key: db2.php
+                path: db2.php
+              {{ end }}
               - key: params.php
                 path: params.php
+              {{ if .Values.auth_db.enabled }}
+              - key: user.php
+                path: user.php
+              {{ end }}
             secretName: schema-config
       restartPolicy: Always
       imagePullSecrets:

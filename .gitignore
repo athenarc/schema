@@ -75,3 +75,6 @@ docker-compose.yml
 /web/.htaccess
 /web/img/faq
 .htaccess
+deployment-gr
+deployment-cz
+deployment-fi
