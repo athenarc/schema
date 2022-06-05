@@ -104,8 +104,8 @@ ftp:
   deployment:
       image: diwis/schema-ftp:1
       domain: ftp
-      username: tesk-1
-      password: Z6fsH6MG
+      username: test
+      password: test
 
 minio:
   app_name: minio
