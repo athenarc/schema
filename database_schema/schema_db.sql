@@ -1779,10 +1779,10 @@ COPY public.jupyter_images (id, description, image) FROM stdin;
 5	Tensorflow notebook	jupyter/tensorflow-notebook:latest
 \.
 
-alter table workflow add column workflow_type varchar(100);
-alter table workflow_upload add column workflow_type varchar(100);
-create index workflow_type_idx on workflow_upload(workflow_type);
-create index workflow_upload_type_idx on workflow_upload(workflow_type);
-alter table jupyter_images add column gpu boolean default false;
-alter table jupyter_server add column state varchar(20);
-alter table jupyter_server add column image_id bigint;
+alter table public.workflow add column workflow_type varchar(100);
+alter table public.workflow_upload add column workflow_type varchar(100);
+create index workflow_type_idx on public.workflow_upload(workflow_type);
+create index workflow_upload_type_idx on public.workflow_upload(workflow_type);
+alter table public.jupyter_images add column gpu boolean default false;
+alter table public.jupyter_server add column state varchar(20);
+alter table public.jupyter_server add column image_id bigint;
