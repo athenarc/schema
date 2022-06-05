@@ -502,7 +502,7 @@ class WorkflowController extends Controller
         $maxMem=(!isset($_POST['memory'])) || (empty($_POST['memory'])) || floatval($_POST['memory'])<=0 || (floatval($_POST['memory']) > floatval($quotas['ram'])) ? floatval($quotas['ram']) : floatval($_POST['memory']);
         $maxCores=(!isset($_POST['cores'])) || (empty($_POST['cores'])) || floatval($_POST['cores'])<=0 || (floatval($_POST['cores']) > floatval($quotas['cores'])) ? floatval($quotas['cores']) : floatval($_POST['cores']);
 
-        $workflowAlreadyRunning=Workflow::isAlreadyRunning($jobid);
+        $workflowAlreadyRunning=Workflow::isAlreadyRunning($jobid, $workflow->workflow_type);
         
         /*
          * If the form has posted, it is not empty and the pod is not already running,
@@ -545,11 +545,12 @@ class WorkflowController extends Controller
     public function actionGetLogs($jobid)
     {
 
-        $results=Workflow::getLogs($jobid);
+        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+        $results=Workflow::getLogs($jobid,$history->workflow_lang);
         $taskLogs=$results[2];
         $status=$results[1];
         $time=$results[0];
-        $history=RunHistory::find()->where(['jobid'=>$jobid])->one();
+        
         $project=$history->project;
 
         return $this->renderPartial('logs',['taskLogs'=>$taskLogs, 'status'=>$status, 'time'=>$time, 'project'=>$project]);

@@ -645,22 +645,7 @@ class Workflow extends \yii\db\ActiveRecord
         $newLocationFile=explode('/',$newLocation);
         $newLocationFile=end($newLocationFile);
 
-        if ($workflow->workflow_type=='CWL')
-        {
-            $url=Yii::$app->params['workflows']['CWL']['endpoint'] . '/ga4gh/wes/v1/runs';
-        }
-        else if ($workflow->workflow_type=='Nextflow')
-        {
-            $url=Yii::$app->params['workflows']['Nextflow']['endpoint'] . '/ga4gh/wes/v1/runs';
-        }
-        else if ($workflow->workflow_type=='SnakeMake')
-        {
-            $url=Yii::$app->params['workflows']['SnakeMake']['endpoint'] . '/ga4gh/wes/v1/runs';
-        }
-        else if ($workflow->workflow_type=='WDL')
-        {
-            $url=Yii::$app->params['workflows']['WDL']['endpoint'] . '/ga4gh/wes/v1/runs';
-        }
+        $url=self::getWes($workflow->workflow_type);
         
         $client = new Client();
         try
@@ -735,6 +720,7 @@ class Workflow extends \yii\db\ActiveRecord
                     "max_ram"=> $maxMem,
                     "max_cpu" => $maxCores,
                     "software_id" => $workflow->id,
+                    "workflow_lang"=> $workflow->workflow_type,
                     'type'=>'workflow',
 
                 ]
@@ -781,7 +767,7 @@ class Workflow extends \yii\db\ActiveRecord
 
         $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py");
         $arguments=[
-            $monitorScript, self::enclose($jobid),self::enclose(Yii::$app->params['wesEndpoint']),
+            $monitorScript, self::enclose($jobid),self::enclose($url),
             self::enclose(Yii::$app->params['teskEndpoint']), self::enclose($outFolder), self::enclose($tmpFolder)];
         $monitorCommand=implode(' ',$arguments);
         // print_r($monitorCommand);
@@ -794,14 +780,14 @@ class Workflow extends \yii\db\ActiveRecord
 
     }
 
-    public static function isAlreadyRunning($jobid)
+    public static function isAlreadyRunning($jobid,$lang)
     {
         $stopStates=['COMPLETE'=>false,'EXECUTOR_ERROR'=>false,'SYSTEM_ERROR'=>false,'CANCELED'=>false,'CANCELING'=>false,];
         if (empty($jobid))
         {
             return false;
         }
-        $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs/' . $jobid;
+        $url=self::getWes($lang) . '/' . $jobid;
         $client = new Client();
         $response = $client->createRequest()
                 ->addHeaders(['Content-Type'=>'application/json','Accept'=>'application/json'])
@@ -825,9 +811,9 @@ class Workflow extends \yii\db\ActiveRecord
 
     }
 
-    public static function getLogs($jobid)
+    public static function getLogs($jobid,$lang)
     {
-        $url=Yii::$app->params['wesEndpoint'] . '/ga4gh/wes/v1/runs/' . $jobid;
+        $url=self::getWes($lang) . '/' . $jobid;
         $client = new Client();
         $response = $client->createRequest()
                 ->addHeaders(['Content-Type'=>'application/json','Accept'=>'application/json'])
@@ -944,24 +930,6 @@ class Workflow extends \yii\db\ActiveRecord
         }
 
         return [$time,$status,$logs];
-
-    }
-
-    public static function checkStatus($status, $job) {
-
-        if(strtoupper($job->status)!=$status) {
-
-            error_log("DB inconsistent: '".strtoupper($job->status)."'!=".$status);
-
-            $monitorScript=Software::sudoWrap(Yii::$app->params['scriptsFolder'] . "/workflowMonitorAndClean.py");
-            $tmpFolder=Yii::$app->params['tmpFolderPath'] . '/' . $job->jobid;
-            $outFolder=Yii::$app->params['userDataPath'] . '/' . explode('@',User::getCurrentUser()['username'])[0] . '/' . $job->omountpoint;
-            $arguments=[
-                $monitorScript, self::enclose($job->jobid),self::enclose(Yii::$app->params['wesEndpoint']),
-                self::enclose(Yii::$app->params['teskEndpoint']), self::enclose($outFolder), self::enclose($tmpFolder)];
-            $monitorCommand=implode(' ',$arguments);
-            shell_exec(sprintf('%s >>%s 2>&1 &', $monitorCommand, $tmpFolder.'/workflowMonitorAndClean.log'));
-        }
 
     }
 
@@ -1206,5 +1174,27 @@ class Workflow extends \yii\db\ActiveRecord
     public static function enclose($string)
     {
         return "'" . $string . "'";
+    }
+
+    public static function getWes($lang)
+    {
+        if ($lang=='CWL')
+        {
+            $url=Yii::$app->params['workflows']['CWL']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($lang=='Nextflow')
+        {
+            $url=Yii::$app->params['workflows']['Nextflow']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($lang=='SnakeMake')
+        {
+            $url=Yii::$app->params['workflows']['SnakeMake']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+        else if ($lang=='WDL')
+        {
+            $url=Yii::$app->params['workflows']['WDL']['endpoint'] . '/ga4gh/wes/v1/runs';
+        }
+
+        return $url;
     }
 }
