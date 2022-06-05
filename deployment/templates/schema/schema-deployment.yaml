@@ -27,17 +27,11 @@ spec:
             mountPath: /app/web/schema/config/db.php
             subPath: db.php
           - name: schema-config
-            mountPath: /app/web/schema/config/db2.php
-            subPath: db2.php
-          - name: schema-config
             mountPath: /app/web/schema/config/params.php
             subPath: params.php
           - name: schema-config
             mountPath: /app/web/schema/scheduler_files/configuration.json
             subPath: configuration.json
-          - name: schema-config
-            mountPath: /app/web/schema/views/user/login.php
-            subPath: user.php
       volumes:
         - name: {{ .Values.schema.volume.name }}
           persistentVolumeClaim:
@@ -50,12 +44,8 @@ spec:
                 path: configuration.json
               - key: db.php
                 path: db.php
-              - key: db2.php
-                path: db2.php
               - key: params.php
                 path: params.php
-              - key: user.php
-                path: user.php
             secretName: schema-config
       restartPolicy: Always
       imagePullSecrets:
