@@ -151,7 +151,6 @@ class SiteController extends Controller
                 User::createNewUser($username, $persistent_id);
                 $identity=User::findByUsername($username);
                 $message="A new user with username $username has been created";
-                EmailEventsAdmin::NotifyByEmail('user_creation', -1,$message);
             }
             else if ((!empty($identityU)) && empty($identityP))
             {
