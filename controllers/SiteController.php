@@ -101,6 +101,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
         $config=SystemConfiguration::find()->one();
         $id=$config->home_page;
         $page=Page::find()->where(['id'=>$id])->one();
@@ -206,7 +207,7 @@ class SiteController extends Controller
                         error_log(sprintf("Login to %s failed", Yii::$app->params['ftpIp']));
                     }
                     ftp_pasv($conn_id,true);
-
+                   
                     $folder=explode('@',$identity->username)[0];
                     if (!@ftp_chdir($conn_id, $folder))
                     {
@@ -228,11 +229,18 @@ class SiteController extends Controller
             else
             {
                 Yii::$app->user->login($identity,0);
+                if (!Userw::hasRole('workflowUser',$superAdminAllowed = false))
+                {
+                    $id=$identity->id;
+                    Userw::assignRole($id,'workflowUser');
+                }
 
                 return $this->goHome();
             }
             
         }
+
+        
         
 
     }
