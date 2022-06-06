@@ -1104,7 +1104,7 @@ class WorkflowController extends Controller
          */
 
         $errors=[];
-        $results=Workflow::getLogs($jobid);
+        $results=Workflow::getLogs($jobid,$history->workflow_lang);
         if (isset($results['error']))
         {
             $jobid=$results['jobid'];
