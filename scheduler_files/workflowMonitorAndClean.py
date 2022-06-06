@@ -80,7 +80,7 @@ except IndexError as ierr:
     print("Use: %s <JOBID> <WES_ENDPOINT> <TES_ENDPOINT> <OUT_FOLDER> <TMP_FOLDER>" % sys.argv[0])
     exit(1)
 
-workflowUrl=wesEndpoint + '/ga4gh/wes/v1/runs/' + jobid
+workflowUrl=wesEndpoint + '/' + jobid
 
 headers={'Accept':'application/json', 'Content-Type': 'application/json'}
 response = requests.get(workflowUrl,headers=headers)
