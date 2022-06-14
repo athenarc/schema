@@ -302,4 +302,14 @@ class SiteController extends Controller
         return $this->render('help',['page'=>$page]);
     }
 
+    public function actionHealth()
+    {
+        $response=Yii::$app->response;
+        $response->format = \yii\web\Response::FORMAT_JSON;
+        $response->setStatusCode(200);
+        $response->send();
+        return;
+
+    }
+
 }
