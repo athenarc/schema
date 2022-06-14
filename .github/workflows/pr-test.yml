@@ -27,6 +27,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Test build
         run: docker-compose up -d
+      - name: Sleep
+        shell: bash
+        run: sleep 30;
+      - name: curl test
+        shell: bash
+        run: curl -v localhost:8080/index.php?r=site/health
       - name: Test api
         shell: bash
         run: bash test-call.bash
