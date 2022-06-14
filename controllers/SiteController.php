@@ -306,7 +306,7 @@ class SiteController extends Controller
     {
         $response=Yii::$app->response;
         $response->format = \yii\web\Response::FORMAT_JSON;
-        $response->setStatusCode(200); 
+        $response->setStatusCode(200)
         $response->send();
         return;
 
