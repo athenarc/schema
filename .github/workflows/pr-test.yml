@@ -6,15 +6,8 @@ name: Test
 # documentation. 
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
-    types: [closed]
-
-env:
-  IMAGE_NAME: diwis/schema
-
 
 jobs:
   test:
@@ -30,10 +23,10 @@ jobs:
       - name: Sleep
         shell: bash
         run: sleep 30;
-      - name: curl test
+      - name: Test endpoint with output
         shell: bash
-        run: curl -v localhost:8080/index.php?r=site/health
-      - name: Test api
+        run: curl --write-out '%{http_code}' --output /dev/null --silent localhost:8080/index.php?r=site/health
+      - name: Test endpoint
         shell: bash
         run: bash test-call.bash
       - name: End test
