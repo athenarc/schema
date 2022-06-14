@@ -29,13 +29,6 @@ jobs:
         run: docker-compose up -d
       - name: Test api
         shell: bash
-        run: |
-          CODE=`curl --write-out '%{http_code}' --output /dev/null --silent localhost:8080/index.php?r=site/health`;
-          echo $CODE;
-          if [ $CODE!="200" ]
-          then
-            docker-compose down
-            exit 1;
-          fi
+        run: chmod a+x test-api.bash && bash test-api.bash
       - name: End test
         run: docker-compose down
