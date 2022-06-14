@@ -1,0 +1,40 @@
+name: Test
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation. 
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [closed]
+
+env:
+  IMAGE_NAME: diwis/schema
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        run: docker-compose up -d
+      - name: Sleep
+        run: sleep 30s
+        shell: bash
+      - name: Test api
+        shell: bash
+        run: |
+          CODE=`curl --write-out '%{http_code}' --output /dev/null --silent localhost:8080/index.php?r=site/health`;
+          if [ $CODE!="200" ]
+          then
+            exit 1
+      - name: End test
+        run: docker-compose down

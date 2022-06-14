@@ -1,0 +1,7 @@
+version: '2'
+services:
+  php:
+    build: .
+    image: "schema-test:latest"
+    ports:
+      - '8080:8080'

@@ -41,7 +41,6 @@ tests/_support/_generated
 /web/yii
 /web/yii.bat
 /mail
-/docker-compose
 /config/db.php
 /config/db2.php
 /config/params.php
@@ -53,7 +52,6 @@ tests/_support/_generated
 /codeception.yml
 /commands
 /config/db_copy.php
-docker-compose.yml
 /requirements.php
 /runtime
 /tests
