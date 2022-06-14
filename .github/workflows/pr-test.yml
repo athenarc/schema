@@ -25,6 +25,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Test build
         run: docker-compose up -d
       - name: Sleep
         run: sleep 30s
