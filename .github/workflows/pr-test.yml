@@ -27,15 +27,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Test build
         run: docker-compose up -d
-      - name: Sleep
-        run: sleep 30s
-        shell: bash
       - name: Test api
         shell: bash
         run: |
           CODE=`curl --write-out '%{http_code}' --output /dev/null --silent localhost:8080/index.php?r=site/health`;
+          echo $CODE;
           if [ $CODE!="200" ]
           then
+            docker-compose down
             exit 1;
           fi
       - name: End test
