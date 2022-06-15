@@ -40,18 +40,17 @@ class FileListWorkflow
         $indentation=0;
         for ($i=0; $i<$level; $i++) 
             $indentation+=30;
-        // print_r($files);
-        // exit(0);
+        
         foreach ($files as $key=>$value)
         {
-            if (strpos($key,'file_')===false)
+            if (strpos($key,'__file__')===false)
             {
                 $folder_value=str_replace(Yii::$app->params['userDataPath'] . explode('@',User::getCurrentUser()['username'])[0] . '/','',$key);
                 $folder_split=explode('/',$folder_value);
                 $folder_name=end($folder_split);
 
                 echo "<div class='row selection-row'>";
-                echo "<div class='non-selectable col-md-3' style='margin-left:" . $indentation 
+                echo "<div class='non-selectable col-md-7' style='margin-left:" . $indentation 
                             . "px;''><i class='fa fa-folder' aria-hidden='true'></i>&nbsp;&nbsp;$folder_name";
                 echo Html::hiddenInput('hiddenPath',$folder_value);
                 echo "</div></div>";
@@ -67,7 +66,7 @@ class FileListWorkflow
                 $file_split=explode('/',$file_value);
                 $file_name=end($file_split);
                 echo "<div class='row selection-row'>";
-                echo "<div class='selectable col-md-3' style='margin-left:" . $indentation 
+                echo "<div class='selectable col-md-7' style='margin-left:" . $indentation 
                             . "px;''><i class='fa fa-file-alt' aria-hidden='true'></i>&nbsp;&nbsp;$file_name";
                 echo Html::hiddenInput('hiddenPath',$file_value);
                 echo "</div></div>";

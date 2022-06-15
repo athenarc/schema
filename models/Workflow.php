@@ -353,7 +353,7 @@ class Workflow extends \yii\db\ActiveRecord
                 }
                 else
                 {
-                    $results['file_'.$i]=$path;
+                    $results['__file__'.$i]=$path;
                     $i++;
                 }
                 
@@ -400,7 +400,7 @@ class Workflow extends \yii\db\ActiveRecord
             }
             else
             {
-                $results['file_'.$i]=$path;
+                $results['__file__'.$i]=$path;
                 $i++;
             }
         }

@@ -1470,7 +1470,7 @@ class Software extends \yii\db\ActiveRecord
                 }
                 else
                 {
-                    $results['file_'.$i]=$path;
+                    $results['__file__'.$i]=$path;
                     $i++;
                 }
                 
