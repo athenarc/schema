@@ -203,7 +203,7 @@ class JupyterServer extends \yii\db\ActiveRecord
         file_put_contents($file, $json_data);
 
         $command=Yii::$app->params['scriptsFolder'] . "jupyterServerStart.py " . self::enclose($file) . ' 2>&1' ;
-
+        // print_r($command);exit(0);
         $command=Software::sudoWrap($command);
 
         exec($command,$out,$ret);

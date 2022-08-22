@@ -54,8 +54,9 @@ def createServerConfig(sid,cpu,mem,password,folder,image,mount,nfs, namespace, d
     containers.append(container)
 
     pod['template']['spec']['containers']=containers
+
     if (int(mem) > 512) or (int(cpu)>=56):
-        container['resources']={'limits':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}
+        container['resources']={'limits':{'cpu':str(cpu), 'memory':str(mem) + 'Gi'}}
 
     deployment['apiVersion']= 'apps/v1'
     deployment['kind']='Deployment'
