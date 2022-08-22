@@ -80,8 +80,6 @@ except:
 
 
 
-types=set(['string', 'int', 'long', 'float', 'double', 'null', 'File', 'Directory', 'Any','boolean'])
-
 #open db connection and get image id
 conn=psg.connect(host=host, user=dbuser, password=passwd, dbname=dbname)
 cur=conn.cursor()
@@ -99,79 +97,12 @@ conn.commit()
 if len(inputs)==0:
     exit(4)
 
-
-
-
-#create queries for input insertion
-query='INSERT INTO software_inputs(name, position, softwareid, field_type, prefix, separate, optional, default_value) VALUES '
-
-bindingFlag=False
-positionFlag=False
-
-for inpt in inputs:
-    if 'inputBinding' not in inpt.keys():
-        bindingFlag=True
-        continue
-        #exit(32)
-    
-    binding=inpt['inputBinding']
-    # Get position, separate and prefix from inputBinding.
-    # If it does not exist, ignore input
-    if 'position' not in binding:
-        positionFlat=True
-        continue
-    position=binding['position']
-
-    separate='t'
-    if 'separate' in binding:
-        if binding['separate']=='false':
-            separate='f'
-        else:
-            separate='t'
-
-    prefix=''
-    if 'prefix' in binding:
-        prefix=binding['prefix']
-        
-   
-
-    # Get field type and optional
-    if 'type' not in inpt.keys():
-        #stop execution and return because this is serious
-        exit(34)
-
-    fieldType=inpt['type'].strip()
-
-    optional='f'
-    if fieldType[-1]=='?':
-        optional='t'
-        fieldType=fieldType[:-1]
-    
-    if fieldType not in types:
-        #stop execution and return because this is serious
-        print(fieldType)
-        exit(35)
-    
-    
-    #get default value
-    defaultValue=''
-    if (fieldType!='File') and (fieldType!='Directory') and (fieldType!='null'):
-        if 'default' in inpt.keys():
-            defaultValue=str(inpt['default'])
-
-    name=quoteEnclose(inpt['id'])
-    fieldType=quoteEnclose(fieldType)
-    prefix=quoteEnclose(prefix)
-    defaultValue=quoteEnclose(defaultValue)
-    optional=quoteEnclose(optional)
-    separate=quoteEnclose(separate)
-
-    query+='(' + name + ',' + str(position) + ',' + str(softId) + ',' + fieldType + ',' + prefix + ',' + separate + ',' + optional + ',' + defaultValue + '),'
-
-query=query[:-1]
-print(query)
-cur.execute(query)
-conn.commit()
+if isinstance(cwlContent['inputs'],dict):
+    exit_value=uf.inputStoreDict(softName,softVersion, cwlContent['inputs'])
+elif isinstance(cwlContent['inputs'],list):
+    exit_value=uf.inputStoreList(softName,softVersion, cwlContent['inputs'])
+else:
+    exit_value=100
 
 conn.close()
 
