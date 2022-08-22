@@ -1,6 +1,6 @@
 # Start with official yii2 image because it contains all dependencies
 
-FROM yiisoftware/yii2-php:7.4-apache
+FROM yiisoftware/yii2-php:8.1-apache
 
 RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && \
@@ -65,7 +65,7 @@ RUN sed -i "s|\"minimum-stability\": \"stable\"|\"minimum-stability\": \"dev\" |
 RUN composer require webvimark/module-user-management && \
     composer require kartik-v/yii2-widget-datepicker "dev-master" && \
     composer require --prefer-dist yiisoft/yii2-bootstrap4 && \
-    composer require --prefer-dist yiisoft/yii2-bootstrap && \
+    composer require -W --prefer-dist yiisoft/yii2-bootstrap:* && \
     composer require --prefer-dist yiisoft/yii2-httpclient && \
     composer require alexantr/yii2-elfinder && \
     composer require 2amigos/yii2-ckeditor-widget
