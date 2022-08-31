@@ -813,7 +813,7 @@ class Software extends \yii\db\ActiveRecord
         /* 
          * Get resources
          */
-        $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'disk_gb'=>'30'];
+        $resources=['cpu_cores'=>$this->limits['cpu'], 'ram_gb'=>$this->limits['ram'],'disk_gb'=>Yii::$app->params['teskTempVolumeSize']];
         $data['resources']=$resources;
 
         /*

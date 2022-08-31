@@ -125,6 +125,7 @@ jupyter:
 
 tesk:
   url: <TESK installation URL>
+  temp-volume: 50 #value in GB
 
 wes:
   CWL:
