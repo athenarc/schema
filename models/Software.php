@@ -456,11 +456,18 @@ class Software extends \yii\db\ActiveRecord
         
         $inputs=[];
         foreach ($fields as $field)
-        {   
+        {
             if (($field->field_type!='Directory') && ($field->field_type!='File'))
             {
                 continue;
             }
+
+            // Exit case for ambiguous file/directory name
+            // An empty file/directory name, concatenated to an existing path, is still an acceptable value
+            if (trim($field->value)=="") {
+                continue;
+            }
+
             $input=[];
             if ($field->field_type=='Directory')
             {
